@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, Image, TouchableOpacity, TouchableWithoutFeedback} from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableOpacity} from 'react-native';
 import {Permissions, ImagePicker} from "expo"
 import {Entypo, MaterialIcons} from "@expo/vector-icons"
 
@@ -30,7 +30,7 @@ export default class PlayerCard extends React.Component {
           });
         } else {
           this.setState({
-            imgSrc: require("../assets/blank-profile.png"),
+            imgSrc: require("../assets/images/blank-profile.png"),
             lookedForUrl:true
           });
         }
@@ -40,7 +40,7 @@ export default class PlayerCard extends React.Component {
       }).catch(error => {
         alert("Hi ha problemes per carregar la imatge del jugador\nError:"+error.message)
         this.setState({
-          imgSrc: require("../assets/blank-profile.png"),
+          imgSrc: require("../assets/images/blank-profile.png"),
           lookedForUrl:true
         });
       })
