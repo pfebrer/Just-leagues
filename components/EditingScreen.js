@@ -94,7 +94,7 @@ export default class EditingScreen extends React.Component {
                 </View>
                 <View style={styles.buttonRow}>
                     <Button
-                        onPress={}
+                        onPress={()=>{console.log('[PRESS] Editar el ranking manualment')}}
                         title="Editar el ranking manualment"
                         color="#303030"
                         accessibilityLabel="Editar el ranking manualment"
@@ -102,15 +102,15 @@ export default class EditingScreen extends React.Component {
                 </View>
                 <View style={styles.buttonRow}>
                     <Button
-                        onPress={}
-                        title="Inicia sessió"
+                        onPress={()=>{console.log('[PRESS] Afegir/treure jugadors')}}
+                        title="Afegir/treure jugadors"
                         color="#303030"
                         accessibilityLabel="Afegir/treure jugadors"
                     />
                 </View>
                 <View style={styles.buttonRow}>
                     <Button
-                        onPress={}
+                        onPress={()=>{console.log('[PRESS] Finalitzar periode de competició')}}
                         title="Finalitzar periode de competició"
                         color="#303030"
                         accessibilityLabel="Finalitzar periode de competició"
@@ -118,7 +118,7 @@ export default class EditingScreen extends React.Component {
                 </View>
                 <View style={styles.buttonRow}>
                     <Button
-                        onPress={}
+                        onPress={()=>{}}
                         title="Modificar partits"
                         color="#303030"
                         accessibilityLabel="Modificar partits"

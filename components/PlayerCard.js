@@ -8,7 +8,7 @@ export default class PlayerCard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      imgSrc: require("../assets/blank-profile.png"),
+      imgSrc: require("../assets/images/blank-profile.png"),
       prevPlayerName: props.playerName,
       modalVisible: false
     }

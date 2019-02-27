@@ -26,7 +26,7 @@ export default class MatchSearcher extends React.Component {
 
     render() {
       return (
-        <ImageBackground style = {{flex:1}} source={require("../assets/bg.jpg")}>
+        <ImageBackground style = {{flex:1}} source={require("../assets/images/loginBG.jpg")}>
           <View style = {styles.container}>
             <MatchFilter filter={this.state.filter} filter2={this.state.filter2} applyFilter={this.applyFilter} filterApplied={this.filterApplied}/>
             <MatchHistory filter={this.state.filter} filter2={this.state.filter2}/>

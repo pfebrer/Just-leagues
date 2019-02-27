@@ -99,7 +99,7 @@ export default class Stats extends React.Component {
       <ChangePWModal hidePWModal={this.hidePWModal}/>
     ) : null;
     return (
-      <ImageBackground style = {{flex:1}} source={require("../assets/bg.jpg")}>
+      <ImageBackground style = {{flex:1}} source={require("../assets/images/bg.jpg")}>
       <View style= {styles.container}>
         <PlayerCard playerName={playerName} playersRef={this.playersRef} userRef={this.playersRef.doc(this.userId)} currentUserName={this.state.currentUserName}/>
         <ScrollView style={styles.statsScrollView}>

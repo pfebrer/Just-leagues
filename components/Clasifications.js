@@ -185,7 +185,7 @@ export default class Clasifications extends React.Component {
     ) : null;
 
     return (
-      <ImageBackground style = {{flex:1}} source={require("../assets/bg.jpg")}>
+      <ImageBackground style = {{flex:1}} source={require("../assets/images/bg.jpg")}>
       <View style = {{flex:1,backgroundColor: "#ffec8b33"}}>
         {this.state.compView}
         {addMatchButton}

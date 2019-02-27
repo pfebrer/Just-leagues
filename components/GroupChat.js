@@ -100,7 +100,7 @@ export default class GroupChat extends React.Component {
         let group = this.state.group;
         let title = this.state.group ? /^\d+$/.test(this.state.group) ? "Xat del grup "+group : "Xat general" : "";
         return (
-            <ImageBackground style = {{flex:1}} source={require("../assets/bg.jpg")}>
+            <ImageBackground style = {{flex:1}} source={require("../assets/images/loginBG.jpg")}>
             <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
                 <View style={styles.chatTitleView}>
                     <Text style={styles.chatTitleText}>{title}</Text>
