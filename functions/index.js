@@ -334,7 +334,11 @@ exports.updateRankingHttp = functions.https.onRequest((req, res) => {
 
 exports.updateGroups = functions.https.onRequest((req, res) => {
 
-    let logGroups = {};
+    let log = {
+        ranking: {},
+        playerData: {},
+        results : {}
+    };
     const firestore = admin.firestore();
     firestore.collection(CONSTANTS.RANKINGS).doc(CONSTANTS.SQUASH_RANKING).get().then(playerSnapshot => {
         let {ranking} = playerSnapshot.data();
@@ -344,32 +348,52 @@ exports.updateGroups = functions.https.onRequest((req, res) => {
         if (orphans > 0) {
             totalGroups++;
         }
-        //res.write('totalGroups:' + totalGroups + ', orphans:' + orphans);
-        for (let i = 0; i < ranking.length; i++) {
-            firestore.collection(CONSTANTS.PLAYERS).doc(ranking[i]).set({
-                currentGroup: Math.trunc(i / CONSTANTS.GROUP_SIZE) + 1
-            }, {merge: true})
-        }
 
+        //Clear all old groups
+        firestore.collection(CONSTANTS.GROUPS).get().then((snapshot) => {
+            snapshot.forEach((groupDoc) => {
+                groupDoc.ref.delete();
+            });
+        });
+        // Update player Rankings
+        firestore.collection(CONSTANTS.PLAYERS).get().then((snapshot) => {
+            snapshot.forEach((playerDoc) => {
+                let playerName = playerDoc.data().playerName;
+                let position = ranking.indexOf(playerName);
+                let groupPosition = Math.trunc(position/4)+1;
+                console.log(playerDoc.id + '['+playerName+']['+position+']['+groupPosition+']=>' + JSON.stringify(playerDoc.data()));
+                log.playerData[playerName] = playerDoc.data();
+                log.ranking[playerName] = position;
+                playerDoc.ref.set({
+                    currentGroup: groupPosition
+                },{merge: true});
+            })
+        });
+
+        let emptyCalculatedGroups = {}; //avoid unnecessary calculations improve performance
         let getEmptyGroup = function (arrLength) {
-            let ret = [];
-            //Exponentiation  to 2 in order to generate all matches
-            for (let k = Math.pow(arrLength , 2); k > 0; k--) {
-                ret.push(false);
+            let ret = emptyCalculatedGroups[arrLength];
+            if (ret === null || ret === undefined) {
+                ret = [];
+                //Exponentiation  to 2 in order to generate all matches
+                for (let k = Math.pow(arrLength, 2); k > 0; k--) {
+                    ret.push(false);
+                }
+                ret = emptyCalculatedGroups[arrLength] = {results: ret};
             }
-            return {results: ret};
+            return ret;
         };
 
-        for (let i = 0; i < totalGroups; i++) {
+        for (let i = 1; i < (totalGroups + 1); i++) {
             if (i + 1 === totalGroups && orphans > 0) {
-                firestore.collection(CONSTANTS.GROUPS).doc(String(i)).set(getEmptyGroup(orphans));
-                //logGroups[i] = getEmptyGroup(orphans);
+                log.results[i] = getEmptyGroup(orphans);
             } else {
-                firestore.collection(CONSTANTS.GROUPS).doc(String(i)).set(getEmptyGroup(CONSTANTS.GROUP_SIZE));
-                //logGroups[i] = getEmptyGroup(CONSTANTS.GROUP_SIZE);
+                log.results[i] = getEmptyGroup(CONSTANTS.GROUP_SIZE);
             }
+            let groupRef = firestore.collection(CONSTANTS.GROUPS).doc(String(i));
+            groupRef.set(log.results[i]);
         }
         // res.write(JSON.stringify(logGroups));
-        res.write(JSON.stringify(logGroups));
+        res.write(JSON.stringify(log));
     });
 });
