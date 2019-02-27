@@ -5,7 +5,8 @@ import AppNavigator from './navigation/AppNavigator';
 
 export default class App extends React.Component {
   state = {
-    isLoadingComplete: false,
+    isLoadingComplete: false
+
   };
 
   render() {
@@ -32,15 +33,17 @@ export default class App extends React.Component {
       Asset.loadAsync([
         require('./assets/images/robot-dev.png'),
         require('./assets/images/robot-prod.png'),
-        require('./assets/images/bg.png'),
-        require('./assets/images/blank-profile.png')
+        require('./assets/images/bg.jpg'),
+        require('./assets/images/blank-profile.png'),
+        require('./assets/images/loginBG.jpg'),
+        require('./assets/images/loginBG2.jpg')
       ]),
       Font.loadAsync({
         // This is the font that we are using for our tab bar
         ...Icon.Ionicons.font,
         // We include SpaceMono because we use it in HomeScreen.js. Feel free
         // to remove this if you are not using it in your app
-        'space-mono': require('./assets/fonts/SpaceMono-Regular'),
+        'space-mono': require('./assets/fonts/SpaceMono-Regular.ttf'),
         'lucidaGrandeBold': require('./assets/fonts/LucidaGrandeBold.ttf'),
         'lucidaGrande': require('./assets/fonts/LucidaGrande.ttf'),
         'roboto': require('./assets/fonts/Roboto-Bold.ttf'),
