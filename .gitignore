@@ -46,6 +46,8 @@ local.properties
 *.iml
 /android/
 
+.expo
+
 # Node
 node_modules
 *.log
