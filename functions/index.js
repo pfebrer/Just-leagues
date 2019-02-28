@@ -1,7 +1,12 @@
 const functions = require('firebase-functions');
 const fetch = require('node-fetch')
-
 const admin = require('firebase-admin');
+
+
+admin.initializeApp(functions.config().firebase);
+const firestore = admin.firestore();
+const auth = admin.auth();
+
 const CONSTANTS = {
     RANKINGS: "rankings",
     SQUASH_RANKING: "squashRanking",
@@ -9,7 +14,7 @@ const CONSTANTS = {
     PLAYERS: "players",
     GROUP_SIZE: 4
 };
-admin.initializeApp(functions.config().firebase);
+
 
 //send the push notification 
 exports.messageNotification = functions.firestore.document('groups/{iGroup}/chatMessages/{id}').onCreate((event, context) => {
@@ -27,7 +32,7 @@ exports.messageNotification = functions.firestore.document('groups/{iGroup}/chat
 
             let {expoToken, playerName} = childSnapshot.data();
             let title = /^\d+$/.test(iGroup) ? "Xat del grup " + iGroup : "Xat general";
-            if (expoToken && playerName != authorName) {
+            if (expoToken && playerName !== authorName) {
                 messages.push({
                     "to": expoToken,
                     "sound": "default",
@@ -210,72 +215,25 @@ exports.newChallenge1 = functions.firestore.document('Reptes/{id}').onCreate((ev
     })
 });
 
-exports.updateRanking = functions.firestore.document('monthInfo/updateRanking').onCreate((event, context) => {
-
-    const root = event.ref.firestore;
-    let things = {};
-    //return the main promise 
-    return root.collection('groups').get().then((snapshot) => {
-
-        let sortedGroups = [];
-
-        snapshot.forEach((docSnapshot) => {
-            let {results} = docSnapshot.data();
-            let iGroup = Number(docSnapshot.id);
-            let size = Math.sqrt(results.length);
-            let totals = [];
-            for (let i = 0; i < size; i++) {
-                let total = results.slice(i * 4, (i + 1) * 4).reduce((a, b) => a + b, 0);
-                totals.push([total, i]);
-            }
-
-            let sortedGroup = totals.sort((a, b) => {
-                let pointsDif = b[0] - a[0];
-                if (pointsDif != 0) {
-                    return pointsDif;
-                }
-                return a[1] - b[1]
-            })
-                .map(([_, i]) => i + (iGroup - 1) * 4);
-
-            sortedGroups.push(sortedGroup)
-
-        });
-
-        let sortedRanking = [];
-        sortedGroups.forEach((group, i) => {
-            if (i < sortedGroups.length - 1) {
-                let lastOfGroup = group[group.length - 1];
-                let firstOfNextGroup = sortedGroups[i + 1][0];
-                group[group.length - 1] = firstOfNextGroup;
-                sortedGroups[i + 1][0] = lastOfGroup;
-            }
-            sortedRanking = sortedRanking.concat(group)
-        });
-
-        things.sortedRanking = sortedRanking;
-
-        return root.collection('rankings').doc(CONSTANTS.SQUASH_RANKING).get()
-    }).then((docSnapshot) => {
-        let {ranking} = docSnapshot.data();
-
-
-        let newRanking = things.sortedRanking.map((playerPos) => {
-            return ranking[playerPos]
-        });
-
-        root.collection("rankings").doc(CONSTANTS.SQUASH_RANKING).set({ranking: newRanking})
-    }).catch((reason) => {
-        console.log(reason)
-    })
-
+exports.updateRanking = functions.region('europe-west1').firestore.document('monthInfo/updateRanking').onCreate((document, event) => {
+    return validateAndContinue(document, event, __updateRanking());
 });
 
-exports.updateRankingHttp = functions.https.onRequest((req, res) => {
+exports.updateRankingHttp = functions.region('europe-west1').https.onCall((req, res) => {
+    return validateAndContinue(data, context, __updateRanking);
+});
 
-    const firestore = admin.firestore();
+exports.updateGroups = functions.region('europe-west1').https.onCall((data, context) => {
+    return validateAndContinue(data, context, __updateGroups);
+});
+
+exports.updateGroupsAPI = functions.region('europe-west1').https.onRequest((req, res) => {
+    return validateAndContinueAPI(req, res, __updateGroups);
+});
+
+const __updateRanking = (data, context, user) => {
     let things = {};
-
+    let isAdmin = Boolean(user.admin);
     //return the main promise
     return firestore.collection('groups').get().then((snapshot) => {
 
@@ -294,7 +252,7 @@ exports.updateRankingHttp = functions.https.onRequest((req, res) => {
             //sort group in proper order
             let sortedGroup = totals.sort((a, b) => {
                 let pointsDif = b[0] - a[0];
-                if (pointsDif != 0) {
+                if (0 != pointsDif) {
                     return pointsDif;
                 }
                 return a[1] - b[1]
@@ -308,8 +266,7 @@ exports.updateRankingHttp = functions.https.onRequest((req, res) => {
         sortedGroups.forEach((group, i) => {
             if (i < sortedGroups.length - 1) {
                 let lastOfGroup = group[group.length - 1];
-                let firstOfNextGroup = sortedGroups[i + 1][0];
-                group[group.length - 1] = firstOfNextGroup;
+                group[group.length - 1] = sortedGroups[i + 1][0];
                 sortedGroups[i + 1][0] = lastOfGroup;
             }
             sortedRanking = sortedRanking.concat(group)
@@ -317,29 +274,30 @@ exports.updateRankingHttp = functions.https.onRequest((req, res) => {
 
         things.sortedRanking = sortedRanking;
 
-        return firestore.collection('rankings').doc(CONSTANTS.SQUASH_RANKING).get()
+        return firestore.collection('rankings').doc(CONSTANTS.SQUASH_RANKING).get();
     }).then((docSnapshot) => {
         let {ranking} = docSnapshot.data();
-
 
         let newRanking = things.sortedRanking.map((playerPos) => {
             return ranking[playerPos]
         });
-
-        firestore.collection("rankings").doc(CONSTANTS.SQUASH_RANKING).set({ranking: newRanking});
+        if (isAdmin) {
+            firestore.collection("rankings").doc(CONSTANTS.SQUASH_RANKING).set({ranking: newRanking});
+        }
     }).catch((reason) => {
         console.log(reason);
     });
-});
+}
 
-exports.updateGroups = functions.https.onRequest((req, res) => {
-
-    let log = {
+const __updateGroups = (data, context, user) => {
+    let updateGroupsTmp = {
         ranking: {},
         playerData: {},
-        results : {}
+        results: {},
+        user: (user || context && context.auth && context.auth.user)
     };
-    const firestore = admin.firestore();
+    const executeActions = Boolean(updateGroupsTmp.user.admin || data.forceActions || context && context.query && context.query.forceActions);
+
     firestore.collection(CONSTANTS.RANKINGS).doc(CONSTANTS.SQUASH_RANKING).get().then(playerSnapshot => {
         let {ranking} = playerSnapshot.data();
         let totalGroups = Math.trunc(ranking.length / CONSTANTS.GROUP_SIZE);
@@ -349,24 +307,28 @@ exports.updateGroups = functions.https.onRequest((req, res) => {
             totalGroups++;
         }
 
-        //Clear all old groups
-        firestore.collection(CONSTANTS.GROUPS).get().then((snapshot) => {
-            snapshot.forEach((groupDoc) => {
-                groupDoc.ref.delete();
+        if (executeActions) {
+            //Clear all old groups
+            firestore.collection(CONSTANTS.GROUPS).get().then((snapshot) => {
+                snapshot.forEach((groupDoc) => {
+                    groupDoc.ref.delete();
+                });
             });
-        });
+        }
         // Update player Rankings
         firestore.collection(CONSTANTS.PLAYERS).get().then((snapshot) => {
             snapshot.forEach((playerDoc) => {
                 let playerName = playerDoc.data().playerName;
                 let position = ranking.indexOf(playerName);
-                let groupPosition = Math.trunc(position/4)+1;
-                console.log(playerDoc.id + '['+playerName+']['+position+']['+groupPosition+']=>' + JSON.stringify(playerDoc.data()));
-                log.playerData[playerName] = playerDoc.data();
-                log.ranking[playerName] = position;
-                playerDoc.ref.set({
-                    currentGroup: groupPosition
-                },{merge: true});
+                let groupPosition = Math.trunc(position / 4) + 1;
+                console.log(playerDoc.id + '[' + playerName + '][' + position + '][' + groupPosition + ']=>' + JSON.stringify(playerDoc.data()));
+                updateGroupsTmp.playerData[playerName] = playerDoc.data();
+                updateGroupsTmp.ranking[playerName] = position;
+                if (executeActions) {
+                    playerDoc.ref.set({
+                        currentGroup: groupPosition
+                    }, {merge: true});
+                }
             })
         });
 
@@ -386,14 +348,104 @@ exports.updateGroups = functions.https.onRequest((req, res) => {
 
         for (let i = 1; i < (totalGroups + 1); i++) {
             if (i + 1 === totalGroups && orphans > 0) {
-                log.results[i] = getEmptyGroup(orphans);
+                updateGroupsTmp.results[i] = getEmptyGroup(orphans);
             } else {
-                log.results[i] = getEmptyGroup(CONSTANTS.GROUP_SIZE);
+                updateGroupsTmp.results[i] = getEmptyGroup(CONSTANTS.GROUP_SIZE);
             }
-            let groupRef = firestore.collection(CONSTANTS.GROUPS).doc(String(i));
-            groupRef.set(log.results[i]);
+            if (executeActions) {
+                let groupRef = firestore.collection(CONSTANTS.GROUPS).doc(String(i));
+                groupRef.set(updateGroupsTmp.results[i]);
+            }
         }
         // res.write(JSON.stringify(logGroups));
-        res.write(JSON.stringify(log));
+        //res.write(JSON.stringify(log));
+        return updateGroupsTmp;
     });
-});
+};
+
+const validateAndContinue = (data, context, next) => {
+    let userUID = context.auth.uid;
+    if (userUID !== null && userUID !== undefined) {
+        // auth.verifyIdToken(idToken).then((decodedIdToken) => {
+        console.log('ID Token correctly decoded User', userUID);
+        let user = {};
+        firestore.collection(CONSTANTS.PLAYERS).doc(userUID).get().then((docSnapshot) => {
+            let {playerName, currentGroup, admin} = docSnapshot.data()
+            user.playerName = playerName;
+            user.currentGroup = currentGroup;
+            user.admin = admin;
+            // adding resolved user to CallableContext
+            context.auth.user = user;
+            console.log("validateAndContinue::currentUser", context.auth);
+            return next(data, context, user);
+        }).catch(err => {
+            console.error("User not found in auth", err);
+            if (context.status) {
+                context.status(403).send('Unauthorized');
+            }
+            return;
+        });
+        // }).catch((error) => {
+        //     console.error('Error while verifying Firebase ID token:', error);
+        //     res.status(403).send('Unauthorized');
+        // });
+    } else {
+        if (context.status) {
+            context.status(403).send('Unauthorized');
+        }
+    }
+
+};
+
+const validateAndContinueAPI = (req, res, next) => {
+    let idToken = processRequest(req, res);
+    console.log("validateAndContinueAPI::idToken", idToken);
+    if (idToken !== null && idToken !== undefined) {
+        // if ('userAndPasswordCredentials' === idToken) {
+        // let user = req.query.u;
+        // let password = req.query.p;
+        //admin.auth().generateSignInWithEmailLink()
+        // auth.signInWithEmailAndPassword(user + "@nickspa.cat", password).then(async (userCredential) => {
+        //     validateAndContinue(req.query, {
+        //         auth: {uid: userCredential.uid}
+        //     }, next);
+        // });
+
+        // } else {
+        auth.verifyIdToken(idToken).then((decodedIdToken) => {
+            validateAndContinue(req.query, {
+                auth: {uid: decodedIdToken.uid}
+            }, next);
+        });
+        // }
+    } else {
+        res.status(403).send('Unauthorized');
+    }
+};
+
+const processRequest = (req, res) => {
+    let idToken = null;
+    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
+        console.log('Found "Authorization" header');
+        // Read the ID Token from the Authorization header.
+        idToken = req.headers.authorization.split('Bearer ')[1];
+    } else if (req.query.idToken) {
+        console.log('Found "idToken" query parameter');
+        idToken = req.query.idToken;
+    } else if (req.cookies) {
+        console.log('Found "__session" cookie');
+        // Read the ID Token from cookie.
+        idToken = req.cookies.__session;
+    } else {
+        let user = req.query.u;
+        let password = req.query.p;
+        if (user !== null && user !== undefined && password !== null && password !== undefined) {
+            console.log("Trying to obtain token from user and Password")
+            idToken = 'userAndPasswordCredentials';
+        } else {
+            console.log('No token found :S');
+        }
+    }
+    return idToken;
+}
+
