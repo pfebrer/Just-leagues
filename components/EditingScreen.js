@@ -1,32 +1,35 @@
 import React from 'react';
-import {Button, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {firebase, firestore} from "../Firebase"
-import EndingPeriodModal from "./editingComponents/EndingPeriodModal"
+import {Button, StyleSheet, Text, View} from 'react-native';
+import {auth, functions, firestore} from "../Firebase";
+import EndingPeriodModal from "./editingComponents/EndingPeriodModal";
+import Spinner from 'react-native-loading-spinner-overlay';
+
 
 export default class EditingScreen extends React.Component {
 
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
             endingPeriodModal: false,
-        }
-        this.playersRef = firestore.collection("players");
-        this.userId = firebase.auth().currentUser.uid;
-        this.matchesRef = firestore.collection("matches");
-        this.rankingRef = firestore.collection("rankings");
+            spinner: false
+        };
+        // this.playersRef = firestore.collection("players");
+        // this.userId = auth.currentUser.uid;
+        // this.matchesRef = firestore.collection("matches");
+        // this.rankingRef = firestore.collection("rankings");
     }
 
     componentDidMount() {
 
-        this.rankingRef.onSnapshot((querySnapshot) => {
-            querySnapshot.forEach((doc) => {
-                    let {ranking} = doc.data()
-                    this.setState({
-                        ranking: ranking,
-                    })
-                }
-            )
-        });
+        // this.rankingRef.onSnapshot((querySnapshot) => {
+        //     querySnapshot.forEach((doc) => {
+        //             let {ranking} = doc.data();
+        //             this.setState({
+        //                 ranking: ranking,
+        //             })
+        //         }
+        //     )
+        // });
     }
 
     toggleEndingPeriodModal() {
@@ -36,55 +39,54 @@ export default class EditingScreen extends React.Component {
     };
 
     updateRanking = () => {
-        const httpsCallable = firestore.functions().httpsCallable('updateRankingHttp');
-        httpsCallable.then((data) => {
-            console.log(data); // hello world
-        }).catch(httpsError => {
-            console.log(httpsError.code); // invalid-argument
-            console.log(httpsError.message); // Your error message goes here
-            console.log(httpsError.details.foo); // bar
-        });
+        this.callFunction('updateRankingHttp');
     };
 
     updateGroups = () => {
-        const httpsCallable = firestore.functions().httpsCallable('updateGroups');
-        httpsCallable.then((data) => {
-            console.log(data); // hello world
-        }).catch(httpsError => {
-            console.log(httpsError.code); // invalid-argument
-            console.log(httpsError.message); // Your error message goes here
-            console.log(httpsError.details.foo); // bar
-        });
+        this.callFunction('updateGroups');
     };
 
-    tancatMes = () => {
-        const httpsCallableRanking = firestore.functions().httpsCallable('updateRanking');
+    tancarMes = () => {
+        this.callFunction('updateRanking', this.callFunction('updateGroups'));
+    };
 
-        httpsCallableRanking.then((data) => {
-            console.log(data); // hello world
-            const httpsCallableGroup = firestore.functions().httpsCallable('updateGroups');
-            httpsCallableGroup.then((data) => {
-                console.log(data); // hello world
-            }).catch(httpsError => {
-                console.log(httpsError.code); // invalid-argument
-                console.log(httpsError.message); // Your error message goes here
-                console.log(httpsError.details.foo); // bar
-            });
-        }).catch(httpsError => {
-            console.log(httpsError.code); // invalid-argument
-            console.log(httpsError.message); // Your error message goes here
-            console.log(httpsError.details.foo); // bar
+    callFunction = (functionName, callback, errorFn) => {
+        let me = this;
+        if (callback === undefined || callback === null) {
+            callback = (data) => {
+                console.log("EditingScreen::callFunction::callback",data); // hello world
+                this.setState({spinner: false});
+            };
+        }
+        if (errorFn === undefined || errorFn === null) {
+            errorFn = (httpsError) => {
+                console.log("EditingScreen::callFunction::errorFn",httpsError.code); // invalid-argument
+                console.log("EditingScreen::callFunction::errorFn",httpsError.message); // Your error message goes here
+                console.log("EditingScreen::callFunction::errorFn",httpsError); // bar
+                this.setState({spinner: false});
+            };
+        }
+        console.log("EditingScreen::callFunction functionName["+functionName+"]");
+
+        auth.currentUser.getIdToken().then(function(token) {
+            me.setState({spinner: true});
+            console.log("idToken generated: ",token);
+            functions.httpsCallable(functionName)().then(callback).catch(errorFn);
         });
+
     };
 
     render() {
-
         let endingPeriodModal = this.state.endingPeriodModal ? (
             <EndingPeriodModal toggleEndingPeriodModal={this.toggleEndingPeriodModal}/>
         ) : null;
 
         return (
             <View style={styles.container}>
+                <Spinner
+                    visible={this.state.spinner}
+                    textStyle={styles.spinnerTextStyle}
+                />
                 <View style={styles.titleView}>
                     <Text style={styles.titleText}>GESTIÓ COMPETICIÓ</Text>
                 </View>
@@ -94,7 +96,9 @@ export default class EditingScreen extends React.Component {
                 </View>
                 <View style={styles.buttonRow}>
                     <Button
-                        onPress={()=>{console.log('[PRESS] Editar el ranking manualment')}}
+                        onPress={() => {
+                            console.log('[PRESS] Editar el ranking manualment')
+                        }}
                         title="Editar el ranking manualment"
                         color="#303030"
                         accessibilityLabel="Editar el ranking manualment"
@@ -102,7 +106,9 @@ export default class EditingScreen extends React.Component {
                 </View>
                 <View style={styles.buttonRow}>
                     <Button
-                        onPress={()=>{console.log('[PRESS] Afegir/treure jugadors')}}
+                        onPress={() => {
+                            console.log('[PRESS] Afegir/treure jugadors')
+                        }}
                         title="Afegir/treure jugadors"
                         color="#303030"
                         accessibilityLabel="Afegir/treure jugadors"
@@ -110,7 +116,9 @@ export default class EditingScreen extends React.Component {
                 </View>
                 <View style={styles.buttonRow}>
                     <Button
-                        onPress={()=>{console.log('[PRESS] Finalitzar periode de competició')}}
+                        onPress={() => {
+                            console.log('[PRESS] Finalitzar periode de competició')
+                        }}
                         title="Finalitzar periode de competició"
                         color="#303030"
                         accessibilityLabel="Finalitzar periode de competició"
@@ -118,7 +126,8 @@ export default class EditingScreen extends React.Component {
                 </View>
                 <View style={styles.buttonRow}>
                     <Button
-                        onPress={()=>{}}
+                        onPress={() => {
+                        }}
                         title="Modificar partits"
                         color="#303030"
                         accessibilityLabel="Modificar partits"
@@ -142,7 +151,7 @@ export default class EditingScreen extends React.Component {
                 </View>
                 <View style={styles.buttonRow}>
                     <Button
-                        onPress={this.tancatMes}
+                        onPress={this.tancarMes}
                         title="Tancar Mes"
                         color="#303030"
                         accessibilityLabel="Tancar Mes"
@@ -150,7 +159,9 @@ export default class EditingScreen extends React.Component {
                 </View>
                 <View style={styles.buttonRow}>
                     <Button
-                        onPress={() => {this.props.navigation.navigate("Classifications")}}
+                        onPress={() => {
+                            this.props.navigation.navigate("Classifications")
+                        }}
                         title="Torna a Classificacions"
                         color="#303030"
                         accessibilityLabel="Tancar Mes"
