@@ -216,26 +216,45 @@ exports.newChallenge1 = functions.firestore.document('Reptes/{id}').onCreate((ev
 });
 
 exports.updateRanking = functions.region('europe-west1').firestore.document('monthInfo/updateRanking').onCreate((document, event) => {
-    return validateAndContinue(document, event, __updateRanking());
+    return __updateRanking(null, null, {user: {admin: true}});
+});
+exports.updateRanking = functions.region('europe-west1').firestore.document('monthInfo/updateRanking').onUpdate((document, event) => {
+    return __updateRanking(null, null, {user: {admin: true}});
+});
+
+exports.updateRanking = functions.region('europe-west1').firestore.document('monthInfo/updateGroups').onCreate((document, event) => {
+    return __updateGroups(null, null, {user: {admin: true}});
+});
+exports.updateRanking = functions.region('europe-west1').firestore.document('monthInfo/updateGroups').onUpdate((document, event) => {
+    return __updateGroups(null, null, {user: {admin: true}});
 });
 
 exports.updateRankingHttp = functions.region('europe-west1').https.onCall((req, res) => {
     return validateAndContinue(data, context, __updateRanking);
 });
+exports.updateRankingAPI = functions.region('europe-west1').https.onCall((req, res) => {
+    return validateAndContinueAPI(data, context, __updateRanking);
+});
+exports.updateRankingURL = functions.region('europe-west1').https.onCall((req, res) => {
+    return validateAndContinueURL(data, context, __updateRanking);
+});
 
 exports.updateGroups = functions.region('europe-west1').https.onCall((data, context) => {
     return validateAndContinue(data, context, __updateGroups);
 });
-
 exports.updateGroupsAPI = functions.region('europe-west1').https.onRequest((req, res) => {
-    return validateAndContinueAPI(req, res, __updateGroups);
+    let ret = validateAndContinueAPI(req, res, __updateGroups);
 });
+exports.updateGroupsURL = functions.region('europe-west1').https.onRequest((req, res) => {
+    let ret = validateAndContinueURL(req, res, __updateGroups);
+});
+
 
 const __updateRanking = (data, context, user) => {
     let things = {};
     let isAdmin = Boolean(user.admin);
     //return the main promise
-    return firestore.collection('groups').get().then((snapshot) => {
+    return firestore.collection(CONSTANTS.GROUPS).get().then((snapshot) => {
 
         let sortedGroups = [];
 
@@ -252,7 +271,7 @@ const __updateRanking = (data, context, user) => {
             //sort group in proper order
             let sortedGroup = totals.sort((a, b) => {
                 let pointsDif = b[0] - a[0];
-                if (0 != pointsDif) {
+                if (pointsDif != 0) {
                     return pointsDif;
                 }
                 return a[1] - b[1]
@@ -266,7 +285,8 @@ const __updateRanking = (data, context, user) => {
         sortedGroups.forEach((group, i) => {
             if (i < sortedGroups.length - 1) {
                 let lastOfGroup = group[group.length - 1];
-                group[group.length - 1] = sortedGroups[i + 1][0];
+                let firstOfNextGroup = sortedGroups[i + 1][0];
+                group[group.length - 1] = firstOfNextGroup;
                 sortedGroups[i + 1][0] = lastOfGroup;
             }
             sortedRanking = sortedRanking.concat(group)
@@ -282,15 +302,92 @@ const __updateRanking = (data, context, user) => {
             return ranking[playerPos]
         });
         if (isAdmin) {
-            firestore.collection("rankings").doc(CONSTANTS.SQUASH_RANKING).set({ranking: newRanking});
+            firestore.collection(CONSTANTS.RANKINGS).doc(CONSTANTS.SQUASH_RANKING).set({ranking: newRanking});
+        }
+        if (context.status) {
+            context.status(200).json(newRanking);
         }
     }).catch((reason) => {
         console.log(reason);
     });
-}
+};
+
+exports.setRankingURL = functions.region('europe-west1').https.onRequest((req, res) => {
+    validateAndContinueURL(req, res, __setRanking);
+});
+
+const __setRanking = (req, res, user) => {
+    let ranking = req.query.ranking || req.body.ranking;
+    const capitalizeName = (str) => {
+        var pieces = str.split(" ");
+        for (var i = 0; i < pieces.length; i++) {
+            var j = pieces[i].charAt(0).toUpperCase();
+            pieces[i] = j + pieces[i].substr(1).toLowerCase();
+        }
+        return pieces.join(" ");
+    };
+    const generateNickEmail = (name) => {
+        let parts = name.toLowerCase().split(" ");
+        let email = "";
+        for (let i = 0; i < parts.length - 1; i++) {
+            email += parts[i].charAt(0);
+        }
+        email += parts[parts.length - 1];
+        return email + "@nickspa.cat"
+    };
+    const generatePassword = (name) => {
+        let parts = name.toLowerCase().split(" ");
+        name = capitalizeName(parts[0]);
+        return name + '0123';
+    };
+
+    ranking = ranking.split(",");
+
+    let playersRef = firestore.collection(CONSTANTS.PLAYERS);
+
+    let newRanking = [];
+    for (let i = 0; i < ranking.length; i++) {
+        let player = ranking[i];
+        let playerEmail = generateNickEmail(player);
+        let playerCapitalizedName = capitalizeName(player);
+        let playerPassword = generatePassword(player);
+        console.log("__setRanking::PROCESSING User[" + playerEmail + "][" + (i + 1) + "] with name[" + playerCapitalizedName + "] and password[" + playerPassword + "]");
+        playersRef.where("playerName", "==", playerCapitalizedName).get().then((snapshot) => {
+            if (snapshot.empty) {
+                auth.getUserByEmail(playerEmail).then((user) => {
+                    console.log("__setRanking::CREATING User[" + playerEmail + "] exists in AUTH");
+                }).catch((err) => {
+                    console.log("__setRanking::CREATING User[" + playerEmail + "] NOT exists in AUTH, CREATING USER in AUTH");
+                    return auth.createUser({
+                        displayName: playerCapitalizedName,
+                        email: playerEmail,
+                        emailVerified: false,
+                        password: playerPassword
+                    });
+                }).then((userRecord) => {
+                    console.info("SOC USERRECORD", userRecord)
+                    return auth.getUserByEmail(playerEmail);
+                }).then((userR) => {
+                    console.log("__setRanking::CREATING User[" + playerEmail + "] in FIRESTORE");
+                    playersRef.doc(userR.uid).set({
+                        currentGroup: 99,
+                        playerName: playerCapitalizedName
+                    }, {merge: true});
+                }).catch(err => console.error("__setRanking:: ERROR CREATING User[" + playerEmail + "] in FIRESTORE", err));
+            }
+        });
+        newRanking.push(playerCapitalizedName);
+    }
+    console.log("__setRanking::ranking [" + ranking + "]");
+    console.log("__setRanking::newRanking [" + newRanking + "]");
+    firestore.collection(CONSTANTS.RANKINGS).doc(CONSTANTS.SQUASH_RANKING).set({ranking: newRanking});
+    res.status(200).json(newRanking);
+    return newRanking;
+};
 
 const __updateGroups = (data, context, user) => {
     let updateGroupsTmp = {
+        sortedRanking : [],
         ranking: {},
         playerData: {},
         results: {},
@@ -298,39 +395,61 @@ const __updateGroups = (data, context, user) => {
     };
     const executeActions = Boolean(updateGroupsTmp.user.admin || data.forceActions || context && context.query && context.query.forceActions);
 
-    firestore.collection(CONSTANTS.RANKINGS).doc(CONSTANTS.SQUASH_RANKING).get().then(playerSnapshot => {
-        let {ranking} = playerSnapshot.data();
-        let totalGroups = Math.trunc(ranking.length / CONSTANTS.GROUP_SIZE);
-        let orphans = ranking.length % CONSTANTS.GROUP_SIZE;
+    console.log("__updateGroups::User" + JSON.stringify(updateGroupsTmp.user));
+    console.log("__updateGroups::Can execute actions[" + executeActions + "]");
+
+    let totalGroups = 0;
+    let orphans = 0;
+    let ranking = null;
+
+    return firestore.collection(CONSTANTS.RANKINGS).doc(CONSTANTS.SQUASH_RANKING).get().then(playerSnapshot => {
+        ranking = playerSnapshot.data().ranking;
+        totalGroups = Math.trunc(ranking.length / CONSTANTS.GROUP_SIZE);
+        orphans = ranking.length % CONSTANTS.GROUP_SIZE;
         // generate group for orphan people
         if (orphans > 0) {
             totalGroups++;
         }
-
-        if (executeActions) {
-            //Clear all old groups
-            firestore.collection(CONSTANTS.GROUPS).get().then((snapshot) => {
-                snapshot.forEach((groupDoc) => {
-                    groupDoc.ref.delete();
+        return firestore.collection(CONSTANTS.GROUPS).get();
+    }).then((snapshot) => {
+        console.log("__updateGroups::Cleaning groups");
+        console.log("__updateGroups::snapshot.size[" + snapshot.size + "], totalGroups[" + totalGroups + "]");
+        if (snapshot.size > totalGroups) {
+            for (let i = totalGroups + 1; i < snapshot.size; i++) {
+                console.log("__updateGroups::Cleaning group[" + i + "]");
+                firestore.collection(CONSTANTS.GROUPS).doc(String(i)).delete().catch((err) => {
+                    console.error("__updateGroups::Could not delete group " + String(i), err)
                 });
-            });
+            }
         }
+        return firestore.collection(CONSTANTS.PLAYERS).get();
+    }).then((snapshot) => {
         // Update player Rankings
-        firestore.collection(CONSTANTS.PLAYERS).get().then((snapshot) => {
-            snapshot.forEach((playerDoc) => {
-                let playerName = playerDoc.data().playerName;
-                let position = ranking.indexOf(playerName);
-                let groupPosition = Math.trunc(position / 4) + 1;
-                console.log(playerDoc.id + '[' + playerName + '][' + position + '][' + groupPosition + ']=>' + JSON.stringify(playerDoc.data()));
-                updateGroupsTmp.playerData[playerName] = playerDoc.data();
-                updateGroupsTmp.ranking[playerName] = position;
-                if (executeActions) {
-                    playerDoc.ref.set({
-                        currentGroup: groupPosition
-                    }, {merge: true});
-                }
-            })
+        // firestore.collection(CONSTANTS.PLAYERS).get().then((snapshot) => {
+        console.log("__updateGroups::Ranking " + JSON.stringify(ranking));
+        console.log("__updateGroups::snapshot [" + JSON.stringify(snapshot) + "]");
+        let batch = firestore.batch();
+        updateGroupsTmp.sortedRanking = ranking;
+        snapshot.forEach((playerDoc) => {
+            let playerName = playerDoc.data().playerName;
+            let position = ranking.indexOf(playerName);
+            let groupPosition = Math.trunc(position / 4) + 1;
+            //console.log('__updateGroups::PLAYER[' + playerDoc.id + '][' + playerName + '][' + position + '][' + groupPosition + ']=>' + JSON.stringify(playerDoc.data()));
+            //updateGroupsTmp.playerData[playerName] = playerDoc.data();
+            updateGroupsTmp.ranking[playerName] = position;
+            if (executeActions) {
+                batch.set(playerDoc.ref, {
+                    currentGroup: groupPosition
+                }, {merge: true});
+                // playerDoc.ref.set({
+                //     currentGroup: groupPosition
+                // }, {merge: true}).catch((err) => {
+                //     console.error("__updateGroups::Could not update player " + playerName, err);
+                // });
+            }
         });
+        batch.commit().catch(err => console.error("__updateGroups::Could not update players ", err));
+        console.log("LOLO");
 
         let emptyCalculatedGroups = {}; //avoid unnecessary calculations improve performance
         let getEmptyGroup = function (arrLength) {
@@ -345,7 +464,11 @@ const __updateGroups = (data, context, user) => {
             }
             return ret;
         };
-
+        console.log("__updateGroups::TOTAL Groups " + totalGroups);
+        let groupRef = null;
+        if (executeActions) {
+            groupRef = firestore.collection(CONSTANTS.GROUPS);
+        }
         for (let i = 1; i < (totalGroups + 1); i++) {
             if (i + 1 === totalGroups && orphans > 0) {
                 updateGroupsTmp.results[i] = getEmptyGroup(orphans);
@@ -353,14 +476,25 @@ const __updateGroups = (data, context, user) => {
                 updateGroupsTmp.results[i] = getEmptyGroup(CONSTANTS.GROUP_SIZE);
             }
             if (executeActions) {
-                let groupRef = firestore.collection(CONSTANTS.GROUPS).doc(String(i));
-                groupRef.set(updateGroupsTmp.results[i]);
+                console.log("__updateGroups::Creating/Updating group[" + i + "] with [" + JSON.stringify(updateGroupsTmp.results[i]) + "]");
+                groupRef.doc(String(i)).set(updateGroupsTmp.results[i], {merge: true}).catch((err) => {
+                    console.error("__updateGroups::Could not update group " + i, err);
+                });
             }
         }
+
+
         // res.write(JSON.stringify(logGroups));
         //res.write(JSON.stringify(log));
+
+        console.log("PEPITO");
+        console.log('__updateGroups::updateGroupsTmp' + JSON.stringify(updateGroupsTmp));
+        //return updateGroupsTmp;
+        if (context.status) {
+            context.status(200).json(updateGroupsTmp);
+        }
         return updateGroupsTmp;
-    });
+    }).catch((err) => console.error("__updateGroups::Could not retrieve  players", err));
 };
 
 const validateAndContinue = (data, context, next) => {
@@ -394,7 +528,6 @@ const validateAndContinue = (data, context, next) => {
             context.status(403).send('Unauthorized');
         }
     }
-
 };
 
 const validateAndContinueAPI = (req, res, next) => {
@@ -410,7 +543,6 @@ const validateAndContinueAPI = (req, res, next) => {
         //         auth: {uid: userCredential.uid}
         //     }, next);
         // });
-
         // } else {
         auth.verifyIdToken(idToken).then((decodedIdToken) => {
             validateAndContinue(req.query, {
@@ -421,6 +553,34 @@ const validateAndContinueAPI = (req, res, next) => {
     } else {
         res.status(403).send('Unauthorized');
     }
+};
+
+const validateAndContinueURL = (req, res, next) => {
+    let queryUser = req.query.u || req.body.u;
+    let user = {};
+    let ret = firestore.collection(CONSTANTS.PLAYERS).where("playerName", "==", queryUser).get().then((querySnapshot) => {
+        querySnapshot.forEach(function (docSnapshot) {
+            let {playerName, currentGroup, admin} = docSnapshot.data();
+            user.playerName = playerName;
+            user.currentGroup = currentGroup;
+            user.admin = admin;
+            if (!res.auth) {
+                res["auth"] = {};
+            }
+            if (!res.auth.user) {
+                res.auth["user"] = {};
+            }
+            res.auth.user = user;
+            console.log("validateAndContinue::currentUser", res.auth);
+            return next(req, res, user);
+        });
+    }).catch(err => {
+        console.error("validateAndContinueURL::User not found in auth", err);
+        if (context.status) {
+            context.status(403).send('Unauthorized');
+        }
+        return;
+    });
 };
 
 const processRequest = (req, res) => {
