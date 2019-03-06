@@ -16,7 +16,7 @@ const functions = app.functions();
 const auth = app.auth();
 
 //firestore.settings({timestampsInSnapshots:true})
-console.log("USING FIREBASE FUNCTIONS IN LOCAL SERVER");
+//console.log("USING FIREBASE FUNCTIONS IN LOCAL SERVER");
 //functions.useFunctionsEmulator('http://192.168.1.43:5000');
 
 export {firebase,firestore,functions,auth};

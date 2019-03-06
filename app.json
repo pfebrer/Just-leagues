@@ -8,13 +8,13 @@
       "ios",
       "android"
     ],
-    "version": "1.0.0",
+    "version": "2.1.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#818181"
     },
     "updates": {
       "fallbackToCacheTimeout": 0
@@ -23,7 +23,11 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.pol.esquaixlligues"
+    },
+    "android": {
+      "package": "com.pol.esquaixlligues"
     }
   }
 }

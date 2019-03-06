@@ -30,6 +30,7 @@ export default class App extends React.Component {
 
   _loadResourcesAsync = async () => {
     return Promise.all([
+
       Asset.loadAsync([
         require('./assets/images/robot-dev.png'),
         require('./assets/images/robot-prod.png'),
@@ -66,6 +67,6 @@ export default class App extends React.Component {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-  },
+    backgroundColor: '#5e5e5e',
+  }
 });
