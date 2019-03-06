@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button, StyleSheet, Text, View} from 'react-native';
-import {auth, functions, firestore} from "../Firebase";
+import {auth, functions} from "../Firebase";
 import EndingPeriodModal from "./editingComponents/EndingPeriodModal";
 import Spinner from 'react-native-loading-spinner-overlay';
 
@@ -35,7 +35,7 @@ export default class EditingScreen extends React.Component {
     toggleEndingPeriodModal() {
         this.setState({
             endingPeriodModal: !this.state.endingPeriodModal
-        })
+        });
     };
 
     updateRanking = () => {
@@ -51,29 +51,22 @@ export default class EditingScreen extends React.Component {
     };
 
     callFunction = (functionName, callback, errorFn) => {
-        let me = this;
+
         if (callback === undefined || callback === null) {
             callback = (data) => {
-                console.log("EditingScreen::callFunction::callback",data); // hello world
+                console.log("EditingScreen::callFunction::callback", data); // hello world
                 this.setState({spinner: false});
             };
         }
         if (errorFn === undefined || errorFn === null) {
             errorFn = (httpsError) => {
-                console.log("EditingScreen::callFunction::errorFn",httpsError.code); // invalid-argument
-                console.log("EditingScreen::callFunction::errorFn",httpsError.message); // Your error message goes here
-                console.log("EditingScreen::callFunction::errorFn",httpsError); // bar
+                console.log("EditingScreen::callFunction::errorFn", httpsError); // bar
                 this.setState({spinner: false});
             };
         }
-        console.log("EditingScreen::callFunction functionName["+functionName+"]");
+        console.log("EditingScreen::callFunction functionName[" + functionName + "]");
 
-        auth.currentUser.getIdToken().then(function(token) {
-            me.setState({spinner: true});
-            console.log("idToken generated: ",token);
-            functions.httpsCallable(functionName)().then(callback).catch(errorFn);
-        });
-
+        functions.httpsCallable(functionName)().then(callback).catch(errorFn);
     };
 
     render() {
