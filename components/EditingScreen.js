@@ -13,10 +13,10 @@ export default class EditingScreen extends React.Component {
             endingPeriodModal: false,
             spinner: false
         };
-        // this.playersRef = firestore.collection("players");
+        // this.playersRef = firestore.collection(Collections.PLAYERS);
         // this.userId = auth.currentUser.uid;
-        // this.matchesRef = firestore.collection("matches");
-        // this.rankingRef = firestore.collection("rankings");
+        // this.matchesRef = firestore.collection(Collections.MATCHES);
+        // this.rankingRef = firestore.collection(Collections.RANKING);
     }
 
     componentDidMount() {

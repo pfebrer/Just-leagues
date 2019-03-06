@@ -2,12 +2,13 @@ import React, { Component } from 'react'
 import { Text, StyleSheet, View, ScrollView, TouchableOpacity} from 'react-native'
 import {firebase, firestore} from "../Firebase"
 import AntDesign from '@expo/vector-icons/AntDesign';
+import {Collections} from "../constants/CONSTANTS";
 
 export default class Challenges extends Component {
 
     constructor() {
         super()
-        this.challengesRef = firestore.collection("Reptes")
+        this.challengesRef = firestore.collection(Collections.CHALLENGE);
         this.state = {
             playedChallenges: [],
             alreadyPlayed: []

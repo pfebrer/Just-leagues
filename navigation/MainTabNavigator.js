@@ -6,13 +6,14 @@ import MatchModal from "../components/MatchModal";
 import EditingScreen from "../components/EditingScreen";
 import GroupChat from "../components/GroupChat";
 import MatchSearcher from "../components/MatchSearcher";
-import {AntDesign, Entypo, Ionicons} from '@expo/vector-icons';
-import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
+import {AntDesign, Entypo, Ionicons, MaterialCommunityIcons, MaterialIcons} from '@expo/vector-icons';
+import EditRankingScreen from "../components/ranking/EditRankingScreen";
+
 
 const ClasifStack = createStackNavigator({
     Classifications: Classifications,
     MatchModal: MatchModal,
-    EditingScreen: EditingScreen
+    EditingScreen: EditingScreen,
 }, {
     headerMode: "none",
     mode: "modal"
@@ -55,9 +56,18 @@ export default createBottomTabNavigator({
                     <AntDesign name="database" size={20} color={tintColor}/>
                 )
             }
+        },
+        Ranking: {
+            screen: EditRankingScreen,
+            navigationOptions: {
+                tabBarLabel: "Ranking",
+                tabBarIcon: ({tintColor}) => (
+                    <MaterialIcons name="format-list-numbered" size={20} color={tintColor}/>
+                )
+            }
         }
     },
-    {initialRouteName: "GroupChat"},
+    {initialRouteName: "Classificacions"},
     {
         tabBarOptions: {
             activeTintColor: 'tomato',

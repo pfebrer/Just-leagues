@@ -1,7 +1,7 @@
 import React from 'react';
 import {Button, FlatList, ImageBackground, StyleSheet, Text, TouchableHighlight, View} from 'react-native';
 import Loading from "../Loading";
-import {CONSTANTS} from "../../constants/CONSTANTS";
+import {Collections, CONSTANTS, Documents} from "../../constants/CONSTANTS";
 import {firestore} from "firebase";
 import {Foundation} from '@expo/vector-icons';
 
@@ -16,7 +16,7 @@ export default class EditRankingScreen extends React.Component {
             spinner: false,
             isLoading: true
         };
-        this.rankingsRef = firestore().collection(CONSTANTS.RANKINGS).doc(CONSTANTS.SQUASH_RANKING);
+        this.rankingsRef = firestore().collection(Collections.RANKINGS).doc(Documents.RANKINGS.squashRanking);
         // this.rankingsRef.get().then((snapshot) => {
         //     let r = snapshot.data().ranking
         //     this.setState({

@@ -3,6 +3,7 @@ import {Button, ImageBackground, KeyboardAvoidingView, StyleSheet, Text, TextInp
 import {firebase, firestore} from "../Firebase";
 import {Notifications, Permissions} from "expo";
 import Spinner from 'react-native-loading-spinner-overlay';
+import {Collections} from "../constants/CONSTANTS";
 
 export default class Login extends React.Component {
     constructor(props) {
@@ -13,7 +14,7 @@ export default class Login extends React.Component {
             spinner: false
         };
         this.usersRef = async () => {
-            return firestore.collection("players");
+            return firestore.collection(Collections.PLAYERS);
         };
         this.userInput = React.createRef();
         this.pWInput = React.createRef();

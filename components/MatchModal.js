@@ -2,23 +2,24 @@ import React from 'react';
 import {ImageBackground, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import ScoreRow from "./ScoreRow"
 import MatchHistory from "./MatchHistory"
-import {firebase,firestore} from "../Firebase"
+import {firebase, firestore} from "../Firebase"
+import {Collections} from "../constants/CONSTANTS";
 
 export default class MatchModal extends React.Component {
 
     constructor(props) {
-        super(props)
+        super(props);
         this.state = {
             editableResult: false,
-            resultSubmitted: false,
+            resultSubmitted: false
         }
         this.editedResults = ["", ""];
         this.playerName = props.navigation.getParam('playerName', null);
         this.matchPlayers = props.navigation.getParam('matchPlayers', []);
 
-        firestore.collection("players").doc(firebase.auth().currentUser.uid).get().then((docSnapshot)=>{
-            let {playerName,currentGroup,admin} = docSnapshot.data()
-            this.setState({playerName,admin})
+        firestore.collection(Collections.PLAYERS).doc(firebase.auth().currentUser.uid).get().then((docSnapshot) => {
+            let {playerName, currentGroup, admin} = docSnapshot.data();
+            this.setState({playerName, admin});
         }).catch(err => {
             alert("No s'ha pogut carregar la informació de l'usuari", err);
         });
@@ -109,10 +110,14 @@ export default class MatchModal extends React.Component {
             }
             button = (
                 <View style={{flexDirection: "row", marginBottom: 20}}>
-                    <TouchableOpacity style={styles.goBackArrowButton} onPress={() => {this.props.navigation.navigate("Classifications")}}>
+                    <TouchableOpacity style={styles.goBackArrowButton} onPress={() => {
+                        this.props.navigation.navigate("Classifications")
+                    }}>
                         <Text style={styles.goBackArrowText}>Torna</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity key="addResultButton" style={resultViewStyle} onPress={() => {this.editResult(this.state.editableResult)}}>
+                    <TouchableOpacity key="addResultButton" style={resultViewStyle} onPress={() => {
+                        this.editResult(this.state.editableResult)
+                    }}>
                         <Text style={resultTextStyle}>{text}</Text>
                     </TouchableOpacity>
                 </View>
@@ -120,7 +125,9 @@ export default class MatchModal extends React.Component {
         } else {
             let text = "Torna a les classificacions";
             button = (
-                <TouchableOpacity key="goBackButton" style={styles.goBackButton} onPress={() => {this.props.navigation.navigate("Classifications")}}>
+                <TouchableOpacity key="goBackButton" style={styles.goBackButton} onPress={() => {
+                    this.props.navigation.navigate("Classifications")
+                }}>
                     <Text style={styles.goBackText}>{text}</Text>
                 </TouchableOpacity>
             )

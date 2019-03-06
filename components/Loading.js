@@ -1,6 +1,7 @@
 import React from 'react'
 import {ActivityIndicator, ImageBackground, StatusBar, StyleSheet, Text, View,} from 'react-native';
 import {firebase, firestore} from "../Firebase"
+import {Collections} from "../constants/CONSTANTS";
 
 export default class Loading extends React.Component {
 
@@ -27,11 +28,11 @@ export default class Loading extends React.Component {
             this.status.bg = require("../assets/images/loginBG2.jpg");
             console.log("Loading::status.bg", this.status.bg);
         }
-       // this.setState(status);
+        // this.setState(status);
     }
 
     onConstruct = async () => {
-        this.usersRef = await firestore.collection("players");
+        this.usersRef = await firestore.collection(Collections.PLAYERS);
         //firebase.auth().signOut();
         console.log('Loading::[START] checking checking user');
         const unsub = await firebase.auth().onAuthStateChanged(user => {

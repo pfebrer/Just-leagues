@@ -6,6 +6,7 @@ import AddMatchModal from "./AddMatchModal"
 import AdminAddMatchModal from "./AdminAddMatchModal"
 import {firebase, firestore} from "../Firebase"
 import {AntDesign} from '@expo/vector-icons';
+import {Collections, Documents} from "../constants/CONSTANTS";
 
 export default class Clasifications extends React.Component {
     constructor(props) {
@@ -21,20 +22,20 @@ export default class Clasifications extends React.Component {
             userId: firebase.auth().currentUser.uid,
             compView: this.compView
         };
-        this.playersRef = firestore.collection("players");
-        this.rankingsRef = firestore.collection("rankings").doc("squashRanking");
-        this.matchesRef = firestore.collection("matches");
-        this.groupsRef = firestore.collection("groups");
+        this.playersRef = firestore.collection(Collections.PLAYERS);
+        this.rankingsRef = firestore.collection(Collections.RANKINGS).doc(Documents.RANKINGS.squashRanking);
+        this.matchesRef = firestore.collection(Collections.MATCHES);
+        this.groupsRef = firestore.collection(Collections.GROUPS);
         this.playersRef.doc(this.state.userId).get().then((docSnapshot) => {
             let {playerName, currentGroup, admin} = docSnapshot.data();
             this.setState({playerName, admin});
         }).catch(err => {
-            alert("No s'ha pogut carregar la informació de l'usuari"+ err);
+            alert("No s'ha pogut carregar la informació de l'usuari" + err);
         });
     }
 
     componentDidMount() {
-        this.typeOfComp = firestore.collection("monthInfo").doc("typeOfComp").onSnapshot((docSnapshot) => {
+        this.typeOfComp = firestore.collection(Collections.MONTH_INFO).doc(Documents.MONTH_INFO.typeOfComp).onSnapshot((docSnapshot) => {
             const typeOfComp = docSnapshot.data();
             this.setState({typeOfComp});
         });
@@ -56,12 +57,15 @@ export default class Clasifications extends React.Component {
 
         if (this.state.typeOfComp && (!areEqual(previousState.typeOfComp, this.state.typeOfComp) || !areEqual(previousState.ranking, this.state.ranking) || !areEqual(previousState.groupsResults, this.state.groupsResults) || !areEqual(previousState.playerName, this.state.playerName))) {
             let compView = null;
-            if(this.state.typeOfComp.Groups) {
-                compView =  <Groups returnGroups={this.returnGroups} ranking={this.state.ranking} handlePress={this.handlePress}/>;
+            if (this.state.typeOfComp.Groups) {
+                compView = <Groups returnGroups={this.returnGroups} ranking={this.state.ranking}
+                                   handlePress={this.handlePress}/>;
 
-            } else if (this.state.typeOfComp.Challenges){
-                compView = <Challenges ranking={this.state.ranking} wentUp={this.state.wentUp} wentDown={this.state.wentDown} playerName={this.state.playerName} handlePress={this.handlePress}/>;
-            } else if(this.state.typeOfComp.Knockou){
+            } else if (this.state.typeOfComp.Challenges) {
+                compView =
+                    <Challenges ranking={this.state.ranking} wentUp={this.state.wentUp} wentDown={this.state.wentDown}
+                                playerName={this.state.playerName} handlePress={this.handlePress}/>;
+            } else if (this.state.typeOfComp.Knockou) {
 
             }
             let showAddButton = this.state.typeOfComp.Groups || this.state.admin;
@@ -74,7 +78,6 @@ export default class Clasifications extends React.Component {
             });
         }
     }
-
 
 
     componentWillUnmount() {

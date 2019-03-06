@@ -1,5 +1,53 @@
+// EXTRACT FROM CONSTANTS.js
+const Constants = {
+    GROUP_SIZE: 4
+};
+
+const Collections = {
+    //Make collections dynamics
+    RANKINGS: (prefix) => {
+        return (prefix && prefix + '_') + "rankings"
+    },
+    GROUPS: (prefix) => {
+        return (prefix && prefix + '_') + "groups"
+    },
+    PLAYERS: (prefix) => {
+        return (prefix && prefix + '_') + "players"
+    },
+    TOURNAMENT: (prefix) => {
+        return (prefix && prefix + '_') + "Torneig"
+    },
+    MATCHES: (prefix) => {
+        return (prefix && prefix + '_') + "matches"
+    },
+    MONTH_INFO: (prefix) => {
+        return (prefix && prefix + '_') + "monthInfo"
+    },
+    CHALLENGE: (prefix) => {
+        return (prefix && prefix + '_') + "Reptes"
+    }
+};
+const Documents = {
+    RANKINGS: {
+        squashRanking: "squashRanking",
+    },
+    MONTH_INFO: {
+        typeOfComp: "typeOfComp",
+        updateRanking: "updateRanking"
+    },
+    GROUPS: {
+        chatMessages: "chatMessages"
+    },
+    PLAYERS: {
+        props: {
+            currentGroup: "currentGroup",
+            playerName: "playerName"
+        }
+    }
+};
+// REMEMBER TO KEEP IN SYNC WITH CONSTANTS.js
 const functions = require('firebase-functions');
-const fetch = require('node-fetch')
+const fetch = require('node-fetch');
 const admin = require('firebase-admin');
 
 
@@ -7,16 +55,8 @@ admin.initializeApp(functions.config().firebase);
 const firestore = admin.firestore();
 const auth = admin.auth();
 
-const CONSTANTS = {
-    RANKINGS: "rankings",
-    SQUASH_RANKING: "squashRanking",
-    GROUPS: "groups",
-    PLAYERS: "players",
-    GROUP_SIZE: 4
-};
 
-
-//send the push notification 
+//send the push notification
 exports.messageNotification = functions.firestore.document('groups/{iGroup}/chatMessages/{id}').onCreate((event, context) => {
 
     const {playerName, message} = event.data();
@@ -27,7 +67,7 @@ exports.messageNotification = functions.firestore.document('groups/{iGroup}/chat
     let messages = [];
     //return the main promise 
 
-    return root.collection(CONSTANTS.PLAYERS).where("currentGroup", "==", iGroup).get().then((snapshot) => {
+    return root.collection(Collections.PLAYERS()).where("currentGroup", "==", iGroup).get().then((snapshot) => {
         snapshot.forEach((childSnapshot) => {
 
             let {expoToken, playerName} = childSnapshot.data();
@@ -68,33 +108,30 @@ exports.matchNotification = functions.firestore.document('matches/{id}').onCreat
 
     const {iGroup, matchPlayers, matchResult} = event.data();
     const iWinner = matchResult.indexOf(3);
-    const setsLoser = iWinner == 1 ? matchResult[0] : matchResult[1];
+    const setsLoser = iWinner === 1 ? matchResult[0] : matchResult[1];
     const winnerName = matchPlayers[iWinner];
-    const loserName = iWinner == 1 ? matchPlayers[0] : matchPlayers[1];
-    const iGroupFaked = iGroup == "Torneig" ? "Reptes" : iGroup;
+    const loserName = iWinner === 1 ? matchPlayers[0] : matchPlayers[1];
+    const iGroupFaked = iGroup === "Torneig" ? "Reptes" : iGroup;
 
     const root = event.ref.firestore;
-    const messages = []
+    const messages = [];
     //return the main promise 
-    return root.collection('players').where("currentGroup", "==", iGroupFaked).get().then((snapshot) => {
+    return root.collection(Collections.PLAYERS()).where(Documents.PLAYERS.props.currentGroup, "==", iGroupFaked).get().then((snapshot) => {
         snapshot.forEach((childSnapshot) => {
-
-            var {expoToken, playerName} = childSnapshot.data();
-
-
+            let {expoToken, playerName} = childSnapshot.data();
             if (expoToken) {
                 let message;
-                if (matchPlayers.indexOf(playerName) != -1) {
-                    message = winnerName == playerName ? "Has guanyat a " + loserName + " 3-" + setsLoser : "Has perdut contra " + winnerName + "3-" + setsLoser;
+                if (matchPlayers.indexOf(playerName) !== -1) {
+                    message = winnerName === playerName ? "Has guanyat a " + loserName + " 3-" + setsLoser : "Has perdut contra " + winnerName + "3-" + setsLoser;
                 } else {
                     message = winnerName + " ha guanyat a " + loserName + " 3-" + setsLoser;
                 }
                 let title;
                 if (/^\d+$/.test(iGroup)) {
                     title = "Partit afegit al grup " + iGroup
-                } else if (iGroup == "Reptes") {
+                } else if (iGroup === "Reptes") {
                     title = "Nou repte afegit"
-                } else if (iGroup == "Torneig") {
+                } else if (iGroup === "Torneig") {
                     title = "S'ha jugat un partit dels campionats"
                 }
 
@@ -107,16 +144,16 @@ exports.matchNotification = functions.firestore.document('matches/{id}').onCreat
             }
         });
 
-        root.collection('players').doc("xYenRrtoisOZEvpuRJm0h6FOOe42").get().then((docSnapshot) => {
+        root.collection(Collections.PLAYERS()).doc("xYenRrtoisOZEvpuRJm0h6FOOe42").get().then((docSnapshot) => {
 
-            var {expoToken, playerName} = docSnapshot.data();
-            if (expoToken && matchPlayers.indexOf(playerName) == -1) {
+            let {expoToken, playerName} = docSnapshot.data();
+            if (expoToken && matchPlayers.indexOf(playerName) === -1) {
                 let title;
                 if (/^\d+$/.test(iGroup)) {
                     title = "Partit afegit al grup " + iGroup
-                } else if (iGroup == "Reptes") {
+                } else if (iGroup === "Reptes") {
                     title = "Nou repte afegit"
-                } else if (iGroup == "Torneig") {
+                } else if (iGroup === "Torneig") {
                     title = "S'ha jugat un partit dels campionats"
                 }
                 messages.push({
@@ -138,7 +175,7 @@ exports.matchNotification = functions.firestore.document('matches/{id}').onCreat
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(messages)
 
@@ -154,14 +191,14 @@ exports.newChallenge1 = functions.firestore.document('Reptes/{id}').onCreate((ev
     const {matchPlayers, matchResult} = event.data();
     let iWinner = matchResult.indexOf(3);
     const winnerName = matchPlayers[iWinner];
-    const loserName = iWinner == 1 ? matchPlayers[0] : matchPlayers[1];
+    const loserName = iWinner === 1 ? matchPlayers[0] : matchPlayers[1];
 
     const root = event.ref.firestore;
-    const messages = []
+    const messages = [];
     //return the main promise 
-    return root.collection('rankings').doc(CONSTANTS.SQUASH_RANKING).get().then((docSnapshot) => {
+    return root.collection(Collections.RANKINGS()).doc(Documents.RANKINGS.squashRanking).get().then((docSnapshot) => {
 
-        var {ranking, wentUp, wentDown, oneWon} = docSnapshot.data();
+        let {ranking, wentUp, wentDown, oneWon} = docSnapshot.data();
         if (!oneWon) {
             oneWon = []
         }
@@ -170,14 +207,14 @@ exports.newChallenge1 = functions.firestore.document('Reptes/{id}').onCreate((ev
         [iLoser, iWinner] = [ranking.indexOf(loserName), ranking.indexOf(winnerName)];
         if (iWinner < iLoser) {
             //Guanyador puja una posició i perdedor baixa una
-            if (iWinner != 0 && oneWon.indexOf(winnerName) >= 0) {
+            if (iWinner !== 0 && oneWon.indexOf(winnerName) >= 0) {
                 ranking[iWinner] = ranking[iWinner - 1];
                 ranking[iWinner - 1] = winnerName;
                 oneWon.splice(oneWon.indexOf(winnerName), 1)
-            } else if (oneWon.indexOf(winnerName) == -1) {
+            } else if (oneWon.indexOf(winnerName) === -1) {
                 oneWon.push(winnerName)
             }
-            if (iLoser != ranking.length - 1) {
+            if (iLoser !== ranking.length - 1) {
                 ranking[iLoser] = ranking[iLoser + 1];
                 ranking[iLoser + 1] = loserName;
             }
@@ -192,14 +229,14 @@ exports.newChallenge1 = functions.firestore.document('Reptes/{id}').onCreate((ev
         if (!wentDown) {
             wentDown = [];
         }
-        if (wentDown.indexOf(loserName) == -1) {
+        if (wentDown.indexOf(loserName) === -1) {
             wentDown.push(loserName);
         }
         if (wentUp.indexOf(loserName) >= 0) {
             wentUp.splice(wentUp.indexOf(loserName), 1);
         }
-        if (oneWon.indexOf(winnerName) == -1) {
-            if (wentUp.indexOf(winnerName) == -1) {
+        if (oneWon.indexOf(winnerName) === -1) {
+            if (wentUp.indexOf(winnerName) === -1) {
                 wentUp.push(winnerName);
             }
             if (wentDown.indexOf(winnerName) >= 0) {
@@ -207,7 +244,12 @@ exports.newChallenge1 = functions.firestore.document('Reptes/{id}').onCreate((ev
             }
         }
 
-        return root.collection('rankings').doc(CONSTANTS.SQUASH_RANKING).set({ranking, wentUp, wentDown, oneWon})
+        return root.collection(Collections.RANKINGS()).doc(Documents.RANKINGS.squashRanking).set({
+            ranking,
+            wentUp,
+            wentDown,
+            oneWon
+        });
     }).then(() => {
         console.log("Succesfully changed ranking")
     }).catch((reason) => {
@@ -229,32 +271,43 @@ exports.updateRanking = functions.region('europe-west1').firestore.document('mon
     return __updateGroups(null, null, {user: {admin: true}});
 });
 
-exports.updateRankingHttp = functions.region('europe-west1').https.onCall((req, res) => {
-    return validateAndContinue(data, context, __updateRanking);
+exports.updateRanking = functions.region('europe-west1').https.onCall((data, context) => {
+    return validateAndContinue(req, res, __updateRanking);
 });
-exports.updateRankingAPI = functions.region('europe-west1').https.onCall((req, res) => {
+exports.updateRankingAPI = functions.region('europe-west1').https.onCall((data, context) => {
     return validateAndContinueAPI(data, context, __updateRanking);
 });
-exports.updateRankingURL = functions.region('europe-west1').https.onCall((req, res) => {
+exports.updateRankingURL = functions.region('europe-west1').https.onRequest((data, context) => {
     return validateAndContinueURL(data, context, __updateRanking);
 });
 
 exports.updateGroups = functions.region('europe-west1').https.onCall((data, context) => {
     return validateAndContinue(data, context, __updateGroups);
 });
-exports.updateGroupsAPI = functions.region('europe-west1').https.onRequest((req, res) => {
-    let ret = validateAndContinueAPI(req, res, __updateGroups);
+exports.updateGroupsAPI = functions.region('europe-west1').https.onCall((data, context) => {
+    let ret = validateAndContinueAPI(data, context, __updateGroups);
 });
 exports.updateGroupsURL = functions.region('europe-west1').https.onRequest((req, res) => {
     let ret = validateAndContinueURL(req, res, __updateGroups);
 });
 
+exports.setRankingURL = functions.region('europe-west1').https.onRequest((req, res) => {
+    validateAndContinueURL(req, res, __setRanking);
+});
+
+const __getDBPrefix = (req) => {
+    let ret = req.dbPrefix || req.query.dbPrefix || req.body.dbPrefix || "";
+    if (ret !== "") {
+        console.log("__getDBPrefix::USING DE PREFIX " + ret);
+    }
+    return ret;
+}
 
 const __updateRanking = (data, context, user) => {
     let things = {};
     let isAdmin = Boolean(user.admin);
     //return the main promise
-    return firestore.collection(CONSTANTS.GROUPS).get().then((snapshot) => {
+    return firestore.collection(Collections.GROUPS(__getDBPrefix(data))).get().then((snapshot) => {
 
         let sortedGroups = [];
 
@@ -271,7 +324,7 @@ const __updateRanking = (data, context, user) => {
             //sort group in proper order
             let sortedGroup = totals.sort((a, b) => {
                 let pointsDif = b[0] - a[0];
-                if (pointsDif != 0) {
+                if (pointsDif !== 0) {
                     return pointsDif;
                 }
                 return a[1] - b[1]
@@ -294,7 +347,7 @@ const __updateRanking = (data, context, user) => {
 
         things.sortedRanking = sortedRanking;
 
-        return firestore.collection('rankings').doc(CONSTANTS.SQUASH_RANKING).get();
+        return firestore.collection(Collections.RANKINGS(__getDBPrefix(data))).doc(Documents.RANKINGS.squashRanking).get();
     }).then((docSnapshot) => {
         let {ranking} = docSnapshot.data();
 
@@ -302,7 +355,7 @@ const __updateRanking = (data, context, user) => {
             return ranking[playerPos]
         });
         if (isAdmin) {
-            firestore.collection(CONSTANTS.RANKINGS).doc(CONSTANTS.SQUASH_RANKING).set({ranking: newRanking});
+            firestore.collection(Collections.RANKINGS(__getDBPrefix(data))).doc(Documents.RANKINGS.squashRanking).set({ranking: newRanking});
         }
         if (context.status) {
             context.status(200).json(newRanking);
@@ -312,16 +365,13 @@ const __updateRanking = (data, context, user) => {
     });
 };
 
-exports.setRankingURL = functions.region('europe-west1').https.onRequest((req, res) => {
-    validateAndContinueURL(req, res, __setRanking);
-});
-
 const __setRanking = (req, res, user) => {
+    console.log("__setRanking::START PROCESSING");
     let ranking = req.query.ranking || req.body.ranking;
     const capitalizeName = (str) => {
-        var pieces = str.split(" ");
-        for (var i = 0; i < pieces.length; i++) {
-            var j = pieces[i].charAt(0).toUpperCase();
+        const pieces = str.split(" ");
+        for (let i = 0; i < pieces.length; i++) {
+            const j = pieces[i].charAt(0).toUpperCase();
             pieces[i] = j + pieces[i].substr(1).toLowerCase();
         }
         return pieces.join(" ");
@@ -343,7 +393,7 @@ const __setRanking = (req, res, user) => {
 
     ranking = ranking.split(",");
 
-    let playersRef = firestore.collection(CONSTANTS.PLAYERS);
+    let playersRef = firestore.collection(Collections.PLAYERS(__getDBPrefix(req)));
 
     let newRanking = [];
     for (let i = 0; i < ranking.length; i++) {
@@ -365,29 +415,41 @@ const __setRanking = (req, res, user) => {
                         password: playerPassword
                     });
                 }).then((userRecord) => {
-                    console.info("SOC USERRECORD", userRecord)
+                    console.info("SOC USER_RECORD", userRecord);
                     return auth.getUserByEmail(playerEmail);
                 }).then((userR) => {
                     console.log("__setRanking::CREATING User[" + playerEmail + "] in FIRESTORE");
                     playersRef.doc(userR.uid).set({
-                        currentGroup: 99,
-                        playerName: playerCapitalizedName
+                        currentGroup: -99,
+                        playerName: playerCapitalizedName,
+                        currentRanking: (i + 1)
                     }, {merge: true});
                 }).catch(err => console.error("__setRanking:: ERROR CREATING User[" + playerEmail + "] in FIRESTORE", err));
+            } else {
+                console.log("__setRanking::UPDATE User[" + playerEmail + "] in FIRESTORE with currentRanking "+(i + 1));
+                snapshot.forEach((userR) => {
+                    playersRef.doc(userR.id).set({
+                        currentGroup: -99,
+                        playerName: playerCapitalizedName,
+                        currentRanking: (i + 1)
+                    }, {merge: true});
+                });
+
             }
         });
         newRanking.push(playerCapitalizedName);
     }
     console.log("__setRanking::ranking [" + ranking + "]");
     console.log("__setRanking::newRanking [" + newRanking + "]");
-    firestore.collection(CONSTANTS.RANKINGS).doc(CONSTANTS.SQUASH_RANKING).set({ranking: newRanking});
+    firestore.collection(Collections.RANKINGS(__getDBPrefix(req))).doc(Documents.RANKINGS.squashRanking).set({ranking: newRanking});
     res.status(200).json(newRanking);
     return newRanking;
 };
 
 const __updateGroups = (data, context, user) => {
+
     let updateGroupsTmp = {
-        sortedRanking : [],
+        sortedRanking: [],
         ranking: {},
         playerData: {},
         results: {},
@@ -402,30 +464,30 @@ const __updateGroups = (data, context, user) => {
     let orphans = 0;
     let ranking = null;
 
-    return firestore.collection(CONSTANTS.RANKINGS).doc(CONSTANTS.SQUASH_RANKING).get().then(playerSnapshot => {
+    return firestore.collection(Collections.RANKINGS(__getDBPrefix(data))).doc(Documents.RANKINGS.squashRanking).get().then(playerSnapshot => {
         ranking = playerSnapshot.data().ranking;
-        totalGroups = Math.trunc(ranking.length / CONSTANTS.GROUP_SIZE);
-        orphans = ranking.length % CONSTANTS.GROUP_SIZE;
+        totalGroups = Math.trunc(ranking.length / Constants.GROUP_SIZE);
+        orphans = ranking.length % Constants.GROUP_SIZE;
         // generate group for orphan people
         if (orphans > 0) {
             totalGroups++;
         }
-        return firestore.collection(CONSTANTS.GROUPS).get();
+        return firestore.collection(Collections.GROUPS(__getDBPrefix(data))).get();
     }).then((snapshot) => {
         console.log("__updateGroups::Cleaning groups");
         console.log("__updateGroups::snapshot.size[" + snapshot.size + "], totalGroups[" + totalGroups + "]");
         if (snapshot.size > totalGroups) {
             for (let i = totalGroups + 1; i < snapshot.size; i++) {
                 console.log("__updateGroups::Cleaning group[" + i + "]");
-                firestore.collection(CONSTANTS.GROUPS).doc(String(i)).delete().catch((err) => {
+                firestore.collection(Collections.GROUPS(__getDBPrefix(data))).doc(String(i)).delete().catch((err) => {
                     console.error("__updateGroups::Could not delete group " + String(i), err)
                 });
             }
         }
-        return firestore.collection(CONSTANTS.PLAYERS).get();
+        return firestore.collection(Collections.PLAYERS(__getDBPrefix(data))).get();
     }).then((snapshot) => {
         // Update player Rankings
-        // firestore.collection(CONSTANTS.PLAYERS).get().then((snapshot) => {
+        // firestore.collection(Collections.PLAYERS(__getDBPrefix(data))).get().then((snapshot) => {
         console.log("__updateGroups::Ranking " + JSON.stringify(ranking));
         console.log("__updateGroups::snapshot [" + JSON.stringify(snapshot) + "]");
         let batch = firestore.batch();
@@ -467,13 +529,13 @@ const __updateGroups = (data, context, user) => {
         console.log("__updateGroups::TOTAL Groups " + totalGroups);
         let groupRef = null;
         if (executeActions) {
-            groupRef = firestore.collection(CONSTANTS.GROUPS);
+            groupRef = firestore.collection(Collections.GROUPS(__getDBPrefix(data)));
         }
         for (let i = 1; i < (totalGroups + 1); i++) {
             if (i + 1 === totalGroups && orphans > 0) {
                 updateGroupsTmp.results[i] = getEmptyGroup(orphans);
             } else {
-                updateGroupsTmp.results[i] = getEmptyGroup(CONSTANTS.GROUP_SIZE);
+                updateGroupsTmp.results[i] = getEmptyGroup(Constants.GROUP_SIZE);
             }
             if (executeActions) {
                 console.log("__updateGroups::Creating/Updating group[" + i + "] with [" + JSON.stringify(updateGroupsTmp.results[i]) + "]");
@@ -503,8 +565,8 @@ const validateAndContinue = (data, context, next) => {
         // auth.verifyIdToken(idToken).then((decodedIdToken) => {
         console.log('ID Token correctly decoded User', userUID);
         let user = {};
-        firestore.collection(CONSTANTS.PLAYERS).doc(userUID).get().then((docSnapshot) => {
-            let {playerName, currentGroup, admin} = docSnapshot.data()
+        firestore.collection(Collections.PLAYERS(__getDBPrefix(data))).doc(userUID).get().then((docSnapshot) => {
+            let {playerName, currentGroup, admin} = docSnapshot.data();
             user.playerName = playerName;
             user.currentGroup = currentGroup;
             user.admin = admin;
@@ -517,7 +579,7 @@ const validateAndContinue = (data, context, next) => {
             if (context.status) {
                 context.status(403).send('Unauthorized');
             }
-            return;
+
         });
         // }).catch((error) => {
         //     console.error('Error while verifying Firebase ID token:', error);
@@ -530,60 +592,72 @@ const validateAndContinue = (data, context, next) => {
     }
 };
 
-const validateAndContinueAPI = (req, res, next) => {
-    let idToken = processRequest(req, res);
+const validateAndContinueAPI = (data, context, next) => {
+    let idToken = lookIdentityInRequest(req, res);
     console.log("validateAndContinueAPI::idToken", idToken);
     if (idToken !== null && idToken !== undefined) {
-        // if ('userAndPasswordCredentials' === idToken) {
-        // let user = req.query.u;
-        // let password = req.query.p;
-        //admin.auth().generateSignInWithEmailLink()
-        // auth.signInWithEmailAndPassword(user + "@nickspa.cat", password).then(async (userCredential) => {
-        //     validateAndContinue(req.query, {
-        //         auth: {uid: userCredential.uid}
-        //     }, next);
-        // });
-        // } else {
-        auth.verifyIdToken(idToken).then((decodedIdToken) => {
-            validateAndContinue(req.query, {
-                auth: {uid: decodedIdToken.uid}
-            }, next);
-        });
+        if ('userAndPasswordCredentials' === idToken) {
+            return validateAndContinueURL(req, res, next);
+        } else {
+            // let user = req.query.u;
+            // let password = req.query.p;
+            //admin.auth().generateSignInWithEmailLink()
+            // auth.signInWithEmailAndPassword(user + "@nickspa.cat", password).then(async (userCredential) => {
+            //     validateAndContinue(req.query, {
+            //         auth: {uid: userCredential.uid}
+            //     }, next);
+            // });
+            // } else {
+            auth.verifyIdToken(idToken).then((decodedIdToken) => {
+                validateAndContinue(req.query, {
+                    auth: {uid: decodedIdToken.uid}
+                }, next);
+            });
+        }
         // }
     } else {
-        res.status(403).send('Unauthorized');
+        if (context.status) {
+            context.status(403).send('Unauthorized');
+        }
     }
 };
 
 const validateAndContinueURL = (req, res, next) => {
     let queryUser = req.query.u || req.body.u;
     let user = {};
-    let ret = firestore.collection(CONSTANTS.PLAYERS).where("playerName", "==", queryUser).get().then((querySnapshot) => {
-        querySnapshot.forEach(function (docSnapshot) {
-            let {playerName, currentGroup, admin} = docSnapshot.data();
-            user.playerName = playerName;
-            user.currentGroup = currentGroup;
-            user.admin = admin;
-            if (!res.auth) {
-                res["auth"] = {};
+    let ret = firestore.collection(Collections.PLAYERS(__getDBPrefix(req))).where(Documents.PLAYERS.props.playerName, "==", queryUser).get().then((querySnapshot) => {
+        if (querySnapshot.empty) {
+            console.log("validateAndContinueURL::Database ["+Collections.PLAYERS(__getDBPrefix(req))+"] is EMPTY");
+            if (res.status) {
+                res.status(404).send('Unauthorized');
             }
-            if (!res.auth.user) {
-                res.auth["user"] = {};
-            }
-            res.auth.user = user;
-            console.log("validateAndContinue::currentUser", res.auth);
-            return next(req, res, user);
-        });
+        } else {
+            querySnapshot.forEach(function (docSnapshot) {
+                let {playerName, currentGroup, admin} = docSnapshot.data();
+                user.playerName = playerName;
+                user.currentGroup = currentGroup;
+                user.admin = admin;
+                if (!res.auth) {
+                    res["auth"] = {};
+                }
+                if (!res.auth.user) {
+                    res.auth["user"] = {};
+                }
+                res.auth.user = user;
+                console.log("validateAndContinue::currentUser", res.auth);
+                return next(req, res, user);
+            });
+        }
     }).catch(err => {
         console.error("validateAndContinueURL::User not found in auth", err);
-        if (context.status) {
-            context.status(403).send('Unauthorized');
+        if (res.status) {
+            res.status(403).send('Unauthorized');
         }
-        return;
+
     });
 };
 
-const processRequest = (req, res) => {
+const lookIdentityInRequest = (req, res) => {
     let idToken = null;
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer ')) {
         console.log('Found "Authorization" header');
@@ -600,12 +674,11 @@ const processRequest = (req, res) => {
         let user = req.query.u;
         let password = req.query.p;
         if (user !== null && user !== undefined && password !== null && password !== undefined) {
-            console.log("Trying to obtain token from user and Password")
+            console.log("Trying to obtain token from user and Password");
             idToken = 'userAndPasswordCredentials';
         } else {
             console.log('No token found :S');
         }
     }
     return idToken;
-}
-
+};
