@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, FlatList, ImageBackground, StyleSheet, Text, TouchableHighlight, View} from 'react-native';
+import {FlatList, ImageBackground, StyleSheet, Text, TouchableHighlight, View} from 'react-native';
 import Loading from "../Loading";
 import {Collections, CONSTANTS, Documents} from "../../constants/CONSTANTS";
 import {firestore} from "firebase";
@@ -24,14 +24,25 @@ export default class EditRankingScreen extends React.Component {
         //         isLoading: false
         //     });
         // });
+        let aa = firestore().collection(Collections.RANKINGS).onSnapshot((snapshot) => {
+            snapshot.docChanges().forEach((snapshotChanges) => {
+                console.log("EditRankingScreen::changeScanner ", snapshotChanges.doc.data());
+                this.setState({ranking: snapshotChanges.doc.data().ranking});
+            });
+
+        });
+        var unsubscribe = firestore().collection("cities").onSnapshot(function () {});
     }
 
     componentDidMount() {
+
         this.ranking = this.rankingsRef.onSnapshot((docSnapshot) => {
-            const {ranking} = docSnapshot.data();
+
+            const {ranking} = docSnapshot.data(); //["Fabià Figueras","Enric Calafell",""]
             this.setState({ranking});
             this.setState({isLoading: false});
         });
+
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
@@ -39,31 +50,26 @@ export default class EditRankingScreen extends React.Component {
         console.log("EditRankingScreen::component updated", prevProps, prevState, snapshot);
     }
 
-    renderRow(player, ranking) {
+    renderRow(player, position, ranking) {
         let rankingPos = ranking.indexOf(player) + 1;
-
+        console.log("EditRankingScreen::renderRow player[" + player + "] rankingPos[" + rankingPos + "] position[" + position + "]")
         let onBtnPress = (player) => {
             alert("soc el player:" + player)
         };
         return (
             <TouchableHighlight
-                underlayColor='rgba(192,192,192,1,0.6)'
-                onPress={() => onBtnPress(player)}>
+                underlayColor='rgb(192,192,192)'
+                onPress={() => onBtnPress(player)} style={styles.row}>
                 <View style={styles.row}>
                     <View style={styles.rowPosition}>
-                        <Text style={styles.positionText}>[ {rankingPos} ]</Text>
+                        <Text style={styles.positionText}> {rankingPos} </Text>
                     </View>
                     <View style={styles.rowPlayerName}>
                         <Text style={styles.playerText}> {player} </Text>
                     </View>
                     <TouchableHighlight style={styles.rowDelBtn} onPress={() => onBtnPress(player)}>
-                        <Foundation name="skull"/>
+                        <Foundation name="skull" size={32} color="green"/>
                     </TouchableHighlight>
-                    <Button
-                        large
-                        icon={{name: 'skull', type: 'foundation'}}
-                        onPress={() => onBtnPress(player)}
-                    />
                 </View>
             </TouchableHighlight>
         )
@@ -76,9 +82,10 @@ export default class EditRankingScreen extends React.Component {
         if (this.state.isLoading) {
             view = (<Loading checkUser={false} msg={"Carregant ranking"} bg={bgAsset}/>);
         } else {
-            view = <FlatList data={this.state.ranking} renderItem={(player) => {
-                return this.renderRow(player, this.state.ranking);
-            }}/>
+            view = <FlatList data={this.state.ranking} renderItem={(playerItem) => {
+                console.log("Rendering player", playerItem.item, playerItem.index);
+                return this.renderRow(playerItem.item, playerItem.index, this.state.ranking);
+            }} style={styles.flatList}/>
         }
         return (
 
@@ -96,10 +103,33 @@ export default class EditRankingScreen extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        paddingTop: 30
     },
-    row: {flex: 1, flexDirection: 'row'},
-    rowPosition: {},
-    positionText: {},
-    rowPlayerName: {},
-    playerText: {}
+    row: {
+        flex: 1,
+        flexDirection: 'row',
+        height: 25,
+        backgroundColor: "#afafaf"
+    },
+    rowPosition: {
+        width: 20,
+        alignItems: "center",
+        justifyContent: "center"
+    },
+    positionText: {
+        flex: 1
+    },
+    rowDelBtn: {
+        width: 20,
+        fontSize: 18
+    },
+    rowPlayerName: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center"
+    },
+    playerText: {
+        flex: 1
+    },
+    flatList: {}
 });
