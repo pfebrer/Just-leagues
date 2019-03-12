@@ -31,7 +31,6 @@ export default class EditRankingScreen extends React.Component {
             });
 
         });
-        var unsubscribe = firestore().collection("cities").onSnapshot(function () {});
     }
 
     componentDidMount() {
@@ -82,10 +81,26 @@ export default class EditRankingScreen extends React.Component {
         if (this.state.isLoading) {
             view = (<Loading checkUser={false} msg={"Carregant ranking"} bg={bgAsset}/>);
         } else {
-            view = <FlatList data={this.state.ranking} renderItem={(playerItem) => {
-                console.log("Rendering player", playerItem.item, playerItem.index);
-                return this.renderRow(playerItem.item, playerItem.index, this.state.ranking);
-            }} style={styles.flatList}/>
+
+            view =
+                <View style={styles.container}>
+                    <View style={[styles.row, styles.header]}>
+                        <View style={styles.rowPosition}>
+                            <Text style={styles.positionText}>Position</Text>
+                        </View>
+                        <View style={styles.rowPlayerName}>
+                            <Text style={styles.playerText}>PlayerName</Text>
+                        </View>
+                        <View style={styles.rowDelBtn}>
+                            <Text style={styles.delBtnText}>Options</Text>
+                        </View>
+                    </View>
+
+                    <FlatList data={this.state.ranking} renderItem={(playerItem) => {
+                        console.log("Rendering player", playerItem.item, playerItem.index);
+                        return this.renderRow(playerItem.item, playerItem.index, this.state.ranking);
+                    }} style={styles.flatList}/>
+                </View>
         }
         return (
 
@@ -105,31 +120,45 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: 30
     },
+    header: {
+        flex: 1,
+        height: 45,
+        paddingTop: 30,
+        flexDirection: 'row'
+    },
     row: {
         flex: 1,
         flexDirection: 'row',
-        height: 25,
-        backgroundColor: "#afafaf"
+        height: 45,
+        borderBottomWidth: 1,
+        borderBottomColor: 'black',
+        backgroundColor: 'rgba(255,255,255,0.5)'
     },
     rowPosition: {
-        width: 20,
+        width: 30,
         alignItems: "center",
         justifyContent: "center"
     },
     positionText: {
-        flex: 1
+        flex: 1,
+        fontWeight: 'bold',
+        alignItems: 'center'
     },
     rowDelBtn: {
-        width: 20,
-        fontSize: 18
+        width: 30,
+        marginRight: 10,
+        alignItems: "flex-end"
     },
     rowPlayerName: {
         flex: 1,
-        alignItems: "center",
-        justifyContent: "center"
+        alignItems: "flex-start",
+        alignContent: 'center',
+        justifyContent: "center",
+        backgroundColor: 'red'
     },
     playerText: {
-        flex: 1
+        flex: 1,
+        backgroundColor: 'pink'
     },
     flatList: {}
 });

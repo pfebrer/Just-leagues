@@ -79,7 +79,7 @@ export default class Groups extends React.Component {
             if (groupsResults.length > 0) {
                 while (isNextGroup) {
                     iGroup += 1;
-                    const nPlayers = 0;
+                    let nPlayers = 0;
                     if (ranking.length > 6) {
                         nPlayers = 4;
                     } else {
