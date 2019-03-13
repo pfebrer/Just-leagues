@@ -116,7 +116,9 @@ export default class EditRankingScreen extends React.Component {
                             </View>
                         </View>
                         <View style={[styles.centered, styles.cellBorderRight, styles.containerPlayerName,{alignSelf: 'stretch'}]}>
-                            <Text style={[styles.fontBold, styles.playerText]}>Nom del jugador</Text>
+                            <View style={[styles.centered,{alignSelf: 'stretch'}]}>
+                                <Text style={[styles.fontBold, styles.playerText]}>Jugador</Text>
+                            </View>
                         </View>
                     </View>
                     <View style={[styles.playerList]}>
