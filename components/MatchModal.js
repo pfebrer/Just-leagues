@@ -12,7 +12,7 @@ export default class MatchModal extends React.Component {
         this.state = {
             editableResult: false,
             resultSubmitted: false
-        }
+        };
         this.editedResults = ["", ""];
         this.playerName = props.navigation.getParam('playerName', null);
         this.matchPlayers = props.navigation.getParam('matchPlayers', []);

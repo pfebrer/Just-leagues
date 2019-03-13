@@ -50,6 +50,7 @@ export default createBottomTabNavigator({
         },
         MatchSearcher: {
             screen: MatchSearcher,
+
             navigationOptions: {
                 tabBarLabel: "Partits",
                 tabBarIcon: ({tintColor}) => (
@@ -67,7 +68,7 @@ export default createBottomTabNavigator({
             }
         }
     },
-    {initialRouteName: "Classificacions"},
+    {initialRouteName: "Ranking"},
     {
         tabBarOptions: {
             activeTintColor: 'tomato',

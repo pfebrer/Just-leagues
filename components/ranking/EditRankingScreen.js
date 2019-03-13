@@ -1,9 +1,9 @@
 import React from 'react';
 import {FlatList, ImageBackground, StyleSheet, Text, TouchableHighlight, View} from 'react-native';
 import Loading from "../Loading";
-import {Collections, CONSTANTS, Documents} from "../../constants/CONSTANTS";
-import {firestore} from "firebase";
-import {Foundation} from '@expo/vector-icons';
+import {Collections, Documents} from "../../constants/CONSTANTS";
+import {auth, firestore} from "firebase";
+import {Foundation, MaterialIcons, Entypo} from '@expo/vector-icons';
 
 
 export default class EditRankingScreen extends React.Component {
@@ -24,12 +24,18 @@ export default class EditRankingScreen extends React.Component {
         //         isLoading: false
         //     });
         // });
-        let aa = firestore().collection(Collections.RANKINGS).onSnapshot((snapshot) => {
+
+        firestore().collection(Collections.PLAYERS).doc(auth().currentUser.uid).get().then((docSnapshot) => {
+            let {playerName, admin} = docSnapshot.data();
+            this.setState({playerName, admin});
+        }).catch(err => {
+            alert("No s'ha pogut carregar la informació de l'usuari", err);
+        });
+        firestore().collection(Collections.RANKINGS).onSnapshot((snapshot) => {
             snapshot.docChanges().forEach((snapshotChanges) => {
                 console.log("EditRankingScreen::changeScanner ", snapshotChanges.doc.data());
                 this.setState({ranking: snapshotChanges.doc.data().ranking});
             });
-
         });
     }
 
@@ -45,35 +51,55 @@ export default class EditRankingScreen extends React.Component {
     }
 
     componentDidUpdate(prevProps, prevState, snapshot) {
-        debugger;
-        console.log("EditRankingScreen::component updated", prevProps, prevState, snapshot);
+        //debugger;
+        //console.log("EditRankingScreen::component updated", prevProps, prevState, snapshot);
     }
+
+    onBtnDelPress(player) {
+        alert("Eliminar el player:" + player);
+    }
+
+    onBtnEditPress(player) {
+        alert("EDITAR player " + player);
+    }
+
+    onBtnPress = (player) => {
+        alert("soc el player:" + player);
+    };
 
     renderRow(player, position, ranking) {
         let rankingPos = ranking.indexOf(player) + 1;
-        console.log("EditRankingScreen::renderRow player[" + player + "] rankingPos[" + rankingPos + "] position[" + position + "]")
-        let onBtnPress = (player) => {
-            alert("soc el player:" + player)
-        };
+        //console.log("EditRankingScreen::renderRow player[" + player + "] rankingPos[" + rankingPos + "] position[" + position + "]")
+        let adminOptions = null;
+        if (this.state.admin) {
+            adminOptions = (<View style={[styles.centered, styles.containerBTNS]}>
+                <TouchableHighlight style={[styles.btn]}
+                                    onPress={() => this.onBtnEditPress(player)} underlayColor='rgb(192,192,192)'>
+                    <MaterialIcons name="reorder" size={32} color="#0b6eaa"/>
+                </TouchableHighlight>
+
+                <TouchableHighlight style={[styles.btn]}
+                                    onPress={() => this.onBtnDelPress(player)} underlayColor='rgb(192,192,192)'>
+                    <Entypo name="cross" size={32} color="#8a002e"/>
+                </TouchableHighlight>
+            </View>)
+        }
         return (
             <TouchableHighlight
                 underlayColor='rgb(192,192,192)'
-                onPress={() => onBtnPress(player)} style={styles.row}>
+                onPress={() => this.onBtnPress(player)} style={styles.row}>
                 <View style={styles.row}>
-                    <View style={styles.rowPosition}>
-                        <Text style={styles.positionText}> {rankingPos} </Text>
+                    <View style={[styles.centered, styles.cellBorderRight, styles.containerPosition]}>
+                        <Text style={[styles.fontBold, styles.positionText]}> {rankingPos} </Text>
                     </View>
-                    <View style={styles.rowPlayerName}>
-                        <Text style={styles.playerText}> {player} </Text>
+                    <View style={[styles.centered, styles.cellBorderRight, styles.containerPlayerName]}>
+                        <Text style={[styles.playerText]}> {player} </Text>
                     </View>
-                    <TouchableHighlight style={styles.rowDelBtn} onPress={() => onBtnPress(player)}>
-                        <Foundation name="skull" size={32} color="green"/>
-                    </TouchableHighlight>
+                    {adminOptions}
                 </View>
             </TouchableHighlight>
         )
     }
-
 
     render() {
         let view = null;
@@ -81,25 +107,24 @@ export default class EditRankingScreen extends React.Component {
         if (this.state.isLoading) {
             view = (<Loading checkUser={false} msg={"Carregant ranking"} bg={bgAsset}/>);
         } else {
-
             view =
                 <View style={styles.container}>
                     <View style={[styles.row, styles.header]}>
-                        <View style={styles.rowPosition}>
-                            <Text style={styles.positionText}>Position</Text>
+                        <View style={[styles.centered, styles.cellBorderRight, styles.containerPosition]}>
+                            <View style={[styles.centered, styles.containerPositionInner]}>
+                                <Text style={[styles.fontBold, styles.centered, styles.positionText,{alignSelf: 'stretch'}]}>POS</Text>
+                            </View>
                         </View>
-                        <View style={styles.rowPlayerName}>
-                            <Text style={styles.playerText}>PlayerName</Text>
-                        </View>
-                        <View style={styles.rowDelBtn}>
-                            <Text style={styles.delBtnText}>Options</Text>
+                        <View style={[styles.centered, styles.cellBorderRight, styles.containerPlayerName,{alignSelf: 'stretch'}]}>
+                            <Text style={[styles.fontBold, styles.playerText]}>Nom del jugador</Text>
                         </View>
                     </View>
-
-                    <FlatList data={this.state.ranking} renderItem={(playerItem) => {
-                        console.log("Rendering player", playerItem.item, playerItem.index);
-                        return this.renderRow(playerItem.item, playerItem.index, this.state.ranking);
-                    }} style={styles.flatList}/>
+                    <View style={[styles.playerList]}>
+                        <FlatList data={this.state.ranking} renderItem={(playerItem) => {
+                            console.log("Rendering player", playerItem.item, playerItem.index);
+                            return this.renderRow(playerItem.item, playerItem.index, this.state.ranking);
+                        }} style={styles.flatList}/>
+                    </View>
                 </View>
         }
         return (
@@ -118,47 +143,67 @@ export default class EditRankingScreen extends React.Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 30
+        paddingTop: 10
     },
+    //Block Config
     header: {
-        flex: 1,
-        height: 45,
-        paddingTop: 30,
-        flexDirection: 'row'
+        flex: 0
     },
-    row: {
+    playerList: {
         flex: 1,
         flexDirection: 'row',
-        height: 45,
-        borderBottomWidth: 1,
-        borderBottomColor: 'black',
-        backgroundColor: 'rgba(255,255,255,0.5)'
+        justifyContent: 'flex-end',
     },
-    rowPosition: {
-        width: 30,
-        alignItems: "center",
-        justifyContent: "center"
-    },
-    positionText: {
+    //ROW CONFIG
+    row: {
+        flexDirection: 'row',
+        height: 35,
         flex: 1,
-        fontWeight: 'bold',
+        borderBottomWidth: 1,
+        borderBottomColor: '#8a8a8a',
+        backgroundColor: 'rgba(255,255,255,0.6)'
+    },
+    //CONTAINERS CONFIG
+    centered: {
+        justifyContent: 'center',
         alignItems: 'center'
     },
-    rowDelBtn: {
+    containerPosition: {
+        width: 50,
+        flexDirection: 'row'
+    },
+    containerPositionInner: {
+        flex: 1,
+        marginLeft: 12.5
+    },
+    containerPlayerName: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    containerBTNS: {
+        //width: 100
+        flexDirection: 'row'
+    },
+    cellBorderRight: {
+        borderRightColor: 'black',
+        borderRightWidth: 1
+    },
+
+    // TEXT FORMAT
+    positionText: {
+        // flex: 1,
+    },
+    playerText: {
+        //flex: 1
+    },
+    btn: {
         width: 30,
         marginRight: 10,
         alignItems: "flex-end"
     },
-    rowPlayerName: {
-        flex: 1,
-        alignItems: "flex-start",
-        alignContent: 'center',
-        justifyContent: "center",
-        backgroundColor: 'red'
-    },
-    playerText: {
-        flex: 1,
-        backgroundColor: 'pink'
-    },
-    flatList: {}
+    fontBold: {
+        fontWeight: 'bold'
+    }
 });
