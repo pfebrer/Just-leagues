@@ -57,15 +57,22 @@ export default class EditRankingScreen extends React.Component {
 
     onBtnDelPress(player) {
         alert("Eliminar el player:" + player);
-    }
+    };
 
     onBtnEditPress(player) {
         alert("EDITAR player " + player);
-    }
+    };
+
+    onBtnAddPress() {
+        alert("CREATE new player ");
+    };
 
     onBtnPress = (player) => {
         alert("soc el player:" + player);
     };
+
+    iconSize = 30;
+    iconColor = '#515054'
 
     renderRow(player, position, ranking) {
         let rankingPos = ranking.indexOf(player) + 1;
@@ -75,12 +82,12 @@ export default class EditRankingScreen extends React.Component {
             adminOptions = (<View style={[styles.centered, styles.containerBTNS]}>
                 <TouchableHighlight style={[styles.btn]}
                                     onPress={() => this.onBtnEditPress(player)} underlayColor='rgb(192,192,192)'>
-                    <MaterialIcons name="reorder" size={32} color="#0b6eaa"/>
+                    <MaterialIcons name="reorder" size={this.iconSize} color="{iconColor}"/>
                 </TouchableHighlight>
 
                 <TouchableHighlight style={[styles.btn]}
                                     onPress={() => this.onBtnDelPress(player)} underlayColor='rgb(192,192,192)'>
-                    <Entypo name="cross" size={32} color="#8a002e"/>
+                    <Entypo name="cross" size={this.iconSize} color="{iconColor}"/>
                 </TouchableHighlight>
             </View>)
         }
@@ -107,6 +114,15 @@ export default class EditRankingScreen extends React.Component {
         if (this.state.isLoading) {
             view = (<Loading checkUser={false} msg={"Carregant ranking"} bg={bgAsset}/>);
         } else {
+            let adminOptions = null;
+            if (this.state.admin) {
+                adminOptions = (<View style={[styles.centered, styles.containerBTNS]}>
+                    <TouchableHighlight style={[styles.btn]}
+                                        onPress={this.onBtnAddPress} underlayColor='rgb(192,192,192)'>
+                        <MaterialIcons name="add-circle" size={this.iconSize} color="{iconColor}"/>
+                    </TouchableHighlight>
+                </View>)
+            }
             view =
                 <View style={styles.container}>
                     <View style={[styles.row, styles.header]}>
@@ -120,6 +136,7 @@ export default class EditRankingScreen extends React.Component {
                                 <Text style={[styles.fontBold, styles.playerText]}>Jugador</Text>
                             </View>
                         </View>
+                        {adminOptions}
                     </View>
                     <View style={[styles.playerList]}>
                         <FlatList data={this.state.ranking} renderItem={(playerItem) => {
