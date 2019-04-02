@@ -1,4 +1,20 @@
+/**
+ * URL PARAMETERS
+ * dbPrefix --> [tt] prefix concatenated in order to test with another collections
+ * u --> [Enric Calafell] admin credentials
+ * *API --> methods used internally by the app
+ * *URL --> request used openly
+ */
+
 // EXTRACT FROM CONSTANTS.js
+
+
+const runtimeOpts = {
+    timeoutSeconds: 300,
+    memory: '128MB',
+    node: '8'
+}
+
 const Constants = {
     GROUP_SIZE: 4
 };
@@ -41,7 +57,8 @@ const Documents = {
     PLAYERS: {
         props: {
             currentGroup: "currentGroup",
-            playerName: "playerName"
+            playerName: "playerName",
+            isAdmin: 'admin'
         }
     }
 };
@@ -57,7 +74,7 @@ const auth = admin.auth();
 
 
 //send the push notification
-exports.messageNotification = functions.firestore.document('groups/{iGroup}/chatMessages/{id}').onCreate((event, context) => {
+exports.messageNotification = functions.region('europe-west1').runWith(runtimeOpts).firestore.document('groups/{iGroup}/chatMessages/{id}').onCreate((event, context) => {
 
     const {playerName, message} = event.data();
     let iGroup = context.params.iGroup;
@@ -85,26 +102,24 @@ exports.messageNotification = functions.firestore.document('groups/{iGroup}/chat
         //once all the messages have been resolved 
         return Promise.all(messages)
 
-    })
-        .then(messages => {
+    }).then(messages => {
 
-            fetch('https://exp.host/--/api/v2/push/send', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(messages)
+        fetch('https://exp.host/--/api/v2/push/send', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(messages)
 
-            });
-        })
-        .catch(reason => {
-            console.log(reason)
-        })
+        });
+    }).catch(reason => {
+        console.log(reason)
+    });
 });
 
 //Enviar notificacions quan s'afegeixen partits
-exports.matchNotification = functions.firestore.document('matches/{id}').onCreate((event, context) => {
+exports.matchNotification = functions.region('europe-west1').runWith(runtimeOpts).firestore.document('matches/{id}').onCreate((event, context) => {
 
     const {iGroup, matchPlayers, matchResult} = event.data();
     const iWinner = matchResult.indexOf(3);
@@ -115,8 +130,16 @@ exports.matchNotification = functions.firestore.document('matches/{id}').onCreat
 
     const root = event.ref.firestore;
     const messages = [];
-    //return the main promise 
-    return root.collection(Collections.PLAYERS()).where(Documents.PLAYERS.props.currentGroup, "==", iGroupFaked).get().then((snapshot) => {
+    let title;
+    if (/^\d+$/.test(iGroup)) {
+        title = "Partit afegit al grup " + iGroup
+    } else if (iGroup === "Reptes") {
+        title = "Nou repte afegit"
+    } else if (iGroup === "Torneig") {
+        title = "S'ha jugat un partit dels campionats"
+    }
+    //return the main promise
+    return firestore.collection(Collections.PLAYERS()).where(Documents.PLAYERS.props.currentGroup, "==", iGroupFaked).get().then((snapshot) => {
         snapshot.forEach((childSnapshot) => {
             let {expoToken, playerName} = childSnapshot.data();
             if (expoToken) {
@@ -126,15 +149,6 @@ exports.matchNotification = functions.firestore.document('matches/{id}').onCreat
                 } else {
                     message = winnerName + " ha guanyat a " + loserName + " 3-" + setsLoser;
                 }
-                let title;
-                if (/^\d+$/.test(iGroup)) {
-                    title = "Partit afegit al grup " + iGroup
-                } else if (iGroup === "Reptes") {
-                    title = "Nou repte afegit"
-                } else if (iGroup === "Torneig") {
-                    title = "S'ha jugat un partit dels campionats"
-                }
-
                 messages.push({
                     "to": expoToken,
                     "sound": "default",
@@ -143,19 +157,14 @@ exports.matchNotification = functions.firestore.document('matches/{id}').onCreat
                 });
             }
         });
-
-        root.collection(Collections.PLAYERS()).doc("xYenRrtoisOZEvpuRJm0h6FOOe42").get().then((docSnapshot) => {
-
-            let {expoToken, playerName} = docSnapshot.data();
+        //return Promise.all(messages)
+        return firestore.collection(Collections.PLAYERS()).where(Documents.PLAYERS.props.isAdmin, "==", true).get();
+    }).then((snapshot) => {
+        //return firestore.collection(Collections.PLAYERS()).where(Documents.PLAYERS.props.isAdmin, "==", true).get().then((snapshot) => {
+        snapshot.forEach((querySnapshot) => {
+            let {expoToken, playerName} = querySnapshot.data();
             if (expoToken && matchPlayers.indexOf(playerName) === -1) {
-                let title;
-                if (/^\d+$/.test(iGroup)) {
-                    title = "Partit afegit al grup " + iGroup
-                } else if (iGroup === "Reptes") {
-                    title = "Nou repte afegit"
-                } else if (iGroup === "Torneig") {
-                    title = "S'ha jugat un partit dels campionats"
-                }
+
                 messages.push({
                     "to": expoToken,
                     "sound": "default",
@@ -163,30 +172,25 @@ exports.matchNotification = functions.firestore.document('matches/{id}').onCreat
                     "body": winnerName + " ha guanyat a " + loserName + " 3-" + setsLoser
                 });
             }
-        }).catch(reason => console.log(reason));
+        });
+        //}).catch(reason => console.log(reason));
+        return Promise.all(messages);
+    }).then(messages => {
+        fetch('https://exp.host/--/api/v2/push/send', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(messages)
 
-        //firebase.database then() respved a single promise that resolves
-        //once all the messages have been resolved 
-        return Promise.all(messages)
-    })
-        .then(messages => {
-
-            fetch('https://exp.host/--/api/v2/push/send', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(messages)
-
-            });
-        })
-        .catch(reason => {
-            console.log(reason)
-        })
+        });
+    }).catch(reason => {
+        console.log(reason)
+    });
 });
 
-exports.newChallenge1 = functions.firestore.document('Reptes/{id}').onCreate((event, context) => {
+exports.newChallenge1 = functions.region('europe-west1').runWith(runtimeOpts).firestore.document('Reptes/{id}').onCreate((event, context) => {
 
     const {matchPlayers, matchResult} = event.data();
     let iWinner = matchResult.indexOf(3);
@@ -257,42 +261,46 @@ exports.newChallenge1 = functions.firestore.document('Reptes/{id}').onCreate((ev
     })
 });
 
-exports.updateRanking = functions.region('europe-west1').firestore.document('monthInfo/updateRanking').onCreate((document, event) => {
+exports.updateRankingOnCreate = functions.region('europe-west1').runWith(runtimeOpts).firestore.document('monthInfo/updateRanking').onCreate((document, event) => {
     return __updateRanking(null, null, {user: {admin: true}});
 });
-exports.updateRanking = functions.region('europe-west1').firestore.document('monthInfo/updateRanking').onUpdate((document, event) => {
+exports.updateRankingOnUpdate = functions.region('europe-west1').runWith(runtimeOpts).firestore.document('monthInfo/updateRanking').onUpdate((document, event) => {
     return __updateRanking(null, null, {user: {admin: true}});
 });
 
-exports.updateRanking = functions.region('europe-west1').firestore.document('monthInfo/updateGroups').onCreate((document, event) => {
+exports.updateGroupsOnCreate = functions.region('europe-west1').runWith(runtimeOpts).firestore.document('monthInfo/updateGroups').onCreate((document, event) => {
     return __updateGroups(null, null, {user: {admin: true}});
 });
-exports.updateRanking = functions.region('europe-west1').firestore.document('monthInfo/updateGroups').onUpdate((document, event) => {
+exports.updateGroupsOnUpdate = functions.region('europe-west1').runWith(runtimeOpts).firestore.document('monthInfo/updateGroups').onUpdate((document, event) => {
     return __updateGroups(null, null, {user: {admin: true}});
 });
 
-exports.updateRanking = functions.region('europe-west1').https.onCall((data, context) => {
+exports.updateRanking = functions.region('europe-west1').runWith(runtimeOpts).https.onCall((data, context) => {
     return validateAndContinue(req, res, __updateRanking);
 });
-exports.updateRankingAPI = functions.region('europe-west1').https.onCall((data, context) => {
+exports.updateRankingAPI = functions.region('europe-west1').runWith(runtimeOpts).https.onCall((data, context) => {
     return validateAndContinueAPI(data, context, __updateRanking);
 });
-exports.updateRankingURL = functions.region('europe-west1').https.onRequest((data, context) => {
+exports.updateRankingURL = functions.region('europe-west1').runWith(runtimeOpts).https.onRequest((data, context) => {
     return validateAndContinueURL(data, context, __updateRanking);
 });
 
-exports.updateGroups = functions.region('europe-west1').https.onCall((data, context) => {
+exports.updateGroups = functions.region('europe-west1').runWith(runtimeOpts).https.onCall((data, context) => {
     return validateAndContinue(data, context, __updateGroups);
 });
-exports.updateGroupsAPI = functions.region('europe-west1').https.onCall((data, context) => {
-    let ret = validateAndContinueAPI(data, context, __updateGroups);
+exports.updateGroupsAPI = functions.region('europe-west1').runWith(runtimeOpts).https.onCall((data, context) => {
+    return validateAndContinueAPI(data, context, __updateGroups);
 });
-exports.updateGroupsURL = functions.region('europe-west1').https.onRequest((req, res) => {
-    let ret = validateAndContinueURL(req, res, __updateGroups);
+exports.updateGroupsURL = functions.region('europe-west1').runWith(runtimeOpts).https.onRequest((req, res) => {
+    return validateAndContinueURL(req, res, __updateGroups);
 });
 
-exports.setRankingURL = functions.region('europe-west1').https.onRequest((req, res) => {
-    validateAndContinueURL(req, res, __setRanking);
+exports.setRankingURL = functions.region('europe-west1').runWith(runtimeOpts).https.onRequest((req, res) => {
+    return validateAndContinueURL(req, res, __setRanking);
+});
+
+exports.getRankingURL = functions.region('europe-west1').runWith(runtimeOpts).https.onRequest((req, res) => {
+    return validateAndContinueURL(req, res, __getRanking);
 });
 
 const __getDBPrefix = (req) => {
@@ -365,6 +373,13 @@ const __updateRanking = (data, context, user) => {
     });
 };
 
+const __getRanking = (req, res, user) => {
+    return firestore.collection(Collections.RANKINGS(__getDBPrefix(req))).doc(Documents.RANKINGS.squashRanking).get().then((docSnapshot) => {
+        let {ranking} = docSnapshot.data();
+        res.status(200).json(ranking);
+    });
+};
+
 const __setRanking = (req, res, user) => {
     console.log("__setRanking::START PROCESSING");
     let ranking = req.query.ranking || req.body.ranking;
@@ -426,7 +441,7 @@ const __setRanking = (req, res, user) => {
                     }, {merge: true});
                 }).catch(err => console.error("__setRanking:: ERROR CREATING User[" + playerEmail + "] in FIRESTORE", err));
             } else {
-                console.log("__setRanking::UPDATE User[" + playerEmail + "] in FIRESTORE with currentRanking "+(i + 1));
+                console.log("__setRanking::UPDATE User[" + playerEmail + "] in FIRESTORE with currentRanking " + (i + 1));
                 snapshot.forEach((userR) => {
                     playersRef.doc(userR.id).set({
                         currentGroup: -99,
@@ -627,7 +642,7 @@ const validateAndContinueURL = (req, res, next) => {
     let user = {};
     let ret = firestore.collection(Collections.PLAYERS(__getDBPrefix(req))).where(Documents.PLAYERS.props.playerName, "==", queryUser).get().then((querySnapshot) => {
         if (querySnapshot.empty) {
-            console.log("validateAndContinueURL::Database ["+Collections.PLAYERS(__getDBPrefix(req))+"] is EMPTY");
+            console.log("validateAndContinueURL::Database [" + Collections.PLAYERS(__getDBPrefix(req)) + "] is EMPTY");
             if (res.status) {
                 res.status(404).send('Unauthorized');
             }
