@@ -66,8 +66,12 @@ export default class EditRankingScreen extends React.Component {
     onBtnAddPress() {
         alert("CREATE new player ");
     };
-
-    onBtnPress = (player) => {
+	
+	onBtnRecoverPress() {
+        alert("Recover existing player ");
+    };
+	
+	onBtnPress = (player) => {
         alert("soc el player:" + player);
     };
 
@@ -117,6 +121,10 @@ export default class EditRankingScreen extends React.Component {
             let adminOptions = null;
             if (this.state.admin) {
                 adminOptions = (<View style={[styles.centered, styles.containerBTNS]}>
+					<TouchableHighlight style={[styles.btn]}
+                                        onPress={this.onBtnRecoverPress} underlayColor='rgb(192,192,192)'>
+                        <Entypo name="add-to-list" size={this.iconSize} color="{iconColor}"/>
+                    </TouchableHighlight>
                     <TouchableHighlight style={[styles.btn]}
                                         onPress={this.onBtnAddPress} underlayColor='rgb(192,192,192)'>
                         <MaterialIcons name="add-circle" size={this.iconSize} color="{iconColor}"/>

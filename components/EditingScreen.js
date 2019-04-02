@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button, StyleSheet, Text, View} from 'react-native';
-import {auth, functions} from "../Firebase";
+import {functions} from "../Firebase";
 import EndingPeriodModal from "./editingComponents/EndingPeriodModal";
 import Spinner from 'react-native-loading-spinner-overlay';
 
@@ -51,16 +51,18 @@ export default class EditingScreen extends React.Component {
     };
 
     callFunction = (functionName, callback, errorFn) => {
-
+        this.setState({spinner: true});
         if (callback === undefined || callback === null) {
             callback = (data) => {
                 console.log("EditingScreen::callFunction::callback", data); // hello world
+                alert("SUCCESS: " + functionName + ", data:" + data.data);
                 this.setState({spinner: false});
             };
         }
         if (errorFn === undefined || errorFn === null) {
             errorFn = (httpsError) => {
                 console.log("EditingScreen::callFunction::errorFn", httpsError); // bar
+                alert("ERROR: " + functionName + ", data:" + data.data);
                 this.setState({spinner: false});
             };
         }
@@ -78,6 +80,7 @@ export default class EditingScreen extends React.Component {
             <View style={styles.container}>
                 <Spinner
                     visible={this.state.spinner}
+                    textContent={this.state.spinnerText}
                     textStyle={styles.spinnerTextStyle}
                 />
                 <View style={styles.titleView}>
