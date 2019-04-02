@@ -118,6 +118,8 @@ exports.messageNotification = functions.region('europe-west1').runWith(runtimeOp
     });
 });
 
+
+
 //Enviar notificacions quan s'afegeixen partits
 exports.matchNotification = functions.region('europe-west1').runWith(runtimeOpts).firestore.document('matches/{id}').onCreate((event, context) => {
 
