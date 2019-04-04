@@ -9,8 +9,8 @@ export default class Login extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            userName: "ecalafell",
-            password: "Enric0123",
+            //userName: "ecalafell",
+            //password: "Enric0123",
             spinner: false
         };
         this.usersRef = async () => {

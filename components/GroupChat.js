@@ -13,7 +13,7 @@ import {
 import ChatMessage from "./chatComponents/ChatMessage"
 import {firebase, firestore} from "../Firebase"
 import {MaterialIcons} from '@expo/vector-icons';
-import {Collections, Documents} from "../constants/CONSTANTS";
+import {ChatWorkMode, Collections, Documents} from "../constants/CONSTANTS";
 
 export default class GroupChat extends React.Component {
 
@@ -33,16 +33,28 @@ export default class GroupChat extends React.Component {
         this.playerRef = firestore.collection(Collections.PLAYERS).doc(this.userId);
         this.playerRef.get().then((docSnapshot) => {
             const {playerName, currentGroup} = docSnapshot.data();
+            debugger;
+            let title = "";
+            let workMode = this.props.navigation.getParam('workMode', 'group');
+            if (workMode === ChatWorkMode.group) {
+                title = "Xat del grup " + currentGroup;
+            } else {
+                title = "Xat general";
+            }
+            this.props.navigation.setParams({title: title});
             this.setState({
+                workMode: workMode,
                 group: currentGroup,
+                title: title,
                 playerName
             });
         }).catch(err => alert("No s'ha pogut determinar de quin grup ets.\nError: " + err.message));
     }
 
     componentDidUpdate(prevProps, prevState) {
+        let groupCollection = this.state.workMode === ChatWorkMode.group ? String(this.state.group) : Documents.GROUPS.generalMessages;
         if (prevState.group !== this.state.group) {
-            this.unsub = this.groupsRef.doc(String(this.state.group)).collection(Documents.GROUPS.chatMessages).orderBy("date").onSnapshot((querySnapshot) => {
+            this.unsub = this.groupsRef.doc(groupCollection).collection(Documents.GROUPS.chatMessages).orderBy("date").onSnapshot((querySnapshot) => {
                 let messages = this.state.messages;
                 querySnapshot.docChanges().forEach((change) => {
                     if (change.type === "added") {
@@ -54,6 +66,7 @@ export default class GroupChat extends React.Component {
                     messages
                 });
             }, err => {
+                console.error(err)
             });
         }
     }
@@ -77,11 +90,7 @@ export default class GroupChat extends React.Component {
             if (lastMessage[0] != playerName || date - lastMessage[2] > timeToSplit) {
                 fullMessage = [];
             }
-
-            fullMessage.push(message);
-
-
-            //El renderitzem quan ja el tenim tot
+            fullMessage.push(message);//El renderitzem quan ja el tenim tot
             if (nextMessage[0] != playerName || nextMessage[2] - date > timeToSplit) {
                 fullMessage.unshift(date)
                 renderedMessages.push(
@@ -95,10 +104,10 @@ export default class GroupChat extends React.Component {
     }
 
     sendMessage = () => {
-
+        let groupCollection = this.state.workMode === ChatWorkMode.group ? String(this.state.group) : Documents.GROUPS.generalMessages;
         if (this.state.newMessage) {
             const date = Date.now()
-            this.groupsRef.doc(String(this.state.group)).collection(Documents.GROUPS.chatMessages).doc(String(date)).set({
+            this.groupsRef.doc(groupCollection).collection(Documents.GROUPS.chatMessages).doc(String(date)).set({
                 date,
                 playerName: this.state.playerName,
                 message: this.state.newMessage.trim()
@@ -110,13 +119,13 @@ export default class GroupChat extends React.Component {
     }
 
     render() {
-        let group = this.state.group;
-        let title = this.state.group ? /^\d+$/.test(this.state.group) ? "Xat del grup " + group : "Xat general" : "";
+
+        let bgResourceId = this.state.workMode === ChatWorkMode.group ? require("../assets/images/loginBG.jpg") : require("../assets/images/loginBG2.jpg")
         return (
-            <ImageBackground style={{flex: 1}} source={require("../assets/images/loginBG.jpg")}>
+            <ImageBackground style={{flex: 1}} source={bgResourceId}>
                 <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
                     <View style={styles.chatTitleView}>
-                        <Text style={styles.chatTitleText}>{title}</Text>
+                        <Text style={styles.chatTitleText}>{this.state.title}</Text>
                     </View>
                     <ScrollView style={styles.chatContainer}
                                 ref={ref => this.scrollView = ref}

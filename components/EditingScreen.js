@@ -51,6 +51,7 @@ export default class EditingScreen extends React.Component {
     };
 
     callFunction = (functionName, callback, errorFn) => {
+
         this.setState({spinner: true});
         if (callback === undefined || callback === null) {
             callback = (data) => {
@@ -72,6 +73,7 @@ export default class EditingScreen extends React.Component {
     };
 
     render() {
+        alert("this.state.isLoadingComplete"+this.state.isLoadingComplete);
         let endingPeriodModal = this.state.endingPeriodModal ? (
             <EndingPeriodModal toggleEndingPeriodModal={this.toggleEndingPeriodModal}/>
         ) : null;

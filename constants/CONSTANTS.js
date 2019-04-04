@@ -22,7 +22,8 @@ const Documents = {
         updateRanking: "updateRanking"
     },
     GROUPS: {
-        chatMessages: "chatMessages"
+        chatMessages: "chatMessages",
+        generalMessages: "generalMessages"
     },
     PLAYERS: {
         props: {
@@ -31,5 +32,10 @@ const Documents = {
         }
     }
 };
+
+const ChatWorkMode = {
+    group : 'Group',
+    general: 'General'
+};
 //USED IN FIREBASE FUNCTIONS, REMEMBER TO KEEP IN SYNC
-export {Constants, Collections, Documents};
+export {Constants, Collections, Documents,ChatWorkMode};

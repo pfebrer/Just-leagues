@@ -1,5 +1,5 @@
 import React from 'react';
-import {createBottomTabNavigator, createStackNavigator} from 'react-navigation';
+import {createBottomTabNavigator, createMaterialTopTabNavigator, createStackNavigator} from 'react-navigation';
 import Stats from "../components/Stats";
 import Classifications from "../components/Clasifications";
 import MatchModal from "../components/MatchModal";
@@ -8,6 +8,7 @@ import GroupChat from "../components/GroupChat";
 import MatchSearcher from "../components/MatchSearcher";
 import {AntDesign, Entypo, Ionicons, MaterialCommunityIcons, MaterialIcons} from '@expo/vector-icons';
 import EditRankingScreen from "../components/ranking/EditRankingScreen";
+import {ChatWorkMode} from "../constants/CONSTANTS";
 
 
 const ClasifStack = createStackNavigator({
@@ -19,6 +20,39 @@ const ClasifStack = createStackNavigator({
     mode: "modal"
 });
 
+
+//createMaterialTopTabNavigator(RouteConfigs, TabNavigatorConfig);
+const chatsStack = createMaterialTopTabNavigator(
+    {
+        GroupChat: {
+            screen: GroupChat,
+            params: {workMode: ChatWorkMode.group},
+            navigationOptions: {
+                tabBarLabel: "Grup",
+                tabBarIcon: ({tintColor}) => (
+                    <MaterialCommunityIcons name="tournament" size={20} color={tintColor}/>
+                )
+            }
+        },
+        GeneralChat: {
+            screen: GroupChat,
+            params: {workMode: ChatWorkMode.general},
+            navigationOptions: {
+                tabBarLabel: "General",
+                tabBarIcon: ({tintColor}) => (
+                    <MaterialCommunityIcons name="tournament" size={20} color={tintColor}/>
+                )
+            }
+        },
+    }, {
+        headerMode: "none",
+        mode: "modal",
+        tabBarOptions: {
+            style: {
+                paddingTop: 20   //Padding 0 here
+            }
+        }
+    });
 
 export default createBottomTabNavigator({
         Stats: {
@@ -40,7 +74,7 @@ export default createBottomTabNavigator({
             }
         },
         GroupChat: {
-            screen: GroupChat,
+            screen: chatsStack,
             navigationOptions: {
                 tabBarLabel: "Xat",
                 tabBarIcon: ({tintColor}) => (
@@ -68,8 +102,8 @@ export default createBottomTabNavigator({
             }
         }
     },
-    {initialRouteName: "Ranking"},
     {
+        initialRouteName: "Classificacions",
         tabBarOptions: {
             activeTintColor: 'tomato',
             inactiveTintColor: 'gray',
