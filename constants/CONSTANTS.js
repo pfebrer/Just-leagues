@@ -1,17 +1,17 @@
 //USED IN FIREBASE FUNCTIONS, REMEMBER TO KEEP IN SYNC
 
-let dbPrefix = "";
 const Constants = {
-    GROUP_SIZE: 4
+    GROUP_SIZE: 4,
+    dbPrefix: "soft_"
 };
 const Collections = {
-    RANKINGS: (dbPrefix && dbPrefix + '_') + "rankings",
-    GROUPS: (dbPrefix && dbPrefix + '_') + "groups",
-    PLAYERS: (dbPrefix && dbPrefix + '_') + "players",
-    TOURNAMENT: (dbPrefix && dbPrefix + '_') + "Torneig",
-    MATCHES: (dbPrefix && dbPrefix + '_') + "matches",
-    MONTH_INFO: (dbPrefix && dbPrefix + '_') + "monthInfo",
-    CHALLENGE: (dbPrefix && dbPrefix + '_') + "Reptes"
+    RANKINGS: (Constants.dbPrefix && Constants.dbPrefix) + "rankings",
+    GROUPS: (Constants.dbPrefix && Constants.dbPrefix) + "groups",
+    PLAYERS: (Constants.dbPrefix && Constants.dbPrefix) + "players",
+    TOURNAMENT: (Constants.dbPrefix && Constants.dbPrefix) + "Torneig",
+    MATCHES: (Constants.dbPrefix && Constants.dbPrefix) + "matches",
+    MONTH_INFO: (Constants.dbPrefix && Constants.dbPrefix) + "monthInfo",
+    CHALLENGE: (Constants.dbPrefix && Constants.dbPrefix) + "Reptes"
 };
 const Documents = {
     RANKINGS: {
@@ -34,8 +34,8 @@ const Documents = {
 };
 
 const ChatWorkMode = {
-    group : 'Group',
+    group: 'Group',
     general: 'General'
 };
 //USED IN FIREBASE FUNCTIONS, REMEMBER TO KEEP IN SYNC
-export {Constants, Collections, Documents,ChatWorkMode};
+export {Constants, Collections, Documents, ChatWorkMode};

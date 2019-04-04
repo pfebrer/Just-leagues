@@ -308,6 +308,7 @@ exports.getRankingURL = functions.region('europe-west1').runWith(runtimeOpts).ht
 const __getDBPrefix = (req) => {
     let ret = req.dbPrefix || req.query.dbPrefix || req.body.dbPrefix || "";
     if (ret !== "") {
+        ret = ret + "_";
         console.log("__getDBPrefix::USING DE PREFIX " + ret);
     }
     return ret;
@@ -400,7 +401,7 @@ const __setRanking = (req, res, user) => {
             email += parts[i].charAt(0);
         }
         email += parts[parts.length - 1];
-        return email + "@nickspa.cat"
+        return email + "@"+__getDBPrefix(req).replace("_",".")+"nickspa.cat"
     };
     const generatePassword = (name) => {
         let parts = name.toLowerCase().split(" ");

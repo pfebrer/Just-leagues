@@ -39,7 +39,8 @@ export default class Clasifications extends React.Component {
             const typeOfComp = docSnapshot.data();
             this.setState({typeOfComp});
         });
-        this.ranking = this.rankingsRef.onSnapshot((docSnapshot) => {
+        this.rankingsRef.onSnapshot((docSnapshot) => {
+            debugger;
             const {ranking, wentUp, wentDown} = docSnapshot.data();
             this.setState({
                 ranking,

@@ -35,10 +35,23 @@ export default class Loading extends React.Component {
         this.usersRef = await firestore.collection(Collections.PLAYERS);
         //firebase.auth().signOut();
         console.log('Loading::[START] checking checking user');
+        await firebase.auth().signOut();
         const unsub = await firebase.auth().onAuthStateChanged(user => {
             // references to App and Login where declared in AppNavigator
             console.log('Loading::[STOP] checking user GoTo-> ', user ? 'App' : 'Auth');
-            this.props.navigation.navigate(user ? 'App' : 'Auth');
+            if (user) {
+                firestore.collection(Collections.PLAYERS).doc(user.uid).get().then((docSnapshot) => {
+                    if(docSnapshot.exists) {
+                        this.props.navigation.navigate('App');
+                    } else {
+                        alert('User not exists in [' + Collections.PLAYERS + '] database');
+                    }
+                }).catch((err) => {
+                    alert('User not exists in ['+ Collections.PLAYERS + '] database\n\nError: ' + err.message)
+                });
+            } else {
+                this.props.navigation.navigate('Auth');
+            }
 
         });
     }

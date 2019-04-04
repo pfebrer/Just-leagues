@@ -3,7 +3,7 @@ import {Button, ImageBackground, KeyboardAvoidingView, StyleSheet, Text, TextInp
 import {firebase, firestore} from "../Firebase";
 import {Notifications, Permissions} from "expo";
 import Spinner from 'react-native-loading-spinner-overlay';
-import {Collections} from "../constants/CONSTANTS";
+import {Collections, Constants} from "../constants/CONSTANTS";
 
 export default class Login extends React.Component {
     constructor(props) {
@@ -22,23 +22,29 @@ export default class Login extends React.Component {
 
     logIn = () => {
         this.setState({spinner: true});
+        let userName = this.state.userName + "@" + Constants.dbPrefix.replace("_", ".") + "nickspa.cat";
+        console.log("userName: " + userName);
         firebase
             .auth()
-            .signInWithEmailAndPassword(this.state.userName + "@nickspa.cat", this.state.password)
+            .signInWithEmailAndPassword(userName, this.state.password)
             .then(() => {
                 let userId = firebase.auth().currentUser.uid;
-                this.registerForPushNotificationsAsync(userId);
-                this.userInput.current.clear();
-                this.pWInput.current.clear();
-                this.setState({spinner: true});
-                this.props.navigation.navigate('App');
-            })
-            .catch(error => {
-                    this.setState({spinner: false});
-                    alert("No s'ha pogut iniciar sessió.\n\nError: " + error.message)
-
+                return this.registerForPushNotificationsAsync(userId);
+            }).then(() => {
+            firestore.collection(Collections.PLAYERS).doc(this.state.userId).get().then((docSnapshot) => {
+                if (docSnapshot.exists) {
+                    this.props.navigation.navigate('App');
+                } else {
+                    alert('User not exists in [' + Collections.PLAYERS + '] database');
                 }
-            );
+            }).catch((err) => {
+                alert('User not exists in [' + Collections.PLAYERS + '] database\n\nError: ' + err.message)
+            });
+        }).catch(error => {
+            this.setState({spinner: false});
+            this.pWInput.current.clear();
+            alert("No s'ha pogut iniciar sessió.\n\nError: " + error.message)
+        });
     };
 
     registerForPushNotificationsAsync = async (uid) => {
@@ -93,18 +99,20 @@ export default class Login extends React.Component {
                             {/*</View>*/}
                             <TextInput placeholder="Usuari" ref={this.userInput}
                                        style={styles.inputField}
-                                       onChangeText={(userName) => this.setState({userName})}
+                                       onChangeText={(userName) => this.setState({userName: userName.toLowerCase()})}
                                        value={this.state.userName}
+                                       autoCapitalize={"none"}
                             />
                         </View>
                         <View style={styles.inputFieldRow}>
                             {/*<View style={styles.fieldDescriptionView}>*/}
                             {/*<Text style={styles.fieldDescriptionText}>Contrasenya:</Text>*/}
                             {/*</View>*/}
-                            <TextInput placeholder="Contrasenya" ref={this.pWInput}
+                            <TextInput placeholder="Paraula de pas" ref={this.pWInput}
                                        style={styles.inputField} secureTextEntry={true}
-                                       onChangeText={(password) => this.setState({password})}
+                                       onChangeText={(password) => this.setState({password: password.toLowerCase()})}
                                        value={this.state.password}
+                                       autoCapitalize={"none"}
                             />
                         </View>
                         {/*<TouchableOpacity style={styles.loginButton} onPress={this.logIn}>*/}
