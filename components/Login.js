@@ -29,18 +29,19 @@ export default class Login extends React.Component {
             .signInWithEmailAndPassword(userName, this.state.password)
             .then(() => {
                 let userId = firebase.auth().currentUser.uid;
+                //this.setState({userId})
                 return this.registerForPushNotificationsAsync(userId);
-            }).then(() => {
+            })/*.then(() => {
             firestore.collection(Collections.PLAYERS).doc(this.state.userId).get().then((docSnapshot) => {
                 if (docSnapshot.exists) {
                     this.props.navigation.navigate('App');
                 } else {
-                    alert('User not exists in [' + Collections.PLAYERS + '] database');
+                    alert('User does not exist in [' + Collections.PLAYERS + '] database');
                 }
             }).catch((err) => {
-                alert('User not exists in [' + Collections.PLAYERS + '] database\n\nError: ' + err.message)
+                alert('User does not exist in [' + Collections.PLAYERS + '] database\n\nError: ' + err.message)
             });
-        }).catch(error => {
+        })*/.catch(error => {
             this.setState({spinner: false});
             this.pWInput.current.clear();
             alert("No s'ha pogut iniciar sessió.\n\nError: " + error.message)
@@ -73,7 +74,8 @@ export default class Login extends React.Component {
 
         let updates = {};
         updates["expoToken"] = token;
-        this.usersRef.doc(uid).update(updates);
+        const usersRef = await this.usersRef()
+        usersRef.doc(uid).update(updates);
 
     };
 
@@ -110,7 +112,7 @@ export default class Login extends React.Component {
                             {/*</View>*/}
                             <TextInput placeholder="Paraula de pas" ref={this.pWInput}
                                        style={styles.inputField} secureTextEntry={true}
-                                       onChangeText={(password) => this.setState({password: password.toLowerCase()})}
+                                       onChangeText={(password) => this.setState({password: password})}
                                        value={this.state.password}
                                        autoCapitalize={"none"}
                             />

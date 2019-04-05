@@ -2,7 +2,8 @@
 
 const Constants = {
     GROUP_SIZE: 4,
-    dbPrefix: "soft_"
+    UNTYING_CRITERIA: ["directMatch","position"],
+    dbPrefix: ""
 };
 const Collections = {
     RANKINGS: (Constants.dbPrefix && Constants.dbPrefix) + "rankings",
