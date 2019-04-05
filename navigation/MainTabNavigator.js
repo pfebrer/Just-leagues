@@ -8,7 +8,7 @@ import GroupChat from "../components/GroupChat";
 import MatchSearcher from "../components/MatchSearcher";
 import {AntDesign, Entypo, Ionicons, MaterialCommunityIcons, MaterialIcons} from '@expo/vector-icons';
 import EditRankingScreen from "../components/ranking/EditRankingScreen";
-import {ChatWorkMode} from "../constants/CONSTANTS";
+import {ChatWorkMode, Constants} from "../constants/CONSTANTS";
 
 
 const ClasifStack = createStackNavigator({
@@ -49,10 +49,10 @@ const chatsStack = createMaterialTopTabNavigator(
         mode: "modal",
         tabBarOptions: {
             style: {
-                paddingTop: 20   //Padding 0 here
+                paddingTop: Constants.paddingTopHeader   //Padding 0 here
             }
         }
-    });
+});
 
 export default createBottomTabNavigator({
         Stats: {

@@ -3,7 +3,8 @@
 const Constants = {
     GROUP_SIZE: 4,
     UNTYING_CRITERIA: ["directMatch","position"],
-    dbPrefix: ""
+    dbPrefix: "",
+    paddingTopHeader: 20,
 };
 const Collections = {
     RANKINGS: (Constants.dbPrefix && Constants.dbPrefix) + "rankings",

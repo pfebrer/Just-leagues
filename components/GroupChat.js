@@ -8,12 +8,13 @@ import {
     Text,
     TextInput,
     TouchableOpacity,
-    View
+    View,
+    Dimensions
 } from 'react-native';
 import ChatMessage from "./chatComponents/ChatMessage"
 import {firebase, firestore} from "../Firebase"
 import {MaterialIcons} from '@expo/vector-icons';
-import {ChatWorkMode, Collections, Documents} from "../constants/CONSTANTS";
+import {ChatWorkMode, Collections, Documents, Constants} from "../constants/CONSTANTS";
 
 export default class GroupChat extends React.Component {
 
@@ -49,6 +50,7 @@ export default class GroupChat extends React.Component {
                 playerName
             });
         }).catch(err => alert("No s'ha pogut determinar de quin grup ets.\nError: " + err.message));
+
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -118,13 +120,22 @@ export default class GroupChat extends React.Component {
 
     }
 
+    //This function determines where is the title located in the Y dimension to provide the vertical offset
+    //for the keyboard avoiding view (otherwise it doesn't take the header into account)
+    handleLayoutChange() {
+        this.titleRef.measure( (fx, fy, width, height, px, py) => {
+          this.setState({verticalOffset: py - Constants.paddingTopHeader})
+        })
+    }
+
     render() {
 
         let bgResourceId = this.state.workMode === ChatWorkMode.group ? require("../assets/images/loginBG.jpg") : require("../assets/images/loginBG2.jpg")
         return (
             <ImageBackground style={{flex: 1}} source={bgResourceId}>
-                <KeyboardAvoidingView style={styles.container} behavior="padding" enabled>
-                    <View style={styles.chatTitleView}>
+                <KeyboardAvoidingView style={styles.container} behavior="padding" keyboardVerticalOffset={this.state.verticalOffset} enabled>
+                    <View style={styles.chatTitleView} onLayout={(event) => {this.handleLayoutChange() }} 
+                        ref={view => { this.titleRef = view; }}>
                         <Text style={styles.chatTitleText}>{this.state.title}</Text>
                     </View>
                     <ScrollView style={styles.chatContainer}
