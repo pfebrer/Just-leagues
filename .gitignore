@@ -47,6 +47,7 @@ local.properties
 /android/
 
 .expo
+/tmp/
 
 # Node
 node_modules
