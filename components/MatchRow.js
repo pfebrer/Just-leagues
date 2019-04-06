@@ -8,7 +8,7 @@ import 'firebase/firestore';
 const firestore = firebase.firestore()
 //firestore.settings({timestampsInSnapshots:true})
 
-export default class MatchRow extends React.Component {
+export default class MatchRow extends React.PureComponent {
 
     convertDate = (inputFormat) => {
       function pad(s) { return (s < 10) ? '0' + s : s; };

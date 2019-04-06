@@ -1,5 +1,5 @@
 import React from 'react';
-import {ScrollView, StyleSheet, Text, View} from 'react-native';
+import {ScrollView, StyleSheet, Text, View, FlatList} from 'react-native';
 import MatchRow from "./MatchRow"
 import {firestore} from "../Firebase"
 import {Collections} from "../constants/CONSTANTS";
@@ -60,7 +60,8 @@ export default class MatchHistory extends React.Component {
     }
 
     renderMatches = () => {
-        let matches = [];
+        let matches = null;
+        let items = [];
         let totals = null;
         let unFilteredMatches = this.state.matches.slice();
         let filteredMatches = unFilteredMatches.reverse().filter(this.filterMatches);
@@ -85,14 +86,16 @@ export default class MatchHistory extends React.Component {
                 if (index == filteredMatches.length - 1) {
                     noBottomBorder = true;
                 }
-                matches.push(
-                    <MatchRow key={match[0]} match={match} noBottomBorder={noBottomBorder}/>
-                )
+                items.push({match:match,noBottomBorder:noBottomBorder})
             });
             matches = (
-                <ScrollView style={scrollViewStyle}>
-                    {matches}
-                </ScrollView>
+                <FlatList style={scrollViewStyle} data = {items} renderItem = {({item}) =>(
+                    <MatchRow match={item.match} noBottomBorder={item.noBottomBorder}/>
+                    )}
+                    keyExtractor={item => item.match[0]}
+                    >
+                </FlatList>
+
             );
             //Renderitzem els totals
             if (this.props.filter2) {

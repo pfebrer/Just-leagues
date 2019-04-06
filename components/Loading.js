@@ -33,9 +33,7 @@ export default class Loading extends React.Component {
 
     onConstruct = async () => {
         this.usersRef = await firestore.collection(Collections.PLAYERS);
-        //firebase.auth().signOut();
         console.log('Loading::[START] checking checking user');
-        await firebase.auth().signOut();
         const unsub = await firebase.auth().onAuthStateChanged(user => {
             // references to App and Login where declared in AppNavigator
             console.log('Loading::[STOP] checking user GoTo-> ', user ? 'App' : 'Auth');

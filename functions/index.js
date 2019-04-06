@@ -16,7 +16,8 @@ const runtimeOpts = {
 }
 
 const Constants = {
-    GROUP_SIZE: 4
+    GROUP_SIZE: 4,
+    UNTYING_CRITERIA: ["directMatch","position"]
 };
 
 const Collections = {
@@ -314,6 +315,32 @@ const __getDBPrefix = (req) => {
     return ret;
 }
 
+const __untie = (iPlayers, results, criteria) => {
+
+    //Loop through all the criteria until we find one where players are untied
+    criteria.forEach((criterion, idx, criteria) =>{
+
+        if (criterion == "position"){
+
+            return iPlayers[0] - iPlayers[1]
+
+        } else if (criterion == "directMatch") {
+
+            let size = Math.sqrt(results.length); //size of the group
+
+            //Get the scores of the direct match between the two players
+            let scoreP1 = results[iPlayers[0]*size + iPlayers[1]] 
+            let scoreP2 = results[iPlayers[1]*size + iPlayers[0]]
+            
+            //Return the comparison in case the scores are different
+            if (scoreP1 !== scoreP2){
+                return scoreP1 - scoreP2
+            } //else just wait for the next criterion to solve the problem
+        }
+
+    })
+}
+
 const __updateRanking = (data, context, user) => {
     let things = {};
     let isAdmin = Boolean(user.admin);
@@ -337,8 +364,8 @@ const __updateRanking = (data, context, user) => {
                 let pointsDif = b[0] - a[0];
                 if (pointsDif !== 0) {
                     return pointsDif;
-                }
-                return a[1] - b[1]
+                } 
+                return __untie([a[1],b[1]], results, Constants.UNTYING_CRITERIA)
             }).map(([_, i]) => i + (iGroup - 1) * 4);
 
             sortedGroups.push(sortedGroup);
