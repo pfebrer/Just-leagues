@@ -4,6 +4,7 @@ import {functions} from "../Firebase";
 import EndingPeriodModal from "./editingComponents/EndingPeriodModal";
 import Spinner from 'react-native-loading-spinner-overlay';
 import {Constants} from "../constants/CONSTANTS";
+import { ExpoConstants } from 'expo';
 
 
 export default class EditingScreen extends React.Component {
@@ -74,7 +75,7 @@ export default class EditingScreen extends React.Component {
     };
 
     render() {
-        alert("this.state.isLoadingComplete"+this.state.isLoadingComplete);
+        //alert("this.state.isLoadingComplete"+this.state.isLoadingComplete);
         let endingPeriodModal = this.state.endingPeriodModal ? (
             <EndingPeriodModal toggleEndingPeriodModal={this.toggleEndingPeriodModal}/>
         ) : null;
@@ -165,6 +166,9 @@ export default class EditingScreen extends React.Component {
                         color="#303030"
                         accessibilityLabel="Tancar Mes"
                     />
+                </View>
+                <View style={styles.titleView}>
+                    <Text style={styles.titleText}>VERSIO [ExpoConstants.manifest.version]</Text>
                 </View>
                 {endingPeriodModal}
             </View>
