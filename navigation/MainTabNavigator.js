@@ -1,5 +1,6 @@
 import React from 'react';
-import {createBottomTabNavigator, createMaterialTopTabNavigator, createStackNavigator} from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
+import { createBottomTabNavigator, createMaterialTopTabNavigator } from 'react-navigation-tabs';
 import Stats from "../components/Stats";
 import Classifications from "../components/Clasifications";
 import MatchModal from "../components/MatchModal";
