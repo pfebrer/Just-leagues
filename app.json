@@ -11,9 +11,9 @@
     ],
     "version": "2.2.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/images/icon.png",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/images/splash.png",
       "resizeMode": "cover",
       "backgroundColor": "#818181"
     },
@@ -24,10 +24,13 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.pol.esquaixlligues"
     },
     "android": {
       "package": "com.pol.esquaixlligues"
-    }
+    },
+    "description": "",
+    "githubUrl": "https://github.com/kalfilla/SquashLeaguesV2"
   }
 }
