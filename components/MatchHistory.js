@@ -1,7 +1,7 @@
 import React from 'react';
 import {ScrollView, StyleSheet, Text, View, FlatList} from 'react-native';
 import MatchRow from "./MatchRow"
-import {firestore} from "../Firebase"
+import Firebase from "../api/Firebase"
 import {Collections} from "../constants/CONSTANTS";
 
 
@@ -12,7 +12,7 @@ export default class MatchHistory extends React.Component {
         this.state = {
             matches: []
         };
-        this.matchesRef = firestore.collection(Collections.MATCHES);
+        this.matchesRef = Firebase.firestore.collection(Collections.MATCHES);
     }
 
     componentDidMount() {

@@ -4,7 +4,8 @@ import PlayerCard from "./PlayerCard"
 import Strike from "./statDisplays/Strike"
 import DetailedStats from "./statDisplays/DetailedStats"
 import MatchLength from "./statDisplays/MatchLength"
-import {firebase, firestore} from "../Firebase"
+import firebase from "firebase"
+import Firebase from "../api/Firebase"
 import BestWorstRival from './statDisplays/BestWorstRival';
 import ChangePWModal from './ChangePWModal';
 import {Collections} from "../constants/CONSTANTS";
@@ -18,9 +19,9 @@ export default class Stats extends React.Component {
             playerName: "",
             playerMatches: []
         }
-        this.playersRef = firestore.collection(Collections.PLAYERS);
+        this.playersRef = Firebase.firestore.collection(Collections.PLAYERS);
         this.userId = firebase.auth().currentUser.uid;
-        this.matchesRef = firestore.collection(Collections.MATCHES);
+        this.matchesRef = Firebase.firestore.collection(Collections.MATCHES);
     }
 
     componentDidMount() {

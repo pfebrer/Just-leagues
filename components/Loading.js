@@ -1,6 +1,6 @@
 import React from 'react'
 import {ActivityIndicator, ImageBackground, StatusBar, StyleSheet, Text, View,} from 'react-native';
-import {firebase, firestore} from "../Firebase"
+import Firebase from "../api/Firebase"
 import {Collections} from "../constants/CONSTANTS";
 
 export default class Loading extends React.Component {
@@ -32,27 +32,29 @@ export default class Loading extends React.Component {
     }
 
     onConstruct = async () => {
-        this.usersRef = await firestore.collection(Collections.PLAYERS);
-        console.log('Loading::[START] checking checking user');
-        const unsub = await firebase.auth().onAuthStateChanged(user => {
-            // references to App and Login where declared in AppNavigator
-            console.log('Loading::[STOP] checking user GoTo-> ', user ? 'App' : 'Auth');
+
+        //Listen for any change on the authorization state (even logouts)
+        const unsub = Firebase.auth.onAuthStateChanged(user => {
+            //If there is a logged in user, go to the main page
             if (user) {
-                firestore.collection(Collections.PLAYERS).doc(user.uid).get().then((docSnapshot) => {
+              this.props.navigation.navigate('App');
+                /*this.usersRef.doc(user.uid).get().then((docSnapshot) => {
                     if(docSnapshot.exists) {
                         this.props.navigation.navigate('App');
                     } else {
-                        alert('User not exists in [' + Collections.PLAYERS + '] database');
+                        alert('User not exists in [' + Collections.USERS + '] database');
                     }
                 }).catch((err) => {
-                    alert('User not exists in ['+ Collections.PLAYERS + '] database\n\nError: ' + err.message)
-                });
+                    alert('User not exists in ['+ Collections.USERS + '] database\n\nError: ' + err.message)
+                });*/
+
+            //Otherwise go to the login page
             } else {
                 this.props.navigation.navigate('Auth');
             }
-
         });
     }
+
 
     render() {
         return (

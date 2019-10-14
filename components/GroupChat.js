@@ -12,7 +12,7 @@ import {
     Dimensions
 } from 'react-native';
 import ChatMessage from "./chatComponents/ChatMessage"
-import {firebase, firestore} from "../Firebase"
+import Firebase from "../api/Firebase"
 import {MaterialIcons} from '@expo/vector-icons';
 import {ChatWorkMode, Collections, Documents, Constants} from "../constants/CONSTANTS";
 
@@ -29,9 +29,9 @@ export default class GroupChat extends React.Component {
 
     componentDidMount() {
         //BackHandler.addEventListener('hardwareBackPress', ()=>{return true;});
-        this.userId = firebase.auth().currentUser.uid;
-        this.groupsRef = firestore.collection(Collections.GROUPS);
-        this.playerRef = firestore.collection(Collections.PLAYERS).doc(this.userId);
+        this.userId = Firebase.auth.currentUser.uid;
+        this.groupsRef = Firebase.firestore.collection(Collections.GROUPS);
+        this.playerRef = Firebase.firestore.collection(Collections.PLAYERS).doc(this.userId);
         this.playerRef.get().then((docSnapshot) => {
             const {playerName, currentGroup} = docSnapshot.data();
             debugger;

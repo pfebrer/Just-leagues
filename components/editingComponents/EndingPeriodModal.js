@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, View, TouchableOpacity, Text, Picker} from 'react-native';
-import {firebase, firestore} from "../../Firebase"
+import firebase from "firebase";
 
 export default class EndingPeriodModal extends React.Component {
 

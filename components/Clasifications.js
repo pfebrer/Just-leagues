@@ -4,7 +4,7 @@ import Groups from "./Groups"
 import Challenges from "./Challenges"
 import AddMatchModal from "./AddMatchModal"
 import AdminAddMatchModal from "./AdminAddMatchModal"
-import {firebase, firestore} from "../Firebase"
+import Firebase from "../api/Firebase"
 import {AntDesign} from '@expo/vector-icons';
 import {Collections, Documents} from "../constants/CONSTANTS";
 
@@ -19,13 +19,13 @@ export default class Clasifications extends React.Component {
         );
         this.state = {
             ranking: [],
-            userId: firebase.auth().currentUser.uid,
+            userId: Firebase.auth.currentUser.uid,
             compView: this.compView
         };
-        this.playersRef = firestore.collection(Collections.PLAYERS);
-        this.rankingsRef = firestore.collection(Collections.RANKINGS).doc(Documents.RANKINGS.squashRanking);
-        this.matchesRef = firestore.collection(Collections.MATCHES);
-        this.groupsRef = firestore.collection(Collections.GROUPS);
+        this.playersRef = Firebase.firestore.collection(Collections.PLAYERS);
+        this.rankingsRef = Firebase.firestore.collection(Collections.RANKINGS).doc(Documents.RANKINGS.squashRanking);
+        this.matchesRef = Firebase.firestore.collection(Collections.MATCHES);
+        this.groupsRef = Firebase.firestore.collection(Collections.GROUPS);
         this.playersRef.doc(this.state.userId).get().then((docSnapshot) => {
             let {playerName, currentGroup, admin} = docSnapshot.data();
             this.setState({playerName, admin});
@@ -35,7 +35,7 @@ export default class Clasifications extends React.Component {
     }
 
     componentDidMount() {
-        this.typeOfComp = firestore.collection(Collections.MONTH_INFO).doc(Documents.MONTH_INFO.typeOfComp).onSnapshot((docSnapshot) => {
+        this.typeOfComp = Firebase.firestore.collection(Collections.MONTH_INFO).doc(Documents.MONTH_INFO.typeOfComp).onSnapshot((docSnapshot) => {
             const typeOfComp = docSnapshot.data();
             this.setState({typeOfComp});
         });
@@ -144,7 +144,7 @@ export default class Clasifications extends React.Component {
                 matchPlayers,
                 matchResult: resultInSets
             };
-            ref = firestore.collection(iGroup);
+            ref = Firebase.firestore.collection(iGroup);
             refToDoc = String(Date.now())
         }
         ref.doc(refToDoc).set(toUpdate).then(

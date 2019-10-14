@@ -1,7 +1,7 @@
 import React from 'react';
 import {ActivityIndicator, ScrollView, StyleSheet, Text, View} from 'react-native';
 import Table from "./Table"
-import {firestore} from "../Firebase"
+import Firebase from "../api/Firebase"
 import {Collections} from "../constants/CONSTANTS";
 
 export default class Groups extends React.Component {
@@ -12,7 +12,7 @@ export default class Groups extends React.Component {
             groupsResults: false,
             renderedGroups: []
         };
-        this.groupsRef = firestore.collection(Collections.GROUPS);
+        this.groupsRef = Firebase.firestore.collection(Collections.GROUPS);
     }
 
     componentDidMount() {
@@ -40,11 +40,11 @@ export default class Groups extends React.Component {
           results: [false,false,false,false,false,false,false,false,false,false,false,false,false,false,false,false]
         })
         }*/
-        /*firestore.collection(Collections.PLAYERS).get().then((snapShot) => {
+        /*Firebase.firestore.collection(Collections.PLAYERS).get().then((snapShot) => {
           snapShot.forEach((playerdoc)=>{
             let {playerName} = playerdoc.data();
             let position = this.props.ranking.indexOf(playerName)
-            firestore.collection(Collections.PLAYERS).doc(playerdoc.id).set({
+            Firebase.firestore.collection(Collections.PLAYERS).doc(playerdoc.id).set({
               currentGroup: Math.trunc(position/4)+1
               //currentGroup: "Reptes"
             },{merge: true})

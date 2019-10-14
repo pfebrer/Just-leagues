@@ -2,7 +2,7 @@ import React from 'react';
 import {ImageBackground, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import ScoreRow from "./ScoreRow"
 import MatchHistory from "./MatchHistory"
-import {firebase, firestore} from "../Firebase"
+import Firebase from "../api/Firebase"
 import {Collections} from "../constants/CONSTANTS";
 
 export default class MatchModal extends React.Component {
@@ -17,7 +17,7 @@ export default class MatchModal extends React.Component {
         this.playerName = props.navigation.getParam('playerName', null);
         this.matchPlayers = props.navigation.getParam('matchPlayers', []);
 
-        firestore.collection(Collections.PLAYERS).doc(firebase.auth().currentUser.uid).get().then((docSnapshot) => {
+        Firebase.firestore.collection(Collections.PLAYERS).doc(firebase.auth().currentUser.uid).get().then((docSnapshot) => {
             let {playerName, currentGroup, admin} = docSnapshot.data();
             this.setState({playerName, admin});
         }).catch(err => {

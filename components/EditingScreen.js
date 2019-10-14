@@ -1,6 +1,6 @@
 import React from 'react';
 import {Button, StyleSheet, Text, View} from 'react-native';
-import {functions} from "../Firebase";
+import Firebase from "../api/Firebase";
 import EndingPeriodModal from "./editingComponents/EndingPeriodModal";
 import Spinner from 'react-native-loading-spinner-overlay';
 import {Constants} from "../constants/CONSTANTS";
@@ -71,7 +71,7 @@ export default class EditingScreen extends React.Component {
         }
         console.log("EditingScreen::callFunction functionName[" + functionName + "]");
 
-        functions.httpsCallable(functionName)({dbPrefix: Constants.dbPrefix}).then(callback).catch(errorFn);
+        Firebase.functions.httpsCallable(functionName)({dbPrefix: Constants.dbPrefix}).then(callback).catch(errorFn);
     };
 
     render() {

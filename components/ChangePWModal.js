@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Text, StyleSheet, View, TextInput, TouchableOpacity, KeyboardAvoidingView} from 'react-native'
-import {firebase,firestore} from "../Firebase"
+import firebase from "firebase"
 
 export default class ChangePWModal extends Component {
 
