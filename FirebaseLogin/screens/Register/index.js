@@ -84,7 +84,7 @@ export default class Register extends Component {
       <View style={styles.container}>
         <Text style={styles.create}>CREATE ACCOUNT</Text>
         <InputField
-          placeholder={translate("name")}
+          placeholder={translate("auth.name")}
           autoCapitalize="words"
           error={this.state.isNameCorrect}
           style={styles.input}
@@ -93,7 +93,7 @@ export default class Register extends Component {
           icon={person}
         />
         <InputField
-          placeholder={translate("email")}
+          placeholder={translate("auth.email")}
           keyboardType="email-address"
           error={this.state.isEmailCorrect}
           style={styles.input}
@@ -102,7 +102,7 @@ export default class Register extends Component {
           icon={email}
         />
         <InputField
-          placeholder={translate("password")}
+          placeholder={translate("auth.password")}
           error={this.state.isPasswordCorrect}
           style={styles.input}
           focus={this.changeInputFocus}
@@ -111,7 +111,7 @@ export default class Register extends Component {
           icon={password}
         />
         <InputField
-          placeholder={translate("repeat password")}
+          placeholder={translate("auth.repeat password")}
           error={this.state.isRepeatCorrect}
           style={styles.input}
           secureTextEntry={true}
@@ -123,7 +123,7 @@ export default class Register extends Component {
         />
         <Continue isCreating={this.state.isCreatingAccount} click={this.createUserAccount}/>
         <TouchableOpacity onPress={this.props.change('login')} style={styles.touchable}>
-          <Text style={styles.signIn}>{'<'} {translate("log in")}</Text>
+          <Text style={styles.signIn}>{'<'} {translate("auth.log in")}</Text>
         </TouchableOpacity>
       </View>
     )

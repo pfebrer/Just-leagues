@@ -2,6 +2,7 @@ import React from 'react'
 import {ActivityIndicator, ImageBackground, StatusBar, StyleSheet, Text, View,} from 'react-native';
 import Firebase from "../api/Firebase"
 import {Collections} from "../constants/CONSTANTS";
+import { translate } from '../assets/translations/translationManager';
 
 export default class Loading extends React.Component {
 
@@ -20,7 +21,7 @@ export default class Loading extends React.Component {
         if (this.props.msg !== undefined) {
             this.status.msg = this.props.msg;
         } else {
-            this.status.msg = "Carregant usuari";
+            this.status.msg = translate("info.checking user");
         }
         if (this.props.bg !== undefined) {
             this.status.bg = this.props.bg;

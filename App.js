@@ -50,7 +50,9 @@ async function loadResourcesAsync() {
       'lucidaGrandeBold': require('./assets/fonts/LucidaGrandeBold.ttf'),
       'lucidaGrande': require('./assets/fonts/LucidaGrande.ttf'),
       'roboto': require('./assets/fonts/Roboto-Bold.ttf'),
-      'bold': require('./assets/fonts/Roboto-Bold.ttf')
+      'bold': require('./assets/fonts/Roboto-Bold.ttf'),
+      Roboto: require("native-base/Fonts/Roboto.ttf"),
+      Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf")
     })
   ]);
 }

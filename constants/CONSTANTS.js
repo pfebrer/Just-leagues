@@ -15,6 +15,7 @@ const Collections = {
     MONTH_INFO: (Constants.dbPrefix && Constants.dbPrefix) + "monthInfo",
     CHALLENGE: (Constants.dbPrefix && Constants.dbPrefix) + "Reptes"
 };
+
 const Documents = {
     RANKINGS: {
         squashRanking: "squashRanking",
@@ -39,5 +40,6 @@ const ChatWorkMode = {
     group: 'Group',
     general: 'General'
 };
+
 //USED IN FIREBASE FUNCTIONS, REMEMBER TO KEEP IN SYNC
 export {Constants, Collections, Documents, ChatWorkMode};

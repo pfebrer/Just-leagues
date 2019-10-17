@@ -19,27 +19,26 @@ export default class Stats extends React.Component {
             playerName: "",
             playerMatches: []
         }
-        this.playersRef = Firebase.firestore.collection(Collections.PLAYERS);
+
         this.userId = Firebase.auth.currentUser.uid;
-        this.matchesRef = Firebase.firestore.collection(Collections.MATCHES);
     }
 
     componentDidMount() {
 
-        this.playersRef.doc(this.userId).get()
-            .then((docSnapshot) => {
-                let {playerName} = docSnapshot.data()
-                if (this.state.playerName == "... ...") {
-                    this.setState({playerName, currentUserName: playerName})
-                } else {
-                    this.setState({currentUserName: playerName})
-                }
-            })
-            .catch(err => {
-                alert("No s'ha pogut carregar la informació de l'usuari", err);
-            });
+        Firebase.playersRef.doc(this.userId).get()
+        .then((docSnapshot) => {
+            let {playerName} = docSnapshot.data()
+            if (this.state.playerName == "... ...") {
+                this.setState({playerName, currentUserName: playerName})
+            } else {
+                this.setState({currentUserName: playerName})
+            }
+        })
+        .catch(err => {
+            alert("No s'ha pogut carregar la informació de l'usuari", err);
+        });
 
-        this.matchesRef.orderBy("date").get().then((querySnapshot) => {
+        Firebase.matchesRef.orderBy("date").get().then((querySnapshot) => {
             let playerMatches = [];
             querySnapshot.forEach((doc) => {
                 const {matchPlayers, matchResult, iGroup} = doc.data()
@@ -65,7 +64,7 @@ export default class Stats extends React.Component {
 
     componentDidUpdate(prevProps, prevState) {
         if (prevState.playerName !== this.state.playerName) {
-            this.unsub = this.matchesRef.orderBy("date").onSnapshot((querySnapshot) => {
+            this.unsub = Firebase.matchesRef.orderBy("date").onSnapshot((querySnapshot) => {
                 let playerMatches = [];
                 querySnapshot.forEach((doc) => {
                     const {matchPlayers, matchResult, iGroup} = doc.data()
@@ -116,8 +115,8 @@ export default class Stats extends React.Component {
         return (
             <ImageBackground style={{flex: 1}} source={require("../assets/images/bg.jpg")}>
                 <View style={styles.container}>
-                    <PlayerCard playerName={playerName} playersRef={this.playersRef}
-                                userRef={this.playersRef.doc(this.userId)}
+                    <PlayerCard playerName={playerName} playersRef={Firebase.playersRef}
+                                userRef={Firebase.playersRef.doc(this.userId)}
                                 currentUserName={this.state.currentUserName}/>
                     <ScrollView style={styles.statsScrollView}>
                         <Strike playerMatches={this.state.playerMatches}/>
@@ -144,15 +143,9 @@ export default class Stats extends React.Component {
                         <Text style={styles.changePWText}>Canvia la contrasenya</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.logOutButton} onPress={() => {
-                        this.props.navigation.navigate("Login");
-                        this.playersRef.doc(this.userId).update({
-                            expoToken: false
-                        });
-                        setTimeout(() => {
-                            Firebase.auth.signOut().then().catch((error) => {
-                                alert(error.message)
-                            })
-                        }, 1000)
+                        Firebase.auth.signOut().then().catch((error) => {
+                            alert(error.message)
+                        })
                     }}>
                         <Text style={styles.logOutText}>Tanca Sessió</Text>
                     </TouchableOpacity>

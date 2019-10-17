@@ -10,6 +10,7 @@ import MatchSearcher from "../components/MatchSearcher";
 import {AntDesign, Entypo, Ionicons, MaterialCommunityIcons, MaterialIcons} from '@expo/vector-icons';
 import EditRankingScreen from "../components/ranking/EditRankingScreen";
 import {ChatWorkMode, Constants} from "../constants/CONSTANTS";
+import { translate } from '../assets/translations/translationManager';
 
 
 const ClasifStack = createStackNavigator({
@@ -17,7 +18,6 @@ const ClasifStack = createStackNavigator({
     MatchModal: MatchModal,
     EditingScreen: EditingScreen,
 }, {
-    headerMode: "none",
     mode: "modal"
 });
 
@@ -59,16 +59,16 @@ export default createBottomTabNavigator({
         Stats: {
             screen: Stats,
             navigationOptions: {
-                tabBarLabel: "Estadístiques",
+                tabBarLabel: translate("tabs.stats"),
                 tabBarIcon: ({tintColor}) => (
                     <Ionicons name="ios-stats" size={20} color={tintColor}/>
                 )
             }
         },
-        Classificacions: {
+        Competition: {
             screen: ClasifStack,
             navigationOptions: {
-                tabBarLabel: "Competició",
+                tabBarLabel: translate("tabs.competition"),
                 tabBarIcon: ({tintColor}) => (
                     <MaterialCommunityIcons name="tournament" size={20} color={tintColor}/>
                 )
@@ -77,7 +77,7 @@ export default createBottomTabNavigator({
         GroupChat: {
             screen: chatsStack,
             navigationOptions: {
-                tabBarLabel: "Xat",
+                tabBarLabel: translate("tabs.chat"),
                 tabBarIcon: ({tintColor}) => (
                     <Entypo name="chat" size={20} color={tintColor}/>
                 )
@@ -87,7 +87,7 @@ export default createBottomTabNavigator({
             screen: MatchSearcher,
 
             navigationOptions: {
-                tabBarLabel: "Partits",
+                tabBarLabel: translate("tabs.matches"),
                 tabBarIcon: ({tintColor}) => (
                     <AntDesign name="database" size={20} color={tintColor}/>
                 )
@@ -96,7 +96,7 @@ export default createBottomTabNavigator({
         Ranking: {
             screen: EditRankingScreen,
             navigationOptions: {
-                tabBarLabel: "Ranking",
+                tabBarLabel: translate("tabs.ranking"),
                 tabBarIcon: ({tintColor}) => (
                     <MaterialIcons name="format-list-numbered" size={20} color={tintColor}/>
                 )
@@ -104,7 +104,7 @@ export default createBottomTabNavigator({
         }
     },
     {
-        initialRouteName: "Classificacions",
+        initialRouteName: "Competition",
         tabBarOptions: {
             activeTintColor: 'tomato',
             inactiveTintColor: 'gray',

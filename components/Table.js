@@ -1,56 +1,33 @@
 import React from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
-export default class Table extends React.Component {
-    getTotals = (myArray, chunk_size) => {
-        let totals = [];
-        if (Array.isArray(myArray)) {
-            let myNewArray = myArray.slice()
-            while (myNewArray.length) {
-                totals.push(myNewArray.splice(0, chunk_size).reduce((a, b) => {
-                    return a + b;
-                }));
-            }
-        }
-        return totals;
-    };
+import { getTotals, iLeaderLoser } from "../assets/utils/utilFuncs"
+import { translate } from '../assets/translations/translationManager';
+import { w } from '../api/Dimensions';
 
-    getLeaderLoser = (totals) => {
-        const maxTotals = Math.max.apply(Math, totals);
-        const minTotals = Math.min.apply(Math, totals);
-        let leader = totals.indexOf(maxTotals);
-        let loser = totals.lastIndexOf(minTotals);
-        const leaderLoser = [leader, loser];
-        return leaderLoser;
-    }
+export default class Table extends React.Component {
 
     renderTable = (group, iGroup, groupResults) => {
         //Número d'integrants del grup
         const nGroup = group.length;
+
         //Totals
-        let totals;
-        let leaderLoser;
-        if (groupResults) {
-            totals = this.getTotals(groupResults, nGroup);
-            leaderLoser = this.getLeaderLoser(totals)
-        } else {
-            totals = false;
-        }
+        let totals = getTotals(groupResults, nGroup);;
+        let leaderLoser = iLeaderLoser(totals) ;
+
         //Construïm taula
         let table = []
-        //Títol del grup
-        table.push(<View key={String(iGroup) + "header"} style={styles.tableTitle}><Text
-            style={styles.tableTitleText}>GRUP {iGroup}</Text></View>)
-        //Taula en sí
         for (let i = 0; i <= nGroup; i++) {
             let rowContent = [];
             let addRowStyles = null;
             let addStatusStyles = null;
             //Determinem si és la fila del que va primer o últim
             if (totals && leaderLoser[0] == i - 1) {
-                addStatusStyles = styles.leaderRow
+                addStatusStyles = styles.leaderRowText
+                addRowStyles = styles.leaderRow
             } else if (totals && leaderLoser[1] == i - 1) {
-                addStatusStyles = styles.lastPlayerRow
+                addStatusStyles = styles.lastPlayerRowText
+                addRowStyles = styles.lastPlayerRow
             }
             for (let j = 0; j < nGroup + 3; j++) {
                 let addStyles = "";
@@ -133,20 +110,38 @@ export default class Table extends React.Component {
 
     render() {
         const {group, iGroup, groupResults} = this.props
-        return (
-            <View style={styles.tableContainer}>
-                {this.renderTable(group, iGroup, groupResults)}
-            </View>
-        );
+
+        return <View style={styles.groupContainer}>
+                    <View style={styles.tableTitle}>
+                        <Text style={styles.tableTitleText}> {(translate("vocabulary.group") + " " + iGroup).toUpperCase()}</Text>
+                    </View>
+                    <View style={styles.tableContainer}>
+                        {this.renderTable(group, iGroup, groupResults)}
+                    </View>
+                </View>
+        
+            
     }
 }
 
 const styles = StyleSheet.create({
-    tableContainer: {
+
+    groupContainer: {
         alignItems: 'center',
         justifyContent: 'center',
         marginBottom: 50,
+        flex:1,
     },
+
+    tableContainer: {
+        borderRadius: 5,
+        borderColor: "black",
+        borderWidth: 1,
+        overflow: "hidden",
+        flex:1,
+        width: w(90)
+    },
+
     tableTitle: {
         justifyContent: "center",
         alignItems: "center",
@@ -160,15 +155,28 @@ const styles = StyleSheet.create({
         alignSelf: "stretch",
         flexDirection: 'row',
         height: 30,
+        flex: 1,
     },
     headerRow: {
         height: 25
     },
+
     leaderRow: {
+        backgroundColor: "#c6e17b",
+    },
+
+    leaderRowText: {
+        fontFamily: "bold",
         color: "#2d652b"
     },
+
     lastPlayerRow: {
-        color: "#ae1414"
+        backgroundColor: "#e1947b"
+    },
+
+    lastPlayerRowText: {
+        fontFamily: "bold",
+        color: "darkred"
     },
     tableCell: {
         alignSelf: 'stretch',
@@ -195,7 +203,7 @@ const styles = StyleSheet.create({
     },
     samePlayerCell: {
         flex: 2,
-        backgroundColor: "#ffffff59"
+        backgroundColor: "lightgray"
     },
     totalCell: {
         flex: 3,

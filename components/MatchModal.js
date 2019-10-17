@@ -97,7 +97,7 @@ export default class MatchModal extends React.Component {
     }
 
     renderAddResultButton = (addResultButton) => {
-        let button;
+        let button = null;
         const matchPlayersNames = [this.matchPlayers[0][1], this.matchPlayers[1][1]]
         if ((addResultButton && !this.state.resultSubmitted && matchPlayersNames.indexOf(this.playerName) >= 0) || this.state.admin) {
             let text = "Afegeix resultat";
@@ -110,11 +110,6 @@ export default class MatchModal extends React.Component {
             }
             button = (
                 <View style={{flexDirection: "row", marginBottom: 20}}>
-                    <TouchableOpacity style={styles.goBackArrowButton} onPress={() => {
-                        this.props.navigation.navigate("Classifications")
-                    }}>
-                        <Text style={styles.goBackArrowText}>Torna</Text>
-                    </TouchableOpacity>
                     <TouchableOpacity key="addResultButton" style={resultViewStyle} onPress={() => {
                         this.editResult(this.state.editableResult)
                     }}>
@@ -122,16 +117,8 @@ export default class MatchModal extends React.Component {
                     </TouchableOpacity>
                 </View>
             )
-        } else {
-            let text = "Torna a les classificacions";
-            button = (
-                <TouchableOpacity key="goBackButton" style={styles.goBackButton} onPress={() => {
-                    this.props.navigation.navigate("Classifications")
-                }}>
-                    <Text style={styles.goBackText}>{text}</Text>
-                </TouchableOpacity>
-            )
         }
+
         return button;
     }
 

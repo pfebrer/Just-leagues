@@ -16,9 +16,6 @@ export default class Login extends React.Component {
             //password: "Enric0123",
             spinner: false
         };
-        this.usersRef = async () => {
-            return Firebase.firestore.collection(Collections.PLAYERS);
-        };
         this.userInput = React.createRef();
         this.pWInput = React.createRef();
     }
@@ -76,8 +73,7 @@ export default class Login extends React.Component {
 
         let updates = {};
         updates["expoToken"] = token;
-        const usersRef = await this.usersRef()
-        usersRef.doc(uid).update(updates);
+        Firebase.playersRef.doc(uid).update(updates);
 
     };
 

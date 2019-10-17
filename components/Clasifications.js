@@ -1,86 +1,67 @@
 import React from 'react';
-import {ActivityIndicator, ImageBackground, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {ActivityIndicator, StyleSheet, Text, TouchableOpacity, TouchableHighlight, View} from 'react-native';
 import Groups from "./Groups"
 import Challenges from "./Challenges"
 import AddMatchModal from "./AddMatchModal"
 import AdminAddMatchModal from "./AdminAddMatchModal"
 import Firebase from "../api/Firebase"
 import {AntDesign} from '@expo/vector-icons';
-import {Collections, Documents} from "../constants/CONSTANTS";
+
+import {oppositePoints} from "../assets/utils/utilFuncs"
+import { Fab, Icon, Button } from 'native-base';
 
 
 export default class Clasifications extends React.Component {
     constructor(props) {
         super(props);
-        this.compView = (
-            <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
-                <Text>Carregant classificacions</Text>
-                <ActivityIndicator size="large"/>
-            </View>
-        );
+
         this.state = {
             ranking: [],
             userId: Firebase.auth.currentUser.uid,
-            compView: this.compView
+            addMatchModal: false
         };
-        this.playersRef = Firebase.firestore.collection(Collections.PLAYERS);
-        this.rankingsRef = Firebase.firestore.collection(Collections.RANKINGS).doc(Documents.RANKINGS.squashRanking);
-        this.matchesRef = Firebase.firestore.collection(Collections.MATCHES);
-        this.groupsRef = Firebase.firestore.collection(Collections.GROUPS);
-        this.playersRef.doc(this.state.userId).get().then((docSnapshot) => {
+
+    }
+
+    static navigationOptions = ({navigation}) => {
+        return {
+            headerLeft: <TouchableOpacity onPress={() => {navigation.getParam("toggleAddMatchModal")}}>
+                            <Icon name="ios-add" style={{ paddingLeft: 20 }} />
+                        </TouchableOpacity>, 
+            headerRight: <TouchableHighlight>
+                            <Icon name="ios-settings" style={{ paddingRight: 20 }} />
+                        </TouchableHighlight>
+        }
+    };
+
+    componentDidMount() {
+
+        //This is so that the header can detect the function and act on the component
+        this.props.navigation.setParams({ toggleAddMatchModal: this.toggleAddMatchModal });
+
+        Firebase.playersRef.doc(this.state.userId).get().then((docSnapshot) => {
             let {playerName, currentGroup, admin} = docSnapshot.data();
             this.setState({playerName, admin});
         }).catch(err => {
             alert("No s'ha pogut carregar la informació de l'usuari" + err);
         });
-    }
 
-    componentDidMount() {
-        this.typeOfComp = Firebase.firestore.collection(Collections.MONTH_INFO).doc(Documents.MONTH_INFO.typeOfComp).onSnapshot((docSnapshot) => {
+        this.typeOfComp = Firebase.typeOfCompRef.onSnapshot((docSnapshot) => {
             const typeOfComp = docSnapshot.data();
             this.setState({typeOfComp});
         });
-        this.ranking = this.rankingsRef.onSnapshot((docSnapshot) => {
+
+        this.ranking = Firebase.rankingsRef.onSnapshot((docSnapshot) => {
             debugger;
             const {ranking, wentUp, wentDown} = docSnapshot.data();
             this.setState({
                 ranking,
                 wentDown,
-                wentUp
+                wentUp,
             })
         });
 
     }
-
-    componentDidUpdate(previousProps, previousState) {
-        function areEqual(a1, a2) {
-            return JSON.stringify(a1) == JSON.stringify(a2);
-        }
-
-        if (this.state.typeOfComp && (!areEqual(previousState.typeOfComp, this.state.typeOfComp) || !areEqual(previousState.ranking, this.state.ranking) || !areEqual(previousState.groupsResults, this.state.groupsResults) || !areEqual(previousState.playerName, this.state.playerName))) {
-            let compView = null;
-            if (this.state.typeOfComp.Groups) {
-                compView = <Groups returnGroups={this.returnGroups} ranking={this.state.ranking}
-                                   handlePress={this.handlePress}/>;
-
-            } else if (this.state.typeOfComp.Challenges) {
-                compView =
-                    <Challenges ranking={this.state.ranking} wentUp={this.state.wentUp} wentDown={this.state.wentDown}
-                                playerName={this.state.playerName} handlePress={this.handlePress}/>;
-            } else if (this.state.typeOfComp.Knockou) {
-
-            }
-            let showAddButton = this.state.typeOfComp.Groups || this.state.admin;
-            let showEditButton = this.state.admin;
-
-            this.setState({
-                compView,
-                showAddButton,
-                showEditButton
-            });
-        }
-    }
-
 
     componentWillUnmount() {
         this.typeOfComp();
@@ -88,6 +69,7 @@ export default class Clasifications extends React.Component {
     };
 
     toggleAddMatchModal = () => {
+        console.warn("pressed")
         this.setState({
             addMatchModal: !this.state.addMatchModal
         });
@@ -101,7 +83,7 @@ export default class Clasifications extends React.Component {
         if (typeOfCell == "playerNameCell") {
             this.props.navigation.navigate("Stats", {playerName: content})
         } else if (typeOfCell == "pointsCell" || fromAddMatchModal) {
-            let oppPoints = this.oppositePoints(content)
+            let oppPoints = oppositePoints(content)
             let points = [content, oppPoints]
             this.props.navigation.navigate("MatchModal", {
                 matchPlayers,
@@ -130,6 +112,7 @@ export default class Clasifications extends React.Component {
         let toUpdate = {};
         let refToDoc;
         let ref;
+
         if (/^\d+$/.test(iGroup)) {
             let groupResults = this.state.groupsResults[iGroup - 1];
             for (let i = 0; i < 2; i++) {
@@ -138,7 +121,7 @@ export default class Clasifications extends React.Component {
             toUpdate = {
                 results: groupResults,
             };
-            ref = this.groupsRef;
+            ref = Firebase.groupsRef;
             refToDoc = String(iGroup)
         } else {
             toUpdate = {
@@ -150,7 +133,7 @@ export default class Clasifications extends React.Component {
         }
         ref.doc(refToDoc).set(toUpdate).then(
             //Registrar el partit a l'històric
-            this.matchesRef.doc(String(Date.now())).set({
+            Firebase.matchesRef.doc(String(Date.now())).set({
                 date: Date.now(),
                 iGroup,
                 matchPlayers,
@@ -163,65 +146,58 @@ export default class Clasifications extends React.Component {
         })
     };
 
-    oppositePoints = (points) => {
-        let pairedPoints = [[7, 1], [6, 2], [5, 3]];
-        let oppPoints = ""
-        pairedPoints.forEach((pair) => {
-            let ind = pair.indexOf(points);
-            if (ind >= 0) {
-                if (ind === 0) {
-                    oppPoints = pair[1];
-                } else {
-                    oppPoints = pair[0];
-                }
-            }
-        });
-        return oppPoints;
-    };
-
     returnGroups = (groupsResults) => {
         this.setState({
             groupsResults: groupsResults
         });
     };
 
+    renderAddMatchModal = (addMatchModal, isAdmin) => {
+
+        if (addMatchModal) {
+
+            return isAdmin ? (
+                <AdminAddMatchModal toggleAddMatchModal={this.toggleAddMatchModal} ranking={this.state.ranking}
+                                    playerName={this.state.playerName} groupsResults={this.state.groupsResults}
+                                    addResult={this.addResult}/>
+            ) : (
+                <AddMatchModal toggleAddMatchModal={this.toggleAddMatchModal} ranking={this.state.ranking}
+                               playerName={this.state.playerName} groupsResults={this.state.groupsResults}
+                               handlePlayerPress={this.handlePress}/>
+            )
+        } else {
+            return null;
+        }
+    }
+
+    renderCompView = (typeOfComp, ranking) => {
+
+        if (!typeOfComp) {
+            return null
+        } else if (typeOfComp.Groups) {
+            return <Groups returnGroups={this.returnGroups} ranking={this.state.ranking}
+                               handlePress={this.handlePress}/>;
+
+        } else if (typeOfComp.Challenges) {
+            return <Challenges ranking={this.state.ranking} wentUp={this.state.wentUp} wentDown={this.state.wentDown}
+                            playerName={this.state.playerName} handlePress={this.handlePress}/>;
+        }
+
+    }
+
     render() {
 
-        let addMatchModal = this.state.addMatchModal ? this.state.admin ? (
-            <AdminAddMatchModal toggleAddMatchModal={this.toggleAddMatchModal} ranking={this.state.ranking}
-                                playerName={this.state.playerName} groupsResults={this.state.groupsResults}
-                                addResult={this.addResult}/>
-        ) : (
-            <AddMatchModal toggleAddMatchModal={this.toggleAddMatchModal} ranking={this.state.ranking}
-                           playerName={this.state.playerName} groupsResults={this.state.groupsResults}
-                           handlePlayerPress={this.handlePress}/>
-        ) : null;
-        let addMatchButton = this.state.showAddButton ? (
-            <TouchableOpacity style={styles.addMatchButton} onPress={this.toggleAddMatchModal}>
-                <Text style={styles.addMatchText}>+</Text>
-            </TouchableOpacity>
-        ) : null;
-        let editCompButton = this.state.showEditButton ? (
-            <TouchableOpacity style={styles.editCompButton} onPress={this.toggleEditingScreen}>
-                <AntDesign name="setting" size={25} color="black"/>
-            </TouchableOpacity>
-        ) : null;
-
-        return (
-            <ImageBackground style={{flex: 1}} source={require("../assets/images/bg.jpg")}>
-                <View style={{flex: 1, backgroundColor: "#ffec8b33"}}>
-                    {this.state.compView}
-                    {addMatchButton}
-                    {addMatchModal}
-                    {editCompButton}
+        //{this.renderAddMatchButton(this.state.showAddButton)}
+        return <View style={{flex: 1, backgroundColor: "white"}}>
+                {this.renderCompView(this.state.typeOfComp)}
+                {this.renderAddMatchModal(this.state.addMatchModal, this.state.admin)}
                 </View>
-            </ImageBackground>
-        );
     }
 
 }
 
 const styles = StyleSheet.create({
+
     addMatchButton: {
         position: "absolute",
         left: 0,
@@ -238,6 +214,7 @@ const styles = StyleSheet.create({
         backgroundColor: "green",
         borderColor: "#00ff0033"
     },
+
     editCompButton: {
         position: "absolute",
         right: 0,
@@ -254,6 +231,7 @@ const styles = StyleSheet.create({
         backgroundColor: "gray",
         borderColor: "#00333333"
     },
+
     addMatchText: {
         color: "white",
         fontSize: 35

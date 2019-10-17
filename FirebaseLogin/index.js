@@ -56,12 +56,12 @@ export default class FirebaseLogin extends Component {
 
     let updates = {};
     updates["expoToken"] = token;
-    Firebase.usersRef.doc(uid).update(updates);
+    Firebase.playersRef.doc(uid).update(updates);
 
   };
 
   dontLogin = () => {
-    this.props.navigation.navigate('Main');
+    this.props.navigation.navigate('App');
   };
 
   render() {

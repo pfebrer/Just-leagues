@@ -3,7 +3,7 @@ import 'firebase/firestore';
 import 'firebase/functions';
 
 import { Toast } from 'native-base'
-import {Collections, Constants} from "../constants/CONSTANTS";
+import {Collections, Constants, Documents} from "../constants/CONSTANTS";
 
 class Firebase {
 
@@ -125,8 +125,25 @@ class Firebase {
     })
   };
 
-  get usersRef() {
+  //DATABASE REFERENCES (Only place where they should be declared in the whole app)
+  get playersRef() {
     return this.firestore.collection(Collections.PLAYERS)
+  }
+
+  get rankingsRef() {
+    return this.firestore.collection(Collections.RANKINGS).doc(Documents.RANKINGS.squashRanking);
+  }
+
+  get matchesRef() {
+    return this.firestore.collection(Collections.MATCHES);
+  }
+
+  get groupsRef() {
+    return this.firestore.collection(Collections.GROUPS);
+  }
+
+  get typeOfCompRef() {
+    return this.firestore.collection(Collections.MONTH_INFO).doc(Documents.MONTH_INFO.typeOfComp)
   }
 }
 

@@ -13,7 +13,7 @@ export default class Continue extends Component {
         style={styles.button}>
         {this.props.isCreating
         ? <ActivityIndicator size="large" style={styles.spinner} color='white' />
-        : <Text style={styles.text}>{translate("continue")}</Text>}
+        : <Text style={styles.text}>{translate("auth.continue")}</Text>}
       </TouchableOpacity>
     );
   }
