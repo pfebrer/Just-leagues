@@ -17,7 +17,7 @@ export default class MatchModal extends React.Component {
         this.playerName = props.navigation.getParam('playerName', null);
         this.matchPlayers = props.navigation.getParam('matchPlayers', []);
 
-        Firebase.firestore.collection(Collections.PLAYERS).doc(firebase.auth().currentUser.uid).get().then((docSnapshot) => {
+        Firebase.firestore.collection(Collections.PLAYERS).doc(Firebase.auth.currentUser.uid).get().then((docSnapshot) => {
             let {playerName, currentGroup, admin} = docSnapshot.data();
             this.setState({playerName, admin});
         }).catch(err => {

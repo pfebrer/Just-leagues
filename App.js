@@ -51,7 +51,7 @@ async function loadResourcesAsync() {
       'lucidaGrande': require('./assets/fonts/LucidaGrande.ttf'),
       'roboto': require('./assets/fonts/Roboto-Bold.ttf'),
       'bold': require('./assets/fonts/Roboto-Bold.ttf')
-    }),
+    })
   ]);
 }
 

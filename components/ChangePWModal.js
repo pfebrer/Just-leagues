@@ -22,7 +22,7 @@ export default class ChangePWModal extends Component {
         return mistake;
     }
     reauthenticate = (currentPassword) => {
-        var user = firebase.auth().currentUser;
+        var user = Firebase.auth.currentUser;
         var cred = firebase.auth.EmailAuthProvider.credential(
             user.email, currentPassword);
         return user.reauthenticateAndRetrieveDataWithCredential(cred);
@@ -36,7 +36,7 @@ export default class ChangePWModal extends Component {
             let currentPassword = this.state.oldPW;
             let newPassword = this.state.newPW;
             this.reauthenticate(currentPassword).then(() => {
-                var user = firebase.auth().currentUser;
+                var user = Firebase.auth.currentUser;
                 user.updatePassword(newPassword).then(() => {
                 alert("Contrasenya actualitzada :)");
                 this.props.hidePWModal()

@@ -3,7 +3,7 @@ import 'firebase/firestore';
 import 'firebase/functions';
 
 import { Toast } from 'native-base'
-import { Collections } from "../constants/CONSTANTS";
+import {Collections, Constants} from "../constants/CONSTANTS";
 
 class Firebase {
 
@@ -27,8 +27,10 @@ class Firebase {
 
   //AUTHENTICATION STUFF
   userLogin = (email, password) => {
+    let me = this;
+    email += "@" + Constants.dbPrefix.replace("_", ".") + "nickspa.cat";
     return new Promise(resolve => {
-      firebase.auth().signInWithEmailAndPassword(email, password)
+      me.auth.signInWithEmailAndPassword(email, password)
         .catch(error => {
           switch (error.code) {
             case 'auth/invalid-email':
@@ -60,8 +62,9 @@ class Firebase {
   };
 
   createFirebaseAccount = (name, email, password) => {
+    let me = this;
     return new Promise(resolve => {
-      firebase.auth().createUserWithEmailAndPassword(email, password).catch(error => {
+      me.auth.createUserWithEmailAndPassword(email, password).catch(error => {
         switch (error.code) {
           case 'auth/email-already-in-use':
             Toast.show({
@@ -90,7 +93,7 @@ class Firebase {
         resolve(false);
       }).then(info => {
         if (info) {
-          firebase.auth().currentUser.updateProfile({
+          Firebase.auth.currentUser.updateProfile({
             displayName: name
           });
           resolve(true);
@@ -100,8 +103,9 @@ class Firebase {
   };
 
   sendEmailWithPassword = (email) => {
+    let me = this;
     return new Promise(resolve => {
-      firebase.auth().sendPasswordResetEmail(email)
+      me.auth.sendPasswordResetEmail(email)
         .then(() => {
           console.warn('Email with new password has been sent');
           resolve(true);
@@ -129,3 +133,4 @@ class Firebase {
 Firebase.shared = new Firebase();
 
 export default Firebase.shared;
+

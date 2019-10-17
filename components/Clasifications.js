@@ -8,6 +8,7 @@ import Firebase from "../api/Firebase"
 import {AntDesign} from '@expo/vector-icons';
 import {Collections, Documents} from "../constants/CONSTANTS";
 
+
 export default class Clasifications extends React.Component {
     constructor(props) {
         super(props);

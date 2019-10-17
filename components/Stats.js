@@ -20,7 +20,7 @@ export default class Stats extends React.Component {
             playerMatches: []
         }
         this.playersRef = Firebase.firestore.collection(Collections.PLAYERS);
-        this.userId = firebase.auth().currentUser.uid;
+        this.userId = Firebase.auth.currentUser.uid;
         this.matchesRef = Firebase.firestore.collection(Collections.MATCHES);
     }
 
@@ -149,7 +149,7 @@ export default class Stats extends React.Component {
                             expoToken: false
                         });
                         setTimeout(() => {
-                            firebase.auth().signOut().then().catch((error) => {
+                            Firebase.auth.signOut().then().catch((error) => {
                                 alert(error.message)
                             })
                         }, 1000)

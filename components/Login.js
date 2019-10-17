@@ -1,7 +1,10 @@
 import React from 'react';
 import {Button, ImageBackground, KeyboardAvoidingView, StyleSheet, Text, TextInput, View} from 'react-native';
-import {firebase, firestore} from "../Firebase";
-import {Notifications, Permissions} from "expo";
+//import {firebase, firestore} from "../Firebase";
+import Firebase from "../api/Firebase"
+import {Notifications} from "expo";
+import * as Permissions from 'expo-permissions';
+
 import Spinner from 'react-native-loading-spinner-overlay';
 import {Collections, Constants} from "../constants/CONSTANTS";
 
@@ -14,7 +17,7 @@ export default class Login extends React.Component {
             spinner: false
         };
         this.usersRef = async () => {
-            return firestore.collection(Collections.PLAYERS);
+            return Firebase.firestore.collection(Collections.PLAYERS);
         };
         this.userInput = React.createRef();
         this.pWInput = React.createRef();
@@ -24,11 +27,10 @@ export default class Login extends React.Component {
         this.setState({spinner: true});
         let userName = this.state.userName + "@" + Constants.dbPrefix.replace("_", ".") + "nickspa.cat";
         console.log("userName: " + userName);
-        firebase
-            .auth()
+        Firebase.auth
             .signInWithEmailAndPassword(userName, this.state.password)
             .then(() => {
-                let userId = firebase.auth().currentUser.uid;
+                let userId = Firebase.auth.currentUser.uid;
                 //this.setState({userId})
                 return this.registerForPushNotificationsAsync(userId);
             })/*.then(() => {
