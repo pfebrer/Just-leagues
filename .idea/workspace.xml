@@ -2,17 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b19b149d-dc9f-4ebf-81ec-bfb0d04d38f6" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.watchmanconfig" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/App.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/api/Firebase.js" beforeDir="false" afterPath="$PROJECT_DIR$/api/Firebase.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/ChangePWModal.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/ChangePWModal.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/Clasifications.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Clasifications.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/Login.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Login.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/components/MatchModal.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/MatchModal.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/components/Stats.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Stats.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/components/Table.js" beforeDir="false" afterPath="$PROJECT_DIR$/components/Table.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -77,8 +70,16 @@
       <option name="presentableId" value="Default" />
       <updated>1571316589735</updated>
       <workItem from="1571316629403" duration="5500000" />
-      <workItem from="1571323303309" duration="1134000" />
+      <workItem from="1571323303309" duration="2741000" />
     </task>
+    <task id="LOCAL-00001" summary="Fix Firebase dependencies">
+      <created>1571324620943</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1571324620943</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -137,6 +138,11 @@
       </set>
     </option>
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Fix Firebase dependencies" />
+    <MESSAGE value="Why results are not SET" />
+    <option name="LAST_COMMIT_MESSAGE" value="Why results are not SET" />
+  </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
@@ -148,11 +154,6 @@
         <line-breakpoint enabled="true" type="javascript">
           <url>file://$PROJECT_DIR$/components/MatchModal.js</url>
           <option name="timeStamp" value="2" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="javascript">
-          <url>file://$PROJECT_DIR$/components/Clasifications.js</url>
-          <line>100</line>
-          <option name="timeStamp" value="3" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

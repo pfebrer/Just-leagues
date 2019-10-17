@@ -199,5 +199,5 @@ const styles = StyleSheet.create({
     },
     totalCell: {
         flex: 3,
-    },
+    }
 });
