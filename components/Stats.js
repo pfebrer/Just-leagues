@@ -25,7 +25,7 @@ export default class Stats extends React.Component {
 
     componentDidMount() {
 
-        Firebase.playersRef.doc(this.userId).get()
+        Firebase.userRef(this.userId).get()
         .then((docSnapshot) => {
             let {playerName} = docSnapshot.data()
             if (this.state.playerName == "... ...") {

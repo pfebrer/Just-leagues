@@ -1,10 +1,10 @@
 import React from 'react';
 import {ActivityIndicator, ScrollView, StyleSheet, Text, View} from 'react-native';
 import Table from "./Table"
-import Firebase from "../api/Firebase"
-import {Collections} from "../constants/CONSTANTS";
-import { translate } from '../assets/translations/translationManager';
-import SETTINGS from '../constants/Settings';
+import Firebase from "../../api/Firebase"
+import {Collections} from "../../constants/CONSTANTS";
+import { translate } from '../../assets/translations/translationManager';
+import SETTINGS from '../../constants/Settings';
 
 export default class Groups extends React.Component {
 
@@ -49,7 +49,6 @@ export default class Groups extends React.Component {
 
     }
     
-
     render() {
 
         if (this.state.groupsResults == 0) {

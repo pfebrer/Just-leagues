@@ -1,22 +1,22 @@
 import React from 'react';
-import {ActivityIndicator, StyleSheet, Text, TouchableOpacity, TouchableHighlight, View} from 'react-native';
-import Groups from "./Groups"
+import { StyleSheet, TouchableOpacity, TouchableHighlight, View} from 'react-native';
+import Groups from "./groups/Groups"
 import Challenges from "./Challenges"
 import AddMatchModal from "./AddMatchModal"
 import AdminAddMatchModal from "./AdminAddMatchModal"
 import Firebase from "../api/Firebase"
-import {AntDesign} from '@expo/vector-icons';
 
 import {oppositePoints} from "../assets/utils/utilFuncs"
-import { Fab, Icon, Button } from 'native-base';
+import { Icon} from 'native-base';
 
 
 export default class Clasifications extends React.Component {
+
     constructor(props) {
         super(props);
 
         this.state = {
-            ranking: [],
+            //ranking: [],
             userId: Firebase.auth.currentUser.uid,
             addMatchModal: false
         };
@@ -36,10 +36,7 @@ export default class Clasifications extends React.Component {
 
     componentDidMount() {
 
-        //This is so that the header can detect the function and act on the component
-        this.props.navigation.setParams({ toggleAddMatchModal: this.toggleAddMatchModal });
-
-        Firebase.playersRef.doc(this.state.userId).get().then((docSnapshot) => {
+        Firebase.userRef(this.state.userId).get().then((docSnapshot) => {
             let {playerName, currentGroup, admin} = docSnapshot.data();
             this.setState({playerName, admin});
         }).catch(err => {
@@ -51,7 +48,7 @@ export default class Clasifications extends React.Component {
             this.setState({typeOfComp});
         });
 
-        this.ranking = Firebase.rankingsRef.onSnapshot((docSnapshot) => {
+        /*this.ranking = Firebase.rankingsRef.onSnapshot((docSnapshot) => {
             debugger;
             const {ranking, wentUp, wentDown} = docSnapshot.data();
             this.setState({
@@ -59,7 +56,7 @@ export default class Clasifications extends React.Component {
                 wentDown,
                 wentUp,
             })
-        });
+        });*/
 
     }
 
@@ -175,7 +172,7 @@ export default class Clasifications extends React.Component {
         if (!typeOfComp) {
             return null
         } else if (typeOfComp.Groups) {
-            return <Groups returnGroups={this.returnGroups} ranking={this.state.ranking}
+            return <Groups returnGroups={this.returnGroups}
                                handlePress={this.handlePress}/>;
 
         } else if (typeOfComp.Challenges) {

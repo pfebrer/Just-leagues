@@ -23,6 +23,7 @@ class Firebase {
     this.functions = this.app.functions();
     this.auth = this.app.auth();
 
+    console.log(Collections.CHALLENGE)
   }
 
   //AUTHENTICATION STUFF
@@ -144,6 +145,10 @@ class Firebase {
 
   get typeOfCompRef() {
     return this.firestore.collection(Collections.MONTH_INFO).doc(Documents.MONTH_INFO.typeOfComp)
+  }
+
+  userRef = (uid) => {
+    return this.playersRef.doc(uid)
   }
 }
 

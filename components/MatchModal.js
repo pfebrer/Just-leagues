@@ -5,6 +5,9 @@ import MatchHistory from "./MatchHistory"
 import Firebase from "../api/Firebase"
 import {Collections} from "../constants/CONSTANTS";
 
+import {pointsToSets, setsToPoints, resultIsCorrect} from "../assets/utils/utilFuncs"
+import { translate } from '../assets/translations/translationManager';
+
 export default class MatchModal extends React.Component {
 
     constructor(props) {
@@ -17,7 +20,7 @@ export default class MatchModal extends React.Component {
         this.playerName = props.navigation.getParam('playerName', null);
         this.matchPlayers = props.navigation.getParam('matchPlayers', []);
 
-        Firebase.firestore.collection(Collections.PLAYERS).doc(Firebase.auth.currentUser.uid).get().then((docSnapshot) => {
+        Firebase.userRef(Firebase.auth.currentUser.uid).get().then((docSnapshot) => {
             let {playerName, currentGroup, admin} = docSnapshot.data();
             this.setState({playerName, admin});
         }).catch(err => {
@@ -25,49 +28,8 @@ export default class MatchModal extends React.Component {
         });
     }
 
-    pointsToSets = (points) => {
-        let sets = null;
-        if ([7, 6, 5].indexOf(points) >= 0) {
-            sets = 3;
-        } else if (points == 3) {
-            sets = 2;
-        } else if (points == 2) {
-            sets = 1;
-        } else if (points == 1) {
-            sets = 0;
-        }
-        return sets;
-    }
-
-    setsToPoints = (setsInp) => {
-        let sets = JSON.stringify(setsInp)
-        let points;
-        if (sets === JSON.stringify([3, 0])) {
-            points = [7, 1];
-        } else if (sets === JSON.stringify([3, 1])) {
-            points = [6, 2];
-        } else if (sets === JSON.stringify([3, 2])) {
-            points = [5, 3];
-        } else if (sets === JSON.stringify([2, 3])) {
-            points = [3, 5];
-        } else if (sets === JSON.stringify([1, 3])) {
-            points = [2, 6];
-        } else if (sets === JSON.stringify([0, 3])) {
-            points = [1, 7];
-        }
-        return points;
-    }
-
     getEditedResults = ({pKey, result}) => {
         this.editedResults[pKey] = result
-    }
-
-    resultIsCorrect = (result) => {
-        let isCorrect = false;
-        if ((result[0] == 3 || result[1] == 3) && !(result[0] == 3 && result[1] == 3)) {
-            isCorrect = true;
-        }
-        return isCorrect;
     }
 
     editResult = (editableResult) => {
@@ -78,8 +40,8 @@ export default class MatchModal extends React.Component {
             const resultsPositions = this.props.navigation.getParam('resultsPositions', []);
             const matchPlayers = [this.matchPlayers[0][1], this.matchPlayers[1][1]]
             const editedResults = this.editedResults
-            if (this.resultIsCorrect(editedResults)) {
-                const resultInPoints = this.setsToPoints(editedResults)
+            if (resultIsCorrect(editedResults)) {
+                const resultInPoints = setsToPoints(editedResults)
                 addResult({iGroup, resultsPositions, resultInPoints, resultInSets: editedResults, matchPlayers})
                 this.setState({
                     resultSubmitted: true,
@@ -87,7 +49,7 @@ export default class MatchModal extends React.Component {
                 });
                 this.props.navigation.navigate("Classifications")
             } else {
-                alert("No ens enganyis, aquest resultat és impossible :(")
+                alert(translate("errors.impossible result"))
             }
 
         }
@@ -129,7 +91,7 @@ export default class MatchModal extends React.Component {
         const points = navigation.getParam('points', []);
         const fromChallenges = navigation.getParam('fromChallenges', false);
         const sets = fromChallenges ? points : points.map((point) => {
-            return this.pointsToSets(point)
+            return pointsToSets(point)
         })
         let addResultButton = false;
 

@@ -58,17 +58,15 @@ export default class Loading extends React.Component {
 
 
     render() {
-        return (
-            <ImageBackground style={{flex: 1}} source={this.status.bg}>
-                <View style={styles.container}>
+        return <View style={styles.container}>
                     <Text style={styles.userCheck}>{this.status.msg}</Text>
                     <ActivityIndicator size="large" color="#FFFFFF"/>
                     <StatusBar barStyle="default"/>
                 </View>
-            </ImageBackground>
-        )
+        
     }
 }
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,

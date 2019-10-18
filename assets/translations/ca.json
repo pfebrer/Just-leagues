@@ -29,6 +29,10 @@
         "loading classifications": "Carregant classificacions"
     },
     "vocabulary": {
-        "group": "Grup"
+        "group": "Grup",
+        "total": "Total"
+    },
+    "errors": {
+        "impossible result":"No ens enganyis, aquest resultat és impossible :("
     }
 }

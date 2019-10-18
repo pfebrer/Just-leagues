@@ -1,9 +1,9 @@
 import React from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
-import { getTotals, iLeaderLoser } from "../assets/utils/utilFuncs"
-import { translate } from '../assets/translations/translationManager';
-import { w } from '../api/Dimensions';
+import { getTotals, iLeaderLoser } from "../../assets/utils/utilFuncs"
+import { translate } from '../../assets/translations/translationManager';
+import { w } from '../../api/Dimensions';
 
 export default class Table extends React.Component {
 
@@ -50,7 +50,7 @@ export default class Table extends React.Component {
                         typeOfCell = "playerNameCell"
                         toSendOnPress = {content, typeOfCell, iGroup}
                     } else {
-                        content = "Nom"
+                        content = translate("auth.name")
                     }
                 } else if (j > 1 && j < nGroup + 2) { //Columnes de les puntuacions
 
@@ -76,7 +76,7 @@ export default class Table extends React.Component {
                 } else if (j == nGroup + 2) {
                     addStyles = styles.totalCell;
                     if (i == 0) {
-                        content = "Total"
+                        content = translate("vocabulary.total")
                     } else {
                         content = totals[i - 1] || ""
                     }

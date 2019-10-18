@@ -6,6 +6,7 @@ const Constants = {
     dbPrefix: "",
     paddingTopHeader: 20,
 };
+
 const Collections = {
     RANKINGS: (Constants.dbPrefix && Constants.dbPrefix) + "rankings",
     GROUPS: (Constants.dbPrefix && Constants.dbPrefix) + "groups",
