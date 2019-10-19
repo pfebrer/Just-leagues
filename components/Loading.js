@@ -38,7 +38,17 @@ export default class Loading extends React.Component {
         const unsub = Firebase.auth.onAuthStateChanged(user => {
             //If there is a logged in user, go to the main page
             if (user) {
-              this.props.navigation.navigate('App');
+
+                Firebase.userRef(user.uid).get()
+                .then((docSnapshot) => {
+                
+                    Firebase.userData = { id: user.uid, ...docSnapshot.data()}
+
+                    this.props.navigation.navigate('App');
+
+                })
+                .catch((err)=> {this.props.navigation.navigate('App');})
+              
                 /*this.usersRef.doc(user.uid).get().then((docSnapshot) => {
                     if(docSnapshot.exists) {
                         this.props.navigation.navigate('App');

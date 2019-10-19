@@ -23,7 +23,7 @@ export default class Stats extends React.Component {
 
     componentDidMount() {
 
-        Firebase.userRef(this.userId).get()
+        /*Firebase.userRef(this.userId).get()
         .then((docSnapshot) => {
             let {playerName} = docSnapshot.data()
             if (this.state.playerName == "... ...") {
@@ -57,11 +57,11 @@ export default class Stats extends React.Component {
             this.setState({playerMatches: playerMatches.reverse()});
         }).catch(err => {
             alert("Hi ha problemes per carregar les estadístiques\nError: " + err.message)
-        })
+        })*/
     }
 
     componentDidUpdate(prevProps, prevState) {
-        if (prevState.playerName !== this.state.playerName) {
+        /*if (prevState.playerName !== this.state.playerName) {
             this.unsub = Firebase.matchesRef.orderBy("date").onSnapshot((querySnapshot) => {
                 let playerMatches = [];
                 querySnapshot.forEach((doc) => {
@@ -82,7 +82,7 @@ export default class Stats extends React.Component {
                 });
                 this.setState({playerMatches: playerMatches.reverse()});
             })
-        }
+        }*/
     }
 
     componentWillUnmount() {
@@ -114,7 +114,7 @@ export default class Stats extends React.Component {
             <ImageBackground style={{flex: 1}} source={require("../assets/images/bg.jpg")}>
                 <View style={styles.container}>
                     <PlayerCard playerName={playerName} playersRef={Firebase.playersRef}
-                                userRef={Firebase.playersRef.doc(this.userId)}
+                                //userRef={Firebase.playersRef.doc(this.userId)}
                                 currentUserName={this.state.currentUserName}/>
                     <ScrollView style={styles.statsScrollView}>
                         <Strike playerMatches={this.state.playerMatches}/>

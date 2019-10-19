@@ -26,8 +26,9 @@ export default class FirebaseLogin extends Component {
   };
 
   userSuccessfullyLoggedIn = (user) => {
+
     this.registerForPushNotificationsAsync(user.user.uid)
-    //this.props.login(user);
+
   };
 
   registerForPushNotificationsAsync = async (uid) => {
@@ -56,7 +57,7 @@ export default class FirebaseLogin extends Component {
 
     let updates = {};
     updates["expoToken"] = token;
-    Firebase.playersRef.doc(uid).update(updates);
+    Firebase.userRef(uid).update(updates);
 
   };
 

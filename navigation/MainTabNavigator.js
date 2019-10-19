@@ -2,7 +2,7 @@ import React from 'react';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator, createMaterialTopTabNavigator } from 'react-navigation-tabs';
 import Stats from "../screens/StatsScreen";
-import Classifications from "../components/Clasifications";
+import Classifications from "../screens/CompetitionScreen";
 import MatchModal from "../components/MatchModal";
 import EditingScreen from "../screens/EditingScreen";
 import GroupChat from "../components/GroupChat";

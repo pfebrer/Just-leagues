@@ -23,13 +23,12 @@ class Firebase {
     this.functions = this.app.functions();
     this.auth = this.app.auth();
 
-    console.log(Collections.CHALLENGE)
   }
 
   //AUTHENTICATION STUFF
   userLogin = (email, password) => {
     let me = this;
-    email += "@" + Constants.dbPrefix.replace("_", ".") + "nickspa.cat";
+    email += "@" + "nickspa.cat"; //+ Constants.dbPrefix.replace("_", ".") +
     return new Promise(resolve => {
       me.auth.signInWithEmailAndPassword(email, password)
         .catch(error => {

@@ -1,9 +1,9 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity, TouchableHighlight, View} from 'react-native';
-import Groups from "./groups/Groups"
-import Challenges from "./Challenges"
-import AddMatchModal from "./AddMatchModal"
-import AdminAddMatchModal from "./AdminAddMatchModal"
+import Groups from "../components/groups/Groups"
+import Challenges from "../components/Challenges"
+import AddMatchModal from "../components/AddMatchModal"
+import AdminAddMatchModal from "../components/AdminAddMatchModal"
 import Firebase from "../api/Firebase"
 
 import {oppositePoints} from "../assets/utils/utilFuncs"
@@ -36,6 +36,8 @@ export default class Clasifications extends React.Component {
     };
 
     componentDidMount() {
+
+        console.warn(Firebase.userData)
 
         /*Firebase.userRef(this.state.userId).get().then((docSnapshot) => {
             let {playerName, currentGroup, admin} = docSnapshot.data();
