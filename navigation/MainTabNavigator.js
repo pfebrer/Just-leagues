@@ -1,12 +1,12 @@
 import React from 'react';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator, createMaterialTopTabNavigator } from 'react-navigation-tabs';
-import Stats from "../components/Stats";
+import Stats from "../screens/StatsScreen";
 import Classifications from "../components/Clasifications";
 import MatchModal from "../components/MatchModal";
-import EditingScreen from "../components/EditingScreen";
+import EditingScreen from "../screens/EditingScreen";
 import GroupChat from "../components/GroupChat";
-import MatchSearcher from "../components/MatchSearcher";
+import MatchSearcher from "../screens/MatchSearcherScreen";
 import {AntDesign, Entypo, Ionicons, MaterialCommunityIcons, MaterialIcons} from '@expo/vector-icons';
 import EditRankingScreen from "../components/ranking/EditRankingScreen";
 import {ChatWorkMode, Constants} from "../constants/CONSTANTS";

@@ -3,11 +3,13 @@
 const Constants = {
     GROUP_SIZE: 4,
     UNTYING_CRITERIA: ["directMatch","position"],
-    dbPrefix: "",
+    dbPrefix: "V3test_",
     paddingTopHeader: 20,
 };
 
 const Collections = {
+    GYMS: (Constants.dbPrefix && Constants.dbPrefix) + "gyms",
+    USERS: (Constants.dbPrefix && Constants.dbPrefix) + "users",
     RANKINGS: (Constants.dbPrefix && Constants.dbPrefix) + "rankings",
     GROUPS: (Constants.dbPrefix && Constants.dbPrefix) + "groups",
     PLAYERS: (Constants.dbPrefix && Constants.dbPrefix) + "players",
@@ -16,6 +18,11 @@ const Collections = {
     MONTH_INFO: (Constants.dbPrefix && Constants.dbPrefix) + "monthInfo",
     CHALLENGE: (Constants.dbPrefix && Constants.dbPrefix) + "Reptes"
 };
+
+const Subcollections = {
+    SPORTS: "sports",
+    GROUPS: "groups"
+}
 
 const Documents = {
     RANKINGS: {
@@ -43,4 +50,4 @@ const ChatWorkMode = {
 };
 
 //USED IN FIREBASE FUNCTIONS, REMEMBER TO KEEP IN SYNC
-export {Constants, Collections, Documents, ChatWorkMode};
+export {Constants, Collections, Subcollections, Documents, ChatWorkMode};

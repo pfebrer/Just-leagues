@@ -18,7 +18,8 @@ export default class Clasifications extends React.Component {
         this.state = {
             //ranking: [],
             userId: Firebase.auth.currentUser.uid,
-            addMatchModal: false
+            addMatchModal: false,
+            typeOfComp: "groups"
         };
 
     }
@@ -36,17 +37,17 @@ export default class Clasifications extends React.Component {
 
     componentDidMount() {
 
-        Firebase.userRef(this.state.userId).get().then((docSnapshot) => {
+        /*Firebase.userRef(this.state.userId).get().then((docSnapshot) => {
             let {playerName, currentGroup, admin} = docSnapshot.data();
             this.setState({playerName, admin});
         }).catch(err => {
             alert("No s'ha pogut carregar la informació de l'usuari" + err);
-        });
+        });*/
 
-        this.typeOfComp = Firebase.typeOfCompRef.onSnapshot((docSnapshot) => {
+        /*this.typeOfComp = Firebase.typeOfCompRef.onSnapshot((docSnapshot) => {
             const typeOfComp = docSnapshot.data();
             this.setState({typeOfComp});
-        });
+        });*/
 
         /*this.ranking = Firebase.rankingsRef.onSnapshot((docSnapshot) => {
             debugger;
@@ -66,7 +67,6 @@ export default class Clasifications extends React.Component {
     };
 
     toggleAddMatchModal = () => {
-        console.warn("pressed")
         this.setState({
             addMatchModal: !this.state.addMatchModal
         });
@@ -171,11 +171,11 @@ export default class Clasifications extends React.Component {
 
         if (!typeOfComp) {
             return null
-        } else if (typeOfComp.Groups) {
+        } else if (typeOfComp == "groups") {
             return <Groups returnGroups={this.returnGroups}
                                handlePress={this.handlePress}/>;
 
-        } else if (typeOfComp.Challenges) {
+        } else if (typeOfComp == "chalenges") {
             return <Challenges ranking={this.state.ranking} wentUp={this.state.wentUp} wentDown={this.state.wentDown}
                             playerName={this.state.playerName} handlePress={this.handlePress}/>;
         }

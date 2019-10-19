@@ -1,7 +1,7 @@
 import React from 'react';
 import {Button, StyleSheet, Text, View} from 'react-native';
 import Firebase from "../api/Firebase";
-import EndingPeriodModal from "./editingComponents/EndingPeriodModal";
+import EndingPeriodModal from "../components/editing/EndingPeriodModal";
 import Spinner from 'react-native-loading-spinner-overlay';
 import {Constants} from "../constants/CONSTANTS";
 import { ExpoConstants } from 'expo';

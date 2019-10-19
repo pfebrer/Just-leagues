@@ -11,26 +11,27 @@ export default class Groups extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            groupsResults: false,
-            renderedGroups: []
+            groups: [],
+            gymID: "D5xZ9D0c0U5FHWdV1qXD",
+            sportID: "squash"
         };
 
     }
 
     componentDidMount() {
 
-        this.groupsSub = Firebase.groupsRef.onSnapshot((querySnapshot) => {
+        this.groupsSub = Firebase.groupsRef(this.state.gymID,this.state.sportID).onSnapshot((querySnapshot) => {
             
-            let groupsResults = querySnapshot.docs.map((group) => {
-                if (/^\d+$/.test(group.id)) {
-                    let {results} = group.data()
-                    return results
-                }
+            let groups = querySnapshot.docs.map((group) => {
+                let {results} = group.data()
+                return {group: Number(group.id), results: results}
             });
 
-            this.setState({groupsResults})
+            groups = groups.sort((a,b) => a.group - b.group)
 
-            this.props.returnGroups(groupsResults)
+            this.setState({groups})
+
+            this.props.returnGroups(groups)
         })
 
     }
@@ -40,12 +41,17 @@ export default class Groups extends React.Component {
         this.groupsSub();
     }
 
-    renderGroups = (groupsResults) => {
+    renderGroups = (groups) => {
 
-        return groupsResults.map( (groupResults, index) => {
-            return <Table key={"Group" + String(index + 1)} group={[[1, "Pol"],[2,"Josep"],[3,"Robert"],[4, "Amadeu"]]} iGroup={index + 1}
-            groupResults={groupResults} handlePress={this.props.handlePress}/>
-        })
+        return groups.map( (group) => (
+            <Table 
+                key={"Group" + String(group.group)} 
+                iGroup={group.group} 
+                groupResults={group.results} 
+                handlePress={this.props.handlePress}
+            />
+        
+        ))
 
     }
     
@@ -68,7 +74,7 @@ export default class Groups extends React.Component {
                 }}
                 contentContainerStyle={styles.contentContainer}
                 bounces={true}>
-                {this.renderGroups(this.state.groupsResults)}
+                {this.renderGroups(this.state.groups)}
             </ScrollView>
         );
     }

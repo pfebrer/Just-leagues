@@ -11,7 +11,7 @@ import {
     View,
     Dimensions
 } from 'react-native';
-import ChatMessage from "./chatComponents/ChatMessage"
+import ChatMessage from "./chat/ChatMessage"
 import Firebase from "../api/Firebase"
 import {MaterialIcons} from '@expo/vector-icons';
 import {ChatWorkMode, Collections, Documents, Constants} from "../constants/CONSTANTS";

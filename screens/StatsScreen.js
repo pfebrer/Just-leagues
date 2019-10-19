@@ -1,14 +1,12 @@
 import React from 'react';
 import {ImageBackground, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import PlayerCard from "./PlayerCard"
-import Strike from "./statDisplays/Strike"
-import DetailedStats from "./statDisplays/DetailedStats"
-import MatchLength from "./statDisplays/MatchLength"
-import firebase from "firebase"
+import PlayerCard from "../components/PlayerCard"
+import Strike from "../components/statDisplays/Strike"
+import DetailedStats from "../components/statDisplays/DetailedStats"
+import MatchLength from "../components/statDisplays/MatchLength"
 import Firebase from "../api/Firebase"
-import BestWorstRival from './statDisplays/BestWorstRival';
-import ChangePWModal from './ChangePWModal';
-import {Collections} from "../constants/CONSTANTS";
+import BestWorstRival from '../components/statDisplays/BestWorstRival';
+import ChangePWModal from '../components/ChangePWModal';
 
 
 export default class Stats extends React.Component {

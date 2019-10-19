@@ -1,8 +1,8 @@
 import React from 'react';
 import {ScrollView, StyleSheet, Text, View, FlatList} from 'react-native';
-import MatchRow from "./MatchRow"
-import Firebase from "../api/Firebase"
-import {Collections} from "../constants/CONSTANTS";
+import MatchRow from "../MatchRow"
+import Firebase from "../../api/Firebase"
+import {Collections} from "../../constants/CONSTANTS";
 
 
 export default class MatchHistory extends React.Component {

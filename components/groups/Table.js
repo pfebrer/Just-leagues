@@ -1,22 +1,70 @@
-import React from 'react';
+import React, {Component} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
 import { getTotals, iLeaderLoser } from "../../assets/utils/utilFuncs"
 import { translate } from '../../assets/translations/translationManager';
 import { w } from '../../api/Dimensions';
 
-export default class Table extends React.Component {
+export default class Table extends Component {
 
-    renderTable = (group, iGroup, groupResults) => {
-        //Número d'integrants del grup
-        const nGroup = group.length;
+    renderScoreCells = (scores, iRow) => {
 
+        
+        return scores.map((score, i) => {
+
+            if (i == iRow) {
+
+                return (
+                    <View
+                        key={i}
+                        style={{...styles.tableCell, ...styles.samePlayerCell}} >
+                        <Text style={[styles.tableText]}>{score}</Text>
+                    </View>
+                )
+
+            } else {
+
+                return (
+                    <TouchableOpacity
+                        key={i}
+                        style={{...styles.tableCell, ...styles.pointsCell}} 
+                        onPress={() => {this.props.handlePress(toSendOnPress)}}>
+                        <Text style={[styles.tableText]}>{score}</Text>
+                    </TouchableOpacity>
+                )
+
+            }
+            
+        });
+    }
+
+    renderTable = (groupResults) => {
+        
+        return groupResults.map( (resultsRow, iRow) => {
+
+            return (
+                <View key={iRow} style={{...styles.tableRow}}>
+                    <View style={{...styles.tableCell, ...styles.positionCell}}>
+                        <Text style={{...styles.tableText}}>{resultsRow.rank}</Text>
+                    </View>
+                    <TouchableOpacity 
+                        style={{...styles.tableCell, ...styles.playerCell}} 
+                        onPress={() => {console.warn("Go to " + resultsRow.name + " profile")}}>
+                        <Text style={{...styles.tableText}}>{resultsRow.name}</Text>
+                    </TouchableOpacity>
+                    {this.renderScoreCells(resultsRow.scores, iRow)}
+                    <View style={{...styles.tableCell, ...styles.totalCell}}>
+                        <Text style={{...styles.tableText}}>{resultsRow.total}</Text>
+                    </View>
+                </View>
+            )
+
+        })
         //Totals
-        let totals = getTotals(groupResults, nGroup);;
+        /*let totals = getTotals(groupResults, nGroup);;
         let leaderLoser = iLeaderLoser(totals) ;
 
-        //Construïm taula
-        let table = []
+        
         for (let i = 0; i <= nGroup; i++) {
             let rowContent = [];
             let addRowStyles = null;
@@ -105,22 +153,61 @@ export default class Table extends React.Component {
 
             table.push(<View key={"Row" + String(i)} style={[styles.tableRow, addRowStyles]}>{rowContent}</View>);
         }
-        return table;
+        return table;*/
     }
 
     render() {
-        const {group, iGroup, groupResults} = this.props
+        const {iGroup, groupResults} = this.props
 
-        return <View style={styles.groupContainer}>
-                    <View style={styles.tableTitle}>
-                        <Text style={styles.tableTitleText}> {(translate("vocabulary.group") + " " + iGroup).toUpperCase()}</Text>
-                    </View>
-                    <View style={styles.tableContainer}>
-                        {this.renderTable(group, iGroup, groupResults)}
-                    </View>
+        const ranks = groupResults.map(resultsRow => resultsRow.rank)
+
+        return (
+            <View style={styles.groupContainer}>
+                <View style={styles.tableTitle}>
+                    <Text style={styles.tableTitleText}> {(translate("vocabulary.group") + " " + iGroup).toUpperCase()}</Text>
                 </View>
+                <View style={styles.tableContainer}>
+                    <Header ranks={ranks}/>
+                    {this.renderTable(groupResults)}
+                </View>
+            </View>
+        )
         
             
+    }
+}
+
+class Header extends Component {
+
+    renderRankCells = (ranks) => {
+
+        return ranks.map((rank, i) => {
+
+            return <View
+                        key={i}
+                        style={{...styles.tableCell, ...styles.pointsCell}} >
+                        <Text style={[styles.tableText]}>{rank}</Text>
+                    </View>
+        });
+
+    }
+
+    render(){
+
+        return <View style={{...styles.tableRow}}>
+                    <View style={{...styles.tableCell, ...styles.positionCell}}>
+                        <Text style={{...styles.tableText}}></Text>
+                    </View>
+                    <TouchableOpacity 
+                        style={{...styles.tableCell, ...styles.playerCell}} 
+                        onPress={() => {this.props.handlePress(toSendOnPress)}}>
+                        <Text style={{...styles.tableText}}>{translate("auth.name")}</Text>
+                    </TouchableOpacity>
+                    {this.renderRankCells(this.props.ranks)}
+                    <View style={{...styles.tableCell, ...styles.totalCell}}>
+                        <Text style={{...styles.tableText}}>{translate("vocabulary.total")}</Text>
+                    </View>
+                </View>
     }
 }
 

@@ -94,6 +94,15 @@ exports.resultIsCorrect = (testResult) => {
 
 }
 
+//Converts a timestamp (ms) into a readable date (dd/mm/yyyy)
+exports.convertDate = (inputFormat) => {
+    function pad(s) {
+        return (s < 10) ? '0' + s : s;
+    };
+    let d = new Date(Number(inputFormat));
+    return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join('/');
+}
+
 //Stores data so that we don't need to retrieve it from the database every time 
 exports.storeDataAsync = async (key, value) => {
     try {

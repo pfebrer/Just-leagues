@@ -1,7 +1,7 @@
 import React from 'react';
 import {ImageBackground, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import ScoreRow from "./ScoreRow"
-import MatchHistory from "./MatchHistory"
+import MatchHistory from "./matchSearcher/MatchHistory"
 import Firebase from "../api/Firebase"
 import {Collections} from "../constants/CONSTANTS";
 
