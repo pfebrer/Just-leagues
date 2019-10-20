@@ -2,25 +2,26 @@ import React from 'react';
 import {ActivityIndicator, ScrollView, StyleSheet, Text, View} from 'react-native';
 import Table from "./Table"
 import Firebase from "../../api/Firebase"
-import {Collections} from "../../constants/CONSTANTS";
 import { translate } from '../../assets/translations/translationManager';
-import SETTINGS from '../../constants/Settings';
 
-export default class Groups extends React.Component {
+//Redux stuff
+import { connect } from 'react-redux'
+
+class Groups extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
             groups: [],
-            gymID: "D5xZ9D0c0U5FHWdV1qXD",
-            sportID: "squash"
         };
 
     }
 
     componentDidMount() {
 
-        this.groupsSub = Firebase.groupsRef(this.state.gymID,this.state.sportID).onSnapshot((querySnapshot) => {
+        let {gymID, sportID} = this.props.competition
+
+        this.groupsSub = Firebase.groupsRef(gymID,sportID).onSnapshot((querySnapshot) => {
             
             let groups = querySnapshot.docs.map((group) => {
                 let {results} = group.data()
@@ -80,6 +81,12 @@ export default class Groups extends React.Component {
         );
     }
 }
+
+const mapStateToProps = state => ({
+    competition: state.competition
+})
+
+export default connect(mapStateToProps)(Groups);
 
 const styles = StyleSheet.create({
     container: {

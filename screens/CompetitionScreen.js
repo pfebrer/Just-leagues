@@ -11,8 +11,6 @@ import { Icon} from 'native-base';
 
 //Redux stuff
 import { connect } from 'react-redux'
-import { storeUserData } from "../redux/actions"
-
 
 class Competition extends React.Component {
 
@@ -191,7 +189,6 @@ class Competition extends React.Component {
 
     render() {
 
-        //{this.renderAddMatchButton(this.state.showAddButton)}
         return <View style={{flex: 1, backgroundColor: "white"}}>
                 {this.renderCompView(this.state.typeOfComp)}
                 {this.renderAddMatchModal(this.state.addMatchModal, this.state.admin)}
