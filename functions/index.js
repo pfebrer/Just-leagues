@@ -73,9 +73,12 @@ admin.initializeApp(functions.config().firebase);
 const firestore = admin.firestore();
 const auth = admin.auth();
 
+const firestoreFunction = functions.region('europe-west1').runWith(runtimeOpts).firestore
+const httpsFunction = functions.region('europe-west1').runWith(runtimeOpts).https
+
 
 //send the push notification
-exports.messageNotification = functions.region('europe-west1').runWith(runtimeOpts).firestore.document('groups/{iGroup}/chatMessages/{id}').onCreate((event, context) => {
+exports.messageNotification = firestoreFunction.document('groups/{iGroup}/chatMessages/{id}').onCreate((event, context) => {
 
     const {playerName, message} = event.data();
     let iGroup = context.params.iGroup;
@@ -119,10 +122,8 @@ exports.messageNotification = functions.region('europe-west1').runWith(runtimeOp
     });
 });
 
-
-
 //Enviar notificacions quan s'afegeixen partits
-exports.matchNotification = functions.region('europe-west1').runWith(runtimeOpts).firestore.document('matches/{id}').onCreate((event, context) => {
+exports.matchNotification = firestoreFunction.document('matches/{id}').onCreate((event, context) => {
 
     const {iGroup, matchPlayers, matchResult} = event.data();
     const iWinner = matchResult.indexOf(3);
@@ -193,7 +194,7 @@ exports.matchNotification = functions.region('europe-west1').runWith(runtimeOpts
     });
 });
 
-exports.newChallenge1 = functions.region('europe-west1').runWith(runtimeOpts).firestore.document('Reptes/{id}').onCreate((event, context) => {
+exports.newChallenge1 = firestoreFunction.document('Reptes/{id}').onCreate((event, context) => {
 
     const {matchPlayers, matchResult} = event.data();
     let iWinner = matchResult.indexOf(3);
@@ -264,45 +265,45 @@ exports.newChallenge1 = functions.region('europe-west1').runWith(runtimeOpts).fi
     })
 });
 
-exports.updateRankingOnCreate = functions.region('europe-west1').runWith(runtimeOpts).firestore.document('monthInfo/updateRanking').onCreate((document, event) => {
+exports.updateRankingOnCreate = firestoreFunction.document('monthInfo/updateRanking').onCreate((document, event) => {
     return __updateRanking(null, null, {user: {admin: true}});
 });
-exports.updateRankingOnUpdate = functions.region('europe-west1').runWith(runtimeOpts).firestore.document('monthInfo/updateRanking').onUpdate((document, event) => {
+exports.updateRankingOnUpdate = firestoreFunction.document('monthInfo/updateRanking').onUpdate((document, event) => {
     return __updateRanking(null, null, {user: {admin: true}});
 });
 
-exports.updateGroupsOnCreate = functions.region('europe-west1').runWith(runtimeOpts).firestore.document('monthInfo/updateGroups').onCreate((document, event) => {
+exports.updateGroupsOnCreate = firestoreFunction.document('monthInfo/updateGroups').onCreate((document, event) => {
     return __updateGroups(null, null, {user: {admin: true}});
 });
-exports.updateGroupsOnUpdate = functions.region('europe-west1').runWith(runtimeOpts).firestore.document('monthInfo/updateGroups').onUpdate((document, event) => {
+exports.updateGroupsOnUpdate = firestoreFunction.document('monthInfo/updateGroups').onUpdate((document, event) => {
     return __updateGroups(null, null, {user: {admin: true}});
 });
 
-exports.updateRanking = functions.region('europe-west1').runWith(runtimeOpts).https.onCall((data, context) => {
+exports.updateRanking = httpsFunction.onCall((data, context) => {
     return validateAndContinue(req, res, __updateRanking);
 });
-exports.updateRankingAPI = functions.region('europe-west1').runWith(runtimeOpts).https.onCall((data, context) => {
+exports.updateRankingAPI = httpsFunction.onCall((data, context) => {
     return validateAndContinueAPI(data, context, __updateRanking);
 });
-exports.updateRankingURL = functions.region('europe-west1').runWith(runtimeOpts).https.onRequest((data, context) => {
+exports.updateRankingURL = httpsFunction.onRequest((data, context) => {
     return validateAndContinueURL(data, context, __updateRanking);
 });
 
-exports.updateGroups = functions.region('europe-west1').runWith(runtimeOpts).https.onCall((data, context) => {
+exports.updateGroups = httpsFunction.onCall((data, context) => {
     return validateAndContinue(data, context, __updateGroups);
 });
-exports.updateGroupsAPI = functions.region('europe-west1').runWith(runtimeOpts).https.onCall((data, context) => {
+exports.updateGroupsAPI = httpsFunction.onCall((data, context) => {
     return validateAndContinueAPI(data, context, __updateGroups);
 });
-exports.updateGroupsURL = functions.region('europe-west1').runWith(runtimeOpts).https.onRequest((req, res) => {
+exports.updateGroupsURL = httpsFunction.onRequest((req, res) => {
     return validateAndContinueURL(req, res, __updateGroups);
 });
 
-exports.setRankingURL = functions.region('europe-west1').runWith(runtimeOpts).https.onRequest((req, res) => {
+exports.setRankingURL = httpsFunction.onRequest((req, res) => {
     return validateAndContinueURL(req, res, __setRanking);
 });
 
-exports.getRankingURL = functions.region('europe-west1').runWith(runtimeOpts).https.onRequest((req, res) => {
+exports.getRankingURL = httpsFunction.onRequest((req, res) => {
     return validateAndContinueURL(req, res, __getRanking);
 });
 
