@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, TouchableHighlight, View} from 'react-native';
+import { StyleSheet, TouchableOpacity, TouchableHighlight, View, Text} from 'react-native';
 import Groups from "../components/groups/Groups"
 import Challenges from "../components/Challenges"
 import AddMatchModal from "../components/AddMatchModal"
@@ -9,15 +9,17 @@ import Firebase from "../api/Firebase"
 import {oppositePoints} from "../assets/utils/utilFuncs"
 import { Icon} from 'native-base';
 
+//Redux stuff
+import { connect } from 'react-redux'
+import { storeUserData } from "../redux/actions"
 
-export default class Clasifications extends React.Component {
+
+class Competition extends React.Component {
 
     constructor(props) {
         super(props);
 
         this.state = {
-            //ranking: [],
-            userId: Firebase.userData.id,
             addMatchModal: false,
             typeOfComp: "groups"
         };
@@ -197,6 +199,12 @@ export default class Clasifications extends React.Component {
     }
 
 }
+
+const mapStateToProps = state => ({
+    currentUser: state.currentUser
+})
+
+export default connect(mapStateToProps)(Competition);
 
 const styles = StyleSheet.create({
 

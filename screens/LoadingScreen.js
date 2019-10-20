@@ -1,10 +1,13 @@
 import React from 'react'
 import {ActivityIndicator, ImageBackground, StatusBar, StyleSheet, Text, View,} from 'react-native';
 import Firebase from "../api/Firebase"
-import {Collections} from "../constants/CONSTANTS";
 import { translate } from '../assets/translations/translationManager';
 
-export default class Loading extends React.Component {
+//Redux stuff
+import { connect } from 'react-redux'
+import { storeUserData } from "../redux/actions"
+
+class LoadingScreen extends React.Component {
 
     status = {
         msg: "",
@@ -41,8 +44,10 @@ export default class Loading extends React.Component {
 
                 Firebase.userRef(user.uid).get()
                 .then((docSnapshot) => {
-                
-                    Firebase.userData = { id: user.uid, ...docSnapshot.data()}
+
+                    let userData = docSnapshot.data()
+
+                    this.props.storeUserData(user.uid, userData)
 
                     this.props.navigation.navigate('App');
 
@@ -76,6 +81,12 @@ export default class Loading extends React.Component {
         
     }
 }
+
+const mapDispatchToProps = dispatch => ({
+    storeUserData: (uid, userData) => dispatch(storeUserData(uid, userData))
+})
+
+export default connect( null, mapDispatchToProps )(LoadingScreen);
 
 const styles = StyleSheet.create({
     container: {
