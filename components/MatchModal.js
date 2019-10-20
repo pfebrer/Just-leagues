@@ -33,7 +33,7 @@ export default class MatchModal extends React.Component {
     }
 
     editResult = (editableResult) => {
-
+        debugger;
         if (editableResult) {
             const addResult = this.props.navigation.getParam('addResult', "");
             const iGroup = this.props.navigation.getParam('iGroup', "");
