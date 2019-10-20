@@ -1,21 +1,15 @@
 import React from 'react';
 import {StyleSheet, ScrollView, Text, View} from 'react-native';
 
+import {convertDate} from "../assets/utils/utilFuncs"
+
 
 export default class MatchRow extends React.PureComponent {
-
-    convertDate = (inputFormat) => {
-        function pad(s) {
-            return (s < 10) ? '0' + s : s;
-        };
-        let d = new Date(Number(inputFormat));
-        return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join('/');
-    }
 
     render() {
         const match = this.props.match;
         let bottomBorder = this.props.noBottomBorder ? null : styles.bottomBorder
-        let matchDate = this.props.isTotal ? match[0] : this.convertDate(match[0]);
+        let matchDate = this.props.isTotal ? match[0] : convertDate(match[0]);
         let addWinnerStyle = [styles.winnerText, null];
         if (match[2][1] == Math.max.apply(Math, match[2])) {
             addWinnerStyle.reverse();

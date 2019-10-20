@@ -1,26 +1,32 @@
 import React from 'react';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator, createMaterialTopTabNavigator } from 'react-navigation-tabs';
-import Stats from "../components/Stats";
-import Classifications from "../components/Clasifications";
+import Stats from "../screens/StatsScreen";
+import Classifications from "../screens/CompetitionScreen";
 import MatchModal from "../components/MatchModal";
-import EditingScreen from "../components/EditingScreen";
+import EditingScreen from "../screens/EditingScreen";
 import GroupChat from "../components/GroupChat";
-import MatchSearcher from "../components/MatchSearcher";
+import MatchSearcher from "../screens/MatchSearcherScreen";
 import {AntDesign, Entypo, Ionicons, MaterialCommunityIcons, MaterialIcons} from '@expo/vector-icons';
 import EditRankingScreen from "../components/ranking/EditRankingScreen";
+import RankingEditScreen from "../screens/RankingEditScreen";
 import {ChatWorkMode, Constants} from "../constants/CONSTANTS";
+import { translate } from '../assets/translations/translationManager';
 
+
+
+const EditingStack = createStackNavigator({
+    EditingScreen: EditingScreen,
+    EditRankingScreen: RankingEditScreen,
+},{ headerMode: "none"});
 
 const ClasifStack = createStackNavigator({
     Classifications: Classifications,
     MatchModal: MatchModal,
-    EditingScreen: EditingScreen,
+    EditingStack: EditingStack,
 }, {
-    headerMode: "none",
     mode: "modal"
 });
-
 
 //createMaterialTopTabNavigator(RouteConfigs, TabNavigatorConfig);
 const chatsStack = createMaterialTopTabNavigator(
@@ -59,16 +65,16 @@ export default createBottomTabNavigator({
         Stats: {
             screen: Stats,
             navigationOptions: {
-                tabBarLabel: "Estadístiques",
+                tabBarLabel: translate("tabs.stats"),
                 tabBarIcon: ({tintColor}) => (
                     <Ionicons name="ios-stats" size={20} color={tintColor}/>
                 )
             }
         },
-        Classificacions: {
+        Competition: {
             screen: ClasifStack,
             navigationOptions: {
-                tabBarLabel: "Competició",
+                tabBarLabel: translate("tabs.competition"),
                 tabBarIcon: ({tintColor}) => (
                     <MaterialCommunityIcons name="tournament" size={20} color={tintColor}/>
                 )
@@ -77,7 +83,7 @@ export default createBottomTabNavigator({
         GroupChat: {
             screen: chatsStack,
             navigationOptions: {
-                tabBarLabel: "Xat",
+                tabBarLabel: translate("tabs.chat"),
                 tabBarIcon: ({tintColor}) => (
                     <Entypo name="chat" size={20} color={tintColor}/>
                 )
@@ -87,7 +93,7 @@ export default createBottomTabNavigator({
             screen: MatchSearcher,
 
             navigationOptions: {
-                tabBarLabel: "Partits",
+                tabBarLabel: translate("tabs.matches"),
                 tabBarIcon: ({tintColor}) => (
                     <AntDesign name="database" size={20} color={tintColor}/>
                 )
@@ -96,7 +102,7 @@ export default createBottomTabNavigator({
         Ranking: {
             screen: EditRankingScreen,
             navigationOptions: {
-                tabBarLabel: "Ranking",
+                tabBarLabel: translate("tabs.ranking"),
                 tabBarIcon: ({tintColor}) => (
                     <MaterialIcons name="format-list-numbered" size={20} color={tintColor}/>
                 )
@@ -104,7 +110,7 @@ export default createBottomTabNavigator({
         }
     },
     {
-        initialRouteName: "Classificacions",
+        initialRouteName: "Competition",
         tabBarOptions: {
             activeTintColor: 'tomato',
             inactiveTintColor: 'gray',

@@ -14,7 +14,7 @@ export default class GetStarted extends Component {
       >
         {this.props.isLogin
           ? <ActivityIndicator size="large" style={styles.spinner} color='white' />
-          : <Text style={styles.text}>{translate("log in").toUpperCase()}</Text>}
+          : <Text style={styles.text}>{translate("auth.log in").toUpperCase()}</Text>}
       </TouchableOpacity>
     );
   }

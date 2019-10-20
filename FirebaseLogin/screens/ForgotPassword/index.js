@@ -47,9 +47,9 @@ export default class ForgotPassword extends Component {
   render(){
     return (
       <View style={styles.container}>
-        <Text style={styles.forgot}>{translate("forgot your password?")}</Text>
+        <Text style={styles.forgot}>{translate("auth.forgot your password?")}</Text>
         <InputField
-          placeholder={translate("email")}
+          placeholder={translate("auth.email")}
           keyboardType="email-address"
           error={this.state.isEmailCorrect}
           returnKeyType="done"
@@ -59,10 +59,10 @@ export default class ForgotPassword extends Component {
           icon={email}
         />
         <TouchableOpacity onPress={this.sendEmail} activeOpacity={0.6} style={styles.button}>
-          <Text style={styles.buttonText}>{translate("send email")}</Text>
+          <Text style={styles.buttonText}>{translate("auth.send email")}</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={this.props.change('login')} style={styles.touchable}>
-          <Text style={styles.login}>{'<'} {translate("log in")}</Text>
+          <Text style={styles.login}>{'<'} {translate("auth.log in")}</Text>
         </TouchableOpacity>
       </View>
     )

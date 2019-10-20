@@ -1,25 +1,28 @@
 {
-    "create account": "Crea una cuenta",
-    "forgot password": "Contraseña olvidada",
-    "use app as guest": "Utiliza la app como invitado",
-    "email": "Correo electrónico",
-    "welcome" : "Bienvenido",
-    "username": "Usuario",
-    "password": "Contraseña",
-    "log in": "Inicia sesión",
-    "log out": "Cierra sesión",
-    "unable to log in": "No se ha podido iniciar sesión",
-    "unable to register for notifications": "No se han podido activar las notificaciones",
-    "explore": "Explora",
-    "name":"Nombre",
-    "repeat password": "Repite la contraseña",
-    "continue": "Continua",
-    "forgot your password?":"Has olvidado tu contraseña?",
-    "send email": "Envía correo",
-    "follow more parks": "Sigue más parks",
-    "build your park": "Edita el park",
-    "edit": "Edita",
-    "left": "Izquierda",
-    "right": "Derecha",
-    "new line": "Nueva línea"
+    "auth": {
+        "create account": "Crea una cuenta",
+        "forgot password": "Contraseña olvidada",
+        "use app as guest": "Utiliza la app como invitado",
+        "email": "Correo electrónico",
+        "welcome" : "Bienvenido",
+        "username": "Usuario",
+        "password": "Contraseña",
+        "log in": "Inicia sesión",
+        "log out": "Cierra sesión",
+        "unable to log in": "No se ha podido iniciar sesión",
+        "unable to register for notifications": "No se han podido activar las notificaciones",
+        "name":"Nombre",
+        "repeat password": "Repite la contraseña",
+        "continue": "Continua",
+        "forgot your password?":"Has olvidado tu contraseña?",
+        "send email": "Envía correo"
+    },
+    
+    "tabs":{
+        "stats": "Estadísticas",
+        "competition": "Competición",
+        "chat": "Chat",
+        "matches": "Partidos",
+        "ranking": "Ranking"
+    }
 }

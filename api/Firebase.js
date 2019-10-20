@@ -3,7 +3,7 @@ import 'firebase/firestore';
 import 'firebase/functions';
 
 import { Toast } from 'native-base'
-import {Collections, Constants} from "../constants/CONSTANTS";
+import {Collections, Subcollections, Constants, Documents} from "../constants/CONSTANTS";
 
 class Firebase {
 
@@ -28,7 +28,7 @@ class Firebase {
   //AUTHENTICATION STUFF
   userLogin = (email, password) => {
     let me = this;
-    email += "@" + Constants.dbPrefix.replace("_", ".") + "nickspa.cat";
+    email += "@" + "nickspa.cat"; //+ Constants.dbPrefix.replace("_", ".") +
     return new Promise(resolve => {
       me.auth.signInWithEmailAndPassword(email, password)
         .catch(error => {
@@ -125,9 +125,50 @@ class Firebase {
     })
   };
 
-  get usersRef() {
+  //DATABASE REFERENCES (Only place where they should be declared in the whole app)
+  /*get playersRef() {
     return this.firestore.collection(Collections.PLAYERS)
   }
+
+  get rankingsRef() {
+    return this.firestore.collection(Collections.RANKINGS).doc(Documents.RANKINGS.squashRanking);
+  }
+
+  get matchesRef() {
+    return this.firestore.collection(Collections.MATCHES);
+  }
+
+  get groupsRef() {
+    return this.firestore.collection(Collections.GROUPS);
+  }
+
+  get typeOfCompRef() {
+    return this.firestore.collection(Collections.MONTH_INFO).doc(Documents.MONTH_INFO.typeOfComp)
+  }
+
+  userRef = (uid) => {
+    return this.playersRef.doc(uid)
+  }*/
+
+  //V3 database references
+  get usersRef() {
+    return this.firestore.collection(Collections.USERS)
+  }
+
+  userRef = (uid) => this.usersRef.doc(uid)
+
+  get gymsRef() {
+    return this.firestore.collection(Collections.GYMS)
+  }
+
+  gymRef = (gymID) => this.gymsRef.doc(gymID);
+
+  sportRef = (gymID, sportID) => this.gymRef(gymID).collection(Subcollections.SPORTS).doc(sportID);
+
+  groupsRef = (gymID, sportID) => this.sportRef(gymID, sportID).collection(Subcollections.GROUPS);
+
+  groupRef = (gymID, sportID, groupID) => this.groupsRef(gymID, sportID).doc(groupID);
+  
 }
 
 Firebase.shared = new Firebase();

@@ -65,7 +65,7 @@ export default class Login extends Component {
       <View style={styles.container}>
         <Image style={styles.icon} resizeMode="contain" source={companyLogo}/>
         <InputField
-          placeholder={translate("email")}
+          placeholder={translate("auth.email")}
           keyboardType="email-address"
           style={styles.email}
           error={this.state.isEmailCorrect}
@@ -74,7 +74,7 @@ export default class Login extends Component {
           icon={email}
         />
         <InputField
-          placeholder={translate("password")}
+          placeholder={translate("auth.password")}
           returnKeyType="done"
           secureTextEntry={true}
           blurOnSubmit={true}
@@ -89,15 +89,15 @@ export default class Login extends Component {
         />
         <View style={styles.textContainer}>
           <TouchableOpacity onPress={this.props.change('register')} activeOpacity={0.6}>
-            <Text style={styles.createAccount}>{translate("create account")}</Text>
+            <Text style={styles.createAccount}>{translate("auth.create account")}</Text>
           </TouchableOpacity>
           <TouchableOpacity onPress={this.props.change('forgot')} style={styles.forgotPasswordTouch} activeOpacity={0.6}>
-            <Text style={styles.forgotPassword}>{translate("forgot password")}</Text>
+            <Text style={styles.forgotPassword}>{translate("auth.forgot password")}</Text>
           </TouchableOpacity>
         </View>
 
         <TouchableOpacity onPress={this.props.noLogIn} style={styles.touchable, styles.avoidLogInTouch} activeOpacity={0.6}>
-          <Text style={styles.useAsGuest}>{translate("use app as guest")}</Text>
+          <Text style={styles.useAsGuest}>{translate("auth.use app as guest")}</Text>
         </TouchableOpacity>
       </View>
     )

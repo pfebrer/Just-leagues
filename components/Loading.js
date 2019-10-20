@@ -2,6 +2,7 @@ import React from 'react'
 import {ActivityIndicator, ImageBackground, StatusBar, StyleSheet, Text, View,} from 'react-native';
 import Firebase from "../api/Firebase"
 import {Collections} from "../constants/CONSTANTS";
+import { translate } from '../assets/translations/translationManager';
 
 export default class Loading extends React.Component {
 
@@ -20,7 +21,7 @@ export default class Loading extends React.Component {
         if (this.props.msg !== undefined) {
             this.status.msg = this.props.msg;
         } else {
-            this.status.msg = "Carregant usuari";
+            this.status.msg = translate("info.checking user");
         }
         if (this.props.bg !== undefined) {
             this.status.bg = this.props.bg;
@@ -37,7 +38,17 @@ export default class Loading extends React.Component {
         const unsub = Firebase.auth.onAuthStateChanged(user => {
             //If there is a logged in user, go to the main page
             if (user) {
-              this.props.navigation.navigate('App');
+
+                Firebase.userRef(user.uid).get()
+                .then((docSnapshot) => {
+                
+                    Firebase.userData = { id: user.uid, ...docSnapshot.data()}
+
+                    this.props.navigation.navigate('App');
+
+                })
+                .catch((err)=> {this.props.navigation.navigate('App');})
+              
                 /*this.usersRef.doc(user.uid).get().then((docSnapshot) => {
                     if(docSnapshot.exists) {
                         this.props.navigation.navigate('App');
@@ -57,17 +68,15 @@ export default class Loading extends React.Component {
 
 
     render() {
-        return (
-            <ImageBackground style={{flex: 1}} source={this.status.bg}>
-                <View style={styles.container}>
+        return <View style={styles.container}>
                     <Text style={styles.userCheck}>{this.status.msg}</Text>
                     <ActivityIndicator size="large" color="#FFFFFF"/>
                     <StatusBar barStyle="default"/>
                 </View>
-            </ImageBackground>
-        )
+        
     }
 }
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
