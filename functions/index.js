@@ -12,12 +12,12 @@
 const runtimeOpts = {
     timeoutSeconds: 300,
     memory: '128MB',
-    node: '8'
+    node: '10'
 }
 
 const Constants = {
     GROUP_SIZE: 4,
-    UNTYING_CRITERIA: ["directMatch","position"]
+    UNTYING_CRITERIA: ["directMatch", "position"]
 };
 
 const Collections = {
@@ -304,8 +304,130 @@ exports.setRankingURL = httpsFunction.onRequest((req, res) => {
 });
 
 exports.getRankingURL = httpsFunction.onRequest((req, res) => {
+
     return validateAndContinueURL(req, res, __getRanking);
 });
+
+// exports.testPath = httpsFunction.onRequest((req, res) => {
+//     console.log(req.query.q);
+//     let ret = [];
+//     firestore.doc(req.query.q).get().then(documentData => {
+//         console.log("DOCUMENT", documentData);
+//     }).catch(err => {
+//         console.error("ERROR in DOCUMENT");
+//     });
+//     // firestore.collection(req.query.q).get().then(collectionData => {
+//     //     console.log("COLLECTION", collectionData);
+//     // }).catch(err => {
+//     //     console.error("ERROR in COLLECTION");
+//     // });
+//
+// });
+
+// exports.migrateUsers = httpsFunction.onRequest((req, res) => {
+//     let playersRef = firestore.collection(Collections.PLAYERS(__getDBPrefix(req)));
+//     let V3dev_users = firestore.collection('V3dev_users');
+//     playersRef.get().then(playerDocument => {
+//         let players = [];
+//         playerDocument.forEach(player => {
+//             console.log("2migrating player ", player.data().playerName, player.id);
+//             auth.getUser(player.id).then(userAuthRecord => {
+//                 console.log("getting AUTH player ", player.id);
+//                 return userAuthRecord;
+//             }).then((userAuthRecord) => {
+//                 console.log("migrating userAuthRecord ", userAuthRecord.email, userAuthRecord.uid);
+//                 let playerEmail = userAuthRecord.email;
+//                 let playerData = player.data();
+//                 playerData.name = playerData.playerName;
+//                 delete playerData["playerName"];
+//                 playerData["email"] = userAuthRecord.email;
+//                 playerData["authUID"] = userAuthRecord.uid;
+//                 console.log("migrateUsers::MOVED User[" + playerEmail + "] in FIRESTORE", playerData);
+//                 V3dev_users.doc(player.id).set(playerData, {merge: true}).then(v3player => {
+//                     // V3dev_users.doc(player.id).set({email : userAuthRecord.email, authUID: userAuthRecord.uid}, {merge: true});
+//                 });
+//                 players.push(playerData);
+//             },reason => {}).catch(err => {
+//                 console.error("Could not migrate user " + player.data().name, err);
+//             });
+//         });
+//         return players;
+//     }).catch(err => {
+//         console.error("Could not migrate users", err);
+//         res.status(500).json(err);
+//     });
+// });
+
+// exports.migrateMatches = httpsFunction.onRequest((req, res) => {
+//     let matches = firestore.collection('matches');
+//     let new_matches = firestore.collection('/V3dev_gyms/nickspa/matches');
+//     let users = firestore.collection('/V3dev_users');
+//     matches.get().then(matchQuerySnapshot => {
+//         matchQuerySnapshot.forEach(match => {
+//             let newMatch = {
+//                 date: match.data().date,
+//                 groupdId: match.data().iGroup,
+//                 players: match.data().matchPlayers,
+//                 playersRef: [],
+//                 result: match.data().matchResult
+//             };
+//             new_matches.doc(match.id).set(newMatch, {merge: true}).then(v3player => {
+//                 // let {matchPlayers} = match.data();
+//                 // matchPlayers.forEach(matchPlayer => {
+//                 //     users.where('playerName', '==', matchPlayer).then(userQuerySnapshot => {
+//                 //         userQuerySnapshot.forEach(user => {
+//                 //             newMatch.playersRef.push(user.data().authUID);
+//                 //             new_matches.doc(match.id).set(newMatch).catch(err => {
+//                 //                 console.error("Player [" + playerName + "] not found", err);
+//                 //             });
+//                 //         });
+//                 //     }).catch(err => {
+//                 //         console.error("Player [" + playerName + "] not found", err);
+//                 //     });
+//                 // });
+//             }).catch(err => {
+//                 console.error("Could not update match ", match.id, err);
+//             });
+//         });
+//     }).catch(err => {
+//         console.error("Could not migrate matches", err);
+//         res.status(500).json(err);
+//     });
+// });
+// exports.migrateMatchesUpdatePlayersRef = httpsFunction.onRequest((req, res) => {
+//     let new_matchesdb = firestore.collection('/V3dev_gyms/nickspa/matches');
+//     let usersdb = firestore.collection('/V3dev_users');
+//
+//     return usersdb.get().then(userQuerySnapshot => {
+//         let users = {};
+//         userQuerySnapshot.forEach(userdb => {
+//             users[userdb.data().name] = userdb.data().authUID;
+//         });
+//         return users;
+//     }).then(users => {
+//         console.log(JSON.stringify(users));
+//         return new_matchesdb.get().then(newMatchesQuerySnapshot => {
+//             newMatchesQuerySnapshot.forEach(match => {
+//                 let playersRef = [];
+//                 let {players} = match.data();
+//                 players.forEach(player => {
+//                     playersRef.push(users[player] || "noRef");
+//                 });
+//                 console.log(match.id + " -> players-> " + JSON.stringify(players) + ", playersRef -> " + JSON.stringify(playersRef));
+//                 // console.log(match.id + " -> " + match.data().date + " -> " + JSON.stringify(players));
+//                 let newMatch = match.data();
+//                 newMatch["playersRef"] = playersRef;
+//                 return new_matchesdb.doc(match.id).set(newMatch, {merge: true}).then(r => {
+//                      console.log(match.id + 'updated')
+//                  });
+//             });
+//         });
+//         res.status(200).json(users);
+//     }).catch(err => {
+//         console.error("algo va mal", err)
+//         res.status(500).json(err);
+//     });
+// });
 
 const __getDBPrefix = (req) => {
     let ret = req.dbPrefix || req.query.dbPrefix || req.body.dbPrefix || "";
@@ -319,9 +441,9 @@ const __getDBPrefix = (req) => {
 const __untie = (iPlayers, results, criteria) => {
 
     //Loop through all the criteria until we find one where players are untied
-    criteria.forEach((criterion, idx, criteria) =>{
+    criteria.forEach((criterion, idx, criteria) => {
 
-        if (criterion == "position"){
+        if (criterion == "position") {
 
             return iPlayers[0] - iPlayers[1]
 
@@ -330,11 +452,11 @@ const __untie = (iPlayers, results, criteria) => {
             let size = Math.sqrt(results.length); //size of the group
 
             //Get the scores of the direct match between the two players
-            let scoreP1 = results[iPlayers[0]*size + iPlayers[1]] 
-            let scoreP2 = results[iPlayers[1]*size + iPlayers[0]]
-            
+            let scoreP1 = results[iPlayers[0] * size + iPlayers[1]]
+            let scoreP2 = results[iPlayers[1] * size + iPlayers[0]]
+
             //Return the comparison in case the scores are different
-            if (scoreP1 !== scoreP2){
+            if (scoreP1 !== scoreP2) {
                 return scoreP1 - scoreP2
             } //else just wait for the next criterion to solve the problem
         }
@@ -365,8 +487,8 @@ const __updateRanking = (data, context, user) => {
                 let pointsDif = b[0] - a[0];
                 if (pointsDif !== 0) {
                     return pointsDif;
-                } 
-                return __untie([a[1],b[1]], results, Constants.UNTYING_CRITERIA)
+                }
+                return __untie([a[1], b[1]], results, Constants.UNTYING_CRITERIA)
             }).map(([_, i]) => i + (iGroup - 1) * 4);
 
             sortedGroups.push(sortedGroup);
@@ -429,7 +551,7 @@ const __setRanking = (req, res, user) => {
             email += parts[i].charAt(0);
         }
         email += parts[parts.length - 1];
-        return email + "@"+__getDBPrefix(req).replace("_",".")+"nickspa.cat"
+        return email + "@" + __getDBPrefix(req).replace("_", ".") + "nickspa.cat"
     };
     const generatePassword = (name) => {
         let parts = name.toLowerCase().split(" ");
