@@ -8,7 +8,7 @@ export default class PlayerCard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      imgSrc: require("../assets/images/blank-profile.png"),
+      imgSrc: require("../../assets/images/blank-profile.png"),
       prevPlayerName: props.playerName,
       modalVisible: false
     }
@@ -30,7 +30,7 @@ export default class PlayerCard extends React.Component {
           });
         } else {
           this.setState({
-            imgSrc: require("../assets/images/blank-profile.png"),
+            imgSrc: require("../../assets/images/blank-profile.png"),
             lookedForUrl:true
           });
         }
@@ -40,7 +40,7 @@ export default class PlayerCard extends React.Component {
       }).catch(error => {
         alert("Hi ha problemes per carregar la imatge del jugador\nError:"+error.message)
         this.setState({
-          imgSrc: require("../assets/images/blank-profile.png"),
+          imgSrc: require("../../assets/images/blank-profile.png"),
           lookedForUrl:true
         });
       })

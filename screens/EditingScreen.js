@@ -97,6 +97,7 @@ export default class EditingScreen extends React.Component {
                 <View style={styles.buttonRow}>
                     <Button
                         onPress={() => {
+                            this.props.navigation.navigate("EditRankingScreen")
                             console.log('[PRESS] Editar el ranking manualment')
                         }}
                         title="Editar el ranking manualment"
@@ -168,7 +169,7 @@ export default class EditingScreen extends React.Component {
                     />
                 </View>
                 <View style={styles.titleView}>
-                    <Text style={styles.titleText}>VERSIO [ExpoConstants.manifest.version]</Text>
+                    <Text style={styles.titleText}>VERSIO  [ExpoConstants.manifest.version]</Text>
                 </View>
                 {endingPeriodModal}
             </View>

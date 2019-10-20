@@ -9,18 +9,24 @@ import GroupChat from "../components/GroupChat";
 import MatchSearcher from "../screens/MatchSearcherScreen";
 import {AntDesign, Entypo, Ionicons, MaterialCommunityIcons, MaterialIcons} from '@expo/vector-icons';
 import EditRankingScreen from "../components/ranking/EditRankingScreen";
+import RankingEditScreen from "../screens/RankingEditScreen";
 import {ChatWorkMode, Constants} from "../constants/CONSTANTS";
 import { translate } from '../assets/translations/translationManager';
 
 
+
+const EditingStack = createStackNavigator({
+    EditingScreen: EditingScreen,
+    EditRankingScreen: RankingEditScreen,
+},{ headerMode: "none"});
+
 const ClasifStack = createStackNavigator({
     Classifications: Classifications,
     MatchModal: MatchModal,
-    EditingScreen: EditingScreen,
+    EditingStack: EditingStack,
 }, {
     mode: "modal"
 });
-
 
 //createMaterialTopTabNavigator(RouteConfigs, TabNavigatorConfig);
 const chatsStack = createMaterialTopTabNavigator(

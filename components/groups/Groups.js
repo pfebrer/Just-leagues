@@ -44,10 +44,11 @@ export default class Groups extends React.Component {
     renderGroups = (groups) => {
 
         return groups.map( (group) => (
-            <Table 
+            <Table
                 key={"Group" + String(group.group)} 
                 iGroup={group.group} 
-                groupResults={group.results} 
+                groupResults={group.results}
+                goToUserProfile={this.props.goToUserProfile} 
                 handlePress={this.props.handlePress}
             />
         

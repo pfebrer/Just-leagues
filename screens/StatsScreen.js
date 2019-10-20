@@ -1,12 +1,8 @@
 import React from 'react';
 import {ImageBackground, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import PlayerCard from "../components/PlayerCard"
-import Strike from "../components/statDisplays/Strike"
-import DetailedStats from "../components/statDisplays/DetailedStats"
-import MatchLength from "../components/statDisplays/MatchLength"
 import Firebase from "../api/Firebase"
-import BestWorstRival from '../components/statDisplays/BestWorstRival';
 import ChangePWModal from '../components/ChangePWModal';
+import PlayerProfile from '../components/statDisplays/UserProfile';
 
 
 export default class Stats extends React.Component {
@@ -14,11 +10,10 @@ export default class Stats extends React.Component {
     constructor(props) {
         super(props)
         this.state = {
-            playerName: "",
             playerMatches: []
         }
 
-        this.userId = Firebase.auth.currentUser.uid;
+        this.userId = Firebase.userData.id;
     }
 
     componentDidMount() {
@@ -60,43 +55,12 @@ export default class Stats extends React.Component {
         })*/
     }
 
-    componentDidUpdate(prevProps, prevState) {
-        /*if (prevState.playerName !== this.state.playerName) {
-            this.unsub = Firebase.matchesRef.orderBy("date").onSnapshot((querySnapshot) => {
-                let playerMatches = [];
-                querySnapshot.forEach((doc) => {
-                    const {matchPlayers, matchResult, iGroup} = doc.data()
-                    let playerName = this.state.playerName
-                    const iPlayer = matchPlayers.indexOf(playerName);
-                    if (iPlayer >= 0) {
-                        const iRival = iPlayer == 0 ? 1 : 0;
-                        const matchWon = matchResult[iPlayer] > matchResult[iRival] ? true : false;
-                        playerMatches.push({
-                            rival: matchPlayers[iRival],
-                            rivalSets: matchResult[iRival],
-                            playerSets: matchResult[iPlayer],
-                            iGroup,
-                            matchWon
-                        })
-                    }
-                });
-                this.setState({playerMatches: playerMatches.reverse()});
-            })
-        }*/
-    }
-
-    componentWillUnmount() {
-        this.unsub();
-    }
-
     static getDerivedStateFromProps(nextProps, prevState) {
-        let playerName = nextProps.navigation.getParam("playerName", "")
-        let lastPlayerName = prevState.playerName;
-        if (playerName && playerName != lastPlayerName) {
-            return {playerName};
-        } else if (!lastPlayerName) {
-            return {playerName: "... ..."}
-        } else return null;
+
+        let uid = nextProps.navigation.getParam("uid", "");
+
+        return {uid}
+
     }
 
     hidePWModal = () => {
@@ -106,32 +70,15 @@ export default class Stats extends React.Component {
     }
 
     render() {
+
         let playerName = this.state.playerName;
         let changePWModal = this.state.changePW ? (
             <ChangePWModal hidePWModal={this.hidePWModal}/>
         ) : null;
+        
         return (
             <ImageBackground style={{flex: 1}} source={require("../assets/images/bg.jpg")}>
-                <View style={styles.container}>
-                    <PlayerCard playerName={playerName} playersRef={Firebase.playersRef}
-                                //userRef={Firebase.playersRef.doc(this.userId)}
-                                currentUserName={this.state.currentUserName}/>
-                    <ScrollView style={styles.statsScrollView}>
-                        <Strike playerMatches={this.state.playerMatches}/>
-                        <View style={styles.statTitleView}>
-                            <Text style={styles.statTitleText}>Estadístiques globals:</Text>
-                        </View>
-                        <DetailedStats playerMatches={this.state.playerMatches}/>
-                        <View style={styles.statTitleView}>
-                            <Text style={styles.statTitleText}>Segons durada del partit:</Text>
-                        </View>
-                        <MatchLength playerMatches={this.state.playerMatches}/>
-                        <View style={styles.statTitleView}>
-                            <Text style={styles.statTitleText}>Rivals més rellevants:</Text>
-                        </View>
-                        <BestWorstRival playerMatches={this.state.playerMatches}/>
-                    </ScrollView>
-                </View>
+                <PlayerProfile uid={this.state.uid}/>
                 <View style={styles.sessionOptions}>
                     <TouchableOpacity style={styles.changePWButton} onPress={() => {
                         this.setState({

@@ -7,7 +7,7 @@ import { w } from '../../api/Dimensions';
 
 export default class Table extends Component {
 
-    renderScoreCells = (scores, iRow) => {
+    renderScoreCells = (scores, iRow, rowTextStyles) => {
 
         
         return scores.map((score, i) => {
@@ -18,7 +18,7 @@ export default class Table extends Component {
                     <View
                         key={i}
                         style={{...styles.tableCell, ...styles.samePlayerCell}} >
-                        <Text style={[styles.tableText]}>{score}</Text>
+                        <Text style={rowTextStyles}></Text>
                     </View>
                 )
 
@@ -28,8 +28,8 @@ export default class Table extends Component {
                     <TouchableOpacity
                         key={i}
                         style={{...styles.tableCell, ...styles.pointsCell}} 
-                        onPress={() => {this.props.handlePress(toSendOnPress)}}>
-                        <Text style={[styles.tableText]}>{score}</Text>
+                        onPress={() => {this.props.goToMatchOverview(toSendOnPress)}}>
+                        <Text style={rowTextStyles}>{score}</Text>
                     </TouchableOpacity>
                 )
 
@@ -39,22 +39,37 @@ export default class Table extends Component {
     }
 
     renderTable = (groupResults) => {
-        
+
+        const totals = groupResults.map(({total}) => total)
+        let [iLeader, iLoser] = iLeaderLoser(totals)
+        let rowStyles, rowTextStyles;
+
         return groupResults.map( (resultsRow, iRow) => {
 
+            if (iRow == iLoser){
+                rowStyles = {...styles.tableRow, ...styles.lastPlayerRow}
+                rowTextStyles = {...styles.tableText, ...styles.lastPlayerRowText}
+            } else if (iRow == iLeader) {
+                rowStyles = {...styles.tableRow, ...styles.leaderRow}
+                rowTextStyles = {...styles.tableText, ...styles.leaderRowText}
+            } else {
+                rowStyles = {...styles.tableRow}
+                rowTextStyles = {...styles.tableText}
+            }
+
             return (
-                <View key={iRow} style={{...styles.tableRow}}>
+                <View key={iRow} style={rowStyles}>
                     <View style={{...styles.tableCell, ...styles.positionCell}}>
-                        <Text style={{...styles.tableText}}>{resultsRow.rank}</Text>
+                        <Text style={rowTextStyles}>{resultsRow.rank}</Text>
                     </View>
                     <TouchableOpacity 
                         style={{...styles.tableCell, ...styles.playerCell}} 
-                        onPress={() => {console.warn("Go to " + resultsRow.name + " profile")}}>
-                        <Text style={{...styles.tableText}}>{resultsRow.name}</Text>
+                        onPress={() => this.props.goToUserProfile(resultsRow.playerID)}>
+                        <Text style={rowTextStyles}>{resultsRow.name}</Text>
                     </TouchableOpacity>
-                    {this.renderScoreCells(resultsRow.scores, iRow)}
+                    {this.renderScoreCells(resultsRow.scores, iRow, rowTextStyles)}
                     <View style={{...styles.tableCell, ...styles.totalCell}}>
-                        <Text style={{...styles.tableText}}>{resultsRow.total}</Text>
+                        <Text style={rowTextStyles}>{resultsRow.total}</Text>
                     </View>
                 </View>
             )

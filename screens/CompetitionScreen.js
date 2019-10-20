@@ -17,7 +17,7 @@ export default class Clasifications extends React.Component {
 
         this.state = {
             //ranking: [],
-            userId: Firebase.auth.currentUser.uid,
+            userId: Firebase.userData.id,
             addMatchModal: false,
             typeOfComp: "groups"
         };
@@ -29,15 +29,13 @@ export default class Clasifications extends React.Component {
             headerLeft: <TouchableOpacity onPress={() => {navigation.getParam("toggleAddMatchModal")}}>
                             <Icon name="ios-add" style={{ paddingLeft: 20 }} />
                         </TouchableOpacity>, 
-            headerRight: <TouchableHighlight>
+            headerRight: <TouchableHighlight onPress={() => {navigation.navigate("EditingScreen")}}>
                             <Icon name="ios-settings" style={{ paddingRight: 20 }} />
                         </TouchableHighlight>
         }
     };
 
     componentDidMount() {
-
-        console.warn(Firebase.userData)
 
         /*Firebase.userRef(this.state.userId).get().then((docSnapshot) => {
             let {playerName, currentGroup, admin} = docSnapshot.data();
@@ -78,10 +76,13 @@ export default class Clasifications extends React.Component {
         this.props.navigation.navigate("EditingScreen");
     };
 
+    goToUserProfile = (uid = Firebase.userData.id) => {
+        this.props.navigation.navigate("Stats", {uid: uid})
+    }
+
     handlePress = ({content, typeOfCell, matchPlayers, iGroup, resultsPositions, fromAddMatchModal, fromChallenges, matchResult}) => {
-        if (typeOfCell == "playerNameCell") {
-            this.props.navigation.navigate("Stats", {playerName: content})
-        } else if (typeOfCell == "pointsCell" || fromAddMatchModal) {
+        
+        if (typeOfCell == "pointsCell" || fromAddMatchModal) {
             let oppPoints = oppositePoints(content)
             let points = [content, oppPoints]
             this.props.navigation.navigate("MatchModal", {
@@ -174,8 +175,10 @@ export default class Clasifications extends React.Component {
         if (!typeOfComp) {
             return null
         } else if (typeOfComp == "groups") {
-            return <Groups returnGroups={this.returnGroups}
-                               handlePress={this.handlePress}/>;
+            return <Groups
+                        goToUserProfile={this.goToUserProfile}
+                        returnGroups={this.returnGroups}
+                        navigation={this.props.navigation}/>;
 
         } else if (typeOfComp == "chalenges") {
             return <Challenges ranking={this.state.ranking} wentUp={this.state.wentUp} wentDown={this.state.wentDown}
