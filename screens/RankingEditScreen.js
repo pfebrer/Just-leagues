@@ -25,6 +25,7 @@ export default class RankingEditScreen extends Component {
         super(props)
 
         this.state = {
+            editable: true,
             deleteMode: false,
             ranking: ["Josep", "Ramón", "Gilbert", "Amadeu", "Francesc", "Josep", "Ramón", "Gilbert", "Amadeu", "Francesc"]
         }
@@ -54,9 +55,10 @@ export default class RankingEditScreen extends Component {
             style={styles.list}
             contentContainerStyle={styles.contentContainer}
             onReleaseRow={(key, newOrder) => this.updateRankingOrder(newOrder)}
-            onPressRow={(key) => this.setState({deleteMode: !this.state.deleteMode})}
+            onPressRow={(key) => this.setState({deleteMode: this.state.editable && !this.state.deleteMode})}
             data={this.state.ranking}
-            renderRow={this._renderRow} />
+            renderRow={this._renderRow}
+            sortingEnabled={this.state.editable}/>
         </View>
     );
   }
