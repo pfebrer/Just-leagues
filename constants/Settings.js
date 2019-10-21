@@ -19,4 +19,7 @@ export default SETTINGS = {
     ], //Describes how the point distribution works.
     groupSize: 4, //Number of players each group should have under normal circumstances
     minGroupSize: 3, //If last group has less players than this, they will be joined into the previous group
+    appearance: {
+        backgroundColor: "#ffe39f"
+    }
 }

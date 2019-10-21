@@ -11,6 +11,7 @@ import { Icon} from 'native-base';
 
 //Redux stuff
 import { connect } from 'react-redux'
+import SETTINGS from '../constants/Settings';
 
 class Competition extends React.Component {
 
@@ -27,10 +28,10 @@ class Competition extends React.Component {
     static navigationOptions = ({navigation}) => {
         return {
             headerLeft: <TouchableOpacity onPress={() => {navigation.getParam("toggleAddMatchModal")}}>
-                            <Icon name="ios-add" style={{ paddingLeft: 20 }} />
+                            <Icon name="add" style={{ paddingLeft: 20 }} />
                         </TouchableOpacity>, 
             headerRight: <TouchableHighlight onPress={() => {navigation.navigate("EditingScreen")}}>
-                            <Icon name="ios-settings" style={{ paddingRight: 20 }} />
+                            <Icon name="settings" style={{ paddingRight: 20 }} />
                         </TouchableHighlight>
         }
     };
@@ -189,7 +190,7 @@ class Competition extends React.Component {
 
     render() {
 
-        return <View style={{flex: 1, backgroundColor: "white"}}>
+        return <View style={styles.container}>
                 {this.renderCompView(this.state.typeOfComp)}
                 {this.renderAddMatchModal(this.state.addMatchModal, this.state.admin)}
                 </View>
@@ -204,6 +205,11 @@ const mapStateToProps = state => ({
 export default connect(mapStateToProps)(Competition);
 
 const styles = StyleSheet.create({
+
+    container: {
+        flex: 1,
+        backgroundColor: SETTINGS.appearance.backgroundColor
+    },
 
     addMatchButton: {
         position: "absolute",

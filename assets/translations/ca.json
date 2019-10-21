@@ -22,7 +22,8 @@
         "competition": "Competició",
         "chat": "Xat",
         "matches": "Partits",
-        "ranking": "Rànquing"
+        "ranking": "Rànquing",
+        "home":"Inici"
     },
     "info": {
         "checking user": "Comprovant usuari",

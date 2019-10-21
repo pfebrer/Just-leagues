@@ -15,6 +15,7 @@ import ChatMessage from "./chat/ChatMessage"
 import Firebase from "../api/Firebase"
 import {MaterialIcons} from '@expo/vector-icons';
 import {ChatWorkMode, Collections, Documents, Constants} from "../constants/CONSTANTS";
+import Settings from '../constants/Settings';
 
 export default class GroupChat extends React.Component {
 
@@ -130,35 +131,35 @@ export default class GroupChat extends React.Component {
 
     render() {
 
-        let bgResourceId = this.state.workMode === ChatWorkMode.group ? require("../assets/images/loginBG.jpg") : require("../assets/images/loginBG2.jpg")
         return (
-            <ImageBackground style={{flex: 1}} source={bgResourceId}>
-                <KeyboardAvoidingView style={styles.container} behavior="padding" keyboardVerticalOffset={this.state.verticalOffset} enabled>
-                    <View style={styles.chatTitleView} onLayout={(event) => {this.handleLayoutChange() }} 
-                        ref={view => { this.titleRef = view; }}>
-                        <Text style={styles.chatTitleText}>{this.state.title}</Text>
-                    </View>
-                    <ScrollView style={styles.chatContainer}
-                                ref={ref => this.scrollView = ref}
-                                onContentSizeChange={(contentWidth, contentHeight) => {
-                                    this.scrollView.scrollToEnd({animated: true});
-                                }}>
-                        {this.renderMessages()}
-                    </ScrollView>
-                    <View style={{flexDirection: "row"}}>
+            <KeyboardAvoidingView style={styles.container} behavior="padding" keyboardVerticalOffset={this.state.verticalOffset} enabled>
+                <View style={styles.chatTitleView} onLayout={(event) => {this.handleLayoutChange() }} 
+                    ref={view => { this.titleRef = view; }}>
+                    <Text style={styles.chatTitleText}>{this.state.title}</Text>
+                </View>
+                <ScrollView style={styles.chatContainer}
+                            ref={ref => this.scrollView = ref}
+                            onContentSizeChange={(contentWidth, contentHeight) => {
+                                this.scrollView.scrollToEnd({animated: true});
+                            }}>
+                    {this.renderMessages()}
+                </ScrollView>
+                <View style={styles.userInput}>
+                    <View style={styles.textInputView}>
                         <TextInput style={styles.textInput}
-                                   onChangeText={(text) => this.setState({newMessage: text})}
-                                   ref={this.textInputRef}
-                                   placeholder="Escriu aquí el teu missatge..."
-                                   multiline={true}/>
+                            onChangeText={(text) => this.setState({newMessage: text})}
+                            ref={this.textInputRef}
+                            placeholder="Escriu aquí el teu missatge..."
+                            multiline={true}/>
+                    </View>
+
                         <TouchableOpacity style={styles.sendButton} onPress={() => {
                             this.sendMessage()
                         }}>
-                            <MaterialIcons name="send" size={25} color="white"/>
-                        </TouchableOpacity>
-                    </View>
-                </KeyboardAvoidingView>
-            </ImageBackground>
+                        <MaterialIcons name="send" size={25} color="white"/>
+                    </TouchableOpacity>
+                </View>
+            </KeyboardAvoidingView>
         );
     }
 }
@@ -167,7 +168,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingTop: 20,
-        backgroundColor: "#ffec8b33",
+        backgroundColor: Settings.appearance.backgroundColor,
     },
     chatTitleView: {
         alignItems: "center",
@@ -181,14 +182,33 @@ const styles = StyleSheet.create({
     chatContainer: {
         flex: 1,
     },
+
+    userInput: {
+        flexDirection: "row",
+        marginBottom: 10,
+        marginHorizontal: 10,
+        height: "auto"
+    },
+
+    textInputView: {
+        flex: 4,
+        marginRight: 10,
+    },
+
     textInput: {
         backgroundColor: "white",
-        flex: 4,
+        flex:1,
+        borderRadius: 30,
         paddingVertical: 15,
         paddingHorizontal: 20,
+        elevation:2,
         fontSize: 15,
     },
+
     sendButton: {
+        elevation: 2,
+        borderRadius: 50,
+        paddingVertical: 20,
         backgroundColor: "green",
         alignItems: "center",
         justifyContent: "center",

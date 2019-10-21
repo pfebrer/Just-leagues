@@ -4,16 +4,17 @@ import Firebase from "../api/Firebase"
 import ChangePWModal from '../components/ChangePWModal';
 import PlayerProfile from '../components/statDisplays/UserProfile';
 
+//Redux stuff
+import { connect } from 'react-redux'
+import SETTINGS from '../constants/Settings';
 
-export default class Stats extends React.Component {
+class Stats extends React.Component {
 
     constructor(props) {
         super(props)
         this.state = {
             playerMatches: []
         }
-
-        this.userId = Firebase.userData.id;
     }
 
     componentDidMount() {
@@ -75,10 +76,11 @@ export default class Stats extends React.Component {
         let changePWModal = this.state.changePW ? (
             <ChangePWModal hidePWModal={this.hidePWModal}/>
         ) : null;
-        
+        let uid = this.state.uid || this.props.currentUser.id
+
         return (
-            <ImageBackground style={{flex: 1}} source={require("../assets/images/bg.jpg")}>
-                <PlayerProfile uid={this.state.uid}/>
+            <View style={styles.container}>
+                <PlayerProfile uid={uid}/>
                 <View style={styles.sessionOptions}>
                     <TouchableOpacity style={styles.changePWButton} onPress={() => {
                         this.setState({
@@ -96,16 +98,22 @@ export default class Stats extends React.Component {
                     </TouchableOpacity>
                 </View>
                 {changePWModal}
-            </ImageBackground>
+            </View>
         );
     }
 }
+
+const mapStateToProps = state => ({
+    currentUser: state.currentUser
+})
+
+export default connect(mapStateToProps)(Stats);
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingHorizontal: 20,
-        backgroundColor: "#ffec8b33",
+        backgroundColor: SETTINGS.appearance.backgroundColor,
         paddingTop: 30,
     },
     statsScrollView: {
@@ -124,7 +132,8 @@ const styles = StyleSheet.create({
     },
     sessionOptions: {
         height: 40,
-        flexDirection: "row"
+        flexDirection: "row",
+        display: "none"
     },
     logOutButton: {
         flex: 1,

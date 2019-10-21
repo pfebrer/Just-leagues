@@ -2,6 +2,7 @@ import React from 'react';
 import {ImageBackground, StyleSheet, View} from 'react-native';
 import MatchFilter from "../components/matchSearcher/MatchFilter"
 import MatchHistory from "../components/matchSearcher/MatchHistory"
+import SETTINGS from '../constants/Settings';
 
 export default class MatchSearcher extends React.Component {
 
@@ -26,13 +27,11 @@ export default class MatchSearcher extends React.Component {
 
     render() {
         return (
-            <ImageBackground style={{flex: 1}} source={require("../assets/images/loginBG2.jpg")}>
-                <View style={styles.container}>
-                    <MatchFilter filter={this.state.filter} filter2={this.state.filter2} applyFilter={this.applyFilter}
-                                 filterApplied={this.filterApplied}/>
-                    <MatchHistory filter={this.state.filter} filter2={this.state.filter2}/>
-                </View>
-            </ImageBackground>
+            <View style={styles.container}>
+                <MatchFilter filter={this.state.filter} filter2={this.state.filter2} applyFilter={this.applyFilter}
+                                filterApplied={this.filterApplied}/>
+                <MatchHistory filter={this.state.filter} filter2={this.state.filter2}/>
+            </View>
         );
     }
 }
@@ -42,6 +41,6 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: 50,
         paddingHorizontal: 20,
-        backgroundColor: "#ffec8b33",
+        backgroundColor: SETTINGS.appearance.backgroundColor,
     },
 });

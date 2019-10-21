@@ -45,13 +45,20 @@ class Groups extends React.Component {
     renderGroups = (groups) => {
 
         return groups.map( (group) => (
-            <Table
-                key={"Group" + String(group.group)} 
-                iGroup={group.group} 
-                groupResults={group.results}
-                goToUserProfile={this.props.goToUserProfile} 
-                handlePress={this.props.handlePress}
-            />
+
+            <View style={{...styles.groupContainer}}>
+                <View style={styles.groupTitle}>
+                    <Text style={styles.groupTitleText}> {(translate("vocabulary.group") + " " + iGroup).toUpperCase()}</Text>
+                </View>
+                <Table
+                    containerStyles={styles.groupContainer}
+                    key={"Group" + String(group.group)} 
+                    iGroup={group.group} 
+                    groupResults={group.results}
+                    goToUserProfile={this.props.goToUserProfile} 
+                    handlePress={this.props.handlePress}
+                />
+            </View>
         
         ))
 
@@ -91,8 +98,16 @@ export default connect(mapStateToProps)(Groups);
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 30
+        paddingTop: 30,
+        marginBottom: 50
     },
+
+    groupContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        flex:1,
+    },
+
     loadingMessageView: {
         flex: 1,
         alignItems: "center",
@@ -104,7 +119,7 @@ const styles = StyleSheet.create({
 
     contentContainer: {
         paddingTop: 30,
-    }
+    },
 });
 
 

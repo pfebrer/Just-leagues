@@ -42,6 +42,7 @@ export default class Table extends Component {
 
         const totals = groupResults.map(({total}) => total)
         let [iLeader, iLoser] = iLeaderLoser(totals)
+        let nPlayers = groupResults.length
         let rowStyles, rowTextStyles;
 
         return groupResults.map( (resultsRow, iRow) => {
@@ -55,6 +56,10 @@ export default class Table extends Component {
             } else {
                 rowStyles = {...styles.tableRow}
                 rowTextStyles = {...styles.tableText}
+            }
+
+            if (iRow == nPlayers -1){
+                rowStyles = {...rowStyles, ...styles.lastTableRow}
             }
 
             return (
@@ -75,100 +80,6 @@ export default class Table extends Component {
             )
 
         })
-        //Totals
-        /*let totals = getTotals(groupResults, nGroup);;
-        let leaderLoser = iLeaderLoser(totals) ;
-
-        
-        for (let i = 0; i <= nGroup; i++) {
-            let rowContent = [];
-            let addRowStyles = null;
-            let addStatusStyles = null;
-            //Determinem si és la fila del que va primer o últim
-            if (totals && leaderLoser[0] == i - 1) {
-                addStatusStyles = styles.leaderRowText
-                addRowStyles = styles.leaderRow
-            } else if (totals && leaderLoser[1] == i - 1) {
-                addStatusStyles = styles.lastPlayerRowText
-                addRowStyles = styles.lastPlayerRow
-            }
-            for (let j = 0; j < nGroup + 3; j++) {
-                let addStyles = "";
-                let addTextStyle = null;
-                let content = "";
-                let typeOfCell = "";
-                let matchPlayers = [];
-                let toSendOnPress = {};
-                let resultsPositions;
-                if (j == 0) { // Columna de les posicions
-                    addStyles = styles.positionCell;
-                    if (i > 0) {
-                        content = group[i - 1][0];
-                        typeOfCell = "positionCell"
-                    }
-                } else if (j == 1) { //Columna dels noms
-                    addStyles = styles.playerCell;
-                    if (i > 0) {
-                        content = group[i - 1][1];
-                        typeOfCell = "playerNameCell"
-                        toSendOnPress = {content, typeOfCell, iGroup}
-                    } else {
-                        content = translate("auth.name")
-                    }
-                } else if (j > 1 && j < nGroup + 2) { //Columnes de les puntuacions
-
-                    if (i - 1 != j - 2) {
-                        addStyles = styles.pointsCell;
-                        typeOfCell = "pointsCell";
-                        addTextStyle = styles.pointsText;
-                        matchPlayers = [group[i - 1], group[j - 2]];
-                        resultsPositions = [nGroup * (i - 1) + j - 2, nGroup * (j - 2) + i - 1] //Posició de la cel·la i de la complementaria
-
-                    } else {
-                        addStyles = styles.samePlayerCell;
-                    }
-                    //Puntuació que va a la casella
-                    if (i == 0) {
-                        content = group[j - 2][0]
-                        typeOfCell = "";
-                        addTextStyle = null;
-                    } else if (groupResults && groupResults[nGroup * (i - 1) + j - 2]) {
-                        content = groupResults[nGroup * (i - 1) + j - 2];
-                    }
-                    toSendOnPress = {content, typeOfCell, matchPlayers, iGroup, resultsPositions};
-                } else if (j == nGroup + 2) {
-                    addStyles = styles.totalCell;
-                    if (i == 0) {
-                        content = translate("vocabulary.total")
-                    } else {
-                        content = totals[i - 1] || ""
-                    }
-                }
-                // Afegim una view o touchableOpacity depenent del tipus de cel·la
-                if (typeOfCell == "playerNameCell" || typeOfCell == "pointsCell") {
-                    rowContent.push(
-                        <TouchableOpacity key={String(iGroup) + String(i) + String(j)}
-                                          style={[styles.tableCell, addStyles]} onPress={() => {
-                            this.props.handlePress(toSendOnPress)
-                        }}>
-                            <Text style={[styles.tableText, addTextStyle, addStatusStyles]}>{content}</Text>
-                        </TouchableOpacity>
-                    );
-                } else {
-                    rowContent.push(
-                        <View key={String(iGroup) + String(i) + String(j)} style={[styles.tableCell, addStyles]}>
-                            <Text style={[styles.tableText, addStatusStyles]}>{content}</Text>
-                        </View>
-                    );
-                }
-            }
-            if (i == 0) {
-                addRowStyles = styles.headerRow
-            }
-
-            table.push(<View key={"Row" + String(i)} style={[styles.tableRow, addRowStyles]}>{rowContent}</View>);
-        }
-        return table;*/
     }
 
     render() {
@@ -177,15 +88,13 @@ export default class Table extends Component {
         const ranks = groupResults.map(resultsRow => resultsRow.rank)
 
         return (
-            <View style={styles.groupContainer}>
-                <View style={styles.tableTitle}>
-                    <Text style={styles.tableTitleText}> {(translate("vocabulary.group") + " " + iGroup).toUpperCase()}</Text>
-                </View>
-                <View style={styles.tableContainer}>
+            <View style={this.props.containerStyles}>
+                <View style={{...styles.tableContainer, ...this.props.tableStyles}}>
                     <Header ranks={ranks}/>
                     {this.renderTable(groupResults)}
                 </View>
             </View>
+            
         )
         
             
@@ -228,20 +137,15 @@ class Header extends Component {
 
 const styles = StyleSheet.create({
 
-    groupContainer: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginBottom: 50,
-        flex:1,
-    },
-
     tableContainer: {
-        borderRadius: 5,
+        borderRadius: 3,
         borderColor: "black",
         borderWidth: 1,
         overflow: "hidden",
         flex:1,
-        width: w(90)
+        width: "100%",
+        elevation: 5,
+        backgroundColor: "white"
     },
 
     tableTitle: {
@@ -249,18 +153,22 @@ const styles = StyleSheet.create({
         alignItems: "center",
         paddingBottom: 10
     },
+
     tableTitleText: {
         color: "black",
         fontSize: 25
     },
+
     tableRow: {
-        alignSelf: "stretch",
         flexDirection: 'row',
         height: 30,
         flex: 1,
+        borderBottomColor: "black",
+        borderBottomWidth: 1,
     },
-    headerRow: {
-        height: 25
+
+    lastTableRow: {
+        borderBottomWidth: 0,
     },
 
     leaderRow: {
@@ -281,11 +189,10 @@ const styles = StyleSheet.create({
         color: "darkred"
     },
     tableCell: {
-        alignSelf: 'stretch',
         justifyContent: "center",
         alignItems: "center",
-        borderColor: "black",
-        borderWidth: 1
+        borderRightColor: "black",
+        borderRightWidth: 1
     },
     tableText: {
         color: "black"
@@ -309,5 +216,6 @@ const styles = StyleSheet.create({
     },
     totalCell: {
         flex: 3,
+        borderRightWidth: 0
     },
 });

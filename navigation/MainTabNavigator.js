@@ -1,17 +1,20 @@
 import React from 'react';
 import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator, createMaterialTopTabNavigator } from 'react-navigation-tabs';
+
 import Stats from "../screens/StatsScreen";
 import Classifications from "../screens/CompetitionScreen";
 import MatchModal from "../components/MatchModal";
 import EditingScreen from "../screens/EditingScreen";
 import GroupChat from "../components/GroupChat";
 import MatchSearcher from "../screens/MatchSearcherScreen";
-import {AntDesign, Entypo, Ionicons, MaterialCommunityIcons, MaterialIcons} from '@expo/vector-icons';
 import EditRankingScreen from "../components/ranking/EditRankingScreen";
 import RankingEditScreen from "../screens/RankingEditScreen";
+import HomeScreen from "../screens/HomeScreen"
+
 import {ChatWorkMode, Constants} from "../constants/CONSTANTS";
 import { translate } from '../assets/translations/translationManager';
+import {AntDesign, Entypo, Ionicons, MaterialCommunityIcons, MaterialIcons} from '@expo/vector-icons';
 
 
 
@@ -19,6 +22,10 @@ const EditingStack = createStackNavigator({
     EditingScreen: EditingScreen,
     EditRankingScreen: RankingEditScreen,
 },{ headerMode: "none"});
+
+const HomeStack = createStackNavigator({
+    HomeScreen: HomeScreen,
+});
 
 const ClasifStack = createStackNavigator({
     Classifications: Classifications,
@@ -29,8 +36,7 @@ const ClasifStack = createStackNavigator({
 });
 
 //createMaterialTopTabNavigator(RouteConfigs, TabNavigatorConfig);
-const chatsStack = createMaterialTopTabNavigator(
-    {
+const chatsStack = createMaterialTopTabNavigator({
         GroupChat: {
             screen: GroupChat,
             params: {workMode: ChatWorkMode.group},
@@ -76,7 +82,16 @@ export default createBottomTabNavigator({
             navigationOptions: {
                 tabBarLabel: translate("tabs.competition"),
                 tabBarIcon: ({tintColor}) => (
-                    <MaterialCommunityIcons name="tournament" size={20} color={tintColor}/>
+                    <Ionicons name="md-trophy" size={20} color={tintColor}/>
+                )
+            }
+        },
+        Home: {
+            screen: HomeStack,
+            navigationOptions: {
+                tabBarLabel: translate("tabs.home"),
+                tabBarIcon: ({tintColor}) => (
+                    <Ionicons name="md-home" size={20} color={tintColor}/>
                 )
             }
         },
@@ -99,7 +114,7 @@ export default createBottomTabNavigator({
                 )
             }
         },
-        Ranking: {
+        /*Ranking: {
             screen: EditRankingScreen,
             navigationOptions: {
                 tabBarLabel: translate("tabs.ranking"),
@@ -107,10 +122,10 @@ export default createBottomTabNavigator({
                     <MaterialIcons name="format-list-numbered" size={20} color={tintColor}/>
                 )
             }
-        }
+        }*/
     },
     {
-        initialRouteName: "Competition",
+        initialRouteName: "Home",
         tabBarOptions: {
             activeTintColor: 'tomato',
             inactiveTintColor: 'gray',
