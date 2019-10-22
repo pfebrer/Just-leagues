@@ -8,6 +8,7 @@
         "username": "Usuari",
         "password": "Paraula de pas",
         "log in": "Inicia sessió",
+        "sign in with google": "Inicia sessió amb Google",
         "log out": "Tanca sessió",
         "unable to log in": "No s'ha pogut iniciar sessió",
         "unable to register for notifications": "No s'han pogut activar les notificacions",

@@ -5,6 +5,8 @@ import 'firebase/functions';
 import { Toast } from 'native-base'
 import {Collections, Subcollections, Constants, Documents} from "../constants/CONSTANTS";
 
+import * as Google from 'expo-google-app-auth';
+
 class Firebase {
 
   constructor(){
@@ -26,6 +28,88 @@ class Firebase {
   }
 
   //AUTHENTICATION STUFF
+  /***Google***/
+  signInWithGoogleAsync = async () => {
+    try {
+      const result = await Google.logInAsync({
+        androidClientId: "524738063553-1tr662gs9strhp1rvljj4qv588mbj254.apps.googleusercontent.com",
+        //iosClientId: YOUR_CLIENT_ID_HERE,
+        scopes: ['profile', 'email'],
+      });
+  
+      if (result.type === 'success') {
+
+        //Log in to our firebase app
+        this.onGoogleSignIn(result)
+        return result.accessToken;
+      } else {
+        return { cancelled: true };
+      }
+    } catch (e) {
+      return { error: true };
+    }
+  }
+
+  onGoogleSignIn = (googleUser) => {
+
+    function isUserEqual(googleUser, firebaseUser) {
+      if (firebaseUser) {
+        var providerData = firebaseUser.providerData;
+        for (var i = 0; i < providerData.length; i++) {
+          if (providerData[i].providerId === firebase.auth.GoogleAuthProvider.PROVIDER_ID &&
+              providerData[i].uid === googleUser.getBasicProfile().getId()) {
+            // We don't need to reauth the Firebase connection.
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    console.log('Google Auth Response', googleUser);
+    // We need to register an Observer on Firebase Auth to make sure auth is initialized.
+    var unsubscribe = this.auth.onAuthStateChanged(function(firebaseUser) {
+      unsubscribe();
+      // Check if we are already signed-in Firebase with the correct user.
+      if (!isUserEqual(googleUser, firebaseUser)) {
+        // Build Firebase credential with the Google ID token.
+        var credential = firebase.auth.GoogleAuthProvider.credential(
+          googleUser.idToken,
+          googleUser.accessToken
+        );
+        // Sign in with credential from the Google user.
+        this.auth.signInWithCredential(credential)
+        .then( result => {
+
+          let userProfile = {
+            profilePic: result.additionalUserInfo.profile.picture,
+            firstName: result.additionalUserInfo.profile.given_name,
+            lastName: result.additionalUserInfo.profile.family_name,
+          }
+          this.userRef(result.user.uid)
+            .set( userProfile, {merge: true})
+            .then(function(snapshot) {
+
+            });
+        })
+        .catch(function(error) {
+          // Handle Errors here.
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          // The email of the user's account used.
+          var email = error.email;
+          // The firebase.auth.AuthCredential type that was used.
+          var credential = error.credential;
+          // ...
+          console.log(errorMessage)
+        });
+      } else {
+        console.log('User already signed-in Firebase.');
+      }
+    }.bind(this));
+  }
+
+  /***Email***/
   userLogin = (email, password) => {
     let me = this;
     email += "@" + "nickspa.cat"; //+ Constants.dbPrefix.replace("_", ".") +
@@ -125,30 +209,13 @@ class Firebase {
     })
   };
 
+  signOut = () => {
+    this.auth.signOut().then().catch((error) => {
+      alert(error.message)
+    })
+  }
+
   //DATABASE REFERENCES (Only place where they should be declared in the whole app)
-  /*get playersRef() {
-    return this.firestore.collection(Collections.PLAYERS)
-  }
-
-  get rankingsRef() {
-    return this.firestore.collection(Collections.RANKINGS).doc(Documents.RANKINGS.squashRanking);
-  }
-
-  get matchesRef() {
-    return this.firestore.collection(Collections.MATCHES);
-  }
-
-  get groupsRef() {
-    return this.firestore.collection(Collections.GROUPS);
-  }
-
-  get typeOfCompRef() {
-    return this.firestore.collection(Collections.MONTH_INFO).doc(Documents.MONTH_INFO.typeOfComp)
-  }
-
-  userRef = (uid) => {
-    return this.playersRef.doc(uid)
-  }*/
 
   //V3 database references
   get usersRef() {

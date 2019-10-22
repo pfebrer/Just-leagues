@@ -19,26 +19,32 @@ export default class Login extends Component {
     isLogin: false,
   };
 
-  getStarted = () => {
+  getStarted = (mode) => {
 
     Keyboard.dismiss();
 
-    const email = this.email.getInputValue();
-    const password = this.password.getInputValue();
+    if (mode == "google") {
+      var googleUser =  Firebase.signInWithGoogleAsync()
 
-    this.setState({
-      isEmailCorrect: email === '',
-      isPasswordCorrect: password === '',
-    }, () => {
-      if(email !== '' && password !== ''){
-        this.loginToFireBase(email, password);
-      } else {
-        Toast.show({
-          text: 'Fill up all fields',
-          buttonText: 'Okay'
-        })
-      }
-    });
+    } else if (mode == "email") {
+      const email = this.email.getInputValue();
+      const password = this.password.getInputValue();
+  
+      this.setState({
+        isEmailCorrect: email === '',
+        isPasswordCorrect: password === '',
+      }, () => {
+        if(email !== '' && password !== ''){
+          this.loginToFireBase(email, password);
+        } else {
+          Toast.show({
+            text: 'Fill up all fields',
+            buttonText: 'Okay'
+          })
+        }
+      });
+    }
+        
   };
 
   changeInputFocus = name => () => {
@@ -96,13 +102,14 @@ export default class Login extends Component {
           </TouchableOpacity>
         </View>
 
-        <TouchableOpacity onPress={this.props.noLogIn} style={styles.touchable, styles.avoidLogInTouch} activeOpacity={0.6}>
-          <Text style={styles.useAsGuest}>{translate("auth.use app as guest")}</Text>
-        </TouchableOpacity>
       </View>
     )
   }
 }
+
+/*<TouchableOpacity onPress={this.props.noLogIn} style={styles.touchable, styles.avoidLogInTouch} activeOpacity={0.6}>
+  <Text style={styles.useAsGuest}>{translate("auth.use app as guest")}</Text>
+</TouchableOpacity>*/
 
 const styles = StyleSheet.create({
   container: {

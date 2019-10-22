@@ -8,7 +8,7 @@ import MatchModal from "../components/MatchModal";
 import EditingScreen from "../screens/EditingScreen";
 import GroupChat from "../components/GroupChat";
 import MatchSearcher from "../screens/MatchSearcherScreen";
-import EditRankingScreen from "../components/ranking/EditRankingScreen";
+import SettingsScreen from "../screens/SettingsScreen";
 import RankingEditScreen from "../screens/RankingEditScreen";
 import HomeScreen from "../screens/HomeScreen"
 
@@ -25,6 +25,7 @@ const EditingStack = createStackNavigator({
 
 const HomeStack = createStackNavigator({
     HomeScreen: HomeScreen,
+    SettingsScreen: SettingsScreen
 });
 
 const ClasifStack = createStackNavigator({

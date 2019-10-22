@@ -2,6 +2,9 @@ import React from 'react'
 import {ActivityIndicator, ImageBackground, StatusBar, StyleSheet, Text, View,} from 'react-native';
 import Firebase from "../api/Firebase"
 import { translate } from '../assets/translations/translationManager';
+import { Toast } from 'native-base';
+import {Notifications} from "expo";
+import * as Permissions from "expo-permissions";
 
 //Redux stuff
 import { connect } from 'react-redux'
@@ -42,6 +45,8 @@ class LoadingScreen extends React.Component {
             //If there is a logged in user, go to the main page
             if (user) {
 
+                this.registerForPushNotificationsAsync(user.uid)
+
                 Firebase.userRef(user.uid).get()
                 .then((docSnapshot) => {
 
@@ -49,6 +54,11 @@ class LoadingScreen extends React.Component {
 
                     this.props.storeUserData(user.uid, userData)
 
+                    /*Toast.show({
+                        text: 'Benvingut, ' + userData.firstName + '!',
+                        duration: 3000
+                    })*/
+                    console.log("User signed in ---> Redirect to the home screen")
                     this.props.navigation.navigate('App');
 
                 })
@@ -66,11 +76,42 @@ class LoadingScreen extends React.Component {
 
             //Otherwise go to the login page
             } else {
+                console.log("USER NOT SIGNED IN --> Redirecting to login Screen")
                 this.props.navigation.navigate('Auth');
             }
         });
     }
 
+    registerForPushNotificationsAsync = async (uid) => {
+        const {status: existingStatus} = await Permissions.getAsync(
+            Permissions.NOTIFICATIONS
+        );
+        let finalStatus = existingStatus;
+    
+        // only ask if permissions have not already been determined, because
+        // iOS won't necessarily prompt the user a second time.
+        if (existingStatus !== 'granted') {
+            // Android remote notification permissions are granted during the app
+            // install, so this will only ask on iOS
+            const {status} = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+            finalStatus = status;
+    
+        }
+    
+        // Stop here if the user did not grant permissions
+        if (finalStatus !== 'granted') {
+            return;
+        }
+    
+        // Get the token that uniquely identifies this device
+        let token = await Notifications.getExpoPushTokenAsync();
+    
+        let updates = {};
+        updates["expoToken"] = token;
+        Firebase.userRef(uid).update(updates);
+    
+    };
+    
 
     render() {
         return <View style={styles.container}>
