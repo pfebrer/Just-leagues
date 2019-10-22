@@ -1,5 +1,15 @@
 import SETTINGS from "../../constants/Settings";
 
+
+//Transposes a 2D array
+exports.transpose = m => m[0].map((x,i) => m.map(x => x[i]))
+
+//Reshape a flat array to a 2d array by grouping in groups of n
+exports.reshape = (arr, shape) => {
+    let newArr = [];
+    while(arr.length) newArr.push(arr.splice(0,shape));
+    return newArr
+}
 //Recieves the points a player has for a certain match and returns the points of its rival.
 exports.oppositePoints = (points) => {
     let pairedPoints = SETTINGS.pointsScheme.map(({points}) => points);

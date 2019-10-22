@@ -1,97 +1,80 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
-import { getTotals, iLeaderLoser } from "../../assets/utils/utilFuncs"
+import { iLeaderLoser, transpose, reshape } from "../../assets/utils/utilFuncs"
 import { translate } from '../../assets/translations/translationManager';
-import { w } from '../../api/Dimensions';
+import { w, h, totalSize } from '../../api/Dimensions';
+import { ScrollView } from 'react-native-gesture-handler';
+import SETTINGS from '../../constants/Settings';
 
 export default class Table extends Component {
 
-    renderScoreCells = (scores, iRow, rowTextStyles) => {
+    renderTable = (ranks, players, scores, totals) => {
 
-        
-        return scores.map((score, i) => {
-
-            if (i == iRow) {
-
-                return (
-                    <View
-                        key={i}
-                        style={{...styles.tableCell, ...styles.samePlayerCell}} >
-                        <Text style={rowTextStyles}></Text>
-                    </View>
-                )
-
-            } else {
-
-                return (
-                    <TouchableOpacity
-                        key={i}
-                        style={{...styles.tableCell, ...styles.pointsCell}} 
-                        onPress={() => {this.props.goToMatchOverview(toSendOnPress)}}>
-                        <Text style={rowTextStyles}>{score}</Text>
-                    </TouchableOpacity>
-                )
-
-            }
-            
-        });
-    }
-
-    renderTable = (groupResults) => {
-
-        const totals = groupResults.map(({total}) => total)
         let [iLeader, iLoser] = iLeaderLoser(totals)
-        let nPlayers = groupResults.length
-        let rowStyles, rowTextStyles;
+        let nPlayers = players.length
 
-        return groupResults.map( (resultsRow, iRow) => {
+        return [
 
-            if (iRow == iLoser){
-                rowStyles = {...styles.tableRow, ...styles.lastPlayerRow}
-                rowTextStyles = {...styles.tableText, ...styles.lastPlayerRowText}
-            } else if (iRow == iLeader) {
-                rowStyles = {...styles.tableRow, ...styles.leaderRow}
-                rowTextStyles = {...styles.tableText, ...styles.leaderRowText}
-            } else {
-                rowStyles = {...styles.tableRow}
-                rowTextStyles = {...styles.tableText}
-            }
+            <Column 
+                key="ranks" header="" data={ranks}
+                style={{...styles.column, ...styles.ranksCol}} 
+                iLeader={iLeader} iLoser={iLoser}/>,
 
-            if (iRow == nPlayers -1){
-                rowStyles = {...rowStyles, ...styles.lastTableRow}
-            }
+            <Column
+                key="players"
+                header={translate("auth.name")} data={players}
+                style={{...styles.column, ...styles.playersCol}}
+                iLeader={iLeader} iLoser={iLoser}
+                touchable/>,
 
-            return (
-                <View key={iRow} style={rowStyles}>
-                    <View style={{...styles.tableCell, ...styles.positionCell}}>
-                        <Text style={rowTextStyles}>{resultsRow.rank}</Text>
-                    </View>
-                    <TouchableOpacity 
-                        style={{...styles.tableCell, ...styles.playerCell}} 
-                        onPress={() => this.props.goToUserProfile(resultsRow.playerID)}>
-                        <Text style={rowTextStyles}>{resultsRow.name}</Text>
-                    </TouchableOpacity>
-                    {this.renderScoreCells(resultsRow.scores, iRow, rowTextStyles)}
-                    <View style={{...styles.tableCell, ...styles.totalCell}}>
-                        <Text style={rowTextStyles}>{resultsRow.total}</Text>
-                    </View>
-                </View>
-            )
+            <ScoresScroll
+                key="scores"
+                headers={ranks}
+                data={scores}
+                nPlayers={nPlayers}
+                style={styles.scoresScroll}
+                iLeader={iLeader} iLoser={iLoser}
+                maxVisibleRows={this.props.maxVisibleRows}/>,
 
-        })
+            <Column 
+                key="totals" 
+                header={translate("vocabulary.total")} data={totals} 
+                style={{...styles.column, ...styles.totalsCol}}
+                iLeader={iLeader}
+                iLoser={iLoser}/>,
+        ]
     }
 
     render() {
-        const {iGroup, groupResults} = this.props
 
-        const ranks = groupResults.map(resultsRow => resultsRow.rank)
+        var ranks, players, scores, totals;
 
+        if (this.props.groupResults) {
+
+            const {groupResults} = this.props
+
+            ranks = groupResults.map(resultsRow => resultsRow.rank)
+            players = groupResults.map(resultsRow => resultsRow.name)
+            totals = groupResults.map(resultsRow => resultsRow.total)
+            scores = groupResults.map(resultsRow => resultsRow.scores)
+
+        } else {
+            var {players, scores} = this.props
+
+            ranks  = this.props.ranks || Array.from( new Array(players.length), (x,i) => i + 1)
+
+            scores = reshape(scores, players.length)
+
+            totals = this.props.totals || scores.map( playerScores => playerScores.reduce((a, b) => a + b, 0) )
+        }
+
+        scores = transpose(scores)
+        
         return (
             <View style={this.props.containerStyles}>
                 <View style={{...styles.tableContainer, ...this.props.tableStyles}}>
-                    <Header ranks={ranks}/>
-                    {this.renderTable(groupResults)}
+                    {this.renderTable(ranks, players, scores, totals)}
                 </View>
             </View>
             
@@ -101,43 +84,115 @@ export default class Table extends Component {
     }
 }
 
-class Header extends Component {
+class ScoresScroll extends Component {
 
-    renderRankCells = (ranks) => {
-
-        return ranks.map((rank, i) => {
-
-            return <View
-                        key={i}
-                        style={{...styles.tableCell, ...styles.pointsCell}} >
-                        <Text style={[styles.tableText]}>{rank}</Text>
-                    </View>
-        });
-
+    renderScoreCols = (headers, data, nVisibleRows) => {
+        return headers.map( (header, iCol) => {
+            return <Column
+                    key={iCol}
+                    header={header}
+                    data={data[iCol]} style={{...styles.column, width: 100/nVisibleRows + "%" }}
+                    iLeader={this.props.iLeader} iLoser={this.props.iLoser}
+                    touchable iScoresCol={iCol}/>
+        } )
     }
 
-    render(){
+    render() {
 
-        return <View style={{...styles.tableRow}}>
-                    <View style={{...styles.tableCell, ...styles.positionCell}}>
-                        <Text style={{...styles.tableText}}></Text>
-                    </View>
-                    <TouchableOpacity 
-                        style={{...styles.tableCell, ...styles.playerCell}} 
-                        onPress={() => {this.props.handlePress(toSendOnPress)}}>
-                        <Text style={{...styles.tableText}}>{translate("auth.name")}</Text>
-                    </TouchableOpacity>
-                    {this.renderRankCells(this.props.ranks)}
-                    <View style={{...styles.tableCell, ...styles.totalCell}}>
-                        <Text style={{...styles.tableText}}>{translate("vocabulary.total")}</Text>
-                    </View>
+        let nVisibleRows = Math.min( this.props.maxVisibleRows || SETTINGS.compDisplay.groupMaxVisibleRows, this.props.nPlayers)
+
+        let contentContainerStyle = {
+            width: this.props.nPlayers >= nVisibleRows ? this.props.nPlayers*100/nVisibleRows +"%" : "100%"
+        }
+
+        return (
+
+            <View style={{...this.props.style, flex: Math.min(8,nVisibleRows*2)}}>
+                <ScrollView style={{flex: 1}} horizontal={true} nestedScrollEnabled contentContainerStyle={contentContainerStyle}>
+                    {this.renderScoreCols(this.props.headers, this.props.data, this.props.nPlayers, nVisibleRows)}
+                </ScrollView>
+            </View>
+            
+        )
+    }
+}
+
+class Column extends Component{
+
+    renderHeader = (header) => {
+
+        return <View style={styles.tableCell}>
+                    <Text style={styles.tableText}>{header}</Text>
                 </View>
+    }
+
+    renderData = (data, iLeader, iLoser) => {
+        return data.map( (data, iRow, arr) => {
+
+            let addCellStyles = iRow == iLeader ? styles.leaderCell : iRow == iLoser ? styles.loserCell : {}
+
+            let cellStyles = {
+                ...styles.tableCell,
+                ...addCellStyles
+            }
+
+            if (iRow == arr.length - 1){ cellStyles = {...cellStyles, ...styles.lastRowCell} };
+
+            let addTextStyles = iRow == iLeader ? styles.leaderText : iRow == iLoser ? styles.loserText : {}
+
+            let textStyles = {
+                ...styles.tableText,
+                ...addTextStyles
+            }
+
+            if ( this.props.iScoresCol == iRow || !this.props.touchable){
+
+                addCellStyles = this.props.iScoresCol == iRow ? styles.samePlayerCell : {}
+
+                cellStyles = { ...cellStyles, ...addCellStyles}
+
+                return (
+                    <View
+                        key={iRow}
+                        style={cellStyles} 
+                        onPress={() => {}}>
+                        <Text style={textStyles}>{data}</Text>
+                    </View>
+
+                )
+            } else {
+
+                return (
+                    <TouchableOpacity
+                        key={iRow}
+                        style={cellStyles} 
+                        onPress={() => {}}>
+                        <Text style={textStyles}>{data}</Text>
+                    </TouchableOpacity>
+                )
+
+            }   
+
+            
+        })
+    }
+
+    render() {
+        
+        return (
+
+            <View style={this.props.style}>
+                {this.renderHeader(this.props.header)}
+                {this.renderData(this.props.data, this.props.iLeader, this.props.iLoser)}
+            </View>
+        )
     }
 }
 
 const styles = StyleSheet.create({
 
     tableContainer: {
+        flexDirection: "row",
         borderRadius: 3,
         borderColor: "black",
         borderWidth: 1,
@@ -148,74 +203,71 @@ const styles = StyleSheet.create({
         backgroundColor: "white"
     },
 
-    tableTitle: {
+    column: {
+        borderRightWidth: 1
+    },
+
+    ranksCol: {
+        flex: 1.5
+    },
+
+    playersCol: {
+        flex: 10
+    },
+
+    scoresScroll: {
+        flexDirection: "row",
+        flex: 8,
+    },
+
+    scoresCol: {
+        width: "20%",
+    },
+
+    totalsCol: {
+        flex: 3,
+        borderRightWidth: 0
+    },
+
+    tableCell: {
         justifyContent: "center",
         alignItems: "center",
-        paddingBottom: 10
-    },
-
-    tableTitleText: {
-        color: "black",
-        fontSize: 25
-    },
-
-    tableRow: {
-        flexDirection: 'row',
-        height: 30,
-        flex: 1,
         borderBottomColor: "black",
         borderBottomWidth: 1,
+        height: h(4)
     },
 
-    lastTableRow: {
-        borderBottomWidth: 0,
+    samePlayerCell: {
+        backgroundColor: "lightgray"
     },
 
-    leaderRow: {
+    leaderCell: {
         backgroundColor: "#c6e17b",
     },
 
-    leaderRowText: {
+    loserCell: {
+        backgroundColor: "#e1947b"
+    },
+
+    lastRowCell: {
+        borderBottomWidth: 0,
+    },
+
+    tableText: {
+        color: "black",
+        fontSize: totalSize(1.6)
+    },
+
+    leaderText: {
         fontFamily: "bold",
         color: "#2d652b"
     },
 
-    lastPlayerRow: {
-        backgroundColor: "#e1947b"
-    },
-
-    lastPlayerRowText: {
+    loserText: {
         fontFamily: "bold",
         color: "darkred"
     },
-    tableCell: {
-        justifyContent: "center",
-        alignItems: "center",
-        borderRightColor: "black",
-        borderRightWidth: 1
-    },
-    tableText: {
-        color: "black"
-    },
-    positionCell: {
-        flex: 1.5,
-    },
-    playerCell: {
-        flex: 10,
-    },
-    pointsCell: {
-        flex: 2,
-    },
-    pointsText: {
-        fontFamily: "bold",
-        fontSize: 17,
-    },
-    samePlayerCell: {
-        flex: 2,
-        backgroundColor: "lightgray"
-    },
-    totalCell: {
-        flex: 3,
-        borderRightWidth: 0
-    },
+
+    
+
 });

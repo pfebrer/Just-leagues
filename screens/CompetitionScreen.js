@@ -30,7 +30,7 @@ class Competition extends React.Component {
             headerLeft: <TouchableOpacity onPress={() => {navigation.getParam("toggleAddMatchModal")}}>
                             <Icon name="add" style={{ paddingLeft: 20 }} />
                         </TouchableOpacity>, 
-            headerRight: <TouchableHighlight onPress={() => {navigation.navigate("EditingScreen")}}>
+            headerRight: <TouchableHighlight onPress={() => {navigation.navigate("SettingsScreen")}}>
                             <Icon name="settings" style={{ paddingRight: 20 }} />
                         </TouchableHighlight>
         }

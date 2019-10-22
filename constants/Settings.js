@@ -21,5 +21,8 @@ export default SETTINGS = {
     minGroupSize: 3, //If last group has less players than this, they will be joined into the previous group
     appearance: {
         backgroundColor: "#ffe39f"
+    },
+    compDisplay: {
+        groupMaxVisibleRows: 6
     }
 }

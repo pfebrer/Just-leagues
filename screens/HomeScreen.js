@@ -52,25 +52,49 @@ class HomeScreen extends React.Component {
             {
                 name: "David Febrer",
                 rank: 1,
-                scores: [false, 5,false,false],
+                scores: [false, 5,false,false,false,false,false,false],
                 total: 5,
             },
             {
                 name: "David Febrer",
                 rank: 1,
-                scores: [3, false,false,false],
+                scores: [3, false,false,false,false,false,false,false],
                 total: 5,
             },
             {
                 name: "David Febrer",
                 rank: 1,
-                scores: [false, false,false,6],
+                scores: [false, false,false,6,false,false,false,false],
                 total: 5,
             },
             {
                 name: "David Febrer",
                 rank: 1,
-                scores: [false, false,2,false],
+                scores: [false, false,2,false,false,false,false,false],
+                total: 5,
+            },
+            {
+                name: "David Febrer",
+                rank: 1,
+                scores: [false, false,2,false,false,false,false,false],
+                total: 5,
+            },
+            {
+                name: "David Febrer",
+                rank: 1,
+                scores: [false, false,2,false,false,false,false,false],
+                total: 5,
+            },
+            {
+                name: "David Febrer",
+                rank: 1,
+                scores: [false, false,2,false,false,false,false,false],
+                total: 5,
+            },
+            {
+                name: "David Febrer",
+                rank: 1,
+                scores: [false, false,2,false,false,false,false,false],
                 total: 5,
             },
         ]
@@ -97,7 +121,11 @@ class HomeScreen extends React.Component {
                                 <Text style={styles.titleText}>{translate("vocabulary.group") + " 1"}</Text>
                             </View>
                             <View>
-                                <Table iGroup={1} groupResults={groupResults} containerStyles={styles.groupContainer}/>
+                                <Table
+                                    iGroup={1}
+                                    groupResults={groupResults}
+                                    containerStyles={styles.groupContainer}
+                                />
                             </View>
                         </TouchableOpacity>
                     </Animated.View>

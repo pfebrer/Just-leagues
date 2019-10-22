@@ -46,6 +46,7 @@ const styles = StyleSheet.create({
     paddingVertical: w(2),
     borderRadius: w(10),
     marginTop: h(6),
+    elevation: 3,
   },
 
   mailButton: {
@@ -61,14 +62,13 @@ const styles = StyleSheet.create({
   },
 
   text: {
-    color: 'white',
     fontWeight: '700',
     paddingVertical: h(1),
     fontSize: totalSize(2.1),
   },
 
   mailText: {
-
+    color: "white"
   },
 
   googleText: {

@@ -6,6 +6,7 @@ import { translate } from '../../assets/translations/translationManager';
 
 //Redux stuff
 import { connect } from 'react-redux'
+import { totalSize } from '../../api/Dimensions';
 
 class Groups extends React.Component {
 
@@ -21,14 +22,14 @@ class Groups extends React.Component {
 
         let {gymID, sportID} = this.props.competition
 
-        this.groupsSub = Firebase.groupsRef(gymID,sportID).onSnapshot((querySnapshot) => {
+        this.groupsSub = Firebase.gymRef(gymID).collection("groups").orderBy("order").onSnapshot((querySnapshot) => {
             
             let groups = querySnapshot.docs.map((group) => {
-                let {results} = group.data()
-                return {group: Number(group.id), results: results}
+                let {order, name, ranks, players, results} = group.data()
+                return {iGroup: order, name, ranks, players, results}
             });
 
-            groups = groups.sort((a,b) => a.group - b.group)
+            //groups = groups.sort((a,b) => a.iGroup - b.iGroup)
 
             this.setState({groups})
 
@@ -46,15 +47,14 @@ class Groups extends React.Component {
 
         return groups.map( (group) => (
 
-            <View style={{...styles.groupContainer}}>
-                <View style={styles.groupTitle}>
-                    <Text style={styles.groupTitleText}> {(translate("vocabulary.group") + " " + iGroup).toUpperCase()}</Text>
+            <View key={group.iGroup} style={{...styles.groupContainer}}>
+                <View style={{...styles.groupTitleView}}>
+                    <Text style={styles.groupTitleText}>{translate("vocabulary.group") + " " + (group.name)}</Text>
                 </View>
                 <Table
-                    containerStyles={styles.groupContainer}
-                    key={"Group" + String(group.group)} 
-                    iGroup={group.group} 
-                    groupResults={group.results}
+                    ranks={group.ranks}
+                    players={group.players}
+                    scores={group.results}
                     goToUserProfile={this.props.goToUserProfile} 
                     handlePress={this.props.handlePress}
                 />
@@ -102,10 +102,29 @@ const styles = StyleSheet.create({
         marginBottom: 50
     },
 
-    groupContainer: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        flex:1,
+    groupContainer : {
+        elevation: 5,
+        marginVertical: 10,
+        marginHorizontal: 10,
+        borderRadius: 5,
+        paddingHorizontal: 15,
+        paddingTop: 10,
+        paddingBottom: 20,
+        backgroundColor: "white",
+        overflow: "hidden"
+    },
+
+    groupTitleView : {
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        paddingBottom: 10,
+    },
+
+    groupTitleText: {
+        fontSize: totalSize(1.9),
+        color: "black",
+        fontWeight: "bold"
     },
 
     loadingMessageView: {
