@@ -22,20 +22,19 @@ import { connect } from 'react-redux'
 import { totalSize, w, h } from '../api/Dimensions';
 import { translate } from '../assets/translations/translationManager';
 import Table from '../components/groups/Table';
-import SETTINGS from '../constants/Settings';
+import { USERSETTINGS } from "../constants/Settings"
 
 class HomeScreen extends React.Component {
 
     constructor(props) {
         super(props);
-
     }
 
     static navigationOptions = ({navigation}) => {
         return {
             headerStyle: {
                 elevation: 2,
-                backgroundColor: SETTINGS.appearance.backgroundColor
+                backgroundColor: USERSETTINGS.generalAppearance.backgroundColor.default
               },
             headerLeft: <TouchableOpacity onPress={() => {}}>
                             <Icon name="person" style={{ paddingLeft: 20 }} />
@@ -150,7 +149,7 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingHorizontal: 10,
         paddingVertical: 20,
-        backgroundColor: SETTINGS.appearance.backgroundColor
+        backgroundColor: USERSETTINGS.generalAppearance.backgroundColor.default
     },
 
     gridRow: {

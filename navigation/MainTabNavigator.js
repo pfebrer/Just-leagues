@@ -6,7 +6,7 @@ import Stats from "../screens/StatsScreen";
 import Classifications from "../screens/CompetitionScreen";
 import MatchModal from "../components/MatchModal";
 import EditingScreen from "../screens/EditingScreen";
-import GroupChat from "../components/GroupChat";
+import GroupChat from "../screens/ChatScreen";
 import MatchSearcher from "../screens/MatchSearcherScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import RankingEditScreen from "../screens/RankingEditScreen";
@@ -26,7 +26,7 @@ const EditingStack = createStackNavigator({
 const HomeStack = createStackNavigator({
     HomeScreen: HomeScreen,
     SettingsScreen: SettingsScreen
-});
+},{initialRouteName: "SettingsScreen",});
 
 const ClasifStack = createStackNavigator({
     Classifications: Classifications,

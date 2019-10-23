@@ -9,7 +9,7 @@
         "password": "Paraula de pas",
         "log in": "Inicia sessió",
         "sign in with google": "Inicia sessió amb Google",
-        "log out": "Tanca sessió",
+        "sign out": "Tanca sessió",
         "unable to log in": "No s'ha pogut iniciar sessió",
         "unable to register for notifications": "No s'han pogut activar les notificacions",
         "name":"Nom",
@@ -36,5 +36,15 @@
     },
     "errors": {
         "impossible result":"No ens enganyis, aquest resultat és impossible :("
+    },
+    "settings": {
+        "background color": {
+            "name":"Color principal",
+            "descripition":"Tria el color principal de la app"
+        },
+        "max visible cols": {
+            "name": "Columnes visibles en grups",
+            "description": "En les competicions de grups, el màxim de columnes que es veuen amb comoditat depenen de l'amplada del teu mòbil"
+        }
     }
 }

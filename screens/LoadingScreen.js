@@ -6,6 +6,9 @@ import { Toast } from 'native-base';
 import {Notifications} from "expo";
 import * as Permissions from "expo-permissions";
 
+import { updateSettings } from "../assets/utils/utilFuncs"
+import { USERSETTINGS } from "../constants/Settings"
+
 //Redux stuff
 import { connect } from 'react-redux'
 import { storeUserData } from "../redux/actions"
@@ -52,7 +55,17 @@ class LoadingScreen extends React.Component {
 
                     let userData = docSnapshot.data()
 
+                    let newSettings = updateSettings(userData.settings, USERSETTINGS)
+
+                    if (newSettings) {
+                        userData = { ...userData, settings: newSettings}
+                    }
+
                     this.props.storeUserData(user.uid, userData)
+
+                    if (newSettings){
+                        Firebase.userRef(user.uid).set({settings:newSettings},{merge: true});
+                    }
 
                     /*Toast.show({
                         text: 'Benvingut, ' + userData.firstName + '!',

@@ -9,9 +9,12 @@ import Firebase from "../api/Firebase"
 import {oppositePoints} from "../assets/utils/utilFuncs"
 import { Icon} from 'native-base';
 
+import {USERSETTINGS} from "../constants/Settings"
+
 //Redux stuff
 import { connect } from 'react-redux'
-import SETTINGS from '../constants/Settings';
+
+
 
 class Competition extends React.Component {
 
@@ -208,7 +211,7 @@ const styles = StyleSheet.create({
 
     container: {
         flex: 1,
-        backgroundColor: SETTINGS.appearance.backgroundColor
+        backgroundColor: USERSETTINGS.generalAppearance.backgroundColor.default
     },
 
     addMatchButton: {

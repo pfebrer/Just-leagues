@@ -11,11 +11,11 @@ import {
     View,
     Dimensions
 } from 'react-native';
-import ChatMessage from "./chat/ChatMessage"
+import ChatMessage from "../components/chat/ChatMessage"
 import Firebase from "../api/Firebase"
 import {MaterialIcons} from '@expo/vector-icons';
 import {ChatWorkMode, Collections, Documents, Constants} from "../constants/CONSTANTS";
-import Settings from '../constants/Settings';
+import {USERSETTINGS} from "../constants/Settings"
 
 export default class GroupChat extends React.Component {
 
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingTop: 20,
-        backgroundColor: Settings.appearance.backgroundColor,
+        backgroundColor: USERSETTINGS.generalAppearance.backgroundColor.default,
     },
     chatTitleView: {
         alignItems: "center",

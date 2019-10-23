@@ -6,7 +6,7 @@ import PlayerProfile from '../components/statDisplays/UserProfile';
 
 //Redux stuff
 import { connect } from 'react-redux'
-import SETTINGS from '../constants/Settings';
+import { USERSETTINGS } from "../constants/Settings"
 
 class Stats extends React.Component {
 
@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingHorizontal: 20,
-        backgroundColor: SETTINGS.appearance.backgroundColor,
+        backgroundColor: USERSETTINGS.generalAppearance.backgroundColor.default,
         paddingTop: 30,
     },
     statsScrollView: {

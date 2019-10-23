@@ -2,7 +2,7 @@ import React from 'react';
 import {ImageBackground, StyleSheet, View} from 'react-native';
 import MatchFilter from "../components/matchSearcher/MatchFilter"
 import MatchHistory from "../components/matchSearcher/MatchHistory"
-import SETTINGS from '../constants/Settings';
+import { USERSETTINGS } from "../constants/Settings"
 
 export default class MatchSearcher extends React.Component {
 
@@ -41,6 +41,6 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingTop: 50,
         paddingHorizontal: 20,
-        backgroundColor: SETTINGS.appearance.backgroundColor,
+        backgroundColor: USERSETTINGS.generalAppearance.backgroundColor.default,
     },
 });

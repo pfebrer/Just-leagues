@@ -10,6 +10,66 @@ exports.reshape = (arr, shape) => {
     while(arr.length) newArr.push(arr.splice(0,shape));
     return newArr
 }
+
+getDefaultSettings = (settings) => {
+    let defaultSettings = {}
+    
+                    
+    Object.keys(settings).forEach( settingType => {
+
+        defaultSettings[settingType] = {}
+
+        Object.keys(settings[settingType]).forEach( setting => { 
+            defaultSettings[settingType][setting] = settings[settingType][setting].default
+        })
+        
+    })
+
+    return defaultSettings
+}
+
+//Function that checks if some settings are not in the users profile and pushes them there.
+exports.updateSettings = (currentSettings, upToDateSettings) => {
+
+    let defaultSettings = getDefaultSettings(upToDateSettings)
+    let newSettings = currentSettings
+
+    let changed = false
+
+    if ( !currentSettings ){
+        changed = true
+        newSettings = defaultSettings
+    } else {
+
+        Object.keys(upToDateSettings).forEach( settingType => {
+
+            if ( !currentSettings[settingType] ){
+    
+                newSettings[settingType] = defaultSettings[settingType]
+    
+                changed = true
+    
+            } else {
+    
+                Object.keys(upToDateSettings[settingType]).forEach( setting => {
+    
+                    if ( ! currentSettings[settingType][setting]){
+    
+                        newSettings[settingType][setting] = defaultSettings[settingType][setting]
+    
+                        changed = true
+                    }
+    
+                })
+            }
+            
+        })
+
+    }
+
+    return  !changed || newSettings
+}
+
 //Recieves the points a player has for a certain match and returns the points of its rival.
 exports.oppositePoints = (points) => {
     let pairedPoints = SETTINGS.pointsScheme.map(({points}) => points);

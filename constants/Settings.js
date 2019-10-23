@@ -1,28 +1,44 @@
+import { translate } from '../assets/translations/translationManager';
+
 //Contains all the parameters that can be used to tune the app
 
-export default SETTINGS = {
-    pointsScheme: [
-        {
-            result: [3,0],
-            points: [7,1],
-        },
 
-        {
-            result: [3,1],
-            points: [6,2],
-        },
+exports.COMPSETTINGS = {
+    groups: {
+        pointsScheme: [
+            {
+                result: [3,0],
+                points: [7,1],
+            },
 
-        {
-            result: [3,2],
-            points: [5,3],
+            {
+                result: [3,1],
+                points: [6,2],
+            },
+
+            {
+                result: [3,2],
+                points: [5,3],
+            }
+        ], //Describes how the point distribution works.
+        groupSize: 4, //Number of players each group should have under normal circumstances
+        minGroupSize: 3, //If last group has less players than this, they will be joined into the previous group
+    }
+}
+
+exports.USERSETTINGS = {
+    generalAppearance: {
+        backgroundColor: {
+            name: translate("settings.background color.name"),
+            description: translate("settings.background color.description"),
+            default: "#ffe39f"
         }
-    ], //Describes how the point distribution works.
-    groupSize: 4, //Number of players each group should have under normal circumstances
-    minGroupSize: 3, //If last group has less players than this, they will be joined into the previous group
-    appearance: {
-        backgroundColor: "#ffe39f"
     },
     compDisplay: {
-        groupMaxVisibleRows: 6
-    }
+        groupMaxVisibleRows: {
+            name: translate("settings.max visible rows.name"),
+            description: translate("settings.max visible rows.description"),
+            default: 6
+        },
+    },
 }
