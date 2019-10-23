@@ -50,32 +50,33 @@ class LoadingScreen extends React.Component {
 
                 this.registerForPushNotificationsAsync(user.uid)
 
-                Firebase.userRef(user.uid).get()
-                .then((docSnapshot) => {
+                Firebase.userRef(user.uid).onSnapshot(
+                (docSnapshot) => {
 
                     let userData = docSnapshot.data()
 
                     let newSettings = updateSettingsFields(userData.settings, USERSETTINGS)
 
-                    if (newSettings) {
-                        userData = { ...userData, settings: newSettings}
-                    }
-
-                    this.props.storeUserData(user.uid, userData)
-
                     if (newSettings){
-                        Firebase.userRef(user.uid).set({settings:newSettings},{merge: true});
-                    }
 
-                    /*Toast.show({
+                        Firebase.userRef(user.uid).set({settings:newSettings},{merge: true});
+                        
+                    } else {
+
+                        this.props.storeUserData(user.uid, userData)
+                        console.log("User signed in ---> Redirect to the home screen")
+                        
+                        this.props.navigation.navigate('App');
+                        /*Toast.show({
                         text: 'Benvingut, ' + userData.firstName + '!',
                         duration: 3000
-                    })*/
-                    console.log("User signed in ---> Redirect to the home screen")
-                    this.props.navigation.navigate('App');
+                        })*/
+                    }
+
+                    
+                    
 
                 })
-                .catch((err)=> {console.error(err)})
               
                 /*this.usersRef.doc(user.uid).get().then((docSnapshot) => {
                     if(docSnapshot.exists) {
