@@ -26,7 +26,7 @@ const EditingStack = createStackNavigator({
 const HomeStack = createStackNavigator({
     HomeScreen: HomeScreen,
     SettingsScreen: SettingsScreen
-},{initialRouteName: "SettingsScreen",});
+});
 
 const ClasifStack = createStackNavigator({
     Classifications: Classifications,

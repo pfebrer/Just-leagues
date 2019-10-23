@@ -5,9 +5,11 @@ import { iLeaderLoser, transpose, reshape } from "../../assets/utils/utilFuncs"
 import { translate } from '../../assets/translations/translationManager';
 import { w, h, totalSize } from '../../api/Dimensions';
 import { ScrollView } from 'react-native-gesture-handler';
-import SETTINGS from '../../constants/Settings';
 
-export default class Table extends Component {
+//Redux stuff
+import { connect } from 'react-redux'
+
+class Table extends Component {
 
     renderTable = (ranks, players, scores, totals) => {
 
@@ -35,7 +37,8 @@ export default class Table extends Component {
                 nPlayers={nPlayers}
                 style={styles.scoresScroll}
                 iLeader={iLeader} iLoser={iLoser}
-                maxVisibleRows={this.props.maxVisibleRows}/>,
+                maxVisibleRows={this.props.maxVisibleRows}
+                currentUser={this.props.currentUser}/>,
 
             <Column 
                 key="totals" 
@@ -99,7 +102,10 @@ class ScoresScroll extends Component {
 
     render() {
 
-        let nVisibleRows = Math.min( this.props.maxVisibleRows || SETTINGS.compDisplay.groupMaxVisibleRows, this.props.nPlayers)
+        let nVisibleRows = Math.min( 
+            this.props.maxVisibleRows || this.props.currentUser.settings["Competition display"].groupMaxVisibleCols, 
+            this.props.nPlayers
+        )
 
         let contentContainerStyle = {
             width: this.props.nPlayers >= nVisibleRows ? this.props.nPlayers*100/nVisibleRows +"%" : "100%"
@@ -188,6 +194,12 @@ class Column extends Component{
         )
     }
 }
+
+const mapStateToProps = state => ({
+    currentUser: state.currentUser
+})
+
+export default connect(mapStateToProps)(Table);
 
 const styles = StyleSheet.create({
 

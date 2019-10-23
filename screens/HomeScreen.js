@@ -34,7 +34,7 @@ class HomeScreen extends React.Component {
         return {
             headerStyle: {
                 elevation: 2,
-                backgroundColor: USERSETTINGS.generalAppearance.backgroundColor.default
+                backgroundColor: USERSETTINGS["General appearance"].backgroundColor.default
               },
             headerLeft: <TouchableOpacity onPress={() => {}}>
                             <Icon name="person" style={{ paddingLeft: 20 }} />
@@ -149,7 +149,7 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingHorizontal: 10,
         paddingVertical: 20,
-        backgroundColor: USERSETTINGS.generalAppearance.backgroundColor.default
+        backgroundColor: USERSETTINGS["General appearance"].backgroundColor.default
     },
 
     gridRow: {

@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingTop: 20,
-        backgroundColor: USERSETTINGS.generalAppearance.backgroundColor.default,
+        backgroundColor: USERSETTINGS["General appearance"].backgroundColor.default,
     },
     chatTitleView: {
         alignItems: "center",

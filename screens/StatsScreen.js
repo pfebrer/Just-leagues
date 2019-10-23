@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingHorizontal: 20,
-        backgroundColor: USERSETTINGS.generalAppearance.backgroundColor.default,
+        backgroundColor: USERSETTINGS["General appearance"].backgroundColor.default,
         paddingTop: 30,
     },
     statsScrollView: {

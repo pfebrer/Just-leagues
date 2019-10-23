@@ -6,7 +6,7 @@ import { Toast } from 'native-base';
 import {Notifications} from "expo";
 import * as Permissions from "expo-permissions";
 
-import { updateSettings } from "../assets/utils/utilFuncs"
+import { updateSettingsFields } from "../assets/utils/utilFuncs"
 import { USERSETTINGS } from "../constants/Settings"
 
 //Redux stuff
@@ -55,7 +55,7 @@ class LoadingScreen extends React.Component {
 
                     let userData = docSnapshot.data()
 
-                    let newSettings = updateSettings(userData.settings, USERSETTINGS)
+                    let newSettings = updateSettingsFields(userData.settings, USERSETTINGS)
 
                     if (newSettings) {
                         userData = { ...userData, settings: newSettings}
@@ -75,7 +75,7 @@ class LoadingScreen extends React.Component {
                     this.props.navigation.navigate('App');
 
                 })
-                .catch((err)=> {this.props.navigation.navigate('App');})
+                .catch((err)=> {console.error(err)})
               
                 /*this.usersRef.doc(user.uid).get().then((docSnapshot) => {
                     if(docSnapshot.exists) {

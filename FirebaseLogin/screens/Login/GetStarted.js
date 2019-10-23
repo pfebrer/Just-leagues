@@ -8,7 +8,7 @@ export default class GetStarted extends Component {
   render() {
     return (
       [
-      <TouchableOpacity
+      <TouchableOpacity key="email"
         onPress={() => {this.props.click("email")}}
         style={{...styles.button, ...styles.mailButton}}
         activeOpacity={0.6}
@@ -17,15 +17,15 @@ export default class GetStarted extends Component {
           ? <ActivityIndicator size="large" style={styles.spinner} color='white' />
           : <Text style={{...styles.text, ...styles.mailText}}>{translate("auth.log in").toUpperCase()}</Text>}
       </TouchableOpacity>,
-      <TouchableOpacity
+      <TouchableOpacity key="google"
       onPress={() => {this.props.click("google")}}
       style={{...styles.button, ...styles.googleButton}}
       activeOpacity={0.6}
     >
       {this.props.isLogin
         ? <ActivityIndicator size="large" style={styles.spinner} color='white' />
-        : [<Image style={styles.googleLogo} source={require("../../../assets/images/googleIcon.png")}/>,
-          <Text style={{...styles.text, ...styles.googleText}}>{translate("auth.sign in with google")}</Text>]}
+        : [<Image key="googleIcon" style={styles.googleLogo} source={require("../../../assets/images/googleIcon.png")}/>,
+          <Text key="googleText" style={{...styles.text, ...styles.googleText}}>{translate("auth.sign in with google")}</Text>]}
     </TouchableOpacity>]
 
     );

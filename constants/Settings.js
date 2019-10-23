@@ -27,17 +27,17 @@ exports.COMPSETTINGS = {
 }
 
 exports.USERSETTINGS = {
-    generalAppearance: {
+    "General appearance": {
         backgroundColor: {
-            name: translate("settings.background color.name"),
-            description: translate("settings.background color.description"),
+            name: "settings.background color.name",
+            description: "settings.background color.description",
             default: "#ffe39f"
         }
     },
-    compDisplay: {
-        groupMaxVisibleRows: {
-            name: translate("settings.max visible rows.name"),
-            description: translate("settings.max visible rows.description"),
+    "Competition display": {
+        groupMaxVisibleCols: {
+            name: "settings.max visible cols.name",
+            description: "settings.max visible cols.description",
             default: 6
         },
     },

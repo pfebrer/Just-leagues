@@ -29,7 +29,7 @@ getDefaultSettings = (settings) => {
 }
 
 //Function that checks if some settings are not in the users profile and pushes them there.
-exports.updateSettings = (currentSettings, upToDateSettings) => {
+exports.updateSettingsFields = (currentSettings, upToDateSettings) => {
 
     let defaultSettings = getDefaultSettings(upToDateSettings)
     let newSettings = currentSettings
@@ -37,8 +37,10 @@ exports.updateSettings = (currentSettings, upToDateSettings) => {
     let changed = false
 
     if ( !currentSettings ){
+
         changed = true
         newSettings = defaultSettings
+        
     } else {
 
         Object.keys(upToDateSettings).forEach( settingType => {
@@ -67,7 +69,7 @@ exports.updateSettings = (currentSettings, upToDateSettings) => {
 
     }
 
-    return  !changed || newSettings
+    return  changed ? newSettings : false
 }
 
 //Recieves the points a player has for a certain match and returns the points of its rival.

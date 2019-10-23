@@ -66,8 +66,8 @@ class Competition extends React.Component {
     }
 
     componentWillUnmount() {
-        this.typeOfComp();
-        this.ranking();
+        //this.typeOfComp();
+        //this.ranking();
     };
 
     toggleAddMatchModal = () => {
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
 
     container: {
         flex: 1,
-        backgroundColor: USERSETTINGS.generalAppearance.backgroundColor.default
+        backgroundColor: USERSETTINGS["General appearance"].backgroundColor.default
     },
 
     addMatchButton: {
