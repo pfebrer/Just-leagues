@@ -215,8 +215,22 @@ class Firebase {
     })
   }
 
-  //DATABASE REFERENCES (Only place where they should be declared in the whole app)
+  //FUNCTIONS TO OPERATE ON THE DATA BASE
+  //Generic updater
+  updateDocInfo = (ref, updates, callback, merge = true) => {
 
+    ref.set(updates, {merge}).then(() => {
+      if (callback) {callback()}
+    })
+    .catch((err) => alert(err))
+  }
+
+  //Update user settings
+  updateUserSettings = (uid, newSettings, callback) => {
+    this.updateDocInfo( this.userRef(uid), {settings: newSettings}, callback, merge = true )
+  }
+
+  //DATABASE REFERENCES (Only place where they should be declared in the whole app)
   //V3 database references
   get usersRef() {
     return this.firestore.collection(Collections.USERS)

@@ -6,15 +6,15 @@ import AddMatchModal from "../components/AddMatchModal"
 import AdminAddMatchModal from "../components/AdminAddMatchModal"
 import Firebase from "../api/Firebase"
 
+import HeaderIcon from "../components/header/HeaderIcon"
+
 import {oppositePoints} from "../assets/utils/utilFuncs"
 import { Icon} from 'native-base';
 
-import {USERSETTINGS} from "../constants/Settings"
+import { USERSETTINGS} from "../constants/Settings"
 
 //Redux stuff
 import { connect } from 'react-redux'
-
-
 
 class Competition extends React.Component {
 
@@ -30,12 +30,8 @@ class Competition extends React.Component {
 
     static navigationOptions = ({navigation}) => {
         return {
-            headerLeft: <TouchableOpacity onPress={() => {navigation.getParam("toggleAddMatchModal")}}>
-                            <Icon name="add" style={{ paddingLeft: 20 }} />
-                        </TouchableOpacity>, 
-            headerRight: <TouchableHighlight onPress={() => {navigation.navigate("SettingsScreen")}}>
-                            <Icon name="settings" style={{ paddingRight: 20 }} />
-                        </TouchableHighlight>
+            headerLeft: <HeaderIcon name="add" onPress={() => {navigation.navigate("toggleAddMatchModal")}}/>,
+            headerRight: <HeaderIcon name="settings" onPress={() => {navigation.navigate("SettingsScreen")}}/>
         }
     };
 
@@ -193,7 +189,7 @@ class Competition extends React.Component {
 
     render() {
 
-        return <View style={styles.container}>
+        return <View style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
                 {this.renderCompView(this.state.typeOfComp)}
                 {this.renderAddMatchModal(this.state.addMatchModal, this.state.admin)}
                 </View>

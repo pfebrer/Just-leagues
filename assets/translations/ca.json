@@ -24,7 +24,8 @@
         "chat": "Xat",
         "matches": "Partits",
         "ranking": "Rànquing",
-        "home":"Inici"
+        "home":"Inici",
+        "settings": "Configuració"
     },
     "info": {
         "checking user": "Comprovant usuari",
@@ -38,13 +39,15 @@
         "impossible result":"No ens enganyis, aquest resultat és impossible :("
     },
     "settings": {
+        "General appearance": "Aparença general",
+        "Competition display": "Presentació de competicions",
         "background color": {
             "name":"Color principal",
-            "descripition":"Tria el color principal de la app"
+            "description":"Tria el color principal de la app."
         },
         "max visible cols": {
             "name": "Columnes visibles en grups",
-            "description": "En les competicions de grups, el màxim de columnes que es veuen amb comoditat depenen de l'amplada del teu mòbil"
+            "description": "En les competicions de grups, el màxim de columnes que es veuen amb comoditat depenen de l'amplada del teu mòbil."
         }
-    }
+    },
 }

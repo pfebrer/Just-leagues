@@ -11,7 +11,7 @@ import { USERSETTINGS } from "../constants/Settings"
 
 //Redux stuff
 import { connect } from 'react-redux'
-import { storeUserData } from "../redux/actions"
+import { storeUserData, setAppSettings } from "../redux/actions"
 
 class LoadingScreen extends React.Component {
 
@@ -45,36 +45,43 @@ class LoadingScreen extends React.Component {
 
         //Listen for any change on the authorization state (even logouts)
         const unsub = Firebase.auth.onAuthStateChanged(user => {
+
+            //On sign out remove the previous userListener, otherwise it will crash due to not having permission to read the database 
+            if (this.userListener && !user) {this.userListener()}
+
             //If there is a logged in user, go to the main page
             if (user) {
 
                 this.registerForPushNotificationsAsync(user.uid)
 
-                Firebase.userRef(user.uid).onSnapshot(
+                this.userListener = Firebase.userRef(user.uid).onSnapshot(
                 (docSnapshot) => {
 
                     let userData = docSnapshot.data()
+
+                    //This fixes the problem of a user being deleted from the database while logged in (logged in forever, weird but it's better to prevent)
+                    if (!userData) {Firebase.signOut()} 
 
                     let newSettings = updateSettingsFields(userData.settings, USERSETTINGS)
 
                     if (newSettings){
 
-                        Firebase.userRef(user.uid).set({settings:newSettings},{merge: true});
+                        Firebase.updateUserSettings(user.uid, newSettings)
                         
                     } else {
 
                         this.props.storeUserData(user.uid, userData)
+
                         console.log("User signed in ---> Redirect to the home screen")
-                        
+
                         this.props.navigation.navigate('App');
+
                         /*Toast.show({
                         text: 'Benvingut, ' + userData.firstName + '!',
                         duration: 3000
                         })*/
-                    }
 
-                    
-                    
+                    }
 
                 })
               
@@ -90,6 +97,7 @@ class LoadingScreen extends React.Component {
 
             //Otherwise go to the login page
             } else {
+
                 console.log("USER NOT SIGNED IN --> Redirecting to login Screen")
                 this.props.navigation.navigate('Auth');
             }
@@ -126,7 +134,6 @@ class LoadingScreen extends React.Component {
     
     };
     
-
     render() {
         return <View style={styles.container}>
                     <Text style={styles.userCheck}>{this.status.msg}</Text>

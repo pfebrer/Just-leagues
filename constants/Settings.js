@@ -1,8 +1,4 @@
-import { translate } from '../assets/translations/translationManager';
-
 //Contains all the parameters that can be used to tune the app
-
-
 exports.COMPSETTINGS = {
     groups: {
         pointsScheme: [
@@ -26,19 +22,47 @@ exports.COMPSETTINGS = {
     }
 }
 
+//Remember to set a translation for each setting that you add!
 exports.USERSETTINGS = {
     "General appearance": {
         backgroundColor: {
+            control: {
+                type: "colorWheel",
+            },
             name: "settings.background color.name",
             description: "settings.background color.description",
-            default: "#ffe39f"
+            default: "#ffe39f",
+            
         }
     },
     "Competition display": {
         groupMaxVisibleCols: {
+            control: {
+                type: "integer",
+                controlType: "up-down"
+            },
             name: "settings.max visible cols.name",
             description: "settings.max visible cols.description",
             default: 6
         },
     },
+}
+
+//Get the value of a particular setting of a given user
+exports.getUserSetting = (userData, settingKey) => {
+
+    return "red"
+
+    let settings = exports.deepClone(userData.settings)
+
+    Object.keys(settings).forEach( settingType => {
+        Object.keys(settings[settingType]).forEach( key => {
+
+            if (key == settingKey){
+                return settings[settingType][settingKey]
+            }
+        })
+    })
+
+    return undefined
 }

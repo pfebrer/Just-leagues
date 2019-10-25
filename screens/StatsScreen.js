@@ -79,7 +79,7 @@ class Stats extends React.Component {
         let uid = this.state.uid || this.props.currentUser.id
 
         return (
-            <View style={styles.container}>
+            <View style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
                 <PlayerProfile uid={uid}/>
                 <View style={styles.sessionOptions}>
                     <TouchableOpacity style={styles.changePWButton} onPress={() => {

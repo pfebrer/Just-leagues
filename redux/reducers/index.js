@@ -4,5 +4,5 @@ import competition from "./competition"
 
 export default combineReducers({
     currentUser,
-    competition
+    competition,
 })

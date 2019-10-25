@@ -8,11 +8,6 @@ import {
     Animated,
     ScrollView
 } from 'react-native';
-import Groups from "../components/groups/Groups"
-import Challenges from "../components/Challenges"
-import AddMatchModal from "../components/AddMatchModal"
-import AdminAddMatchModal from "../components/AdminAddMatchModal"
-import Firebase from "../api/Firebase"
 
 import { Icon} from 'native-base';
 
@@ -23,6 +18,7 @@ import { totalSize, w, h } from '../api/Dimensions';
 import { translate } from '../assets/translations/translationManager';
 import Table from '../components/groups/Table';
 import { USERSETTINGS } from "../constants/Settings"
+import HeaderIcon from "../components/header/HeaderIcon"
 
 class HomeScreen extends React.Component {
 
@@ -30,18 +26,30 @@ class HomeScreen extends React.Component {
         super(props);
     }
 
+    componentDidMount() {
+
+        this.props.navigation.setParams({backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor})
+
+    }
+
+    componentDidUpdate(prevProps){
+
+        let currentbackCol = this.props.currentUser.settings["General appearance"].backgroundColor
+
+        //Update the header color when the background color is updated :)
+        if ( prevProps.currentUser.settings["General appearance"].backgroundColor !== currentbackCol){
+            this.props.navigation.setParams({backgroundColor: currentbackCol})
+        }
+    }
+
     static navigationOptions = ({navigation}) => {
         return {
             headerStyle: {
                 elevation: 2,
-                backgroundColor: USERSETTINGS["General appearance"].backgroundColor.default
+                backgroundColor: navigation.getParam("backgroundColor")
               },
-            headerLeft: <TouchableOpacity onPress={() => {}}>
-                            <Icon name="person" style={{ paddingLeft: 20 }} />
-                        </TouchableOpacity>, 
-            headerRight: <TouchableHighlight onPress={() => {navigation.navigate("SettingsScreen")}}>
-                            <Icon name="settings" style={{ paddingRight: 20 }} />
-                        </TouchableHighlight>
+            headerLeft: <HeaderIcon name="person" />,
+            headerRight: <HeaderIcon name="settings" onPress={() => {navigation.navigate("SettingsScreen")}} />
         }
     };
 
@@ -99,7 +107,7 @@ class HomeScreen extends React.Component {
         ]
 
         return (
-            <ScrollView style={styles.container}>
+            <ScrollView style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
                 <View style={styles.gridRow}>
                     <Animated.View style={{...styles.gridItem, flex: 2}}>
                         <View style={styles.itemTitleView}>
@@ -138,7 +146,8 @@ class HomeScreen extends React.Component {
 }
 
 const mapStateToProps = state => ({
-    currentUser: state.currentUser
+    currentUser: state.currentUser,
+    appSettings: state.appSettings
 })
 
 export default connect(mapStateToProps)(HomeScreen);

@@ -132,7 +132,10 @@ export default class GroupChat extends React.Component {
     render() {
 
         return (
-            <KeyboardAvoidingView style={styles.container} behavior="padding" keyboardVerticalOffset={this.state.verticalOffset} enabled>
+            <KeyboardAvoidingView 
+                style={{...styles.container, ...this.props.currentUser.settings["General appearance"].backgroundColor}}
+                behavior="padding"
+                keyboardVerticalOffset={this.state.verticalOffset} enabled>
                 <View style={styles.chatTitleView} onLayout={(event) => {this.handleLayoutChange() }} 
                     ref={view => { this.titleRef = view; }}>
                     <Text style={styles.chatTitleText}>{this.state.title}</Text>
