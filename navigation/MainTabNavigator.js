@@ -26,9 +26,9 @@ const EditingStack = createStackNavigator({
 
 
 const HomeStack = createStackNavigator({
-    HomeScreen: HomeScreen,
+    //HomeScreen: HomeScreen,
     SettingsScreen: SettingsScreen,
-    CompetitionScreen: CompetitionScreen,
+    //CompetitionScreen: CompetitionScreen,
     MatchModal: MatchModal,
     EditingStack: EditingStack,
 });

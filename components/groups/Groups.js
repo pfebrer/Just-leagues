@@ -20,9 +20,9 @@ class Groups extends React.Component {
 
     componentDidMount() {
 
-        let {gymID, competitionID} = this.props.competition
+        let {gymID, id : compID} = this.props.competition
 
-        this.groupsSub = Firebase.onGroupsSnapshot(gymID, competitionID, 
+        this.groupsSub = Firebase.onGroupsSnapshot(gymID, compID, 
             
             groups => this.setState({groups})
 

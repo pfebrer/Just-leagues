@@ -141,7 +141,7 @@ class Firebase {
         if (user) {
           resolve(user);
         }
-      });
+      }).catch( err => alert(err));
     })
   };
 
@@ -182,7 +182,7 @@ class Firebase {
           });
           resolve(true);
         }
-      });
+      }).catch(err => alert(err));
     });
   };
 
@@ -251,6 +251,26 @@ class Firebase {
     .onSnapshot( querySnapshot =>{
         querySnapshot.forEach(doc => callback( getData ? doc.data() : doc ) )
     });
+
+  }
+
+  //Listen to changes in the pendingMatches of a given user
+  //Callback recieves an array with all the pendings matches complete info if getData = true,
+  //else it recieves the querySnapshot
+  onPendingMatchesSnapshot = (uid, callback, getData = true) => {
+
+    return this.firestore.collectionGroup(Subcollections.PENDINGMATCHES).where("playersIDs", "array-contains", uid )
+    .onSnapshot(querySnapshot => { 
+
+      if (!getData) callback(querySnapshot)
+      else callback( querySnapshot.docs.map(doc => ({
+          ...doc.data(),
+          gymID: doc.ref.parent.parent.parent.parent.id,
+          compID: doc.ref.parent.parent.id
+        })
+      ))
+
+    })
 
   }
 

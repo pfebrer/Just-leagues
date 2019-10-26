@@ -4,12 +4,11 @@ import {
     TouchableOpacity,
     TouchableHighlight,
     View, 
-    Text,
     Animated,
     ScrollView
 } from 'react-native';
 
-import { Icon} from 'native-base';
+import { Icon, Text} from 'native-base';
 
 import Firebase from "../api/Firebase"
 
@@ -18,10 +17,14 @@ import { connect } from 'react-redux'
 import {setCurrentCompetition} from "../redux/actions"
 
 import { totalSize, w, h } from '../api/Dimensions';
+
 import { translate } from '../assets/translations/translationManager';
+import { convertDate, sortMatchesByDate } from "../assets/utils/utilFuncs";
+
 import Table from '../components/groups/Table';
 import { USERSETTINGS } from "../constants/Settings"
 import HeaderIcon from "../components/header/HeaderIcon"
+
 
 class HomeScreen extends Component {
 
@@ -56,6 +59,8 @@ class HomeScreen extends Component {
     };
 
     renderCompetitionStates = (activeCompetitions) =>{
+
+        if (!activeCompetitions) {return null}
         return activeCompetitions.map(comp => (
             <CompetitionState
                 key={comp.competitionID}
@@ -74,7 +79,9 @@ class HomeScreen extends Component {
                     <Notifications/>
                 </View>
                 <View style={styles.gridRow}>
-                    <PendingMatches/>
+                    <PendingMatches 
+                        uid={this.props.currentUser.id}
+                        activeCompetitions={this.props.currentUser.activeCompetitions}/>
                 </View>
                 {this.renderCompetitionStates(this.props.currentUser.activeCompetitions)}
             </ScrollView>
@@ -100,14 +107,126 @@ class Notifications extends Component {
 
 class PendingMatches extends Component {
 
+    constructor(props){
+        super(props)
+        
+        this.state = {}
+
+        //this.contentMaxHeight = new Animated.Value(0)
+
+    }
+
+    componentDidMount(){
+        this.listener = Firebase.onPendingMatchesSnapshot(this.props.uid, 
+            matches => {
+
+                matches = matches.map( match => ({
+                    ...match,
+                    competition: this.props.activeCompetitions.filter(comp => comp.id == match.compID )[0]
+                }) )
+
+                matches = sortMatchesByDate(matches)
+
+                this.setState({matches})
+            }
+        )
+    }
+
+    componentWillUnmount(){
+        this.listener()
+    }
+
+    toggleContent = () => {
+
+        Animated.timing(this.contentMaxHeight, {
+            toValue: 70
+        }).start()
+
+    }
+
+    renderPendingMatches = (matches) => {
+
+        if ( !matches || matches.length == 0 ){
+
+            return <Text>No tens cap partit pendent. Pots relaxar-te :)</Text>
+
+        } else {
+
+            return (
+                <View>
+                    <View style={{flexDirection: "row"}}>
+                        <View style={{flex: 2}}>
+                            <Text style={{}}>Juanito Casas</Text>
+                            <Text note>Lliga social esquaix</Text>
+                        </View>
+                        <View style={{flex: 1, alignItems: "flex-end"}}>
+                            <Text note>21:45</Text>
+                        </View>
+                             
+                    </View>
+                    <View style={{backgroundColor: "gray", height: this.contentMaxHeight}}>
+                    </View>
+                </View>
+            )
+
+            return matches.map( match => {
+
+                var matchInfo;
+
+                //Determine the match information that should be displayed
+                if (match.playersIDs.length == 2){
+                    //then we need to display just the rival
+                    let rival = match.playersNames.filter( (name, i) => match.playersIDs[i] != this.props.uid )[0]
+
+                    matchInfo = <Text>{rival}</Text>
+                }
+
+                //Determine how the time information should be rendered
+                var timeInfo;
+
+                if (match.scheduled) {
+
+                    let {time, location} = scheduled
+
+                    time = convertDate(time.toDate(), "dd/mm hh:mm")
+
+                    timeInfo = <View>
+                                    <Text>{time}</Text>
+                                    <Text>{location}</Text>
+                                </View>
+
+                } else {
+
+                    const matchDue = convertDate(match.due.toDate(), "dd/mm")
+
+                    timeInfo = <Text>{matchDue}</Text>
+                }
+
+                
+
+                return <View style={{flexDirection: "row"}}>
+                            {matchInfo}
+                            {timeInfo}
+                            <Text>{match.competition.name}</Text>
+                        </View>
+            }
+                
+            )
+
+        }
+    }
+
     render(){
 
         return <Animated.View style={{...styles.gridItem, flex: 1}}>
-                    <View style={styles.itemTitleView}>
+                    <TouchableOpacity style={styles.itemTitleView} >
                         <Icon name="time" style={styles.titleIcon}/>
                         <Text style={styles.titleText}>{translate("vocabulary.pending matches")}</Text>
-                    </View>
-                    <Text>No tens cap partit pendent. Pots relaxar-te :)</Text>
+                        <View style={styles.actionIconView}>
+                            <Icon name="arrow-dropdown" style={{...styles.actionIcon}}/>
+                        </View>
+                    </TouchableOpacity>
+                    {this.renderPendingMatches(this.state.matches)}
                 </Animated.View>
     }
 }
@@ -124,11 +243,11 @@ class CompetitionState extends Component {
     componentDidMount(){
 
         const {competition} = this.props
-        const {gymID, competitionID} = competition
+        const {gymID, id: compID} = competition
 
         if (competition.type == "groups"){
 
-            this.listener = Firebase.onPlayerGroupSnapshot(gymID, competitionID, this.props.uid,
+            this.listener = Firebase.onPlayerGroupSnapshot(gymID, compID, this.props.uid,
                 group => this.setState({compStateInfo: group})
             );
 
@@ -137,12 +256,12 @@ class CompetitionState extends Component {
     }
 
     componentWillUnmount(){
-        if (this.listener){this.listener()}
+        if (this.listener) this.listener()
     }
 
     renderCompetitionState = (typeOfComp, compStateInfo) => {
 
-        if (!compStateInfo){ return null}
+        if (!compStateInfo) return null
 
         if (typeOfComp == "groups"){
             return <Table
@@ -173,13 +292,11 @@ class CompetitionState extends Component {
                         <TouchableOpacity style={{...styles.itemTitleView}} onPress={this.goToCompetition}>
                             <Icon name="trophy" style={styles.titleIcon}/>
                             <Text style={styles.titleText}>{this.props.competition.name}</Text>
-                            <View style={styles.goToCompView}>
-                                <Icon name="add" style={{...styles.goToCompIcon}}/>
+                            <View style={styles.actionIconView}>
+                                <Icon name="add" style={{...styles.actionIcon}}/>
                             </View>
                         </TouchableOpacity>
                         {this.renderCompetitionState(this.props.competition.type, this.state.compStateInfo)}
-                        <View>
-                        </View>
                     </View>
                 </Animated.View>
             </View>
@@ -238,12 +355,12 @@ const styles = StyleSheet.create({
         color: "gray"
     },
 
-    goToCompView: {
+    actionIconView: {
         flex: 1,
         alignItems: "flex-end",
     },
     
-    goToCompIcon: {
+    actionIcon: {
         color: "gray"
     },
 

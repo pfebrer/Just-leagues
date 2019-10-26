@@ -32,7 +32,6 @@ class Competition extends React.Component {
     static navigationOptions = ({navigation}) => {
         return {
             headerTitle: navigation.getParam("competitionName", ""),
-            headerLeft: <HeaderIcon name="home" onPress={() => {navigation.navigate("HomeScreen")}}/>,
             headerRight: <HeaderIcon name="settings" onPress={() => {navigation.navigate("SettingsScreen")}}/>
         }
     };

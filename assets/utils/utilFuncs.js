@@ -13,6 +13,32 @@ exports.reshape = (arr, shape) => {
     return newArr
 }
 
+//Groups an array of objects according to a given key
+exports.groupBy= (key, arr) => arr.reduce(function (r, a) {
+    r[a[key]] = r[a[key]] || [];
+    r[a[key]].push(a);
+    return r;
+}, Object.create(null));
+
+//Sort matches according to date
+exports.sortMatchesByDate = (matches) => {
+
+    function matchDate(match){
+
+        if ( match.scheduled ){
+            return match.scheduled.time.toDate()
+        } else {
+            return match.due.toDate()
+        }
+
+    }
+
+    return matches.sort((a, b) => {
+        return matchDate(a) - matchDate(b)
+    })
+}
+
+
 getDefaultSettings = (settings) => {
     let defaultSettings = {}
     
@@ -169,12 +195,22 @@ exports.resultIsCorrect = (testResult) => {
 }
 
 //Converts a timestamp (ms) into a readable date (dd/mm/yyyy)
-exports.convertDate = (inputFormat) => {
+exports.convertDate = (inputFormat, ouputFormat = "dd/mm/yyyy") => {
     function pad(s) {
         return (s < 10) ? '0' + s : s;
     };
     let d = new Date(Number(inputFormat));
-    return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join('/');
+
+    if (ouputFormat == "dd/mm/yyyy"){
+        return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join('/');
+    } else if (ouputFormat == "dd/mm"){
+        return [pad(d.getDate()), pad(d.getMonth() + 1)].join('/');
+    } else if (ouputFormat == "dd/mm hh:mm"){
+        return [pad(d.getDate()), pad(d.getMonth() + 1)].join('/') + " " +[pad(d.getHours()), pad(d.getMinutes())].join(":");
+    } else if (outputFormat == "hh:mm"){
+        return [pad(d.getHours()), pad(d.getMinutes())].join(":")
+    }
+    
 }
 
 //Stores data so that we don't need to retrieve it from the database every time 

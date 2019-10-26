@@ -21,7 +21,8 @@ const Collections = {
 
 const Subcollections = {
     COMPETITIONS: "competitions",
-    GROUPS: "groups"
+    GROUPS: "groups",
+    PENDINGMATCHES: "pendingMatches"
 }
 
 const Documents = {
