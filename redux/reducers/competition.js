@@ -1,12 +1,12 @@
 import { SET_CURRENTCOMPETITION, SET_RANKING } from '../actions/actionTypes'
 
-const competition = (state = {gymID: "nickspa", sportID: "groups"}, action) => {
+const competition = (state = {}, action) => {
     switch (action.type) {
         case SET_CURRENTCOMPETITION:
             console.log("REDUX: Storing current competition data...")
             var newState = {
-                gymID: action.gymID,
-                sportID: action.sportID
+                ...state,
+                ...action.data
             }
             console.log(newState)
             return newState

@@ -215,8 +215,8 @@ class Firebase {
     })
   }
 
-  //FUNCTIONS TO OPERATE ON THE DATA BASE
-  //Generic updater
+  //FUNCTIONS TO OPERATE ON THE DATABASE
+  //Generic document updater
   updateDocInfo = (ref, updates, callback, merge = true) => {
 
     ref.set(updates, {merge}).then(() => {
@@ -224,10 +224,57 @@ class Firebase {
     })
     .catch((err) => alert(err))
   }
-
+  
   //Update user settings
   updateUserSettings = (uid, newSettings, callback) => {
     this.updateDocInfo( this.userRef(uid), {settings: newSettings}, callback, merge = true )
+  }
+
+  //Set default settings
+  restoreDefaultUserSettings = (uid, callback) => {
+    this.updateUserSettings(uid, {}, callback)
+  }
+
+  //Listen to changes on the current user's data
+  //The callback recieves the user's complete data if getData = true, else the documentSnapshot
+  onUserSnapshot = (uid, callback, getData = true) => {
+    return this.userRef(uid).onSnapshot(
+      docSnapshot => callback( getData ? docSnapshot.data() : docSnapshot)
+    )
+  }
+
+  //Listener to changes on the group where the player is in a competition
+  //The callback recieves the group data if getData = true, otherwise it recieves the document snapshot
+  onPlayerGroupSnapshot = (gymID, compID, uid, callback, getData = true) => {
+
+    return this.groupsRef(gymID, compID).where("playersRef", "array-contains", uid )
+    .onSnapshot( querySnapshot =>{
+        querySnapshot.forEach(doc => callback( getData ? doc.data() : doc ) )
+    });
+
+  }
+
+  //Listen to changes in groups in a competition
+  //the callback recieves an array with each group complete info if getData = true, else it recieves the querySnapshot
+  onGroupsSnapshot = (gymID, compID, callback, orderBy = "order", getData = true) => {
+
+    return this.groupsRef(gymID, compID).orderBy(orderBy).onSnapshot((querySnapshot) => {
+      
+      if (getData){
+
+        let groups = querySnapshot.docs.map((group) => {
+          return {...group.data(), iGroup: group.get("order")}
+        });
+
+        callback(groups)
+
+      } else {
+        callback(querySnapshot)
+      }
+      
+
+  })
+
   }
 
   //DATABASE REFERENCES (Only place where they should be declared in the whole app)
@@ -244,11 +291,13 @@ class Firebase {
 
   gymRef = (gymID) => this.gymsRef.doc(gymID);
 
-  sportRef = (gymID, sportID) => this.gymRef(gymID).collection(Subcollections.SPORTS).doc(sportID);
+  compRef = (gymID, compID) => {
+    return this.gymRef(gymID).collection(Subcollections.COMPETITIONS).doc(compID)
+  }
 
-  groupsRef = (gymID, sportID) => this.sportRef(gymID, sportID).collection(Subcollections.GROUPS);
+  groupsRef = (gymID, compID) => this.compRef(gymID, compID).collection(Subcollections.GROUPS);
 
-  groupRef = (gymID, sportID, groupID) => this.groupsRef(gymID, sportID).doc(groupID);
+  groupRef = (gymID, compID, groupID) => this.groupsRef(gymID, compID).doc(groupID);
   
 }
 

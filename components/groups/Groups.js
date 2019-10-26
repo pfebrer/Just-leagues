@@ -20,21 +20,13 @@ class Groups extends React.Component {
 
     componentDidMount() {
 
-        let {gymID, sportID} = this.props.competition
+        let {gymID, competitionID} = this.props.competition
 
-        this.groupsSub = Firebase.gymRef(gymID).collection("groups").orderBy("order").onSnapshot((querySnapshot) => {
+        this.groupsSub = Firebase.onGroupsSnapshot(gymID, competitionID, 
             
-            let groups = querySnapshot.docs.map((group) => {
-                let {order, name, ranks, players, results} = group.data()
-                return {iGroup: order, name, ranks, players, results}
-            });
+            groups => this.setState({groups})
 
-            //groups = groups.sort((a,b) => a.iGroup - b.iGroup)
-
-            this.setState({groups})
-
-            this.props.returnGroups(groups)
-        })
+        );
 
     }
 
@@ -55,6 +47,7 @@ class Groups extends React.Component {
                     ranks={group.ranks}
                     players={group.players}
                     scores={group.results}
+                    playersIDs={group.playersRef}
                     goToUserProfile={this.props.goToUserProfile} 
                     handlePress={this.props.handlePress}
                 />

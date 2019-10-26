@@ -11,11 +11,8 @@ import {
 
 import { Icon} from 'native-base';
 
-import Firebase from "../api/Firebase"
-
 //Redux stuff
 import { connect } from 'react-redux'
-import {setCurrentCompetition} from "../redux/actions"
 
 import { totalSize, w, h } from '../api/Dimensions';
 import { translate } from '../assets/translations/translationManager';
@@ -51,20 +48,10 @@ class HomeScreen extends Component {
                 elevation: 2,
                 backgroundColor: navigation.getParam("backgroundColor")
               },
+            headerLeft: <HeaderIcon name="person" />,
             headerRight: <HeaderIcon name="settings" onPress={() => {navigation.navigate("SettingsScreen")}} />
         }
     };
-
-    renderCompetitionStates = (activeCompetitions) =>{
-        return activeCompetitions.map(comp => (
-            <CompetitionState
-                key={comp.competitionID}
-                uid={this.props.currentUser.id} 
-                competition={comp}
-                navigation={this.props.navigation}
-                setCurrentCompetition={this.props.setCurrentCompetition}/>
-        ))
-    }
 
     render() {
 
@@ -76,7 +63,7 @@ class HomeScreen extends Component {
                 <View style={styles.gridRow}>
                     <PendingMatches/>
                 </View>
-                {this.renderCompetitionStates(this.props.currentUser.activeCompetitions)}
+                <CompetitionsState/>
             </ScrollView>
         )
     }
@@ -112,90 +99,90 @@ class PendingMatches extends Component {
     }
 }
 
-class CompetitionState extends Component {
-
-    constructor(props){
-        super(props)
-
-        this.state = {
-        }
-    }
-
-    componentDidMount(){
-
-        const {competition} = this.props
-        const {gymID, competitionID} = competition
-
-        if (competition.type == "groups"){
-
-            this.listener = Firebase.onPlayerGroupSnapshot(gymID, competitionID, this.props.uid,
-                group => this.setState({compStateInfo: group})
-            );
-
-        }
-        
-    }
-
-    componentWillUnmount(){
-        if (this.listener){this.listener()}
-    }
-
-    renderCompetitionState = (typeOfComp, compStateInfo) => {
-
-        if (!compStateInfo){ return null}
-
-        if (typeOfComp == "groups"){
-            return <Table
-                        ranks={compStateInfo.ranks}
-                        players={compStateInfo.players}
-                        scores={compStateInfo.results}
-                        playersIDs={compStateInfo.playersRef}
-                        goToUserProfile={this.props.goToUserProfile} 
-                    />
-        }
-    }
-
-    goToCompetition = () => {
-
-        //Set the current competition so that the competition screen can know what to render
-        const {gymID, competitionID, name, type} = this.props.competition
-        this.props.setCurrentCompetition(gymID, competitionID, name, type)
-
-        this.props.navigation.navigate("CompetitionScreen")
-    }
+class CompetitionsState extends Component {
 
     render(){
 
+        let groupResults =[
+            {
+                name: "David Febrer",
+                rank: 1,
+                scores: [false, 5,false,false,false,false,false,false],
+                total: 5,
+            },
+            {
+                name: "David Febrer",
+                rank: 1,
+                scores: [3, false,false,false,false,false,false,false],
+                total: 5,
+            },
+            {
+                name: "David Febrer",
+                rank: 1,
+                scores: [false, false,false,6,false,false,false,false],
+                total: 5,
+            },
+            {
+                name: "David Febrer",
+                rank: 1,
+                scores: [false, false,2,false,false,false,false,false],
+                total: 5,
+            },
+            {
+                name: "David Febrer",
+                rank: 1,
+                scores: [false, false,2,false,false,false,false,false],
+                total: 5,
+            },
+            {
+                name: "David Febrer",
+                rank: 1,
+                scores: [false, false,2,false,false,false,false,false],
+                total: 5,
+            },
+            {
+                name: "David Febrer",
+                rank: 1,
+                scores: [false, false,2,false,false,false,false,false],
+                total: 5,
+            },
+            {
+                name: "David Febrer",
+                rank: 1,
+                scores: [false, false,2,false,false,false,false,false],
+                total: 5,
+            },
+        ]
+        
         return (
             <View style={styles.gridRow}>           
                 <Animated.View style={{...styles.gridItem, flex: 1}}>
-                    <View style={{flex: 1}}>
-                        <TouchableOpacity style={{...styles.itemTitleView}} onPress={this.goToCompetition}>
+                    <TouchableOpacity style={{flex: 1}} onPress={this.changeFlex}>
+                        <View style={{...styles.itemTitleView}}>
                             <Icon name="trophy" style={styles.titleIcon}/>
-                            <Text style={styles.titleText}>{this.props.competition.name}</Text>
-                            <View style={styles.goToCompView}>
-                                <Icon name="add" style={{...styles.goToCompIcon}}/>
-                            </View>
-                        </TouchableOpacity>
-                        {this.renderCompetitionState(this.props.competition.type, this.state.compStateInfo)}
-                        <View>
+                            <Text style={styles.titleText}>{translate("vocabulary.group") + " 1"}</Text>
                         </View>
-                    </View>
+                        <View>
+                            <Table
+                                iGroup={1}
+                                groupResults={groupResults}
+                                containerStyles={styles.groupContainer}
+                            />
+                        </View>
+                    </TouchableOpacity>
                 </Animated.View>
+                
             </View>
         )
     }
 }
 
+
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
 })
 
-const mapDispatchToProps = dispatch => ({
-    setCurrentCompetition: (gymID, competitionID, compName, typeOfComp) => dispatch(setCurrentCompetition(gymID, competitionID, compName, typeOfComp))
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
+export default connect(mapStateToProps)(HomeScreen);
 
 const styles = StyleSheet.create({
 
@@ -235,15 +222,6 @@ const styles = StyleSheet.create({
 
     titleIcon: {
         paddingRight: 15,
-        color: "gray"
-    },
-
-    goToCompView: {
-        flex: 1,
-        alignItems: "flex-end",
-    },
-    
-    goToCompIcon: {
         color: "gray"
     },
 

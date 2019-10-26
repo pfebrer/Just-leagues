@@ -4,7 +4,9 @@ import MatchFilter from "../components/matchSearcher/MatchFilter"
 import MatchHistory from "../components/matchSearcher/MatchHistory"
 import { USERSETTINGS } from "../constants/Settings"
 
-export default class MatchSearcher extends React.Component {
+import { connect } from 'react-redux'
+
+class MatchSearcher extends React.Component {
 
     constructor(props) {
         super(props);
@@ -27,7 +29,7 @@ export default class MatchSearcher extends React.Component {
 
     render() {
         return (
-            <View style={styles.container}>
+            <View style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
                 <MatchFilter filter={this.state.filter} filter2={this.state.filter2} applyFilter={this.applyFilter}
                                 filterApplied={this.filterApplied}/>
                 <MatchHistory filter={this.state.filter} filter2={this.state.filter2}/>
@@ -35,6 +37,12 @@ export default class MatchSearcher extends React.Component {
         );
     }
 }
+
+const mapStateToProps = state => ({
+    currentUser: state.currentUser,
+})
+
+export default connect(mapStateToProps)(MatchSearcher);
 
 const styles = StyleSheet.create({
     container: {

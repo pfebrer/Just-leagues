@@ -33,12 +33,18 @@
     },
     "vocabulary": {
         "group": "Grup",
-        "total": "Total"
+        "total": "Total",
+        "pending matches": "Partits pendents",
+        "notifications": "Notificacions",
+        "cancel": "Cancel·la",
+        "OK": "D'acord",
+        "attention": "Atenció!"
     },
     "errors": {
         "impossible result":"No ens enganyis, aquest resultat és impossible :("
     },
     "settings": {
+        "you are about to restore default settings": "Estàs a punt de tornar a la configuració inicial.",
         "General appearance": "Aparença general",
         "Competition display": "Presentació de competicions",
         "background color": {

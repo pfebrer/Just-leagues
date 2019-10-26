@@ -23,48 +23,26 @@ class Competition extends React.Component {
 
         this.state = {
             addMatchModal: false,
-            typeOfComp: "groups"
         };
+
+        props.navigation.setParams({competitionName: props.competition.name})
 
     }
 
     static navigationOptions = ({navigation}) => {
         return {
-            headerLeft: <HeaderIcon name="add" onPress={() => {navigation.navigate("toggleAddMatchModal")}}/>,
+            headerTitle: navigation.getParam("competitionName", ""),
+            headerLeft: <HeaderIcon name="home" onPress={() => {navigation.navigate("HomeScreen")}}/>,
             headerRight: <HeaderIcon name="settings" onPress={() => {navigation.navigate("SettingsScreen")}}/>
         }
     };
 
-    componentDidMount() {
+    componentDidUpdate(prevProps){
 
-        /*Firebase.userRef(this.state.userId).get().then((docSnapshot) => {
-            let {playerName, currentGroup, admin} = docSnapshot.data();
-            this.setState({playerName, admin});
-        }).catch(err => {
-            alert("No s'ha pogut carregar la informació de l'usuari" + err);
-        });*/
-
-        /*this.typeOfComp = Firebase.typeOfCompRef.onSnapshot((docSnapshot) => {
-            const typeOfComp = docSnapshot.data();
-            this.setState({typeOfComp});
-        });*/
-
-        /*this.ranking = Firebase.rankingsRef.onSnapshot((docSnapshot) => {
-            debugger;
-            const {ranking, wentUp, wentDown} = docSnapshot.data();
-            this.setState({
-                ranking,
-                wentDown,
-                wentUp,
-            })
-        });*/
-
+        if (!prevProps.competition || prevProps.competition.name != this.props.competition.name){
+            this.props.navigation.setParams({competitionName: this.props.competition.name})
+        }
     }
-
-    componentWillUnmount() {
-        //this.typeOfComp();
-        //this.ranking();
-    };
 
     toggleAddMatchModal = () => {
         this.setState({
@@ -190,7 +168,7 @@ class Competition extends React.Component {
     render() {
 
         return <View style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
-                {this.renderCompView(this.state.typeOfComp)}
+                {this.renderCompView(this.props.competition.type)}
                 {this.renderAddMatchModal(this.state.addMatchModal, this.state.admin)}
                 </View>
     }
@@ -198,7 +176,8 @@ class Competition extends React.Component {
 }
 
 const mapStateToProps = state => ({
-    currentUser: state.currentUser
+    currentUser: state.currentUser,
+    competition: state.competition
 })
 
 export default connect(mapStateToProps)(Competition);

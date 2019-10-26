@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView, TouchableOpacity, BackHandler} from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity, BackHandler, Alert} from 'react-native';
 import Firebase from "../api/Firebase";
 
 import { translate } from '../assets/translations/translationManager';
@@ -51,7 +51,10 @@ class SettingsScreen extends React.Component {
         return {
             title: translate("tabs.settings"),
             headerLeft: <HeaderIcon name="arrow-back" onPress={navigation.getParam("goBack")}/>,
-            headerRight: <HeaderIcon name="checkmark" onPress={navigation.getParam("submitSettings")}/>
+            headerRight: <View style={{flexDirection: "row"}}>
+                            <HeaderIcon name="refresh" onPress={navigation.getParam("restoreDefaults")}/>
+                            <HeaderIcon name="checkmark" onPress={navigation.getParam("submitSettings")}/>
+                        </View>
         }
     };
 
@@ -64,13 +67,38 @@ class SettingsScreen extends React.Component {
     }
 
     componentDidMount() {
-        this.props.navigation.setParams({submitSettings: this.submitSettings, goBack: this.goBack})
+        this.props.navigation.setParams({submitSettings: this.submitSettings, goBack: this.goBack, restoreDefaults: this.restoreDefaults})
 
         this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.goBack );
     }
 
     componentWillUnmount() {
         this.backHandler.remove()
+    }
+
+    restoreDefaults = () => {
+
+        reallyRestore = () => {
+            Firebase.restoreDefaultUserSettings(this.props.currentUser.id, () => {
+                this.setState({
+                    settings: deepClone(this.props.currentUser.settings)
+                })
+            })
+        }
+
+        // Works on both iOS and Android
+        Alert.alert(
+            translate("vocabulary.attention"),
+            translate("settings.you are about to restore default settings"),
+            [
+            {
+                text: translate('vocabulary.cancel'),
+                style: 'cancel',
+            },
+            {text: translate('vocabulary.OK'), onPress: reallyRestore},
+            ],
+            {cancelable: true},
+        );
     }
 
     updateStateSettings = (type, key, newValue) => {

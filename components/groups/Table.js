@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
-import { iLeaderLoser, transpose, reshape } from "../../assets/utils/utilFuncs"
+import { iLeaderLoser, transpose, reshape, deepClone } from "../../assets/utils/utilFuncs"
 import { translate } from '../../assets/translations/translationManager';
 import { w, h, totalSize } from '../../api/Dimensions';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -11,7 +11,11 @@ import { connect } from 'react-redux'
 
 class Table extends Component {
 
-    renderTable = (ranks, players, scores, totals) => {
+    goToUserProfile = (uid) => {
+        console.warn(uid)
+    }
+
+    renderTable = (ranks, players, playersIDs, scores, totals) => {
 
         let [iLeader, iLoser] = iLeaderLoser(totals)
         let nPlayers = players.length
@@ -28,7 +32,9 @@ class Table extends Component {
                 header={translate("auth.name")} data={players}
                 style={{...styles.column, ...styles.playersCol}}
                 iLeader={iLeader} iLoser={iLoser}
-                touchable/>,
+                touchable
+                onPress={this.goToUserProfile}
+                onPressData={playersIDs}/>,
 
             <ScoresScroll
                 key="scores"
@@ -51,7 +57,7 @@ class Table extends Component {
 
     render() {
 
-        var ranks, players, scores, totals;
+        var ranks, players, playersIDs, scores, totals;
 
         if (this.props.groupResults) {
 
@@ -63,7 +69,9 @@ class Table extends Component {
             scores = groupResults.map(resultsRow => resultsRow.scores)
 
         } else {
-            var {players, scores} = this.props
+            var {players, playersIDs, scores} = deepClone(this.props)
+
+            if( !(players.length > 0 && scores.length > 0) ) { return null }
 
             ranks  = this.props.ranks || Array.from( new Array(players.length), (x,i) => i + 1)
 
@@ -77,7 +85,7 @@ class Table extends Component {
         return (
             <View style={this.props.containerStyles}>
                 <View style={{...styles.tableContainer, ...this.props.tableStyles}}>
-                    {this.renderTable(ranks, players, scores, totals)}
+                    {this.renderTable(ranks, players, playersIDs, scores, totals)}
                 </View>
             </View>
             
@@ -172,7 +180,7 @@ class Column extends Component{
                     <TouchableOpacity
                         key={iRow}
                         style={cellStyles} 
-                        onPress={() => {}}>
+                        onPress={() => {this.props.onPress(this.props.onPressData[iRow])}}>
                         <Text style={textStyles}>{data}</Text>
                     </TouchableOpacity>
                 )
@@ -196,7 +204,7 @@ class Column extends Component{
 }
 
 const mapStateToProps = state => ({
-    currentUser: state.currentUser
+    currentUser: state.currentUser || null
 })
 
 export default connect(mapStateToProps)(Table);

@@ -20,7 +20,7 @@ const Collections = {
 };
 
 const Subcollections = {
-    SPORTS: "sports",
+    COMPETITIONS: "competitions",
     GROUPS: "groups"
 }
 

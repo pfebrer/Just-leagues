@@ -17,7 +17,10 @@ import {MaterialIcons} from '@expo/vector-icons';
 import {ChatWorkMode, Collections, Documents, Constants} from "../constants/CONSTANTS";
 import {USERSETTINGS} from "../constants/Settings"
 
-export default class GroupChat extends React.Component {
+//Redux stuff
+import { connect } from 'react-redux'
+
+class GroupChat extends React.Component {
 
     constructor(props) {
         super(props);
@@ -133,7 +136,7 @@ export default class GroupChat extends React.Component {
 
         return (
             <KeyboardAvoidingView 
-                style={{...styles.container, ...this.props.currentUser.settings["General appearance"].backgroundColor}}
+                style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}
                 behavior="padding"
                 keyboardVerticalOffset={this.state.verticalOffset} enabled>
                 <View style={styles.chatTitleView} onLayout={(event) => {this.handleLayoutChange() }} 
@@ -166,6 +169,12 @@ export default class GroupChat extends React.Component {
         );
     }
 }
+
+const mapStateToProps = state => ({
+    currentUser: state.currentUser,
+})
+
+export default connect(mapStateToProps)(GroupChat);
 
 const styles = StyleSheet.create({
     container: {

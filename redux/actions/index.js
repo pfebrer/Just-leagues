@@ -1,5 +1,4 @@
 import { STORE_CURRENTUSERDATA, SET_CURRENTCOMPETITION, SET_APPSETTINGS} from './actionTypes'
-import { deepClone } from "../../assets/utils/utilFuncs"
 
 export const storeUserData = (uid, userData) => ({
     type: STORE_CURRENTUSERDATA,
@@ -7,10 +6,15 @@ export const storeUserData = (uid, userData) => ({
     data: userData
 })
 
-export const setCurrentCompetition = (gymID, sportID) => ({
+export const setCurrentCompetition = (gymID, competitionID, name, typeOfComp) => ({
     type: SET_CURRENTCOMPETITION,
-    gymID,
-    sportID
+    data: {
+        gymID,
+        competitionID,
+        type: typeOfComp,
+        name
+    }
+    
 })
 
 

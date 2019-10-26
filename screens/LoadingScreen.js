@@ -54,10 +54,9 @@ class LoadingScreen extends React.Component {
 
                 this.registerForPushNotificationsAsync(user.uid)
 
-                this.userListener = Firebase.userRef(user.uid).onSnapshot(
-                (docSnapshot) => {
+                this.userListener = Firebase.onUserSnapshot(user.uid,
 
-                    let userData = docSnapshot.data()
+                    userData => {
 
                     //This fixes the problem of a user being deleted from the database while logged in (logged in forever, weird but it's better to prevent)
                     if (!userData) {Firebase.signOut()} 
@@ -80,6 +79,15 @@ class LoadingScreen extends React.Component {
                         text: 'Benvingut, ' + userData.firstName + '!',
                         duration: 3000
                         })*/
+
+                        /* Firebase.gymRef("nickspa").collection("matches").get()
+                        .then((query) => {
+
+                            query.forEach(doc => {
+                                Firebase.gymRef("nickspa").collection("competitions").doc("UmtaUDr98rdx5pFKrygI").collection("matches").doc(doc.id).set(doc.data()).then(()=>{}).catch(()=>{})
+                            })
+                            
+                        }).catch(()=>{}) */
 
                     }
 
