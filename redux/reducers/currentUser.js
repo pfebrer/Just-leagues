@@ -5,7 +5,7 @@ const currentUser = (state = [], action) => {
         case STORE_CURRENTUSERDATA:
             console.log("REDUX: Storing current user data...")
             let newState = {
-                id: action.id,
+                ...state,
                 ...action.data,
             }
             console.log(newState)

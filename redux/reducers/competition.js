@@ -5,7 +5,6 @@ const competition = (state = {}, action) => {
         case SET_CURRENTCOMPETITION:
             console.log("REDUX: Storing current competition data...")
             var newState = {
-                ...state,
                 ...action.data
             }
             console.log(newState)

@@ -38,7 +38,6 @@ exports.sortMatchesByDate = (matches) => {
     })
 }
 
-
 getDefaultSettings = (settings) => {
     let defaultSettings = {}
     
@@ -195,17 +194,17 @@ exports.resultIsCorrect = (testResult) => {
 }
 
 //Converts a timestamp (ms) into a readable date (dd/mm/yyyy)
-exports.convertDate = (inputFormat, ouputFormat = "dd/mm/yyyy") => {
+exports.convertDate = (inputFormat, outputFormat = "dd/mm/yyyy") => {
     function pad(s) {
         return (s < 10) ? '0' + s : s;
     };
     let d = new Date(Number(inputFormat));
 
-    if (ouputFormat == "dd/mm/yyyy"){
+    if (outputFormat == "dd/mm/yyyy"){
         return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join('/');
-    } else if (ouputFormat == "dd/mm"){
+    } else if (outputFormat == "dd/mm"){
         return [pad(d.getDate()), pad(d.getMonth() + 1)].join('/');
-    } else if (ouputFormat == "dd/mm hh:mm"){
+    } else if (outputFormat == "dd/mm hh:mm"){
         return [pad(d.getDate()), pad(d.getMonth() + 1)].join('/') + " " +[pad(d.getHours()), pad(d.getMinutes())].join(":");
     } else if (outputFormat == "hh:mm"){
         return [pad(d.getHours()), pad(d.getMinutes())].join(":")

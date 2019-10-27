@@ -1,233 +1,144 @@
-import React, {Component} from 'react';
-import {
-    StyleSheet,
-    TouchableOpacity,
-    TouchableHighlight,
-    View, 
-    Text,
-    Animated,
-    ScrollView
-} from 'react-native';
-
-import { Icon} from 'native-base';
+import React from 'react';
+import {ImageBackground, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import Firebase from "../api/Firebase"
+import ChangePWModal from '../components/ChangePWModal';
+import PlayerProfile from '../components/statDisplays/UserProfile';
 
 //Redux stuff
 import { connect } from 'react-redux'
-
-import { totalSize, w, h } from '../api/Dimensions';
-import { translate } from '../assets/translations/translationManager';
-import Table from '../components/groups/Table';
 import { USERSETTINGS } from "../constants/Settings"
-import HeaderIcon from "../components/header/HeaderIcon"
 
-class HomeScreen extends Component {
+class Stats extends React.Component {
 
     constructor(props) {
-        super(props);
+        super(props)
+        this.state = {
+            playerMatches: []
+        }
     }
 
     componentDidMount() {
 
-        this.props.navigation.setParams({backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor})
+        /*Firebase.userRef(this.userId).get()
+        .then((docSnapshot) => {
+            let {playerName} = docSnapshot.data()
+            if (this.state.playerName == "... ...") {
+                this.setState({playerName, currentUserName: playerName})
+            } else {
+                this.setState({currentUserName: playerName})
+            }
+        })
+        .catch(err => {
+            alert("No s'ha pogut carregar la informació de l'usuari", err);
+        });
+
+        Firebase.matchesRef.orderBy("date").get().then((querySnapshot) => {
+            let playerMatches = [];
+            querySnapshot.forEach((doc) => {
+                const {matchPlayers, matchResult, iGroup} = doc.data()
+                let playerName = this.state.playerName
+                const iPlayer = matchPlayers.indexOf(playerName);
+                if (iPlayer >= 0) {
+                    const iRival = iPlayer == 0 ? 1 : 0;
+                    const matchWon = matchResult[iPlayer] > matchResult[iRival] ? true : false;
+                    playerMatches.push({
+                        rival: matchPlayers[iRival],
+                        rivalSets: matchResult[iRival],
+                        playerSets: matchResult[iPlayer],
+                        matchWon,
+                        iGroup
+                    })
+                }
+            });
+            this.setState({playerMatches: playerMatches.reverse()});
+        }).catch(err => {
+            alert("Hi ha problemes per carregar les estadístiques\nError: " + err.message)
+        })*/
+    }
+
+    static getDerivedStateFromProps(nextProps, prevState) {
+
+        let uid = nextProps.navigation.getParam("uid", "");
+
+        return {uid}
 
     }
 
-    componentDidUpdate(prevProps){
-
-        let currentbackCol = this.props.currentUser.settings["General appearance"].backgroundColor
-
-        //Update the header color when the background color is updated :)
-        if ( prevProps.currentUser.settings["General appearance"].backgroundColor !== currentbackCol){
-            this.props.navigation.setParams({backgroundColor: currentbackCol})
-        }
+    hidePWModal = () => {
+        this.setState({
+            changePW: false,
+        })
     }
-
-    static navigationOptions = ({navigation}) => {
-        return {
-            headerStyle: {
-                elevation: 2,
-                backgroundColor: navigation.getParam("backgroundColor")
-              },
-            headerLeft: <HeaderIcon name="person" />,
-            headerRight: <HeaderIcon name="settings" onPress={() => {navigation.navigate("SettingsScreen")}} />
-        }
-    };
 
     render() {
 
+        let playerName = this.state.playerName;
+        let changePWModal = this.state.changePW ? (
+            <ChangePWModal hidePWModal={this.hidePWModal}/>
+        ) : null;
+        let uid = this.state.uid || this.props.currentUser.id
+
         return (
-            <ScrollView style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
-                <View style={styles.gridRow}>
-                    <Notifications/>
-                </View>
-                <View style={styles.gridRow}>
-                    <PendingMatches/>
-                </View>
-                <CompetitionsState/>
-            </ScrollView>
-        )
-    }
-
-}
-
-class Notifications extends Component {
-
-    render(){
-
-        return <Animated.View style={{...styles.gridItem, ...styles.notifications, flex: 1}}>
-                    <View style={styles.itemTitleView}>
-                        <Icon name="notifications" style={{...styles.titleIcon,color: "green"}}/>
-                        <Text style={{...styles.titleText, color: "green", fontFamily: "bold"}}>{translate("vocabulary.notifications")}</Text>
-                    </View>
-                    <Text>Et reclamen com a jugador de la lliga del nick!</Text>
-
-                </Animated.View>
-    }
-}
-
-class PendingMatches extends Component {
-
-    render(){
-
-        return <Animated.View style={{...styles.gridItem, flex: 1}}>
-                    <View style={styles.itemTitleView}>
-                        <Icon name="time" style={styles.titleIcon}/>
-                        <Text style={styles.titleText}>{translate("vocabulary.pending matches")}</Text>
-                    </View>
-                    <Text>No tens cap partit pendent. Pots relaxar-te :)</Text>
-                </Animated.View>
-    }
-}
-
-class CompetitionsState extends Component {
-
-    render(){
-
-        let groupResults =[
-            {
-                name: "David Febrer",
-                rank: 1,
-                scores: [false, 5,false,false,false,false,false,false],
-                total: 5,
-            },
-            {
-                name: "David Febrer",
-                rank: 1,
-                scores: [3, false,false,false,false,false,false,false],
-                total: 5,
-            },
-            {
-                name: "David Febrer",
-                rank: 1,
-                scores: [false, false,false,6,false,false,false,false],
-                total: 5,
-            },
-            {
-                name: "David Febrer",
-                rank: 1,
-                scores: [false, false,2,false,false,false,false,false],
-                total: 5,
-            },
-            {
-                name: "David Febrer",
-                rank: 1,
-                scores: [false, false,2,false,false,false,false,false],
-                total: 5,
-            },
-            {
-                name: "David Febrer",
-                rank: 1,
-                scores: [false, false,2,false,false,false,false,false],
-                total: 5,
-            },
-            {
-                name: "David Febrer",
-                rank: 1,
-                scores: [false, false,2,false,false,false,false,false],
-                total: 5,
-            },
-            {
-                name: "David Febrer",
-                rank: 1,
-                scores: [false, false,2,false,false,false,false,false],
-                total: 5,
-            },
-        ]
-        
-        return (
-            <View style={styles.gridRow}>           
-                <Animated.View style={{...styles.gridItem, flex: 1}}>
-                    <TouchableOpacity style={{flex: 1}} onPress={this.changeFlex}>
-                        <View style={{...styles.itemTitleView}}>
-                            <Icon name="trophy" style={styles.titleIcon}/>
-                            <Text style={styles.titleText}>{translate("vocabulary.group") + " 1"}</Text>
-                        </View>
-                        <View>
-                            <Table
-                                iGroup={1}
-                                groupResults={groupResults}
-                                containerStyles={styles.groupContainer}
-                            />
-                        </View>
-                    </TouchableOpacity>
-                </Animated.View>
-                
+            <View style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
+                <PlayerProfile uid={uid}/>
+                {changePWModal}
             </View>
-        )
+        );
     }
 }
-
 
 const mapStateToProps = state => ({
-    currentUser: state.currentUser,
+    currentUser: state.currentUser
 })
 
-export default connect(mapStateToProps)(HomeScreen);
+export default connect(mapStateToProps)(Stats);
 
 const styles = StyleSheet.create({
-
     container: {
         flex: 1,
-        paddingHorizontal: 10,
-        paddingVertical: 20,
-        backgroundColor: USERSETTINGS["General appearance"].backgroundColor.default
+        paddingHorizontal: 20,
+        backgroundColor: USERSETTINGS["General appearance"].backgroundColor.default,
+        paddingTop: 30,
     },
-
-    gridRow: {
-        flexDirection: "row",
-        marginVertical: 10
+    statsScrollView: {
+        flexGrow: 1,
     },
-
-    gridItem : {
-        elevation: 5,
-        marginHorizontal: 10,
-        borderRadius: 5,
-        paddingHorizontal: 15,
-        paddingTop: 10,
-        paddingBottom: 20,
-        backgroundColor: "white",
-        overflow: "hidden"
-    },
-
-    notifications: {
-        backgroundColor: "lightgreen"
-    },
-
-    itemTitleView : {
-        flexDirection: "row",
-        justifyContent: "flex-start",
+    statTitleView: {
+        paddingTop: 20,
+        paddingBottom: 10,
         alignItems: "center",
-        paddingBottom: 20,
+        justifyContent: "center"
+    },
+    statTitleText: {
+        fontSize: 16,
+        fontFamily: "bold",
+        color: "black"
+    },
+    sessionOptions: {
+        height: 40,
+        flexDirection: "row",
+        display: "none"
+    },
+    logOutButton: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "red"
+    },
+    logOutText: {
+        color: "white",
+        fontFamily: "bold"
+    },
+    changePWButton: {
+        flex: 1,
+        backgroundColor: "#f0e837",
+        alignItems: "center",
+        justifyContent: "center",
+    },
+    changePWText: {
+        color: "black",
+        fontFamily: "bold"
     },
 
-    titleIcon: {
-        paddingRight: 15,
-        color: "gray"
-    },
-
-    titleText: {
-        fontSize: totalSize(1.8),
-        color: "gray"
-    },
 
 });

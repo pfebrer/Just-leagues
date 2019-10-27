@@ -1,6 +1,8 @@
 //Contains all the parameters that can be used to tune the app
 exports.COMPSETTINGS = {
     groups: {
+        nPromotingPlayers: 1, //Number of players that go up or down on period closing
+        untyingCriteria: ["directMatch","position"],//How to decide which player is higher in the ranking when there is a points tie 
         pointsScheme: [
             {
                 result: [3,0],

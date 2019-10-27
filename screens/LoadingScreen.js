@@ -69,7 +69,7 @@ class LoadingScreen extends React.Component {
                         
                     } else {
 
-                        this.props.storeUserData(user.uid, userData)
+                        this.props.storeUserData({id: user.uid,...userData})
 
                         console.log("User signed in ---> Redirect to the home screen")
 

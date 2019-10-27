@@ -268,6 +268,14 @@ class SettingsScreen extends React.Component {
             
         );
     }
+
+    /*Option to change password if log in by mail:
+    <TouchableOpacity 
+        onPress={Firebase.signOut} 
+        transparent 
+        style={styles.signOutButton}>
+        <Text style={styles.signOutText}> {translate("auth.change password")}</Text>
+    </TouchableOpacity> */
 }
 
 const mapStateToProps = state => ({

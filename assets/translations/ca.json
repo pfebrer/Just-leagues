@@ -25,7 +25,8 @@
         "matches": "Partits",
         "ranking": "Rànquing",
         "home":"Inici",
-        "settings": "Configuració"
+        "settings": "Configuració",
+        "competitions handling": "Gestió de competicions"
     },
     "info": {
         "checking user": "Comprovant usuari",
@@ -38,7 +39,10 @@
         "notifications": "Notificacions",
         "cancel": "Cancel·la",
         "OK": "D'acord",
-        "attention": "Atenció!"
+        "attention": "Atenció!",
+        "limit":"Límit",
+        "scheduled match": "Horari acordat",
+        "not scheduled match": "Horari no acordat"
     },
     "errors": {
         "impossible result":"No ens enganyis, aquest resultat és impossible :("

@@ -1,20 +1,13 @@
 import { STORE_CURRENTUSERDATA, SET_CURRENTCOMPETITION, SET_APPSETTINGS} from './actionTypes'
 
-export const storeUserData = (uid, userData) => ({
+export const storeUserData = (userData) => ({
     type: STORE_CURRENTUSERDATA,
-    id: uid,
     data: userData
 })
 
-export const setCurrentCompetition = (gymID, competitionID, name, typeOfComp) => ({
+export const setCurrentCompetition = (compInfo) => ({
     type: SET_CURRENTCOMPETITION,
-    data: {
-        gymID,
-        competitionID,
-        type: typeOfComp,
-        name
-    }
-    
+    data: compInfo
 })
 
 

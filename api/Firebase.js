@@ -274,6 +274,22 @@ class Firebase {
 
   }
 
+  //Listen to competitions for a certain gym (thought in principle for gym admins)
+  onCompetitionsSnapshot = (gymID, callback, getData = true) => {
+
+    return this.compsRef(gymID)
+    .onSnapshot(querySnapshot => { 
+
+      if (!getData) callback(querySnapshot)
+      else callback( querySnapshot.docs.map(doc => ({
+          ...doc.data(),
+          id: doc.id
+        })
+      ))
+
+    })
+  }
+
   //Listen to changes in groups in a competition
   //the callback recieves an array with each group complete info if getData = true, else it recieves the querySnapshot
   onGroupsSnapshot = (gymID, compID, callback, orderBy = "order", getData = true) => {
@@ -297,6 +313,7 @@ class Firebase {
 
   }
 
+
   //DATABASE REFERENCES (Only place where they should be declared in the whole app)
   //V3 database references
   get usersRef() {
@@ -311,8 +328,12 @@ class Firebase {
 
   gymRef = (gymID) => this.gymsRef.doc(gymID);
 
+  compsRef = (gymID) => {
+    return this.gymRef(gymID).collection(Subcollections.COMPETITIONS)
+  }
+
   compRef = (gymID, compID) => {
-    return this.gymRef(gymID).collection(Subcollections.COMPETITIONS).doc(compID)
+    return this.compsRef(gymID).doc(compID)
   }
 
   groupsRef = (gymID, compID) => this.compRef(gymID, compID).collection(Subcollections.GROUPS);

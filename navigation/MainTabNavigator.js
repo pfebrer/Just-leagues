@@ -5,7 +5,7 @@ import { createBottomTabNavigator, createMaterialTopTabNavigator } from 'react-n
 import Stats from "../screens/StatsScreen";
 import CompetitionScreen from "../screens/CompetitionScreen";
 import MatchModal from "../components/MatchModal";
-import EditingScreen from "../screens/EditingScreen";
+import AdminScreen from "../screens/AdminScreen";
 import GroupChat from "../screens/ChatScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import SettingsScreen from "../screens/SettingsScreen";
@@ -20,17 +20,23 @@ import { Icon } from 'native-base';
 
 
 const EditingStack = createStackNavigator({
-    EditingScreen: EditingScreen,
+    AdminScreen: AdminScreen,
     EditRankingScreen: RankingEditScreen,
 },{ headerMode: "none"});
 
 
 const HomeStack = createStackNavigator({
-    //HomeScreen: HomeScreen,
+    HomeScreen: HomeScreen,
     SettingsScreen: SettingsScreen,
-    //CompetitionScreen: CompetitionScreen,
+    CompetitionScreen: CompetitionScreen,
     MatchModal: MatchModal,
-    EditingStack: EditingStack,
+    //Screens for admins only
+    AdminScreen: AdminScreen,
+    EditRankingScreen: RankingEditScreen
+},{initialRouteName: "HomeScreen"});
+
+const AdminStack = createStackNavigator({
+    AdminScreen: AdminScreen,
 });
 
 //createMaterialTopTabNavigator(RouteConfigs, TabNavigatorConfig);

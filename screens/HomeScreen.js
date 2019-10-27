@@ -5,6 +5,7 @@ import {
     TouchableHighlight,
     View, 
     Animated,
+    Easing,
     ScrollView
 } from 'react-native';
 
@@ -34,7 +35,10 @@ class HomeScreen extends Component {
 
     componentDidMount() {
 
-        this.props.navigation.setParams({backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor})
+        this.props.navigation.setParams({
+            backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor,
+            isAdmin: (this.props.currentUser.gymAdmin && this.props.currentUser.gymAdmin.length > 0) || this.props.currentUser.admin
+        })
 
     }
 
@@ -54,6 +58,7 @@ class HomeScreen extends Component {
                 elevation: 2,
                 backgroundColor: navigation.getParam("backgroundColor")
               },
+            headerLeft: navigation.getParam("isAdmin") ? <HeaderIcon name="clipboard" onPress={() => {navigation.navigate("AdminScreen")}} /> : null,
             headerRight: <HeaderIcon name="settings" onPress={() => {navigation.navigate("SettingsScreen")}} />
         }
     };
@@ -110,9 +115,13 @@ class PendingMatches extends Component {
     constructor(props){
         super(props)
         
-        this.state = {}
+        this.state = {
+            matches: []
+        }
 
-        //this.contentMaxHeight = new Animated.Value(0)
+        this.panelHeight = new Animated.Value(0)
+
+        this.MAX_HEIGHT = 10000
 
     }
 
@@ -127,6 +136,8 @@ class PendingMatches extends Component {
 
                 matches = sortMatchesByDate(matches)
 
+                this.MAX_HEIGHT = h(5)*(matches.length - 1)
+
                 this.setState({matches})
             }
         )
@@ -138,10 +149,68 @@ class PendingMatches extends Component {
 
     toggleContent = () => {
 
-        Animated.timing(this.contentMaxHeight, {
-            toValue: 70
-        }).start()
+        Animated.timing(this.panelHeight, {
+            toValue: this.state.showingContent ? 0 : this.MAX_HEIGHT,
+            duration: this.state.showingContent ? 500 : 1500,
+            easing: this.state.showingContent ? undefined : Easing.elastic(2)
+        }).start(() => this.setState({showingContent: !this.state.showingContent})) 
 
+    }
+
+    renderMatchView = (match) => {
+
+        var matchInfo;
+
+        //Determine the match information that should be displayed
+        if (match.playersIDs.length == 2){
+            //then we need to display just the rival
+            let rival = match.playersNames.filter( (name, i) => match.playersIDs[i] != this.props.uid )[0]
+
+            matchInfo = <Text>{rival}</Text>
+        }
+
+        //Determine how the time information should be rendered
+        var timeInfo;
+
+        if (match.scheduled) {
+
+            let {time, location} = match.scheduled
+
+            if (convertDate(time.toDate(), "dd/mm/yyyy") ==  convertDate(Date.now(), "dd/mm/yyyy")) {
+                time = "Today at " + convertDate(time.toDate(), "hh:mm")
+            } else {
+                time = convertDate(time.toDate(), "dd/mm hh:mm")
+            }
+
+            timeInfo = <View>
+                            <Text note style={{color: "green", textAlign: "right"}}>{translate("vocabulary.scheduled match")}</Text>
+                            <Text style={{fontFamily: "bold"}}>{time}</Text>
+                            <Text>{location}</Text>
+                        </View>
+
+        } else {
+
+            const matchDue = convertDate(match.due.toDate(), "dd/mm")
+
+            timeInfo = <View>
+                            <Text note style={{color: "darkred",textAlign: "right"}}>{translate("vocabulary.not scheduled match")}</Text>
+                            <Text note style={{textAlign: "right"}}>{translate("vocabulary.limit") + ": " + matchDue}</Text>
+                        </View>
+        }
+
+
+        return (
+            <View style={styles.pendingMatchContainer}>
+                <View>
+                    {matchInfo}
+                    <Text note>{match.competition.name}</Text>
+                </View>
+                <View style={{flex: 1, alignItems: "flex-end"}}> 
+                    {timeInfo}
+                </View>
+                    
+            </View>
+        )
     }
 
     renderPendingMatches = (matches) => {
@@ -152,65 +221,16 @@ class PendingMatches extends Component {
 
         } else {
 
+            let hiddenMatches = matches.slice(1).map(match => this.renderMatchView(match))
+
             return (
                 <View>
-                    <View style={{flexDirection: "row"}}>
-                        <View style={{flex: 2}}>
-                            <Text style={{}}>Juanito Casas</Text>
-                            <Text note>Lliga social esquaix</Text>
-                        </View>
-                        <View style={{flex: 1, alignItems: "flex-end"}}>
-                            <Text note>21:45</Text>
-                        </View>
-                             
-                    </View>
-                    <View style={{backgroundColor: "gray", height: this.contentMaxHeight}}>
-                    </View>
+                    {this.renderMatchView(matches[0])}
+                    <Animated.View 
+                        style={{height: this.panelHeight, overflow: "hidden"}}>
+                        {hiddenMatches}
+                    </Animated.View>
                 </View>
-            )
-
-            return matches.map( match => {
-
-                var matchInfo;
-
-                //Determine the match information that should be displayed
-                if (match.playersIDs.length == 2){
-                    //then we need to display just the rival
-                    let rival = match.playersNames.filter( (name, i) => match.playersIDs[i] != this.props.uid )[0]
-
-                    matchInfo = <Text>{rival}</Text>
-                }
-
-                //Determine how the time information should be rendered
-                var timeInfo;
-
-                if (match.scheduled) {
-
-                    let {time, location} = scheduled
-
-                    time = convertDate(time.toDate(), "dd/mm hh:mm")
-
-                    timeInfo = <View>
-                                    <Text>{time}</Text>
-                                    <Text>{location}</Text>
-                                </View>
-
-                } else {
-
-                    const matchDue = convertDate(match.due.toDate(), "dd/mm")
-
-                    timeInfo = <Text>{matchDue}</Text>
-                }
-
-                
-
-                return <View style={{flexDirection: "row"}}>
-                            {matchInfo}
-                            {timeInfo}
-                            <Text>{match.competition.name}</Text>
-                        </View>
-            }
-                
             )
 
         }
@@ -218,12 +238,26 @@ class PendingMatches extends Component {
 
     render(){
 
+        const spin = this.panelHeight.interpolate({
+            inputRange: [0, this.MAX_HEIGHT],
+            outputRange: ['0deg', '180deg']
+        })
+
+        const dropdownBut = this.state.matches.length > 1 ? (
+            <Animated.View style={{transform: [{ rotate: spin}] }}>
+                <Icon name="arrow-dropdown" style={{...styles.actionIcon}}/>
+            </Animated.View>
+        ) : null
+
         return <Animated.View style={{...styles.gridItem, flex: 1}}>
-                    <TouchableOpacity style={styles.itemTitleView} >
+                    <TouchableOpacity 
+                        style={styles.itemTitleView} 
+                        onPress={this.toggleContent}>
                         <Icon name="time" style={styles.titleIcon}/>
                         <Text style={styles.titleText}>{translate("vocabulary.pending matches")}</Text>
-                        <View style={styles.actionIconView}>
-                            <Icon name="arrow-dropdown" style={{...styles.actionIcon}}/>
+                        <View style={{...styles.actionIconView}}>
+                            <Text note style={styles.actionHelperText}>{"(" + this.state.matches.length + ")"}</Text>
+                            {dropdownBut}
                         </View>
                     </TouchableOpacity>
                     {this.renderPendingMatches(this.state.matches)}
@@ -277,8 +311,7 @@ class CompetitionState extends Component {
     goToCompetition = () => {
 
         //Set the current competition so that the competition screen can know what to render
-        const {gymID, competitionID, name, type} = this.props.competition
-        this.props.setCurrentCompetition(gymID, competitionID, name, type)
+        this.props.setCurrentCompetition(this.props.competition)
 
         this.props.navigation.navigate("CompetitionScreen")
     }
@@ -309,7 +342,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-    setCurrentCompetition: (gymID, competitionID, compName, typeOfComp) => dispatch(setCurrentCompetition(gymID, competitionID, compName, typeOfComp))
+    setCurrentCompetition: (compInfo) => dispatch(setCurrentCompetition(compInfo))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
@@ -357,7 +390,13 @@ const styles = StyleSheet.create({
 
     actionIconView: {
         flex: 1,
-        alignItems: "flex-end",
+        flexDirection: "row",
+        justifyContent: "flex-end",
+        alignItems: "center",
+    },
+
+    actionHelperText: {
+        paddingRight: 10,
     },
     
     actionIcon: {
@@ -368,5 +407,10 @@ const styles = StyleSheet.create({
         fontSize: totalSize(1.8),
         color: "gray"
     },
+
+    pendingMatchContainer: {
+        flexDirection: "row",
+        height: h(5)
+    }
 
 });
