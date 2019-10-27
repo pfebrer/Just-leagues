@@ -12,7 +12,7 @@ import { connect } from 'react-redux'
 class Table extends Component {
 
     goToUserProfile = (uid) => {
-        console.warn(uid)
+        console.warn(this.props.IDsAndNames[uid])
     }
 
     renderTable = (ranks, players, playersIDs, scores, totals) => {
@@ -69,9 +69,11 @@ class Table extends Component {
             scores = groupResults.map(resultsRow => resultsRow.scores)
 
         } else {
-            var {players, playersIDs, scores} = deepClone(this.props)
+            var {playersIDs, scores} = deepClone(this.props)
 
-            if( !(players.length > 0 && scores.length > 0) ) { return null }
+            if( !(playersIDs.length > 0 && scores.length > 0) ) { return null }
+
+            players = playersIDs.map( uid => this.props.IDsAndNames[uid] || "Sense nom" )
 
             ranks  = this.props.ranks || Array.from( new Array(players.length), (x,i) => i + 1)
 
@@ -204,7 +206,8 @@ class Column extends Component{
 }
 
 const mapStateToProps = state => ({
-    currentUser: state.currentUser || null
+    currentUser: state.currentUser || null,
+    IDsAndNames: state.IDsAndNames
 })
 
 export default connect(mapStateToProps)(Table);
