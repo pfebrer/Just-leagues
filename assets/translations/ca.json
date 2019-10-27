@@ -30,7 +30,8 @@
     },
     "info": {
         "checking user": "Comprovant usuari",
-        "loading classifications": "Carregant classificacions"
+        "loading classifications": "Carregant classificacions",
+        "no pending matches": "No tens cap partit pendent. Pots relaxar-te :)"
     },
     "vocabulary": {
         "group": "Grup",

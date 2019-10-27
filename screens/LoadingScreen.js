@@ -78,19 +78,20 @@ class LoadingScreen extends React.Component {
                         //Update the settings fields if some new settings have been produced
                         let newSettings = updateSettingsFields(userData.settings, USERSETTINGS)
 
-                        console.warn("USERDATA", userData)
-                        //Create a listener for each competition in active competitions to retrieve the users ids and names
-                        userData.activeCompetitions.forEach( comp => {
+                        if (userData.activeCompetitions){
+                            //Create a listener for each competition in active competitions to retrieve the users ids and names
+                            userData.activeCompetitions.forEach( comp => {
 
-                            if (!this.usersListeners[comp.id]){
+                                if (!this.usersListeners[comp.id]){
 
-                                this.usersListeners[comp.id] = Firebase.onCompUsersSnapshot(comp, 
-                                    IDsAndNames => this.props.updateIDsAndNames(IDsAndNames)
-                                )
-                            }
+                                    this.usersListeners[comp.id] = Firebase.onCompUsersSnapshot(comp, 
+                                        IDsAndNames => this.props.updateIDsAndNames(IDsAndNames)
+                                    )
+                                }
 
-                        });
-
+                            });
+                        }
+                        
                         if (newSettings){
 
                             Firebase.updateUserSettings(user.uid, newSettings)
@@ -99,7 +100,7 @@ class LoadingScreen extends React.Component {
 
 
 
-                            this.props.storeUserData({id: user.uid,...userData})
+                            this.props.storeUserData({activeCompetitions: [], id: user.uid,...userData})
 
                             console.log("User signed in ---> Redirect to the home screen")
 

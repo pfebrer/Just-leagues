@@ -270,6 +270,7 @@ class Firebase {
       if (!getData) callback(querySnapshot)
       else callback( querySnapshot.docs.map(doc => ({
           ...doc.data(),
+          id: doc.id,
           gymID: doc.ref.parent.parent.parent.parent.id,
           compID: doc.ref.parent.parent.id
         })
@@ -355,6 +356,10 @@ class Firebase {
 
   compRef = (gymID, compID) => {
     return this.compsRef(gymID).doc(compID)
+  }
+
+  pendingMatchesRef = (gymID, compID) => {
+    return this.compRef(gymID, compID).collection(Subcollections.PENDINGMATCHES)
   }
 
   groupsRef = (gymID, compID) => this.compRef(gymID, compID).collection(Subcollections.GROUPS);
