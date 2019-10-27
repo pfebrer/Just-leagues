@@ -8,7 +8,8 @@
         "username": "Usuari",
         "password": "Paraula de pas",
         "log in": "Inicia sessió",
-        "log out": "Tanca sessió",
+        "sign in with google": "Inicia sessió amb Google",
+        "sign out": "Tanca sessió",
         "unable to log in": "No s'ha pogut iniciar sessió",
         "unable to register for notifications": "No s'han pogut activar les notificacions",
         "name":"Nom",
@@ -22,17 +23,42 @@
         "competition": "Competició",
         "chat": "Xat",
         "matches": "Partits",
-        "ranking": "Rànquing"
+        "ranking": "Rànquing",
+        "home":"Inici",
+        "settings": "Configuració",
+        "competitions handling": "Gestió de competicions"
     },
     "info": {
         "checking user": "Comprovant usuari",
-        "loading classifications": "Carregant classificacions"
+        "loading classifications": "Carregant classificacions",
+        "no pending matches": "No tens cap partit pendent. Pots relaxar-te :)"
     },
     "vocabulary": {
         "group": "Grup",
-        "total": "Total"
+        "total": "Total",
+        "pending matches": "Partits pendents",
+        "notifications": "Notificacions",
+        "cancel": "Cancel·la",
+        "OK": "D'acord",
+        "attention": "Atenció!",
+        "limit":"Límit",
+        "scheduled match": "Horari acordat",
+        "not scheduled match": "Horari no acordat"
     },
     "errors": {
         "impossible result":"No ens enganyis, aquest resultat és impossible :("
+    },
+    "settings": {
+        "you are about to restore default settings": "Estàs a punt de tornar a la configuració inicial.",
+        "General appearance": "Aparença general",
+        "Competition display": "Presentació de competicions",
+        "background color": {
+            "name":"Color principal",
+            "description":"Tria el color principal de la app."
+        },
+        "max visible cols": {
+            "name": "Columnes visibles en grups",
+            "description": "En les competicions de grups, el màxim de columnes que es veuen amb comoditat depenen de l'amplada del teu mòbil."
+        }
     }
 }

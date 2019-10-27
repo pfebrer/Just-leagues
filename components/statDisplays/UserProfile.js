@@ -16,7 +16,6 @@ export default class PlayerProfile extends React.Component {
 
         this.state = {}
 
-        this.userId = Firebase.userData.id;
     }
 
     getUserProfile = (uid) => {
@@ -52,7 +51,7 @@ export default class PlayerProfile extends React.Component {
 
     render() {
 
-        console.warn(this.state.userProfile)
+        console.warn(this.props.uid)
 
         return null
         /*console.warn(this.state.userData)

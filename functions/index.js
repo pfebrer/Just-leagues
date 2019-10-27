@@ -23,25 +23,28 @@ const Constants = {
 const Collections = {
     //Make collections dynamics
     RANKINGS: (prefix) => {
-        return (prefix && prefix + '_') + "rankings"
+        return (prefix && prefix ) + "rankings"
     },
     GROUPS: (prefix) => {
-        return (prefix && prefix + '_') + "groups"
+        return (prefix && prefix ) + "groups"
     },
     PLAYERS: (prefix) => {
-        return (prefix && prefix + '_') + "players"
+        return (prefix && prefix ) + "players"
     },
     TOURNAMENT: (prefix) => {
-        return (prefix && prefix + '_') + "Torneig"
+        return (prefix && prefix ) + "Torneig"
     },
     MATCHES: (prefix) => {
-        return (prefix && prefix + '_') + "matches"
+        return (prefix && prefix ) + "matches"
     },
     MONTH_INFO: (prefix) => {
-        return (prefix && prefix + '_') + "monthInfo"
+        return (prefix && prefix ) + "monthInfo"
     },
     CHALLENGE: (prefix) => {
-        return (prefix && prefix + '_') + "Reptes"
+        return (prefix && prefix ) + "Reptes"
+    },
+    GYMS: (prefix) => {
+        return (prefix && prefix ) + "gyms"
     }
 };
 const Documents = {
@@ -69,15 +72,62 @@ const fetch = require('node-fetch');
 const admin = require('firebase-admin');
 
 
-admin.initializeApp(functions.config().firebase);
+admin.initializeApp();
 const firestore = admin.firestore();
 const auth = admin.auth();
 
 const firestoreFunction = functions.region('europe-west1').runWith(runtimeOpts).firestore
 const httpsFunction = functions.region('europe-west1').runWith(runtimeOpts).https
 
+//This function will detect the creation of a pending match and pass the reference to the relevant user
+exports.pendingMatches = firestoreFunction.document("V3dev_gyms/{gymID}/competitions/{compID}/pendingMatches/{pendMatchID}" )
+.onWrite((change, context) => {
 
-//send the push notification
+    if (change.after.exists){
+
+        let {playersIDs, playersNames, scheduled, due} = change.after.data()
+
+        playersIDs.forEach( playerID => {
+
+            var newPendingMatch = {playersIDs, playersNames, scheduled, due, ref: change.after.ref}
+
+            playerRef = "V3dev_users/"+ playerID
+
+            firestore.runTransaction(t => {
+                return t.get(playerRef)
+                  .then(doc => {
+
+                    let {pendingMatches} = doc.data();
+
+                    if (!pendingMatches) { 
+                        pendingMatches = [newPendingMatch]
+                    } else {
+                        pendingMatches = pendingMatches.filter( match => match.ref != change.after.ref)
+                        pendingMatches = [ ...pendingMatches, newPendingMatch]
+                    }
+
+                    t.update(playerRef, {pendingMatches});
+                    });
+              }).then(result => {
+                console.log('Transaction success!');
+              }).catch(err => {
+                console.log('Transaction failure:', err)
+            });
+
+        })
+
+    } else {
+        //The pending match has either been deleted or played
+        let {playersIDs} = change.before.data()
+
+        playersIDs.forEach( playerID => {
+            firestore.doc("V3dev_users/"+ playerID).set({pendingMatches: firestore.FieldValue.arrayRemove(change.after.ref)}, {merge: true}).then(() => {})
+        })
+    }
+    
+})
+
+//Send a push notification
 exports.messageNotification = firestoreFunction.document('groups/{iGroup}/chatMessages/{id}').onCreate((event, context) => {
 
     const {playerName, message} = event.data();

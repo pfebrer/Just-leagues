@@ -14,7 +14,7 @@ import { Button, Icon } from 'native-base';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { translate } from '../assets/translations/translationManager';
 import { w } from '../api/Dimensions';
-import Settings from '../constants/Settings';
+import { COMPSETTINGS } from '../constants/Settings';
 
 const window = Dimensions.get('window');
 
@@ -138,7 +138,7 @@ class Row extends Component {
       <Animated.View style={{
         ...styles.row,
         ...this._style,
-        backgroundColor: Math.floor(index/Settings.groupSize) % 2 == 0 ? "#ccc" : "white",
+        backgroundColor: Math.floor(index/COMPSETTINGS.groups.groupSize) % 2 == 0 ? "#ccc" : "white",
         marginHorizontal: this._marginHorizontal
         }}>
         <View style={styles.rankView}>

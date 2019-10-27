@@ -8,6 +8,10 @@ import { Ionicons } from '@expo/vector-icons';
 import AppNavigator from './navigation/AppNavigator';
 import { Root } from 'native-base';
 
+//REDUX STUFF
+import store from './redux/store'
+import { Provider } from 'react-redux'
+
 export default function App(props) {
 
   const [isLoadingComplete, setLoadingComplete] = useState(false);
@@ -22,13 +26,14 @@ export default function App(props) {
     );
   } else {
     return (
-      <Root>
-        <View style={styles.container}>
-          {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-          <AppNavigator />
-        </View>
-      </Root>
-      
+      <Provider store={store}>
+        <Root>
+          <View style={styles.container}>
+            {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
+              <AppNavigator />
+          </View>
+        </Root>
+      </Provider>
     );
   }
 }

@@ -1,70 +1,47 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, TouchableHighlight, View} from 'react-native';
+import { StyleSheet, TouchableOpacity, TouchableHighlight, View, Text} from 'react-native';
 import Groups from "../components/groups/Groups"
 import Challenges from "../components/Challenges"
 import AddMatchModal from "../components/AddMatchModal"
 import AdminAddMatchModal from "../components/AdminAddMatchModal"
 import Firebase from "../api/Firebase"
 
+import HeaderIcon from "../components/header/HeaderIcon"
+
 import {oppositePoints} from "../assets/utils/utilFuncs"
 import { Icon} from 'native-base';
 
+import { USERSETTINGS} from "../constants/Settings"
 
-export default class Clasifications extends React.Component {
+//Redux stuff
+import { connect } from 'react-redux'
+
+class Competition extends React.Component {
 
     constructor(props) {
         super(props);
 
         this.state = {
-            //ranking: [],
-            userId: Firebase.userData.id,
             addMatchModal: false,
-            typeOfComp: "groups"
         };
+
+        props.navigation.setParams({competitionName: props.competition.name})
 
     }
 
     static navigationOptions = ({navigation}) => {
         return {
-            headerLeft: <TouchableOpacity onPress={() => {navigation.getParam("toggleAddMatchModal")}}>
-                            <Icon name="ios-add" style={{ paddingLeft: 20 }} />
-                        </TouchableOpacity>, 
-            headerRight: <TouchableHighlight onPress={() => {navigation.navigate("EditingScreen")}}>
-                            <Icon name="ios-settings" style={{ paddingRight: 20 }} />
-                        </TouchableHighlight>
+            headerTitle: navigation.getParam("competitionName", ""),
+            headerRight: <HeaderIcon name="settings" onPress={() => {navigation.navigate("SettingsScreen")}}/>
         }
     };
 
-    componentDidMount() {
+    componentDidUpdate(prevProps){
 
-        /*Firebase.userRef(this.state.userId).get().then((docSnapshot) => {
-            let {playerName, currentGroup, admin} = docSnapshot.data();
-            this.setState({playerName, admin});
-        }).catch(err => {
-            alert("No s'ha pogut carregar la informació de l'usuari" + err);
-        });*/
-
-        /*this.typeOfComp = Firebase.typeOfCompRef.onSnapshot((docSnapshot) => {
-            const typeOfComp = docSnapshot.data();
-            this.setState({typeOfComp});
-        });*/
-
-        /*this.ranking = Firebase.rankingsRef.onSnapshot((docSnapshot) => {
-            debugger;
-            const {ranking, wentUp, wentDown} = docSnapshot.data();
-            this.setState({
-                ranking,
-                wentDown,
-                wentUp,
-            })
-        });*/
-
+        if (!prevProps.competition || prevProps.competition.name != this.props.competition.name){
+            this.props.navigation.setParams({competitionName: this.props.competition.name})
+        }
     }
-
-    componentWillUnmount() {
-        this.typeOfComp();
-        this.ranking();
-    };
 
     toggleAddMatchModal = () => {
         this.setState({
@@ -189,16 +166,27 @@ export default class Clasifications extends React.Component {
 
     render() {
 
-        //{this.renderAddMatchButton(this.state.showAddButton)}
-        return <View style={{flex: 1, backgroundColor: "white"}}>
-                {this.renderCompView(this.state.typeOfComp)}
+        return <View style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
+                {this.renderCompView(this.props.competition.type)}
                 {this.renderAddMatchModal(this.state.addMatchModal, this.state.admin)}
                 </View>
     }
 
 }
 
+const mapStateToProps = state => ({
+    currentUser: state.currentUser,
+    competition: state.competition
+})
+
+export default connect(mapStateToProps)(Competition);
+
 const styles = StyleSheet.create({
+
+    container: {
+        flex: 1,
+        backgroundColor: USERSETTINGS["General appearance"].backgroundColor.default
+    },
 
     addMatchButton: {
         position: "absolute",

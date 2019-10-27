@@ -5,6 +5,8 @@ import 'firebase/functions';
 import { Toast } from 'native-base'
 import {Collections, Subcollections, Constants, Documents} from "../constants/CONSTANTS";
 
+import * as Google from 'expo-google-app-auth';
+
 class Firebase {
 
   constructor(){
@@ -26,6 +28,90 @@ class Firebase {
   }
 
   //AUTHENTICATION STUFF
+  /***Google***/
+  signInWithGoogleAsync = async () => {
+    try {
+      const result = await Google.logInAsync({
+        androidClientId: "524738063553-1tr662gs9strhp1rvljj4qv588mbj254.apps.googleusercontent.com",
+        //iosClientId: YOUR_CLIENT_ID_HERE,
+        scopes: ['profile', 'email'],
+      });
+  
+      if (result.type === 'success') {
+
+        //Log in to our firebase app
+        this.onGoogleSignIn(result)
+        return result.accessToken;
+
+      } else {
+        return { cancelled: true };
+      }
+    } catch (e) {
+      return { error: true };
+    }
+  }
+
+  onGoogleSignIn = (googleUser) => {
+
+    function isUserEqual(googleUser, firebaseUser) {
+      if (firebaseUser) {
+        var providerData = firebaseUser.providerData;
+        for (var i = 0; i < providerData.length; i++) {
+          if (providerData[i].providerId === firebase.auth.GoogleAuthProvider.PROVIDER_ID &&
+              providerData[i].uid === googleUser.getBasicProfile().getId()) {
+            // We don't need to reauth the Firebase connection.
+            return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    console.log('Google Auth Response', googleUser);
+    // We need to register an Observer on Firebase Auth to make sure auth is initialized.
+    var unsubscribe = this.auth.onAuthStateChanged(function(firebaseUser) {
+      unsubscribe();
+      // Check if we are already signed-in Firebase with the correct user.
+      if (!isUserEqual(googleUser, firebaseUser)) {
+        // Build Firebase credential with the Google ID token.
+        var credential = firebase.auth.GoogleAuthProvider.credential(
+          googleUser.idToken,
+          googleUser.accessToken
+        );
+        // Sign in with credential from the Google user.
+        this.auth.signInWithCredential(credential)
+        .then( result => {
+
+          let userProfile = {
+            profilePic: result.additionalUserInfo.profile.picture,
+            displayName: result.additionalUserInfo.profile.name,
+            firstName: result.additionalUserInfo.profile.given_name,
+            lastName: result.additionalUserInfo.profile.family_name,
+          }
+          this.userRef(result.user.uid)
+            .set( userProfile, {merge: true})
+            .then(function(snapshot) {
+
+            });
+        })
+        .catch(function(error) {
+          // Handle Errors here.
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          // The email of the user's account used.
+          var email = error.email;
+          // The firebase.auth.AuthCredential type that was used.
+          var credential = error.credential;
+          // ...
+          console.log(errorMessage)
+        });
+      } else {
+        console.log('User already signed-in Firebase.');
+      }
+    }.bind(this));
+  }
+
+  /***Email***/
   userLogin = (email, password) => {
     let me = this;
     email += "@" + "nickspa.cat"; //+ Constants.dbPrefix.replace("_", ".") +
@@ -57,7 +143,7 @@ class Firebase {
         if (user) {
           resolve(user);
         }
-      });
+      }).catch( err => alert(err));
     })
   };
 
@@ -98,7 +184,7 @@ class Firebase {
           });
           resolve(true);
         }
-      });
+      }).catch(err => alert(err));
     });
   };
 
@@ -125,31 +211,132 @@ class Firebase {
     })
   };
 
+  signOut = () => {
+    this.auth.signOut().then().catch((error) => {
+      alert(error.message)
+    })
+  }
+
+  //FUNCTIONS TO OPERATE ON THE DATABASE
+  //Generic document updater
+  updateDocInfo = (ref, updates, callback, merge = true) => {
+
+    ref.set(updates, {merge}).then(() => {
+      if (callback) {callback()}
+    })
+    .catch((err) => alert(err))
+  }
+  
+  //Update user settings
+  updateUserSettings = (uid, newSettings, callback) => {
+    this.updateDocInfo( this.userRef(uid), {settings: newSettings}, callback, merge = true )
+  }
+
+  //Set default settings
+  restoreDefaultUserSettings = (uid, callback) => {
+    this.updateUserSettings(uid, {}, callback)
+  }
+
+  //LISTENERS TO THE DATABASE
+  
+  onUserSnapshot = (uid, callback, getData = true) => {
+    /*Listen to changes on the current user's data
+    The callback recieves the user's complete data if getData = true, else the documentSnapshot*/
+
+    return this.userRef(uid).onSnapshot(
+      docSnapshot => callback( getData ? docSnapshot.data() : docSnapshot)
+    )
+  }
+
+  onPlayerGroupSnapshot = (gymID, compID, uid, callback, getData = true) => {
+    /*Listener to changes on the group where the player is in a competition
+    /The callback recieves the group data if getData = true, otherwise it recieves the document snapshot*/
+
+    return this.groupsRef(gymID, compID).where("playersRef", "array-contains", uid )
+    .onSnapshot( querySnapshot =>{
+        querySnapshot.forEach(doc => callback( getData ? doc.data() : doc ) )
+    });
+
+  }
+
+  onPendingMatchesSnapshot = (uid, callback, getData = true) => {
+    /*Listen to changes in the pendingMatches of a given user
+    Callback recieves an array with all the pendings matches complete info if getData = true,
+    else it recieves the querySnapshot*/
+
+    return this.firestore.collectionGroup(Subcollections.PENDINGMATCHES).where("playersIDs", "array-contains", uid )
+    .onSnapshot(querySnapshot => { 
+
+      if (!getData) callback(querySnapshot)
+      else callback( querySnapshot.docs.map(doc => ({
+          ...doc.data(),
+          id: doc.id,
+          gymID: doc.ref.parent.parent.parent.parent.id,
+          compID: doc.ref.parent.parent.id
+        })
+      ))
+
+    })
+
+  }
+
+  onCompetitionsSnapshot = (gymID, callback, getData = true) => {
+    /*Listen to competitions for a certain gym (thought in principle for gym admins)*/
+
+    return this.compsRef(gymID)
+    .onSnapshot(querySnapshot => { 
+
+      if (!getData) callback(querySnapshot)
+      else callback( querySnapshot.docs.map(doc => ({
+          ...doc.data(),
+          id: doc.id
+        })
+      ))
+
+    })
+  }
+
+  onCompUsersSnapshot = (comp, callback) => {
+    /*Listen to users that are active in a given competition
+    Returns and object like {id1: name1, id2:name2 ....}*/
+
+    return this.usersRef.where("activeCompetitions", "array-contains", comp).onSnapshot(
+
+      querySnapshot => {
+        callback( querySnapshot.docs.reduce((IDsAndNames,user) => {
+            IDsAndNames[user.id] = user.get("displayName");
+            return IDsAndNames;
+          }, {})
+        )
+      }
+
+    )
+  }
+
+  onGroupsSnapshot = (gymID, compID, callback, orderBy = "order", getData = true) => {
+    /*Listen to changes in groups in a competition
+    the callback recieves an array with each group complete info if getData = true, else it recieves the querySnapshot*/
+
+    return this.groupsRef(gymID, compID).orderBy(orderBy).onSnapshot((querySnapshot) => {
+      
+      if (getData){
+
+        let groups = querySnapshot.docs.map((group) => {
+          return {...group.data(), iGroup: group.get("order")}
+        });
+
+        callback(groups)
+
+      } else {
+        callback(querySnapshot)
+      }
+      
+
+  })
+
+  }
+
   //DATABASE REFERENCES (Only place where they should be declared in the whole app)
-  /*get playersRef() {
-    return this.firestore.collection(Collections.PLAYERS)
-  }
-
-  get rankingsRef() {
-    return this.firestore.collection(Collections.RANKINGS).doc(Documents.RANKINGS.squashRanking);
-  }
-
-  get matchesRef() {
-    return this.firestore.collection(Collections.MATCHES);
-  }
-
-  get groupsRef() {
-    return this.firestore.collection(Collections.GROUPS);
-  }
-
-  get typeOfCompRef() {
-    return this.firestore.collection(Collections.MONTH_INFO).doc(Documents.MONTH_INFO.typeOfComp)
-  }
-
-  userRef = (uid) => {
-    return this.playersRef.doc(uid)
-  }*/
-
   //V3 database references
   get usersRef() {
     return this.firestore.collection(Collections.USERS)
@@ -163,11 +350,21 @@ class Firebase {
 
   gymRef = (gymID) => this.gymsRef.doc(gymID);
 
-  sportRef = (gymID, sportID) => this.gymRef(gymID).collection(Subcollections.SPORTS).doc(sportID);
+  compsRef = (gymID) => {
+    return this.gymRef(gymID).collection(Subcollections.COMPETITIONS)
+  }
 
-  groupsRef = (gymID, sportID) => this.sportRef(gymID, sportID).collection(Subcollections.GROUPS);
+  compRef = (gymID, compID) => {
+    return this.compsRef(gymID).doc(compID)
+  }
 
-  groupRef = (gymID, sportID, groupID) => this.groupsRef(gymID, sportID).doc(groupID);
+  pendingMatchesRef = (gymID, compID) => {
+    return this.compRef(gymID, compID).collection(Subcollections.PENDINGMATCHES)
+  }
+
+  groupsRef = (gymID, compID) => this.compRef(gymID, compID).collection(Subcollections.GROUPS);
+
+  groupRef = (gymID, compID, groupID) => this.groupsRef(gymID, compID).doc(groupID);
   
 }
 

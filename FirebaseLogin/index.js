@@ -6,8 +6,6 @@ import Register from './screens/Register';
 import ForgotPassword from './screens/ForgotPassword';
 import { w } from '../api/Dimensions';
 
-import {Notifications} from "expo";
-import * as Permissions from "expo-permissions";
 import Firebase from "../api/Firebase";
 
 export default class FirebaseLogin extends Component {
@@ -26,38 +24,6 @@ export default class FirebaseLogin extends Component {
   };
 
   userSuccessfullyLoggedIn = (user) => {
-
-    this.registerForPushNotificationsAsync(user.user.uid)
-
-  };
-
-  registerForPushNotificationsAsync = async (uid) => {
-    const {status: existingStatus} = await Permissions.getAsync(
-        Permissions.NOTIFICATIONS
-    );
-    let finalStatus = existingStatus;
-
-    // only ask if permissions have not already been determined, because
-    // iOS won't necessarily prompt the user a second time.
-    if (existingStatus !== 'granted') {
-        // Android remote notification permissions are granted during the app
-        // install, so this will only ask on iOS
-        const {status} = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-        finalStatus = status;
-
-    }
-
-    // Stop here if the user did not grant permissions
-    if (finalStatus !== 'granted') {
-        return;
-    }
-
-    // Get the token that uniquely identifies this device
-    let token = await Notifications.getExpoPushTokenAsync();
-
-    let updates = {};
-    updates["expoToken"] = token;
-    Firebase.userRef(uid).update(updates);
 
   };
 

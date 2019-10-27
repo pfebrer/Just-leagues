@@ -1,6 +1,6 @@
 import React from 'react';
 import {FlatList, ImageBackground, StyleSheet, Text, TouchableHighlight, View} from 'react-native';
-import Loading from "../Loading";
+import Loading from "../../screens/LoadingScreen";
 import {Collections, Documents} from "../../constants/CONSTANTS";
 import {auth, firestore} from "firebase";
 import {Foundation, MaterialIcons, Entypo} from '@expo/vector-icons';

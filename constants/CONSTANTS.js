@@ -3,7 +3,7 @@
 const Constants = {
     GROUP_SIZE: 4,
     UNTYING_CRITERIA: ["directMatch","position"],
-    dbPrefix: "V3test_",
+    dbPrefix: "V3dev_",
     paddingTopHeader: 20,
 };
 
@@ -20,8 +20,9 @@ const Collections = {
 };
 
 const Subcollections = {
-    SPORTS: "sports",
-    GROUPS: "groups"
+    COMPETITIONS: "competitions",
+    GROUPS: "groups",
+    PENDINGMATCHES: "pendingMatches"
 }
 
 const Documents = {

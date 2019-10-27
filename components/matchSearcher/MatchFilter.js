@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity} from 'react-native';
+import { Icon } from 'native-base';
 
 export default class MatchFilter extends React.Component {
 
@@ -32,7 +33,7 @@ export default class MatchFilter extends React.Component {
                 ref={this.myTextInput} placeholder={placeholder}
             />
             <TouchableOpacity style={styles.filterGoButton} onPress={()=>{this.props.applyFilter(this.state.filter, this.clearInput)}}>
-                <Text style={styles.filterButtonText}>⌕</Text>
+                <Icon name="search" style={styles.filterButtonIcon}/>
             </TouchableOpacity>
         </View>
       );
@@ -41,7 +42,11 @@ export default class MatchFilter extends React.Component {
   
 const styles = StyleSheet.create({
   filterView: {
+    elevation: 5,
+    backgroundColor: "white",
     height:60,
+    borderRadius: 5,
+    overflow: "hidden",
     flexDirection: "row",
   },
   filterTextInp: {
@@ -50,8 +55,6 @@ const styles = StyleSheet.create({
   },
   leftTextInp: {
     flex:3,
-    borderTopLeftRadius: 5,
-    borderBottomLeftRadius: 5
   },
   middleTextInp: {
     flex:2.75,
@@ -61,20 +64,14 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "green",
     justifyContent: "center",
-    borderTopRightRadius: 5,
-    borderBottomRightRadius: 5
   },
   filterNoButton: {
     flex:0.25,
     alignItems: "center",
     backgroundColor: "red",
     justifyContent: "center",
-    borderTopLeftRadius: 5,
-    borderBottomLeftRadius: 5
   },
-  filterButtonText: {
+  filterButtonIcon: {
     color:"white",
-    fontFamily: "bold",
-    fontSize: 40
   },
 });

@@ -2,37 +2,31 @@ import React from 'react';
 import {ActivityIndicator, ScrollView, StyleSheet, Text, View} from 'react-native';
 import Table from "./Table"
 import Firebase from "../../api/Firebase"
-import {Collections} from "../../constants/CONSTANTS";
 import { translate } from '../../assets/translations/translationManager';
-import SETTINGS from '../../constants/Settings';
 
-export default class Groups extends React.Component {
+//Redux stuff
+import { connect } from 'react-redux'
+import { totalSize } from '../../api/Dimensions';
+
+class Groups extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
             groups: [],
-            gymID: "D5xZ9D0c0U5FHWdV1qXD",
-            sportID: "squash"
         };
 
     }
 
     componentDidMount() {
 
-        this.groupsSub = Firebase.groupsRef(this.state.gymID,this.state.sportID).onSnapshot((querySnapshot) => {
+        let {gymID, id : compID} = this.props.competition
+
+        this.groupsSub = Firebase.onGroupsSnapshot(gymID, compID, 
             
-            let groups = querySnapshot.docs.map((group) => {
-                let {results} = group.data()
-                return {group: Number(group.id), results: results}
-            });
+            groups => this.setState({groups})
 
-            groups = groups.sort((a,b) => a.group - b.group)
-
-            this.setState({groups})
-
-            this.props.returnGroups(groups)
-        })
+        );
 
     }
 
@@ -44,13 +38,20 @@ export default class Groups extends React.Component {
     renderGroups = (groups) => {
 
         return groups.map( (group) => (
-            <Table
-                key={"Group" + String(group.group)} 
-                iGroup={group.group} 
-                groupResults={group.results}
-                goToUserProfile={this.props.goToUserProfile} 
-                handlePress={this.props.handlePress}
-            />
+
+            <View key={group.iGroup} style={{...styles.groupContainer}}>
+                <View style={{...styles.groupTitleView}}>
+                    <Text style={styles.groupTitleText}>{translate("vocabulary.group") + " " + (group.name)}</Text>
+                </View>
+                <Table
+                    ranks={group.ranks}
+                    players={group.players}
+                    scores={group.results}
+                    playersIDs={group.playersRef}
+                    goToUserProfile={this.props.goToUserProfile} 
+                    handlePress={this.props.handlePress}
+                />
+            </View>
         
         ))
 
@@ -81,11 +82,44 @@ export default class Groups extends React.Component {
     }
 }
 
+const mapStateToProps = state => ({
+    competition: state.competition
+})
+
+export default connect(mapStateToProps)(Groups);
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 30
+        paddingTop: 30,
+        marginBottom: 50
     },
+
+    groupContainer : {
+        elevation: 5,
+        marginVertical: 10,
+        marginHorizontal: 10,
+        borderRadius: 5,
+        paddingHorizontal: 15,
+        paddingTop: 10,
+        paddingBottom: 20,
+        backgroundColor: "white",
+        overflow: "hidden"
+    },
+
+    groupTitleView : {
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        paddingBottom: 10,
+    },
+
+    groupTitleText: {
+        fontSize: totalSize(1.9),
+        color: "black",
+        fontWeight: "bold"
+    },
+
     loadingMessageView: {
         flex: 1,
         alignItems: "center",
@@ -97,7 +131,7 @@ const styles = StyleSheet.create({
 
     contentContainer: {
         paddingTop: 30,
-    }
+    },
 });
 
 

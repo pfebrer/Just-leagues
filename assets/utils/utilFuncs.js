@@ -1,5 +1,104 @@
 import SETTINGS from "../../constants/Settings";
 
+//Get a deep copy of an object
+exports.deepClone = (obj) => JSON.parse(JSON.stringify(obj));
+
+//Transposes a 2D array
+exports.transpose = m => m[0].map((x,i) => m.map(x => x[i]))
+
+//Reshape a flat array to a 2d array by grouping in groups of n
+exports.reshape = (arr, shape) => {
+    let newArr = [];
+    while(arr.length) newArr.push(arr.splice(0,shape));
+    return newArr
+}
+
+//Groups an array of objects according to a given key
+exports.groupBy= (key, arr) => arr.reduce(function (r, a) {
+    r[a[key]] = r[a[key]] || [];
+    r[a[key]].push(a);
+    return r;
+}, Object.create(null));
+
+//Sort matches according to date
+exports.sortMatchesByDate = (matches) => {
+
+    function matchDate(match){
+
+        if ( match.scheduled ){
+            return match.scheduled.time.toDate()
+        } else {
+            return match.due.toDate()
+        }
+
+    }
+
+    return matches.sort((a, b) => {
+        return matchDate(a) - matchDate(b)
+    })
+}
+
+getDefaultSettings = (settings) => {
+    let defaultSettings = {}
+    
+                    
+    Object.keys(settings).forEach( settingType => {
+
+        defaultSettings[settingType] = {}
+
+        Object.keys(settings[settingType]).forEach( setting => { 
+            defaultSettings[settingType][setting] = settings[settingType][setting].default
+        })
+        
+    })
+
+    return defaultSettings
+}
+
+//Function that checks if some settings are not in the users profile and pushes them there.
+exports.updateSettingsFields = (currentSettings, upToDateSettings) => {
+
+    let defaultSettings = getDefaultSettings(upToDateSettings)
+    let newSettings = currentSettings
+
+    let changed = false
+
+    if ( !currentSettings ){
+
+        changed = true
+        newSettings = defaultSettings
+        
+    } else {
+
+        Object.keys(upToDateSettings).forEach( settingType => {
+
+            if ( !currentSettings[settingType] ){
+    
+                newSettings[settingType] = defaultSettings[settingType]
+    
+                changed = true
+    
+            } else {
+    
+                Object.keys(upToDateSettings[settingType]).forEach( setting => {
+    
+                    if ( ! currentSettings[settingType][setting]){
+    
+                        newSettings[settingType][setting] = defaultSettings[settingType][setting]
+    
+                        changed = true
+                    }
+    
+                })
+            }
+            
+        })
+
+    }
+
+    return  changed ? newSettings : false
+}
+
 //Recieves the points a player has for a certain match and returns the points of its rival.
 exports.oppositePoints = (points) => {
     let pairedPoints = SETTINGS.pointsScheme.map(({points}) => points);
@@ -95,12 +194,22 @@ exports.resultIsCorrect = (testResult) => {
 }
 
 //Converts a timestamp (ms) into a readable date (dd/mm/yyyy)
-exports.convertDate = (inputFormat) => {
+exports.convertDate = (inputFormat, outputFormat = "dd/mm/yyyy") => {
     function pad(s) {
         return (s < 10) ? '0' + s : s;
     };
     let d = new Date(Number(inputFormat));
-    return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join('/');
+
+    if (outputFormat == "dd/mm/yyyy"){
+        return [pad(d.getDate()), pad(d.getMonth() + 1), d.getFullYear()].join('/');
+    } else if (outputFormat == "dd/mm"){
+        return [pad(d.getDate()), pad(d.getMonth() + 1)].join('/');
+    } else if (outputFormat == "dd/mm hh:mm"){
+        return [pad(d.getDate()), pad(d.getMonth() + 1)].join('/') + " " +[pad(d.getHours()), pad(d.getMinutes())].join(":");
+    } else if (outputFormat == "hh:mm"){
+        return [pad(d.getHours()), pad(d.getMinutes())].join(":")
+    }
+    
 }
 
 //Stores data so that we don't need to retrieve it from the database every time 
