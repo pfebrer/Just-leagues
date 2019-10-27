@@ -11,7 +11,7 @@ import { USERSETTINGS } from "../constants/Settings"
 
 //Redux stuff
 import { connect } from 'react-redux'
-import { storeUserData, setAppSettings } from "../redux/actions"
+import { storeUserData, updateIDsAndNames } from "../redux/actions"
 
 class LoadingScreen extends React.Component {
 
@@ -46,10 +46,17 @@ class LoadingScreen extends React.Component {
         //Listen for any change on the authorization state (even logouts)
         const unsub = Firebase.auth.onAuthStateChanged(user => {
 
+            //We will store here the listeners for all the users that are in our competitions
+            if (this.usersListeners){
+                //First we need to desubscribe from all previous listeners
+                Object.keys(this.usersListeners).forEach(compID => this.usersListeners[compID]())
+            }
+            this.usersListeners = {} 
+
             //On sign out remove the previous userListener, otherwise it will crash due to not having permission to read the database 
             if (this.userListener && !user) {this.userListener()}
 
-            //If there is a logged in user, go to the main page
+            //If there is a logged in user, do all the preparatory stuff
             if (user) {
 
                 this.registerForPushNotificationsAsync(user.uid)
@@ -58,38 +65,65 @@ class LoadingScreen extends React.Component {
 
                     userData => {
 
-                    //This fixes the problem of a user being deleted from the database while logged in (logged in forever, weird but it's better to prevent)
-                    if (!userData) {Firebase.signOut()} 
+                    
+                    if (!userData) {
+                        //This fixes the problem of a user being deleted from the database while logged in (logged in forever, weird but it's better to prevent)
+                        Firebase.signOut()
 
-                    let newSettings = updateSettingsFields(userData.settings, USERSETTINGS)
-
-                    if (newSettings){
-
-                        Firebase.updateUserSettings(user.uid, newSettings)
-                        
                     } else {
 
-                        this.props.storeUserData({id: user.uid,...userData})
+                        //If there are no settings, it is just the object coming from google sign in (I don't fully understand the flow)
+                        if (!userData.settings) return null 
 
-                        console.log("User signed in ---> Redirect to the home screen")
+                        //Update the settings fields if some new settings have been produced
+                        let newSettings = updateSettingsFields(userData.settings, USERSETTINGS)
 
-                        this.props.navigation.navigate('App');
+                        console.warn("USERDATA", userData)
+                        //Create a listener for each competition in active competitions to retrieve the users ids and names
+                        userData.activeCompetitions.forEach( comp => {
 
-                        /*Toast.show({
-                        text: 'Benvingut, ' + userData.firstName + '!',
-                        duration: 3000
-                        })*/
+                            if (!this.usersListeners[comp.id]){
 
-                        /* Firebase.gymRef("nickspa").collection("matches").get()
-                        .then((query) => {
+                                this.usersListeners[comp.id] = Firebase.onCompUsersSnapshot(comp, 
+                                    IDsAndNames => this.props.updateIDsAndNames(IDsAndNames)
+                                )
+                            }
 
-                            query.forEach(doc => {
-                                Firebase.gymRef("nickspa").collection("competitions").doc("UmtaUDr98rdx5pFKrygI").collection("matches").doc(doc.id).set(doc.data()).then(()=>{}).catch(()=>{})
-                            })
+                        });
+
+                        if (newSettings){
+
+                            Firebase.updateUserSettings(user.uid, newSettings)
                             
-                        }).catch(()=>{}) */
+                        } else {
+
+
+
+                            this.props.storeUserData({id: user.uid,...userData})
+
+                            console.log("User signed in ---> Redirect to the home screen")
+
+                            this.props.navigation.navigate('App');
+
+                            /*Toast.show({
+                            text: 'Benvingut, ' + userData.firstName + '!',
+                            duration: 3000
+                            })*/
+
+                            /* Firebase.gymRef("nickspa").collection("matches").get()
+                            .then((query) => {
+
+                                query.forEach(doc => {
+                                    Firebase.gymRef("nickspa").collection("competitions").doc("UmtaUDr98rdx5pFKrygI").collection("matches").doc(doc.id).set(doc.data()).then(()=>{}).catch(()=>{})
+                                })
+                                
+                            }).catch(()=>{}) */
+
+                        }
 
                     }
+
+                    
 
                 })
               
@@ -153,7 +187,8 @@ class LoadingScreen extends React.Component {
 }
 
 const mapDispatchToProps = dispatch => ({
-    storeUserData: (uid, userData) => dispatch(storeUserData(uid, userData))
+    storeUserData: (uid, userData) => dispatch(storeUserData(uid, userData)),
+    updateIDsAndNames: (newIDsAndNames) => dispatch(updateIDsAndNames(newIDsAndNames))
 })
 
 export default connect( null, mapDispatchToProps )(LoadingScreen);

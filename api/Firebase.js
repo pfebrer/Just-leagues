@@ -42,6 +42,7 @@ class Firebase {
         //Log in to our firebase app
         this.onGoogleSignIn(result)
         return result.accessToken;
+
       } else {
         return { cancelled: true };
       }
@@ -83,6 +84,7 @@ class Firebase {
 
           let userProfile = {
             profilePic: result.additionalUserInfo.profile.picture,
+            displayName: result.additionalUserInfo.profile.name,
             firstName: result.additionalUserInfo.profile.given_name,
             lastName: result.additionalUserInfo.profile.family_name,
           }
@@ -235,17 +237,20 @@ class Firebase {
     this.updateUserSettings(uid, {}, callback)
   }
 
-  //Listen to changes on the current user's data
-  //The callback recieves the user's complete data if getData = true, else the documentSnapshot
+  //LISTENERS TO THE DATABASE
+  
   onUserSnapshot = (uid, callback, getData = true) => {
+    /*Listen to changes on the current user's data
+    The callback recieves the user's complete data if getData = true, else the documentSnapshot*/
+
     return this.userRef(uid).onSnapshot(
       docSnapshot => callback( getData ? docSnapshot.data() : docSnapshot)
     )
   }
 
-  //Listener to changes on the group where the player is in a competition
-  //The callback recieves the group data if getData = true, otherwise it recieves the document snapshot
   onPlayerGroupSnapshot = (gymID, compID, uid, callback, getData = true) => {
+    /*Listener to changes on the group where the player is in a competition
+    /The callback recieves the group data if getData = true, otherwise it recieves the document snapshot*/
 
     return this.groupsRef(gymID, compID).where("playersRef", "array-contains", uid )
     .onSnapshot( querySnapshot =>{
@@ -254,10 +259,10 @@ class Firebase {
 
   }
 
-  //Listen to changes in the pendingMatches of a given user
-  //Callback recieves an array with all the pendings matches complete info if getData = true,
-  //else it recieves the querySnapshot
   onPendingMatchesSnapshot = (uid, callback, getData = true) => {
+    /*Listen to changes in the pendingMatches of a given user
+    Callback recieves an array with all the pendings matches complete info if getData = true,
+    else it recieves the querySnapshot*/
 
     return this.firestore.collectionGroup(Subcollections.PENDINGMATCHES).where("playersIDs", "array-contains", uid )
     .onSnapshot(querySnapshot => { 
@@ -274,8 +279,8 @@ class Firebase {
 
   }
 
-  //Listen to competitions for a certain gym (thought in principle for gym admins)
   onCompetitionsSnapshot = (gymID, callback, getData = true) => {
+    /*Listen to competitions for a certain gym (thought in principle for gym admins)*/
 
     return this.compsRef(gymID)
     .onSnapshot(querySnapshot => { 
@@ -290,9 +295,26 @@ class Firebase {
     })
   }
 
-  //Listen to changes in groups in a competition
-  //the callback recieves an array with each group complete info if getData = true, else it recieves the querySnapshot
+  onCompUsersSnapshot = (comp, callback) => {
+    /*Listen to users that are active in a given competition
+    Returns and object like {id1: name1, id2:name2 ....}*/
+
+    return this.usersRef.where("activeCompetitions", "array-contains", comp).onSnapshot(
+
+      querySnapshot => {
+        callback( querySnapshot.docs.reduce((IDsAndNames,user) => {
+            IDsAndNames[user.id] = user.get("displayName");
+            return IDsAndNames;
+          }, {})
+        )
+      }
+
+    )
+  }
+
   onGroupsSnapshot = (gymID, compID, callback, orderBy = "order", getData = true) => {
+    /*Listen to changes in groups in a competition
+    the callback recieves an array with each group complete info if getData = true, else it recieves the querySnapshot*/
 
     return this.groupsRef(gymID, compID).orderBy(orderBy).onSnapshot((querySnapshot) => {
       
@@ -312,7 +334,6 @@ class Firebase {
   })
 
   }
-
 
   //DATABASE REFERENCES (Only place where they should be declared in the whole app)
   //V3 database references
