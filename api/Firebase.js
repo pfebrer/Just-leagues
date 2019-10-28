@@ -33,6 +33,7 @@ class Firebase {
   signInWithGoogleAsync = async () => {
     try {
       const result = await Google.logInAsync({
+        androidStandaloneAppClientId: "524738063553-vn8rk9pmad9gil0gtsbhaf616ng6e0mj.apps.googleusercontent.com",
         androidClientId: "524738063553-1tr662gs9strhp1rvljj4qv588mbj254.apps.googleusercontent.com",
         //iosClientId: YOUR_CLIENT_ID_HERE,
         scopes: ['profile', 'email'],

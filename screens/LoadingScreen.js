@@ -65,9 +65,9 @@ class LoadingScreen extends React.Component {
 
                     userData => {
 
-                    
                     if (!userData) {
                         //This fixes the problem of a user being deleted from the database while logged in (logged in forever, weird but it's better to prevent)
+                        //THIS DOESN'T ALLOW CREATING NEW USERS THROUGH EMAIL, I HAVE TO FIND A DIFFERENT WORKAROUND
                         Firebase.signOut()
 
                     } else {
