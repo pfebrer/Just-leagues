@@ -28,7 +28,6 @@ import HeaderIcon from "../components/header/HeaderIcon"
 import PendingMatches from "../components/home/PendingMatches"
 import Notifications from "../components/home/Notifications"
 
-
 class HomeScreen extends Component {
 
     constructor(props) {
@@ -135,7 +134,7 @@ class CompetitionState extends Component {
                         ranks={compStateInfo.ranks}
                         players={compStateInfo.players}
                         scores={compStateInfo.results}
-                        playersIDs={compStateInfo.playersRef}
+                        playersIDs={compStateInfo.playersIDs}
                         goToUserProfile={this.props.goToUserProfile} 
                     />
         }
@@ -239,6 +238,11 @@ const styles = StyleSheet.create({
     titleText: {
         fontSize: totalSize(1.8),
         color: "gray"
+    },
+
+    pendingMatchHeader: {
+        flexDirection: "row",
+        height: h(20)
     },
 
     pendingMatchContainer: {

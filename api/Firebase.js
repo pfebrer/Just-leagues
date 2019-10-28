@@ -6,6 +6,7 @@ import { Toast } from 'native-base'
 import {Collections, Subcollections, Constants, Documents} from "../constants/CONSTANTS";
 
 import * as Google from 'expo-google-app-auth';
+import { translate } from "../assets/translations/translationManager";
 
 class Firebase {
 
@@ -82,11 +83,14 @@ class Firebase {
         this.auth.signInWithCredential(credential)
         .then( result => {
 
+          console.warn(result.additionalUserInfo.profile)
+
           let userProfile = {
             profilePic: result.additionalUserInfo.profile.picture,
             displayName: result.additionalUserInfo.profile.name,
             firstName: result.additionalUserInfo.profile.given_name,
             lastName: result.additionalUserInfo.profile.family_name,
+            email: result.additionalUserInfo.profile.email,
           }
           this.userRef(result.user.uid)
             .set( userProfile, {merge: true})
@@ -248,11 +252,25 @@ class Firebase {
     )
   }
 
+  onUnasignedUsersSnapshot = (userEmail, callback, getData = true) => {
+    return this.unasignedUsersRef.where("email", "==", userEmail).onSnapshot(
+      query => {
+
+        if (getData){
+          callback(query.docs.map( doc => ({ ...doc.data(), id: doc.id}) ))
+        } else {
+          callback(query)
+        }
+        
+      }
+    )
+  }
+
   onPlayerGroupSnapshot = (gymID, compID, uid, callback, getData = true) => {
     /*Listener to changes on the group where the player is in a competition
     /The callback recieves the group data if getData = true, otherwise it recieves the document snapshot*/
 
-    return this.groupsRef(gymID, compID).where("playersRef", "array-contains", uid )
+    return this.groupsRef(gymID, compID).where("playersIDs", "array-contains", uid )
     .onSnapshot( querySnapshot =>{
         querySnapshot.forEach(doc => callback( getData ? doc.data() : doc ) )
     });
@@ -336,10 +354,101 @@ class Firebase {
 
   }
 
+  //FUNCTIONS TO DO COMPLEX OPERATIONS
+  mergeUsers = (userToMerge, requestingUser, callback = () => {}) => {
+
+    /*
+    Function to merge two users (only tested to merge an unasigned user to a real user of the app,
+    but it may work to merge to real users, idk).
+    
+    The most secure way to merge two users is through a batched write,
+    because this ensures that either all changes will be succesfully carried out
+    or none will be made.
+
+    These are the operations that we need to do:
+        (1) Change all references to the unasignedUser's ID in the database to the requesting user's ID.
+        (2) Push the unasignedUser's competition to the list of active competitions of the requesting user.
+        (3) Delete the unassigned user.
+
+    Knowing this, we need to:
+        1. Create a batch
+        2. Add to the batch the operations that we already fully know, that is (2) and (3)
+        3. Read all the "playersIDs" arrays that store the ID of the unasignedUser.
+        4. For all the "playersIDs" arrays, change the target ID for the new one and submit the update operation to the batch.
+        5. Commit the batch and wait for it to complete.
+        6. Be happy that one more merge has been succesful :)
+
+    IMPORTANT NOTE: One must ensure that IDstoringRefs contains literally ALL the database references where the ID
+    of the unasigned user is stored, otherwise there will be very important problems.
+
+    */
+
+    //Create the batch that we will use
+    let batch = this.firestore.batch()
+
+    batch.update(this.userRef(requestingUser.id), { activeCompetitions: [...requestingUser.activeCompetitions, ...userToMerge.activeCompetitions] })
+    batch.delete(this.userRef(userToMerge.id))
+
+    //Define all the references where there is an array of playersIDs that needs to be modified
+    let IDstoringRefs = [];
+    userToMerge.activeCompetitions.forEach( competition => {
+
+      var {gymID, id: compID, type: typeOfComp} = competition
+
+      IDstoringRefs.push(
+        //Doc refs
+        this.compRef(gymID, compID), //The competition's ref
+
+        //Collection refs
+        this.matchesRef(gymID, compID).where("playersIDs", "array-contains", userToMerge.id), //The competition's matches ref
+        this.pendingMatchesRef(gymID, compID).where("playersIDs", "array-contains", userToMerge.id), //The competition's pending matches ref
+      )
+
+      if (typeOfComp == "groups"){
+        IDstoringRefs.push(
+          this.groupsRef(gymID, compID).where("playersIDs", "array-contains", userToMerge.id) //The competition's group ref
+        )
+      }
+
+    })
+
+    //Wait for all the promises to resolve (all the references are read and we get a documentSnapshot or a querySnapshot for each of them).
+    Promise.all( IDstoringRefs.map(ref => ref.get()) )
+    .then( snaps => {
+ 
+      snaps.forEach(snap => {
+
+        if (snap.docs){
+          //A collection was read and this is a querySnapshot
+          snap.forEach(doc => {
+
+            batch.update(doc.ref, {playersIDs: doc.get("playersIDs").map(id => id == userToMerge.id ? requestingUser.id : id)} )
+          })
+
+        } else {
+          //A document was read and this is a documentSnapshot
+          batch.update(snap.ref, {playersIDs: snap.get("playersIDs").map(id => id == userToMerge.id ? requestingUser.id : id)})
+        }
+          
+      })
+
+      //Commit the batch operation
+      batch.commit()
+      .then(result => callback(result))
+      .catch(reason => alert( translate("error.unable to merge users") + ":\n" + reason))
+        
+    }).catch( reason => alert(reason))
+
+  }
+
   //DATABASE REFERENCES (Only place where they should be declared in the whole app)
   //V3 database references
   get usersRef() {
     return this.firestore.collection(Collections.USERS)
+  }
+
+  get unasignedUsersRef () {
+    return this.usersRef.where("asigned", "==", false)
   }
 
   userRef = (uid) => this.usersRef.doc(uid)
@@ -356,6 +465,10 @@ class Firebase {
 
   compRef = (gymID, compID) => {
     return this.compsRef(gymID).doc(compID)
+  }
+
+  matchesRef = (gymID, compID) => {
+    return this.compRef(gymID, compID).collection(Subcollections.MATCHES)
   }
 
   pendingMatchesRef = (gymID, compID) => {

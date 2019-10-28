@@ -47,7 +47,7 @@ class Groups extends React.Component {
                     ranks={group.ranks}
                     players={group.players}
                     scores={group.results}
-                    playersIDs={group.playersRef}
+                    playersIDs={group.playersIDs}
                     goToUserProfile={this.props.goToUserProfile} 
                     handlePress={this.props.handlePress}
                 />

@@ -41,7 +41,7 @@ class PendingMatches extends Component {
                 matches = matches.map( match => ({
                     ...match,
                     playersNames: match.playersIDs.map( uid => this.props.IDsAndNames[uid] || "Sense nom"),
-                    competition: this.props.currentUser.activeCompetitions.filter(comp => comp.id == match.compID )[0]
+                    competition: this.props.currentUser.activeCompetitions.filter(comp => comp.id == match.compID )[0] || "Competició desconeguda"
                 }) )
 
                 matches = sortMatchesByDate(matches)
@@ -67,7 +67,7 @@ class PendingMatches extends Component {
 
     }
 
-    renderMatchView = (match) => {
+    renderMatchView = (match, header = false) => {
 
         var matchInfo;
 
@@ -95,7 +95,7 @@ class PendingMatches extends Component {
             timeInfo = <View>
                             <Text note style={{color: "green", textAlign: "right"}}>{translate("vocabulary.scheduled match")}</Text>
                             <Text style={{fontFamily: "bold"}}>{time}</Text>
-                            <Text>{location}</Text>
+                            <Text note></Text>
                         </View>
 
         } else {
@@ -108,9 +108,8 @@ class PendingMatches extends Component {
                         </View>
         }
 
-
         return (
-            <View key={match.id} style={this.props.homeStyles.pendingMatchContainer}>
+            <View key={match.id} style={ header ? this.props.homeStyles.pendingMatchHeader : this.props.homeStyles.pendingMatchContainer}>
                 <View>
                     {matchInfo}
                     <Text note>{match.competition.name}</Text>
@@ -131,7 +130,7 @@ class PendingMatches extends Component {
 
         } else {
 
-            let hiddenMatches = matches.slice(1).map(match => this.renderMatchView(match))
+            let hiddenMatches = matches.slice(1).map(match => this.renderMatchView(match, header = true))
 
             return (
                 <View>
@@ -159,7 +158,7 @@ class PendingMatches extends Component {
             </Animated.View>
         ) : null
 
-        return <Animated.View style={{...this.props.homeStyles.gridItem, flex: 1}}>
+        return <Animated.View style={{...this.props.homeStyles.gridItem, flex:1, height: "auto"}}>
                     <TouchableOpacity 
                         style={this.props.homeStyles.itemTitleView} 
                         onPress={this.toggleContent}>

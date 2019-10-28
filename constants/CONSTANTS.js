@@ -22,6 +22,7 @@ const Collections = {
 const Subcollections = {
     COMPETITIONS: "competitions",
     GROUPS: "groups",
+    MATCHES: "matches",
     PENDINGMATCHES: "pendingMatches"
 }
 

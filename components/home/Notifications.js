@@ -30,66 +30,33 @@ class Notifications extends Component {
 
     componentDidMount() {
 
-        this.unasignedListener = Firebase.usersRef.where("asigned", "==", false).where("email", "==", "pfebrer96@gmail.com").onSnapshot(
-            query => this.setState({ 
-                unasignedUsers: query.docs.map(doc => ({ ...doc.data(), id: doc.id}) )
-            })
+        this.unasignedListener = Firebase.onUnasignedUsersSnapshot(this.props.currentUser.email,
+            unasignedUsers => this.setState({unasignedUsers})
         )
+
+        createUnasignedUser = (displayName, email, comp) => {
+            Firebase.usersRef.add({
+                displayName,
+                email,
+                activeCompetitions: [comp],
+                asigned: false
+            }).then(() => {}).catch(err => console.log(error))
+        }
+
+        /* createUnasignedUser("Pol Febrer", "pfebrer96@gmail.com", {
+            gymID: "nickspa",
+            id: "UmtaUDr98rdx5pFKrygI",
+            name: "Lliga social esquaix",
+            type: "groups",
+          }
+        ) */
 
     }
 
-    mergeUnasignedUser = (uid, unasignedUser) => {
+    mergeUnasignedUser = (unasignedUser, requestingUser) => {
 
-        let {gymID, id: compID} = unasignedUser.activeCompetitions[0]
+        Firebase.mergeUsers(unasignedUser, requestingUser)
 
-        //CHANGE ALL ID REFERENCES IN THE DATABASE
-        //Define the references where there is an array of playersIDs that needs to be modified
-        IDstoringRefs = [
-            Firebase.compRef(gymID, compID), //The competition's ref
-            Firebase.pendingMatchesRef(gymID, compID).where("playersIDs", "array-contains", unasignedUser.id), //The competition's pending matches ref
-            Firebase.groupsRef(gymID, compID).where("playersIDs", "array-contains", unasignedUser.id) //The competition's group ref
-        ]
-
-        //Loop over all the references to modify the playersIDs array
-        IDstoringRefs.forEach(ref => {
-            ref.get().then( snap => {
-                
-                if (snap.docs){
-                    //The snap is a query snapshot
-                    snap.forEach( doc => {
-
-                        var newPlayersIDs = doc.get("playersIDs").map( id => id == unasignedUser.id ? uid : id)
-
-                        if (snap.docs.length == 2){
-                            doc.ref.set({playersIDs: newPlayersIDs}, {merge: true})
-                        } else {
-                            doc.ref.set({newPlayersIDs}, {merge: true})
-                        }
-                        
-
-                    })
-
-                } else {
-                    
-                    var newPlayersIDs = snap.get("playersIDs").map( id => id == unasignedUser.id ? uid : id)
-                    ref.set({newPlayersIDs}, {merge: true})
-                }
-
-                
-            })
-        });
-
-        //PASS THE ACTIVE COMPETITION TO THE USER REQUESTING THE MERGE
-        Firebase.userRef(uid).get().then(
-            doc => {
-
-                let activeCompetitions = doc.get("activeCompetitions") || []
-                
-                doc.ref.set({
-                    activeCompetitions: [...activeCompetitions, unasignedUser.activeCompetitions[0]]
-                }, {merge:true})
-            }
-        )
     }
 
     componentWillUnmount() {
@@ -103,12 +70,12 @@ class Notifications extends Component {
                 <View style={styles.unasignedUserViewHeader}>
                     <TouchableOpacity 
                         style={{...styles.unasignedUserAction, ...styles.unasignedUserAccept}}
-                        onPress={() => {this.mergeUnasignedUser(this.props.currentUser.id, user)}}>
+                        onPress={() => {this.mergeUnasignedUser(user, this.props.currentUser)}}>
                         <Icon name="checkmark" style={{...styles.unasignedUserAcceptIcon}}/>
                     </TouchableOpacity>
                     <View style={{justifyContent: "center", alignItems: "center", flex: 1}}>
-                        <Text style={{fontFamily: "bold"}}>Lliga social esquaix</Text>
-                        <Text>Pol Febrer</Text>
+                        <Text style={{fontFamily: "bold"}}>{user.activeCompetitions[0].name}</Text>
+                        <Text>{user.displayName}</Text>
                     </View>
                     <TouchableOpacity style={{...styles.unasignedUserAction, ...styles.unasignedUserReject}}>
                         <Icon name="close" style={{...styles.unasignedUserRejectIcon}}/>
@@ -127,7 +94,7 @@ class Notifications extends Component {
         console.log("UNASSIGNED USERS:", this.state.unasignedUsers)
 
         let unasignedUsersMessage = this.state.unasignedUsers.length > 0 ? (
-            <Text>Hi ha competicions que t'estan esperant!</Text>
+            <Text>{translate("info.there are competitions waiting for you")}</Text>
         ) : null;
 
         return <Animated.View style={{...this.props.homeStyles.gridItem, ...this.props.homeStyles.notifications, flex: 1}}>

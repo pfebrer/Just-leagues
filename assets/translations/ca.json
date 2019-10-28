@@ -31,7 +31,8 @@
     "info": {
         "checking user": "Comprovant usuari",
         "loading classifications": "Carregant classificacions",
-        "no pending matches": "No tens cap partit pendent. Pots relaxar-te :)"
+        "no pending matches": "No tens cap partit pendent. Pots relaxar-te :)",
+        "there are competitions waiting for you": "Hi ha competicions que t'estan esperant!"
     },
     "vocabulary": {
         "group": "Grup",
@@ -46,7 +47,8 @@
         "not scheduled match": "Horari no acordat"
     },
     "errors": {
-        "impossible result":"No ens enganyis, aquest resultat és impossible :("
+        "impossible result":"No ens enganyis, aquest resultat és impossible :(",
+        "unable to merge users": "No s'han pogut unir els jugadors"
     },
     "settings": {
         "you are about to restore default settings": "Estàs a punt de tornar a la configuració inicial.",
