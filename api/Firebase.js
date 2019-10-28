@@ -441,6 +441,26 @@ class Firebase {
 
   }
 
+  callHttpsFunction = (functionName, argsObject, callback, errorFn) => {
+    //Call a cloud function through https
+
+    if (callback === undefined || callback === null) {
+        callback = (data) => {
+            console.log("Firebase::callFunction::callback", data); // hello world
+            alert("SUCCESS: " + functionName + ", data:" + data.data);
+        };
+    }
+    if (errorFn === undefined || errorFn === null) {
+        errorFn = (httpsError) => {
+            console.log("Firebase::callFunction::errorFn", httpsError); // bar
+            alert("ERROR: " + functionName + ", data:" + data.data);
+        };
+    }
+    console.log("Firebase::callFunction functionName[" + functionName + "]");
+
+    this.functions.httpsCallable(functionName)({dbPrefix: Constants.dbPrefix, ...argsObject}).then(callback).catch(errorFn);
+};
+
   //DATABASE REFERENCES (Only place where they should be declared in the whole app)
   //V3 database references
   get usersRef() {
