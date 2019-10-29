@@ -8,14 +8,42 @@ import { ScrollView } from 'react-native-gesture-handler';
 
 //Redux stuff
 import { connect } from 'react-redux'
+import {setCurrentMatch} from "../../redux/actions"
 
 class Table extends Component {
 
-    goToUserProfile = (uid) => {
-        console.warn(this.props.IDsAndNames[uid])
+    goToUserProfile = ({iRow}) => {
+
+        let uid = this.props.playersIDs[iRow]
+
+        if (uid == this.props.currentUser.id){
+            console.warn("Go to profile: ", this.props.IDsAndNames[uid])
+        } else {
+            console.warn("Go to stats: ", this.props.IDsAndNames[uid])
+        }
+        
     }
 
-    renderTable = (ranks, players, playersIDs, scores, totals) => {
+    cellPositionToMatchIndex = (iRow, iCol, nPlayers) => {
+        
+        let [i, j] = [iRow, iCol].sort()
+
+        //This is the relation that I found between position and match index
+        return i*(nPlayers - 1 - (i+1)/2 ) + j - 1
+
+    }
+
+    goToMatch = ({iRow, iCol, data}) => {
+
+        let iMatch = this.cellPositionToMatchIndex(iRow, iCol, this.props.playersIDs.length)
+
+        this.props.setCurrentMatch({ref: this.props.matches[iMatch], player1: this.props.playersIDs[iRow], player2: this.props.playersIDs[iCol]})
+
+        this.props.navigation.navigate("MatchScreen")
+
+    }
+
+    renderTable = (ranks, players, scores, totals) => {
 
         let [iLeader, iLoser] = iLeaderLoser(totals)
         let nPlayers = players.length
@@ -33,8 +61,7 @@ class Table extends Component {
                 style={{...styles.column, ...styles.playersCol}}
                 iLeader={iLeader} iLoser={iLoser}
                 touchable
-                onPress={this.goToUserProfile}
-                onPressData={playersIDs}/>,
+                onPress={this.goToUserProfile}/>,
 
             <ScoresScroll
                 key="scores"
@@ -44,7 +71,9 @@ class Table extends Component {
                 style={styles.scoresScroll}
                 iLeader={iLeader} iLoser={iLoser}
                 maxVisibleRows={this.props.maxVisibleRows}
-                currentUser={this.props.currentUser}/>,
+                currentUser={this.props.currentUser}
+                onPress={this.goToMatch}
+                onPressData={scores}/>,
 
             <Column 
                 key="totals" 
@@ -57,37 +86,22 @@ class Table extends Component {
 
     render() {
 
-        var ranks, players, playersIDs, scores, totals;
+        let {playersIDs, scores} = deepClone(this.props)
 
-        if (this.props.groupResults) {
+        if( !(playersIDs.length > 0 && scores.length > 0) ) { return null }
 
-            const {groupResults} = this.props
+        let players = playersIDs.map( uid => this.props.IDsAndNames[uid] || "Sense nom" )
 
-            ranks = groupResults.map(resultsRow => resultsRow.rank)
-            players = groupResults.map(resultsRow => resultsRow.name)
-            totals = groupResults.map(resultsRow => resultsRow.total)
-            scores = groupResults.map(resultsRow => resultsRow.scores)
+        let ranks  = this.props.ranks || Array.from( new Array(players.length), (x,i) => i + 1)
 
-        } else {
-            var {playersIDs, scores} = deepClone(this.props)
+        this.scores = transpose( reshape(scores, players.length) )
 
-            if( !(playersIDs.length > 0 && scores.length > 0) ) { return null }
+        let totals = this.props.totals || this.scores.map( playerScores => playerScores.reduce((a, b) => a + b, 0) )
 
-            players = playersIDs.map( uid => this.props.IDsAndNames[uid] || "Sense nom" )
-
-            ranks  = this.props.ranks || Array.from( new Array(players.length), (x,i) => i + 1)
-
-            scores = reshape(scores, players.length)
-
-            totals = this.props.totals || scores.map( playerScores => playerScores.reduce((a, b) => a + b, 0) )
-        }
-
-        scores = transpose(scores)
-        
         return (
             <View style={this.props.containerStyles}>
                 <View style={{...styles.tableContainer, ...this.props.tableStyles}}>
-                    {this.renderTable(ranks, players, playersIDs, scores, totals)}
+                    {this.renderTable(ranks, players, this.scores, totals)}
                 </View>
             </View>
             
@@ -106,7 +120,8 @@ class ScoresScroll extends Component {
                     header={header}
                     data={data[iCol]} style={{...styles.column, width: 100/nVisibleRows + "%" }}
                     iLeader={this.props.iLeader} iLoser={this.props.iLoser}
-                    touchable iScoresCol={iCol}/>
+                    touchable iScoresCol={iCol}
+                    onPress={this.props.onPress}/>
         } )
     }
 
@@ -178,11 +193,13 @@ class Column extends Component{
                 )
             } else {
 
+                let cellInfo = {iRow, iCol: this.props.iScoresCol, data}
+
                 return (
                     <TouchableOpacity
                         key={iRow}
                         style={cellStyles} 
-                        onPress={() => {this.props.onPress(this.props.onPressData[iRow])}}>
+                        onPress={() => {this.props.onPress(cellInfo)}}>
                         <Text style={textStyles}>{data}</Text>
                     </TouchableOpacity>
                 )
@@ -210,7 +227,11 @@ const mapStateToProps = state => ({
     IDsAndNames: state.IDsAndNames
 })
 
-export default connect(mapStateToProps)(Table);
+const mapDispatchToProps = dispatch => ({
+    setCurrentMatch: (compInfo) => dispatch(setCurrentMatch(compInfo))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Table);
 
 const styles = StyleSheet.create({
 

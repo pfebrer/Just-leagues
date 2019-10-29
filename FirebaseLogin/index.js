@@ -12,7 +12,6 @@ export default class FirebaseLogin extends Component {
 
   constructor(props) {
     super(props);
-
   }
   
   state = {

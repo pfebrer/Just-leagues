@@ -24,7 +24,12 @@ export default class Login extends Component {
     Keyboard.dismiss();
 
     if (mode == "google") {
-      var googleUser =  Firebase.signInWithGoogleAsync()
+      this.setState({ isLogin: true });
+
+      var googleUser =  Firebase.signInWithGoogleAsync().then((result) => {
+        if (result.cancelled || result.error) this.setState({ isLogin: false })
+      })
+      
 
     } else if (mode == "email") {
       const email = this.email.getInputValue();

@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Text, TouchableOpacity, StyleSheet } from 'react-native'
+import { COMPSETTINGS } from "../../constants/Settings"
 
 export default class PressPicker extends Component {
 
@@ -9,6 +10,7 @@ export default class PressPicker extends Component {
             pickedValue:props.possibleValues[0],
         }
     }
+
     componentWillMount(){
         this.props.onNewResult({pKey:this.props.pKey,result:this.state.pickedValue})
     }
@@ -18,7 +20,7 @@ export default class PressPicker extends Component {
     }
 
     goToNext = () => {
-        let possibleValues = this.props.possibleValues;
+        let possibleValues = COMPSETTINGS.paired;
         let iPicked = possibleValues.indexOf(this.state.pickedValue)
         let newPicked = possibleValues[iPicked+1] || possibleValues[0]
         this.setState({

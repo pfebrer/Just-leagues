@@ -131,11 +131,8 @@ class CompetitionState extends Component {
 
         if (typeOfComp == "groups"){
             return <Table
-                        ranks={compStateInfo.ranks}
-                        players={compStateInfo.players}
-                        scores={compStateInfo.results}
-                        playersIDs={compStateInfo.playersIDs}
-                        goToUserProfile={this.props.goToUserProfile} 
+                        {...compStateInfo}
+                        navigation={this.props.navigation}
                     />
         }
     }

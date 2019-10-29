@@ -30,6 +30,22 @@ class Groups extends React.Component {
 
     }
 
+    componentDidUpdate(prevProps){
+
+        if ( (!prevProps.competition && this.props.competition) || (prevProps.competition.id != this.props.competition.id) ){
+
+            if (this.groupsSub) this.groupsSub();
+
+            let {gymID, id : compID} = this.props.competition
+
+            this.groupsSub = Firebase.onGroupsSnapshot(gymID, compID, 
+                
+                groups => this.setState({groups})
+
+            );
+        }
+    }
+
     componentWillUnmount() {
         //Dessubscribirse dels listeners
         this.groupsSub();
@@ -44,11 +60,8 @@ class Groups extends React.Component {
                     <Text style={styles.groupTitleText}>{translate("vocabulary.group") + " " + (group.name)}</Text>
                 </View>
                 <Table
-                    ranks={group.ranks}
-                    players={group.players}
-                    scores={group.results}
-                    playersIDs={group.playersIDs}
-                    goToUserProfile={this.props.goToUserProfile} 
+                    {...group}
+                    navigation={this.props.navigation}
                     handlePress={this.props.handlePress}
                 />
             </View>

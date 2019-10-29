@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, Text, View} from 'react-native';
-import PressPicker from "./PressPicker"
+import PressPicker from "./match/PressPicker"
 
 
 export default class ScoreRow extends React.Component {

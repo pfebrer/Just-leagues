@@ -84,8 +84,6 @@ class Firebase {
         this.auth.signInWithCredential(credential)
         .then( result => {
 
-          console.warn(result.additionalUserInfo.profile)
-
           let userProfile = {
             profilePic: result.additionalUserInfo.profile.picture,
             displayName: result.additionalUserInfo.profile.name,
@@ -96,7 +94,6 @@ class Firebase {
           this.userRef(result.user.uid)
             .set( userProfile, {merge: true})
             .then(function(snapshot) {
-
             });
         })
         .catch(function(error) {

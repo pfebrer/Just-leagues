@@ -57,7 +57,6 @@ const styles = StyleSheet.create({
     marginTop: h(2),
     backgroundColor: "white",
     flexDirection: "row",
-    justifyContent: "flex-start",
     
   },
 

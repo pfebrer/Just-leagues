@@ -4,13 +4,13 @@ import { createBottomTabNavigator, createMaterialTopTabNavigator } from 'react-n
 
 import Stats from "../screens/StatsScreen";
 import CompetitionScreen from "../screens/CompetitionScreen";
-import MatchModal from "../components/MatchModal";
 import AdminScreen from "../screens/AdminScreen";
 import GroupChat from "../screens/ChatScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import RankingEditScreen from "../screens/RankingEditScreen";
 import HomeScreen from "../screens/HomeScreen"
+import MatchScreen from "../screens/MatchScreen"
 
 import {ChatWorkMode, Constants} from "../constants/CONSTANTS";
 import { translate } from '../assets/translations/translationManager';
@@ -29,7 +29,7 @@ const HomeStack = createStackNavigator({
     HomeScreen: HomeScreen,
     SettingsScreen: SettingsScreen,
     CompetitionScreen: CompetitionScreen,
-    MatchModal: MatchModal,
+    MatchScreen: MatchScreen,
     //Screens for admins only
     AdminScreen: AdminScreen,
     EditRankingScreen: RankingEditScreen
