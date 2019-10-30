@@ -95,9 +95,10 @@ class PendingMatches extends Component {
 
             timeInfo = <View>
                             <Text note style={{color: "green", textAlign: "right"}}>{translate("vocabulary.scheduled match")}</Text>
-                            <Text style={{fontFamily: "bold"}}>{time}</Text>
-                            <Text note></Text>
+                            <Text style={{fontFamily: "bold", textAlign:"right"}}>{time}</Text>
+                            <Text note style={{textAlign: "right"}}>{location}</Text>
                         </View>
+                        
 
         } else {
 
@@ -111,11 +112,11 @@ class PendingMatches extends Component {
 
         return (
             <View key={match.id} style={ header ? styles.pendingMatchHeader : styles.pendingMatchContainer}>
-                <View>
+                <View style={{flex:1, justifyContent: "center"}}>
                     {matchInfo}
                     <Text note>{match.competition.name}</Text>
                 </View>
-                <View style={{flex: 1, alignItems: "flex-end"}}> 
+                <View> 
                     {timeInfo}
                 </View>
                     
@@ -131,11 +132,11 @@ class PendingMatches extends Component {
 
         } else {
 
-            let hiddenMatches = matches.slice(1).map(match => this.renderMatchView(match, header = true))
+            let hiddenMatches = matches.slice(1).map(match => this.renderMatchView(match))
 
             return (
                 <View>
-                    {this.renderMatchView(matches[0])}
+                    {this.renderMatchView(matches[0], true)}
                     <Animated.View 
                         style={{height: this.panelHeight, overflow: "hidden"}}>
                         {hiddenMatches}
@@ -178,12 +179,11 @@ const styles = StyleSheet.create({
 
     pendingMatchHeader: {
         flexDirection: "row",
-        height: h(20)
     },
 
     pendingMatchContainer: {
         flexDirection: "row",
-        height: h(5)
+        height: h(5),
     }
 
 });
