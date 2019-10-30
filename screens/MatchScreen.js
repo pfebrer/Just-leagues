@@ -125,9 +125,15 @@ class MatchScreen extends React.Component {
 
         return (
             <View style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
-                <View style={styles.mainView}>
+                <ScrollView style={styles.mainView} contentContainerStyle={styles.scrollContainer}>
                     <Card
-                        titleIcon="baseball"
+                        titleIcon="images"
+                        title="Foto commemorativa">
+                        
+                    </Card>
+
+                    <Card
+                        titleIcon="tennisball"
                         title={translate("vocabulary.match score")}
                         >
                         <View style={styles.playerNameView}>
@@ -189,12 +195,18 @@ class MatchScreen extends React.Component {
                     </Card>
 
                     <Card
+                        titleIcon="chatboxes"
+                        title="Discussió">
+                        
+                    </Card>
+
+                    <Card
                         titleIcon="filing"
                         title="Història">
                         
                     </Card>
                     
-                </View>
+                </ScrollView>
                 
             </View>
         );
@@ -212,13 +224,16 @@ export default connect(mapStateToProps)(MatchScreen);
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 20,
-        paddingHorizontal: 20,
         backgroundColor: "#ffec8b33",
     },
 
     mainView:{
         flex: 1,
+        paddingHorizontal: 20
+    },
+
+    scrollContainer: {
+        paddingVertical: 20
     },
 
     matchScoreView: {
