@@ -14,6 +14,7 @@ import PressPicker from '../components/match/PressPicker';
 import { Icon } from 'native-base';
 import { h, totalSize } from '../api/Dimensions';
 import Card from '../components/home/Card';
+import HeaderIcon from "../components/header/HeaderIcon"
 import DatePicker from 'react-native-datepicker'
 
 class MatchScreen extends React.Component {
@@ -29,6 +30,13 @@ class MatchScreen extends React.Component {
         this.editedResults = ["", ""];
 
     }
+
+    static navigationOptions = ({navigation}) => {
+        return {
+            title: translate("tabs.match view"),
+            headerRight: <HeaderIcon name="checkmark" onPress={navigation.getParam("commitMatchChanges")}/>
+        }
+    };
 
     componentDidMount() {
 
@@ -186,12 +194,6 @@ class MatchScreen extends React.Component {
                         
                     </Card>
                     
-                </View>
-                
-                <View style={styles.actionButtonsView}>
-                    <TouchableOpacity style={styles.submitButton}>
-                        <Icon name="checkmark" style={styles.submitButtonIcon}/>
-                    </TouchableOpacity>
                 </View>
                 
             </View>
