@@ -18,6 +18,7 @@ import { totalSize, w, h } from '../../api/Dimensions';
 
 import { translate } from '../../assets/translations/translationManager';
 import { convertDate, sortMatchesByDate } from "../../assets/utils/utilFuncs";
+import Card from './Card';
 
 class PendingMatches extends Component {
 
@@ -109,7 +110,7 @@ class PendingMatches extends Component {
         }
 
         return (
-            <View key={match.id} style={ header ? this.props.homeStyles.pendingMatchHeader : this.props.homeStyles.pendingMatchContainer}>
+            <View key={match.id} style={ header ? styles.pendingMatchHeader : styles.pendingMatchContainer}>
                 <View>
                     {matchInfo}
                     <Text note>{match.competition.name}</Text>
@@ -152,25 +153,17 @@ class PendingMatches extends Component {
             outputRange: ['0deg', '180deg']
         })
 
-        const dropdownBut = this.state.matches.length > 1 ? (
-            <Animated.View style={{transform: [{ rotate: spin}] }}>
-                <Icon name="arrow-dropdown" style={{...this.props.homeStyles.actionIcon}}/>
-            </Animated.View>
-        ) : null
-
-        return <Animated.View style={{...this.props.homeStyles.gridItem, flex:1, height: "auto"}}>
-                    <TouchableOpacity 
-                        style={this.props.homeStyles.itemTitleView} 
-                        onPress={this.toggleContent}>
-                        <Icon name="time" style={this.props.homeStyles.titleIcon}/>
-                        <Text style={this.props.homeStyles.titleText}>{translate("vocabulary.pending matches")}</Text>
-                        <View style={{...this.props.homeStyles.actionIconView}}>
-                            <Text note style={this.props.homeStyles.actionHelperText}>{"(" + this.state.matches.length + ")"}</Text>
-                            {dropdownBut}
-                        </View>
-                    </TouchableOpacity>
-                    {this.renderPendingMatches(this.state.matches)}
-                </Animated.View>
+        return (
+            <Card
+                titleIcon="time"
+                title={translate("vocabulary.pending matches")}
+                onHeaderPress={this.toggleContent}
+                actionHelperText={"(" + this.state.matches.length + ")"}
+                actionIcon={this.state.matches.length > 1 ? "arrow-dropdown" : false}
+                actionIconViewStyles={{transform: [{ rotate: spin}] }}>
+                {this.renderPendingMatches(this.state.matches)}
+            </Card>
+        ) 
     }
 }
 
@@ -180,3 +173,17 @@ const mapStateToProps = state => ({
 })
 
 export default connect(mapStateToProps)(PendingMatches);
+
+const styles = StyleSheet.create({
+
+    pendingMatchHeader: {
+        flexDirection: "row",
+        height: h(20)
+    },
+
+    pendingMatchContainer: {
+        flexDirection: "row",
+        height: h(5)
+    }
+
+});

@@ -27,6 +27,7 @@ import HeaderIcon from "../components/header/HeaderIcon"
 
 import PendingMatches from "../components/home/PendingMatches"
 import Notifications from "../components/home/Notifications"
+import Card from "../components/home/Card"
 
 class HomeScreen extends Component {
 
@@ -81,15 +82,8 @@ class HomeScreen extends Component {
 
         return (
             <ScrollView style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
-                <View style={styles.gridRow}>
-                    <Notifications
-                        homeStyles={styles}/>
-                </View>
-                <View style={styles.gridRow}>
-                    <PendingMatches
-                        homeStyles={styles}
-                        />
-                </View>
+                <Notifications/>
+                <PendingMatches/>
                 {this.renderCompetitionStates(this.props.currentUser.activeCompetitions)}
             </ScrollView>
         )
@@ -148,20 +142,13 @@ class CompetitionState extends Component {
     render(){
 
         return (
-            <View style={styles.gridRow}>           
-                <Animated.View style={{...styles.gridItem, flex: 1}}>
-                    <View style={{flex: 1}}>
-                        <TouchableOpacity style={{...styles.itemTitleView}} onPress={this.goToCompetition}>
-                            <Icon name="trophy" style={styles.titleIcon}/>
-                            <Text style={styles.titleText}>{this.props.competition.name}</Text>
-                            <View style={styles.actionIconView}>
-                                <Icon name="add" style={{...styles.actionIcon}}/>
-                            </View>
-                        </TouchableOpacity>
-                        {this.renderCompetitionState(this.props.competition.type, this.state.compStateInfo)}
-                    </View>
-                </Animated.View>
-            </View>
+            <Card
+                titleIcon="trophy"
+                title={this.props.competition.name}
+                onHeaderPress={this.goToCompetition}
+                actionIcon="add">
+                {this.renderCompetitionState(this.props.competition.type, this.state.compStateInfo)}
+            </Card>
         )
     }
 }
@@ -184,67 +171,5 @@ const styles = StyleSheet.create({
         paddingVertical: 20,
         backgroundColor: USERSETTINGS["General appearance"].backgroundColor.default
     },
-
-    gridRow: {
-        flexDirection: "row",
-        marginVertical: 10
-    },
-
-    gridItem : {
-        elevation: 5,
-        marginHorizontal: 10,
-        borderRadius: 5,
-        paddingHorizontal: 15,
-        paddingTop: 10,
-        paddingBottom: 20,
-        backgroundColor: "white",
-        overflow: "hidden"
-    },
-
-    notifications: {
-        backgroundColor: "lightgreen"
-    },
-
-    itemTitleView : {
-        flexDirection: "row",
-        justifyContent: "flex-start",
-        alignItems: "center",
-        paddingBottom: 20,
-    },
-
-    titleIcon: {
-        paddingRight: 15,
-        color: "gray"
-    },
-
-    actionIconView: {
-        flex: 1,
-        flexDirection: "row",
-        justifyContent: "flex-end",
-        alignItems: "center",
-    },
-
-    actionHelperText: {
-        paddingRight: 10,
-    },
-    
-    actionIcon: {
-        color: "gray"
-    },
-
-    titleText: {
-        fontSize: totalSize(1.8),
-        color: "gray"
-    },
-
-    pendingMatchHeader: {
-        flexDirection: "row",
-        height: h(20)
-    },
-
-    pendingMatchContainer: {
-        flexDirection: "row",
-        height: h(5)
-    }
 
 });

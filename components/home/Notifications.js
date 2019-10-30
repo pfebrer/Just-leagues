@@ -17,6 +17,7 @@ import { connect } from 'react-redux'
 import { totalSize, w, h } from '../../api/Dimensions';
 
 import { translate } from '../../assets/translations/translationManager';
+import Card from './Card';
 
 class Notifications extends Component {
 
@@ -97,16 +98,18 @@ class Notifications extends Component {
             <Text>{translate("info.there are competitions waiting for you")}</Text>
         ) : null;
 
-        return <Animated.View style={{...this.props.homeStyles.gridItem, ...this.props.homeStyles.notifications, flex: 1}}>
-                    <View style={this.props.homeStyles.itemTitleView}>
-                        <Icon name="notifications" style={{...this.props.homeStyles.titleIcon,color: "green"}}/>
-                        <Text style={{...this.props.homeStyles.titleText, color: "green", fontFamily: "bold"}}>{translate("vocabulary.notifications")}</Text>
-                    </View>
-                    {unasignedUsersMessage}
-                    {this.renderUnasignedUsers(this.state.unasignedUsers)}
-                    
+        return (
+            <Card
+                cardContainerStyles={{backgroundColor: "lightgreen"}}
+                titleIcon="notifications"
+                titleIconStyles={{color:"green"}}
+                title={translate("vocabulary.notifications")}
+                titleTextStyles={{color: "green", fontFamily: "bold"}}>
 
-                </Animated.View>
+                {unasignedUsersMessage}
+                {this.renderUnasignedUsers(this.state.unasignedUsers)}
+            </Card>
+        )
     }
 }
 

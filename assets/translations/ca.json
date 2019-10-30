@@ -44,7 +44,9 @@
         "attention": "Atenció!",
         "limit":"Límit",
         "scheduled match": "Horari acordat",
-        "not scheduled match": "Horari no acordat"
+        "not scheduled match": "Horari no acordat",
+        "match score": "Resultat del partit",
+        "fix a date":"Fixa una data..."
     },
     "errors": {
         "impossible result":"No ens enganyis, aquest resultat és impossible :(",

@@ -1,6 +1,5 @@
 import React from 'react';
-import {ImageBackground, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import ScoreRow from "../components/ScoreRow"
+import {ImageBackground, StyleSheet, Text, TouchableOpacity, View, ScrollView} from 'react-native';
 import MatchHistory from "../components/matchSearcher/MatchHistory"
 import Firebase from "../api/Firebase"
 import {Collections} from "../constants/CONSTANTS";
@@ -14,6 +13,8 @@ import IDsAndNames from '../redux/reducers/IDsAndNames';
 import PressPicker from '../components/match/PressPicker';
 import { Icon } from 'native-base';
 import { h, totalSize } from '../api/Dimensions';
+import Card from '../components/home/Card';
+import DatePicker from 'react-native-datepicker'
 
 class MatchScreen extends React.Component {
 
@@ -117,44 +118,74 @@ class MatchScreen extends React.Component {
         return (
             <View style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
                 <View style={styles.mainView}>
-                    <View style={styles.playerNameView}>
-                        <Text style={styles.playerNameText}>{this.props.IDsAndNames[this.props.currentMatch.player1] || "Sense nom"}</Text>
-                    </View>
-                    <View style={styles.scoreInputView}>
-                        <TouchableOpacity 
-                            style={styles.scoreInputControls}
-                            onPress={() => this.setState({newScore1: this.state.newScore1 - 1})}>
-                            <Icon name="arrow-round-back" style={styles.scoreInputControlsIcon}/>
-                        </TouchableOpacity>
-                        <View style={styles.scoreValueView}>
-                            <Text style={styles.scoreValue}>{result[0]}</Text>
+                    <Card
+                        titleIcon="baseball"
+                        title={translate("vocabulary.match score")}
+                        >
+                        <View style={styles.playerNameView}>
+                            <Text style={{...styles.playerNameText, textAlign: "left"}}>{"(1) " + this.props.IDsAndNames[this.props.currentMatch.player1] || "Sense nom"}</Text>
                         </View>
-                        <TouchableOpacity 
-                            style={styles.scoreInputControls}
-                            onPress={() => this.setState({newScore1: this.state.newScore1 + 1})}
-                            >
-                            <Icon name="arrow-round-forward" style={styles.scoreInputControlsIcon}/>
-                        </TouchableOpacity>
-                    </View>
+                        <View style={styles.scoreContainer}>
+                            <View style={styles.scoreInputView}>
+                                <TouchableOpacity 
+                                    style={styles.scoreInputControls}
+                                    onPress={() => this.setState({newScore1: this.state.newScore1 - 1})}>
+                                    <Icon name="arrow-round-back" style={styles.scoreInputControlsIcon}/>
+                                </TouchableOpacity>
+                                <View style={styles.scoreValueView}>
+                                    <Text style={styles.scoreValue}>{result[0]}</Text>
+                                </View>
+                                <TouchableOpacity 
+                                    style={styles.scoreInputControls}
+                                    onPress={() => this.setState({newScore1: this.state.newScore1 + 1})}
+                                    >
+                                    <Icon name="arrow-round-forward" style={styles.scoreInputControlsIcon}/>
+                                </TouchableOpacity>
+                            </View>
 
-                    <View style={styles.scoreInputView}>
-                        <TouchableOpacity 
-                            style={styles.scoreInputControls}
-                            onPress={() => this.setState({newScore2: this.state.newScore2 - 1})}>
-                            <Icon name="arrow-round-back" style={styles.scoreInputControlsIcon}/>
-                        </TouchableOpacity>
-                        <View style={styles.scoreValueView}>
-                            <Text style={styles.scoreValue}>{result[1]}</Text>
+                            <View style={styles.scoreInputView}>
+                                <TouchableOpacity 
+                                    style={styles.scoreInputControls}
+                                    onPress={() => this.setState({newScore2: this.state.newScore2 - 1})}>
+                                    <Icon name="arrow-round-back" style={styles.scoreInputControlsIcon}/>
+                                </TouchableOpacity>
+                                <View style={styles.scoreValueView}>
+                                    <Text style={styles.scoreValue}>{result[1]}</Text>
+                                </View>
+                                <TouchableOpacity
+                                    style={styles.scoreInputControls}
+                                    onPress={() => this.setState({newScore2: this.state.newScore2 + 1})}>
+                                    <Icon name="arrow-round-forward" style={styles.scoreInputControlsIcon}/>
+                                </TouchableOpacity>
+                            </View>
                         </View>
-                        <TouchableOpacity
-                            style={styles.scoreInputControls}
-                            onPress={() => this.setState({newScore2: this.state.newScore2 + 1})}>
-                            <Icon name="arrow-round-forward" style={styles.scoreInputControlsIcon}/>
-                        </TouchableOpacity>
-                    </View>
-                    <View style={styles.playerNameView}>
-                        <Text style={styles.playerNameText}>{this.props.IDsAndNames[this.props.currentMatch.player2] || "Sense nom"}</Text>
-                    </View>
+                        
+                        <View style={styles.playerNameView}>
+                            <Text style={{...styles.playerNameText,textAlign:"right"}}>{(this.props.IDsAndNames[this.props.currentMatch.player2] || "Sense nom") + " (2)"}</Text>
+                        </View>
+
+                    </Card>
+                    <Card
+                        titleIcon="calendar"
+                        title="Horari">
+                            <DatePicker
+                                minDate={new Date()}
+                                style={{width: "100%"}}
+                                mode="datetime"
+                                placeholder={translate("vocabulary.fix a date")}
+                                format="DD-MM-YYYY HH:mm"/>
+                            <View style={{paddingTop:10}}>
+                                <Text style={{textAlign: "center"}}>No hi ha data límit per jugar aquest partit :)</Text>
+                            </View>
+                        
+                    </Card>
+
+                    <Card
+                        titleIcon="filing"
+                        title="Història">
+                        
+                    </Card>
+                    
                 </View>
                 
                 <View style={styles.actionButtonsView}>
@@ -182,45 +213,53 @@ const styles = StyleSheet.create({
         paddingTop: 20,
         paddingHorizontal: 20,
         backgroundColor: "#ffec8b33",
-        justifyContent: "center",
-        alignItems: "center"
     },
 
     mainView:{
         flex: 1,
-        justifyContent: "center",
-        alignItems: "center"
+    },
+
+    matchScoreView: {
+        backgroundColor: "#e3b785",
+        borderRadius: 5,
+        elevation: 5,
+        paddingHorizontal: 20,
     },
 
     //Players
     playerNameView: {
-        marginVertical: 20
+        width: "100%",
     },
 
     playerNameText: {
-        fontFamily: "bold",
-        fontSize: totalSize(3)
+        fontSize: totalSize(2)
     },
 
     //Scores input
+    scoreContainer: {
+        flexDirection: "row",
+        marginVertical: 10,
+    },
+
     scoreInputView: {
         flexDirection: "row",
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center",
+        flex:1
     },
 
     scoreValueView: {
         elevation: 3,
         backgroundColor: "white",
-        height: h(8),
-        width: h(8),
+        height: h(6),
+        width: h(6),
         borderRadius: 5,
         justifyContent: "center",
         alignItems: "center"
     },
 
     scoreValue: {
-        fontSize: totalSize(3.5)
+        fontSize: totalSize(2.5)
     },
 
     scoreInputControls: {
@@ -228,7 +267,7 @@ const styles = StyleSheet.create({
     },
 
     scoreInputControlsIcon: {
-        fontSize: totalSize(4)
+        fontSize: totalSize(1.5)
     },
 
     //Submit button
