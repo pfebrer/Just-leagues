@@ -27,7 +27,7 @@ class MatchScreen extends Component {
         super(props);
 
         this.state = {
-            matchPlayed: true
+            editable: false
         }
 
         this.defaultResult = [0,0]
@@ -59,14 +59,17 @@ class MatchScreen extends Component {
                     this.matchRef = docSnapshot.ref
 
                     this.props.setCurrentMatch( {...match, result: match.result || this.defaultResult}, {merge: true} )
+
+                    this.grantEditRights()
     
                 }
     
             );
-            
+
         } else {
             //Listen to the match
         }
+
         
         
     }
@@ -79,12 +82,32 @@ class MatchScreen extends Component {
 
     }
 
+    grantEditRights = () => {
+
+        let editable = 
+            //Don't let people edit other people's matches or edit already played matches
+            (this.props.currentMatch.playersIDs.indexOf(this.props.currentUser.id) >= 0 && this.props.currentMatch.context.pending)
+            //Unless it is an admin of this gym
+            || (this.props.currentUser.gymAdmin && this.props.currentUser.gymAdmin.indexOf(this.gymID) >= 0)
+            //Or an app admin
+            || this.props.currentUser.admin
+
+        this.setState({editable})
+    }
+
     componentDidUpdate(prevProps){
 
         if ( (!prevProps.currentMatch && this.props.currentMatch) || (prevProps.currentMatch.context.matchID != this.props.currentMatch.context.matchID) ){
 
             this.listenToMatch()
-        }
+
+        } else if ( ! _.isEqual(prevProps.currentUser, this.props.currentUser)) {
+
+            this.grantEditRights()
+
+        } 
+
+
     }
 
     componentWillUnmount(){
@@ -162,10 +185,12 @@ class MatchScreen extends Component {
                     </Card>
 
                     <MatchResult
+                        editable={this.state.editable}
                         defaultResult={this.defaultResult}
                         updateDBMatchParams={this.updateDBMatchParams}/>
 
                     <TimeInfo
+                        editable={this.state.editable}
                         updateDBMatchParams={this.updateDBMatchParams}/>
                     
                     <Card

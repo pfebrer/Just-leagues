@@ -58,6 +58,7 @@ class TimeInfo extends Component {
         let cardProps = {
             titleIcon: "calendar",
             title: this.props.matchPlayed ? translate("cardTitles.match date") : translate("cardTitles.match schedule"),
+            contentContainerStyles: {justifyContent:"center", alignItems: "center"}
         }
 
         if ( !this.props.currentMatch.context.pending) {
@@ -93,10 +94,12 @@ class TimeInfo extends Component {
                         maxDate={this.props.currentMatch.due}
                         date={this.props.currentMatch.scheduled ? this.props.currentMatch.scheduled.time : null}
                         onDateChange={(date) => {this.updateScheduledTime(date)}}
-                        style={{width: "90%"}}
+                        style={{paddingHorizontal: 20, width: "100%", justifyContent: "center", alignItems: "center"}}
                         mode="datetime"
                         placeholder={translate("vocabulary.fix a date")}
                         format="DD-MM HH:mm"
+                        disabled={!this.props.editable}
+                        showIcon={this.props.editable}
                         customStyles={{
                             dateInput: {
                               borderWidth: 0,

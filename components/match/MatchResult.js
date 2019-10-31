@@ -36,16 +36,12 @@ class MatchResult extends Component {
     render() {
 
         let result = this.props.currentMatch.result || this.props.defaultResult
-
-        let inputDisabled = 
-            this.props.currentMatch.playersIDs.indexOf(this.props.currentUser.id) || false
-
-
+            
         let scoreInputs = result.map( (value, index) => (
             <ScoreInput 
                 key={index} 
                 value={value}
-                disabled={inputDisabled} 
+                disabled={!this.props.editable} 
                 updateValue={(step)=>this.updateResult(index, step)}/>
         ))
 
