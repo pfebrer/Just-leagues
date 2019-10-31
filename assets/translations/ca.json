@@ -29,11 +29,18 @@
         "competitions handling": "Gestió de competicions",
         "match view": "Vista de partit"
     },
+    "cardTitles": {
+        "match schedule": "Previsió de data",
+        "match date": "Data del partit"
+    },
+
     "info": {
         "checking user": "Comprovant usuari",
         "loading classifications": "Carregant classificacions",
         "no pending matches": "No tens cap partit pendent. Pots relaxar-te :)",
-        "there are competitions waiting for you": "Hi ha competicions que t'estan esperant!"
+        "there are competitions waiting for you": "Hi ha competicions que t'estan esperant!",
+        "no date limit to play match": "No hi ha data límit per jugar aquest partit.",
+        "limit to play": "Límit per jugar"
     },
     "vocabulary": {
         "group": "Grup",
@@ -47,10 +54,12 @@
         "scheduled match": "Horari acordat",
         "not scheduled match": "Horari no acordat",
         "match score": "Resultat del partit",
-        "fix a date":"Fixa una data..."
+        "fix a date":"Fixa una data...",
+        "days": "Dies",
+        "hours": "Hores"
     },
     "errors": {
-        "impossible result":"No ens enganyis, aquest resultat és impossible :(",
+        "you entered an ivalid result":"No ens enganyis, aquest resultat és impossible :(",
         "unable to merge users": "No s'han pogut unir els jugadors"
     },
     "settings": {

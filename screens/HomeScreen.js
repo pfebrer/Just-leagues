@@ -126,6 +126,7 @@ class CompetitionState extends Component {
         if (typeOfComp == "groups"){
             return <Table
                         {...compStateInfo}
+                        competition={this.props.competition}
                         navigation={this.props.navigation}
                     />
         }

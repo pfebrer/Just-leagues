@@ -1,4 +1,4 @@
-import SETTINGS from "../../constants/Settings";
+import _ from "lodash"
 
 //Get a deep copy of an object
 exports.deepClone = (obj) => JSON.parse(JSON.stringify(obj));
@@ -176,20 +176,22 @@ exports.setsToPoints = (setsInp) => {
     
 }
 
-//Checks whether the result submitted is possible
-exports.resultIsCorrect = (testResult) => {
+//Checks whether the result submitted is possible (checking against the pointsScheme settings for the competition)
+exports.resultIsCorrect = (testResult, pointsScheme) => {
 
-    testResult = JSON.stringify(testResult)
+    let isCorrect = false
 
-    SETTINGS.pointsScheme.forEach(({result}) => {
+    pointsScheme.forEach(({result}) => {
 
-        if ( JSON.stringify(result) ===  testResult || JSON.stringify(result.reverse()) === testResult) {
-            return true
+        if ( _.isEqual(result, testResult) || _.isEqual( _.reverse(result), testResult) ) {
+
+            isCorrect = true
+            return false
         }
 
     })
 
-    return false
+    return isCorrect
 
 }
 

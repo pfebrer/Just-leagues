@@ -61,6 +61,7 @@ class Groups extends React.Component {
                 </View>
                 <Table
                     {...group}
+                    competition={this.props.competition}
                     navigation={this.props.navigation}
                     handlePress={this.props.handlePress}
                 />

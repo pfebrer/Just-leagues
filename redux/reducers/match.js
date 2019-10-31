@@ -4,8 +4,10 @@ const match = (state = {}, action) => {
     switch (action.type) {
         case SET_CURRENTMATCH:
             console.log("REDUX: Storing current match data...")
-            var newState = {
-                ...action.data
+            if (action.config.merge){
+                var newState = { ...state, ...action.data }
+            } else {
+                var newState = action.data
             }
             console.log(newState)
             return newState

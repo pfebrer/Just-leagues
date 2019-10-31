@@ -37,7 +37,14 @@ class Table extends Component {
 
         let iMatch = this.cellPositionToMatchIndex(iRow, iCol, this.props.playersIDs.length)
 
-        this.props.setCurrentMatch({ref: this.props.matches[iMatch], player1: this.props.playersIDs[iRow], player2: this.props.playersIDs[iCol]})
+        this.props.setCurrentMatch({
+            context: {
+                matchID: this.props.matchesIDs[iMatch],
+                ranks: [this.props.ranks[iRow], this.props.ranks[iCol]],
+                competition: this.props.competition,
+                pending: data ? false : true
+            },
+            playersIDs: [this.props.playersIDs[iRow], this.props.playersIDs[iCol]] })
 
         this.props.navigation.navigate("MatchScreen")
 

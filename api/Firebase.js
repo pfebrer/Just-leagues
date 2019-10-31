@@ -8,6 +8,8 @@ import {Collections, Subcollections, Constants, Documents} from "../constants/CO
 import * as Google from 'expo-google-app-auth';
 import { translate } from "../assets/translations/translationManager";
 
+import _ from "lodash"
+
 class Firebase {
 
   constructor(){
@@ -221,7 +223,19 @@ class Firebase {
 
   //FUNCTIONS TO OPERATE ON THE DATABASE
   //Generic document updater
-  updateDocInfo = (ref, updates, callback, merge = true) => {
+  updateDocInfo = (ref, updates, callback, merge = true, params = false, omit = false) => {
+
+    if (typeof ref == "string") {
+      ref = this.firestore.doc(ref)
+    }
+
+    if (params){
+      updates = _.pick(updates, params)
+    }
+
+    if (omit){
+      updates = _.omit(updates, omit)
+    }
 
     ref.set(updates, {merge}).then(() => {
       if (callback) {callback()}
@@ -240,6 +254,16 @@ class Firebase {
   }
 
   //LISTENERS TO THE DATABASE
+
+  onSnapshot = (path, callback, isColection= false) => {
+    /*The most generic snapshot method*/
+    if (isColection){
+      return this.firestore.collection(path).onSnapshot( querySnapshot => callback(querySnapshot))
+    } else {
+      return this.firestore.doc(path).onSnapshot( docSnapshot => callback(docSnapshot))
+    }
+    
+  }
   
   onUserSnapshot = (uid, callback, getData = true) => {
     /*Listen to changes on the current user's data
@@ -294,6 +318,29 @@ class Firebase {
 
     })
 
+  }
+
+  onPendingMatchSnapshot = (gymID, compID, matchID, callback, getData = true) => {
+
+    this.pendingMatchRef(gymID,compID, matchID).onSnapshot( docSnapshot => {
+
+      if (!getData){
+
+        callback(docSnapshot)
+
+      } else {
+
+        let data = docSnapshot.data()
+
+        callback({
+          ...data,
+          due: data.due ? data.due.toDate() : null,
+          scheduled: data.scheduled ? { ...data.scheduled, time: data.scheduled.time.toDate()} : null
+        }, docSnapshot)
+
+      }
+
+    })
   }
 
   onCompetitionsSnapshot = (gymID, callback, getData = true) => {
@@ -493,9 +540,18 @@ class Firebase {
     return this.compRef(gymID, compID).collection(Subcollections.PENDINGMATCHES)
   }
 
+  pendingMatchRef = (gymID, compID, matchID) => {
+    return this.pendingMatchesRef(gymID, compID).doc(matchID)
+  }
+
   groupsRef = (gymID, compID) => this.compRef(gymID, compID).collection(Subcollections.GROUPS);
 
   groupRef = (gymID, compID, groupID) => this.groupsRef(gymID, compID).doc(groupID);
+
+  //Helper functions
+  isMatchPlayedAlready = (matchPath) => matchPath.includes("/" + Subcollections.MATCHES + "/")
+
+  fromDate = (date) => firebase.firestore.Timestamp.fromDate( new Date(Number(date)) )
   
 }
 
