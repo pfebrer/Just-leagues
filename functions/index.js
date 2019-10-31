@@ -79,6 +79,12 @@ const auth = admin.auth();
 const firestoreFunction = functions.region('europe-west1').runWith(runtimeOpts).firestore
 const httpsFunction = functions.region('europe-west1').runWith(runtimeOpts).https
 
+
+exports.initCompetition = firestoreFunction.document("V3dev_gyms/{gymID}/competitions/{compID}"  )
+.onCreate((event, context) => {
+    console.log("NEW COMPETITION!")
+})
+
 //This function will detect the creation of a pending match and pass the reference to the relevant user
 exports.pendingMatches = firestoreFunction.document("V3dev_gyms/{gymID}/competitions/{compID}/pendingMatches/{pendMatchID}" )
 .onWrite((change, context) => {
