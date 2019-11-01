@@ -75,11 +75,17 @@ class Notifications extends Component {
 
     render(){
 
-        console.log("UNASSIGNED USERS:", this.state.unasignedUsers)
+        if(this.state.unasignedUsers.length == 0 && this.props.currentUser.activeCompetitions && this.props.currentUser.activeCompetitions.length > 0){
+            return null
+        }
 
         let unasignedUsersMessage = this.state.unasignedUsers.length > 0 ? (
             <Text>{translate("info.there are competitions waiting for you")}</Text>
-        ) : null;
+        ) : [
+            <Text style={{textAlign: "center", color: "darkred", fontFamily: "bold"}}>{translate("info.you don't have any notifications at the moment")}</Text>,
+            <Text style={{textAlign: "center"}}>{translate("info.if you expected to have any, please talk with your competition administrator")}</Text>
+        ];
+
 
         return (
             <Card

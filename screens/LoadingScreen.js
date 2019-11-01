@@ -35,7 +35,6 @@ class LoadingScreen extends React.Component {
         if (this.props.bg !== undefined) {
             this.status.bg = this.props.bg;
         } else {
-            this.status.bg = require("../assets/images/loginBG2.jpg");
             console.log("Loading::status.bg", this.status.bg);
         }
         // this.setState(status);

@@ -98,7 +98,7 @@ export default createBottomTabNavigator({
                 )
             }
         },
-        GroupChat: {
+        /*GroupChat: {
             screen: chatsStack,
             navigationOptions: {
                 tabBarIcon: ({tintColor}) => (
@@ -113,7 +113,7 @@ export default createBottomTabNavigator({
                     <Icon name="person" style={{color: tintColor}}/>
                 )
             }
-        },
+        },*/
         /*MatchSearcher: {
             screen: MatchSearcher,
 

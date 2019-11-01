@@ -82,7 +82,7 @@ export default class Register extends Component {
   render() {
     return(
       <View style={styles.container}>
-        <Text style={styles.create}>CREATE ACCOUNT</Text>
+        <Text style={styles.create}>{translate("auth.create account")}</Text>
         <InputField
           placeholder={translate("auth.name")}
           autoCapitalize="words"
@@ -142,6 +142,7 @@ const styles = StyleSheet.create({
   },
   create: {
     color:'white',
+    textTransform: "uppercase",
     fontSize: totalSize(2.4),
     marginTop: h(7),
     marginBottom: h(4),

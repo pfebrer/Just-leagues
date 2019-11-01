@@ -18,8 +18,7 @@ const runtimeOpts = {
 const Constants = {
     GROUP_SIZE: 4,
     UNTYING_CRITERIA: ["directMatch","position"],
-    dbPrefix: "V3dev_",
-    paddingTopHeader: 20,
+    dbPrefix: "",
 };
 
 const Collections = {
@@ -160,7 +159,7 @@ exports.messageNotification = firestoreFunction.document('groups/{iGroup}/chatMe
 });
 
 //Enviar notificacions quan s'afegeixen partits
-exports.matchNotification = firestoreFunction.document(Collections.GYMS + "/{gymID}/"+ Subcollections.COMPETITIONS + "/{compID}"+ SubCollections.MATCHES + '/{matchid}').onCreate((event, context) => {
+exports.matchNotification = firestoreFunction.document(Collections.GYMS + "/{gymID}/"+ Subcollections.COMPETITIONS + "/{compID}"+ Subcollections.MATCHES + '/{matchid}').onCreate((event, context) => {
 
     const {iGroup, matchPlayers, matchResult} = event.data();
     const iWinner = matchResult.indexOf(3);

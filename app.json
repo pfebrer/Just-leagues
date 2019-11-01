@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "SquashLeagues by Nick Squash Team",
+    "name": "Just leagues",
     "slug": "SquashLeagues",
     "privacy": "public",
     "sdkVersion": "35.0.0",
@@ -9,7 +9,7 @@
       "android",
       "web"
     ],
-    "version": "2.2.0",
+    "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "splash": {

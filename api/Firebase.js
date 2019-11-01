@@ -188,9 +188,12 @@ class Firebase {
         resolve(false);
       }).then(info => {
         if (info) {
-          Firebase.auth.currentUser.updateProfile({
+          this.auth.currentUser.updateProfile({
             displayName: name
           });
+          this.userRef(this.auth.currentUser.uid).set({
+            displayName: name,
+          })
           resolve(true);
         }
       }).catch(err => alert(err));
