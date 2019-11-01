@@ -9,10 +9,13 @@ import {
 
 import { Icon, Text} from 'native-base';
 
+import _ from "lodash"
+
 import Firebase from "../../api/Firebase"
 
 //Redux stuff
 import { connect } from 'react-redux'
+import {setCurrentMatch} from "../../redux/actions"
 
 import { totalSize, w, h } from '../../api/Dimensions';
 
@@ -42,7 +45,7 @@ class PendingMatches extends Component {
                 matches = matches.map( match => ({
                     ...match,
                     playersNames: match.playersIDs.map( uid => this.props.IDsAndNames[uid] || "Sense nom"),
-                    competition: this.props.currentUser.activeCompetitions.filter(comp => comp.id == match.compID )[0] || "Competició desconeguda"
+                    competition: this.props.currentUser.activeCompetitions.filter(comp => comp.id == match.compID )[0] || {name: "Competició desconeguda"}
                 }) )
 
                 matches = sortMatchesByDate(matches)
@@ -65,6 +68,21 @@ class PendingMatches extends Component {
             duration: this.state.showingContent ? 500 : 1500,
             easing: this.state.showingContent ? undefined : Easing.elastic(2)
         }).start(() => this.setState({showingContent: !this.state.showingContent})) 
+
+    }
+
+    goToMatch = (match) => {
+
+        this.props.setCurrentMatch({
+            context: {
+                matchID: match.id,
+                competition: match.competition,
+                pending: true
+            },
+            ..._.omit(match, ["id", "competition"])
+        })
+
+        this.props.navigation.navigate("MatchScreen")
 
     }
 
@@ -93,10 +111,12 @@ class PendingMatches extends Component {
                 time = convertDate(time.toDate(), "dd/mm hh:mm")
             }
 
-            timeInfo = <View>
+            var locationInfo = location ? <Text note style={{textAlign: "right"}}>{location}</Text> : null
+
+            timeInfo = <View style={styles.timeInfoView}>
                             <Text note style={{color: "green", textAlign: "right"}}>{translate("vocabulary.scheduled match")}</Text>
                             <Text style={{fontFamily: "bold", textAlign:"right"}}>{time}</Text>
-                            <Text note style={{textAlign: "right"}}>{location}</Text>
+                            {locationInfo}
                         </View>
                         
 
@@ -104,23 +124,23 @@ class PendingMatches extends Component {
 
             const matchDue = convertDate(match.due.toDate(), "dd/mm")
 
-            timeInfo = <View>
+            timeInfo = <View style={styles.timeInfoView}>
                             <Text note style={{color: "darkred",textAlign: "right"}}>{translate("vocabulary.not scheduled match")}</Text>
                             <Text note style={{textAlign: "right"}}>{translate("vocabulary.limit") + ": " + matchDue}</Text>
                         </View>
         }
 
         return (
-            <View key={match.id} style={ header ? styles.pendingMatchHeader : styles.pendingMatchContainer}>
+            <TouchableOpacity 
+                key={match.id} 
+                style={ header ? styles.pendingMatchHeader : styles.pendingMatchContainer}
+                onPress={() => this.goToMatch(match)}>
                 <View style={{flex:1, justifyContent: "center"}}>
                     {matchInfo}
                     <Text note>{match.competition.name}</Text>
                 </View>
-                <View> 
-                    {timeInfo}
-                </View>
-                    
-            </View>
+                {timeInfo}
+            </TouchableOpacity>
         )
     }
 
@@ -170,10 +190,15 @@ class PendingMatches extends Component {
 
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
-    IDsAndNames: state.IDsAndNames
+    IDsAndNames: state.IDsAndNames,
+    competitions: state.competitions,
 })
 
-export default connect(mapStateToProps)(PendingMatches);
+const mapDispatchToProps = dispatch => ({
+    setCurrentMatch: (compInfo) => dispatch(setCurrentMatch(compInfo))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(PendingMatches);
 
 const styles = StyleSheet.create({
 
@@ -185,8 +210,10 @@ const styles = StyleSheet.create({
     },
 
     pendingMatchContainer: {
+        justifyContent: "center",
+        alignItems: "center",
         flexDirection: "row",
         height: h(8),
-    }
+    },
 
 });

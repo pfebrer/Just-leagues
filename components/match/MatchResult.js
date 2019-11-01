@@ -46,6 +46,9 @@ class MatchResult extends Component {
         ))
 
         let players = this.props.currentMatch.playersIDs.map( uid => this.props.IDsAndNames[uid] || "Sense nom" )
+        let ranks = this.props.currentMatch.playersIDs.map( uid => {
+            return this.props.competitions[this.props.currentMatch.context.competition.id].playersIDs.indexOf(uid) + 1
+        })
 
         return (
             <UpdatableCard
@@ -55,14 +58,14 @@ class MatchResult extends Component {
                 onCommitUpdate={this.commitResultToDB}
                 >
                 <View style={styles.playerNameView}>
-                    <Text style={{...styles.playerNameText, textAlign: "left"}}>{"(" + this.props.currentMatch.context.ranks[0] + ") " + players[0]}</Text>
+                    <Text style={{...styles.playerNameText, textAlign: "left"}}>{"(" + ranks[0] + ") " + players[0]}</Text>
                 </View>
                 <View style={styles.scoreContainer}>
                     {scoreInputs}
                 </View>
                 
                 <View style={styles.playerNameView}>
-                    <Text style={{...styles.playerNameText,textAlign:"right"}}>{players[1] + " (" + this.props.currentMatch.context.ranks[1] + ")"}</Text>
+                    <Text style={{...styles.playerNameText,textAlign:"right"}}>{players[1] + " (" + ranks[1] + ")"}</Text>
                 </View>
 
             </UpdatableCard>
@@ -115,6 +118,7 @@ class ScoreInput extends Component {
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
     currentMatch: state.match,
+    competitions: state.competitions,
     IDsAndNames: state.IDsAndNames
 })
 

@@ -94,9 +94,13 @@ class HomeScreen extends Component {
             <ScrollView 
                 style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}
                 contentContainerStyle={{paddingVertical: 20}}>
+
                 <Notifications/>
-                <PendingMatches/>
+
+                <PendingMatches navigation={this.props.navigation}/>
+
                 {this.renderCompetitionStates(this.props.currentUser.activeCompetitions)}
+
             </ScrollView>
         )
     }

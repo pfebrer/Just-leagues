@@ -16,8 +16,12 @@ import { Icon, Toast } from 'native-base';
 import { h, totalSize } from '../api/Dimensions';
 import Card from '../components/home/Card';
 import HeaderIcon from "../components/header/HeaderIcon"
+
 import TimeInfo from "../components/match/TimeInfo"
 import MatchResult from '../components/match/MatchResult';
+import Head2Head from "../components/match/Head2Head"
+import MatchDiscussion from "../components/match/MatchDiscussion"
+import MatchImage from "../components/match/MatchImage"
 
 import {COMPSETTINGS} from "../constants/Settings";
 
@@ -58,7 +62,7 @@ class MatchScreen extends Component {
 
                     this.matchRef = docSnapshot.ref
 
-                    this.props.setCurrentMatch( {...match, result: match.result || this.defaultResult}, {merge: true} )
+                    this.props.setCurrentMatch( { ...match, result: match.result || this.defaultResult}, {merge: true} )
 
                     this.grantEditRights()
     
@@ -147,42 +151,12 @@ class MatchScreen extends Component {
         Firebase.updateDocInfo(this.matchRef, this.props.currentMatch, callback, merge = true, params = params, omit = ["context"])
     }
 
-    editResult = (editableResult) => {
-        debugger;
-        if (editableResult) {
-            const addResult = this.props.navigation.getParam('addResult', "");
-            const iGroup = this.props.navigation.getParam('iGroup', "");
-            const resultsPositions = this.props.navigation.getParam('resultsPositions', []);
-            const matchPlayers = [this.matchPlayers[0][1], this.matchPlayers[1][1]]
-            const editedResults = this.editedResults
-            if (resultIsCorrect(editedResults)) {
-                const resultInPoints = setsToPoints(editedResults)
-                addResult({iGroup, resultsPositions, resultInPoints, resultInSets: editedResults, matchPlayers})
-                this.setState({
-                    resultSubmitted: true,
-                    editableResult: false,
-                });
-                this.props.navigation.navigate("Classifications")
-            } else {
-                alert(translate("errors.impossible result"))
-            }
-
-        }
-        this.setState({
-            editableResult: !editableResult
-        })
-    }
-
     render() {
 
         return (
             <View style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
                 <ScrollView style={styles.mainView} contentContainerStyle={styles.scrollContainer}>
-                    <Card
-                        titleIcon="images"
-                        title="Foto commemorativa">
-                        
-                    </Card>
+                    <MatchImage/>
 
                     <MatchResult
                         editable={this.state.editable}
@@ -193,17 +167,9 @@ class MatchScreen extends Component {
                         editable={this.state.editable}
                         updateDBMatchParams={this.updateDBMatchParams}/>
                     
-                    <Card
-                        titleIcon="chatboxes"
-                        title="Discussió">
-                        
-                    </Card>
+                    <MatchDiscussion/>
 
-                    <Card
-                        titleIcon="filing"
-                        title="Història">
-                        
-                    </Card>
+                    <Head2Head/>
                     
                 </ScrollView>
                 

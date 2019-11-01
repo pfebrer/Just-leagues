@@ -11,7 +11,7 @@ import { USERSETTINGS } from "../constants/Settings"
 
 //Redux stuff
 import { connect } from 'react-redux'
-import { storeUserData, updateIDsAndNames } from "../redux/actions"
+import { storeUserData, updateIDsAndNames, updateCompetitions} from "../redux/actions"
 
 class LoadingScreen extends React.Component {
 
@@ -46,12 +46,16 @@ class LoadingScreen extends React.Component {
         //Listen for any change on the authorization state (even logouts)
         const unsub = Firebase.auth.onAuthStateChanged(user => {
 
-            //We will store here the listeners for all the users that are in our competitions
+            //Set up the listeners to retrieve all the data about users and competitions that may be needed during the app experience
             if (this.usersListeners){
                 //First we need to desubscribe from all previous listeners
                 Object.keys(this.usersListeners).forEach(compID => this.usersListeners[compID]())
             }
-            this.usersListeners = {} 
+            if (this.compListeners){
+                //First we need to desubscribe from all previous listeners
+                Object.keys(this.compListeners).forEach(compID => this.compListeners[compID]())
+            }
+            this.compListeners = {} ; this.usersListeners = {} 
 
             //On sign out remove the previous userListener, otherwise it will crash due to not having permission to read the database 
             if (this.userListener && !user) {this.userListener()}
@@ -82,6 +86,13 @@ class LoadingScreen extends React.Component {
                                 )
                             }
 
+                            if (!this.compListeners[comp.id]){
+
+                                this.compListeners[comp.id] = Firebase.onCompetitionSnapshot(comp.gymID, comp.id, 
+                                    compData => this.props.updateCompetitions({ [comp.id]: {...compData, gymID: comp.gymID}})
+                                )
+                            }
+
                         });
                     }
                     
@@ -102,32 +113,9 @@ class LoadingScreen extends React.Component {
                         duration: 3000
                         })*/
 
-                        /* Firebase.gymRef("nickspa").collection("matches").get()
-                        .then((query) => {
-
-                            query.forEach(doc => {
-                                Firebase.gymRef("nickspa").collection("competitions").doc("UmtaUDr98rdx5pFKrygI").collection("matches").doc(doc.id).set(doc.data()).then(()=>{}).catch(()=>{})
-                            })
-                            
-                        }).catch(()=>{}) */
-
                     }
-
-                    
-
-                    
 
                 })
-              
-                /*this.usersRef.doc(user.uid).get().then((docSnapshot) => {
-                    if(docSnapshot.exists) {
-                        this.props.navigation.navigate('App');
-                    } else {
-                        alert('User not exists in [' + Collections.USERS + '] database');
-                    }
-                }).catch((err) => {
-                    alert('User not exists in ['+ Collections.USERS + '] database\n\nError: ' + err.message)
-                });*/
 
             //Otherwise go to the login page
             } else {
@@ -180,7 +168,8 @@ class LoadingScreen extends React.Component {
 
 const mapDispatchToProps = dispatch => ({
     storeUserData: (uid, userData) => dispatch(storeUserData(uid, userData)),
-    updateIDsAndNames: (newIDsAndNames) => dispatch(updateIDsAndNames(newIDsAndNames))
+    updateIDsAndNames: (newIDsAndNames) => dispatch(updateIDsAndNames(newIDsAndNames)),
+    updateCompetitions: (newCompetitions) => dispatch(updateCompetitions(newCompetitions))
 })
 
 export default connect( null, mapDispatchToProps )(LoadingScreen);

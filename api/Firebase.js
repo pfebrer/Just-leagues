@@ -372,6 +372,19 @@ class Firebase {
     })
   }
 
+  onCompetitionSnapshot = (gymID, compID, callback, getData = true) => {
+    /*Listens for changes in a given competition*/
+    return this.compRef(gymID, compID).onSnapshot(
+      docSnapshot => {
+
+        if(!getData) callback(docSnapshot)
+        else {
+          callback(docSnapshot.data())
+        }
+      }
+    )
+  }
+
   onCompUsersSnapshot = (comp, callback) => {
     /*Listen to users that are active in a given competition
     Returns and object like {id1: name1, id2:name2 ....}*/
@@ -522,8 +535,6 @@ class Firebase {
 
       //Initial scores array
       let scores = Array(playersGroup.length**2).fill(false)
-      //Ranks array
-      let ranks = playersGroup.map(playerID => ranking.indexOf(playerID) + 1)
       //Define the name and the order of the group
       let name = String(i + 1), order = i + 1
 
@@ -549,7 +560,6 @@ class Firebase {
       var groupRef = this.groupsRef(gymID, compID).doc(name)
       batch.set( groupRef, {
         scores,
-        ranks,
         name, order,
         matchesIDs,
         playersIDs: playersGroup

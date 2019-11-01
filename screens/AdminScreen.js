@@ -10,6 +10,7 @@ import { connect } from 'react-redux'
 import {setCurrentCompetition} from "../redux/actions"
 import { translate } from '../assets/translations/translationManager';
 import { COMPSETTINGS } from '../constants/Settings';
+import { w } from '../api/Dimensions';
 
 class AdminScreen extends React.Component {
 
@@ -37,7 +38,10 @@ class AdminScreen extends React.Component {
 
             this.compListeners.push(Firebase.onCompetitionsSnapshot(gymID,
                     //THIS LINE DOES NOT REALLY SUPPORT DIFFERENT GYMS, YOU WILL GET THE COMPETITIONS OF THE LAST GYM
-                    competitions => this.setState({competitions})
+                    competitions => {
+                        this.setState({competitions})
+                        this.props.setCurrentCompetition(competitions[0])
+                    }
                 )
             )
 
@@ -52,22 +56,25 @@ class AdminScreen extends React.Component {
 
     renderCompPicker = (competitions, currentComp) => {
 
-        let pickerItems = competitions.map(comp=> <Picker.Item label={comp.name} value={comp.id} /> )
+        console.warn(competitions)
+        let pickerItems = competitions.map(comp=> <Picker.Item key={comp.id} label={comp.name} value={comp.id} /> )
 
         let selected = currentComp ? currentComp.id : competitions.length > 0 ? competitions.id : null;
 
         return (
-            <View>
+            <View style={styles.compSelectionView}>
                 <Text>{translate("info.choose the competition that you would like to edit")}</Text>
-                <Picker
-                    selectedValue={selected}
-                    style={styles.compPicker}
-                    onValueChange={(itemValue, itemIndex) =>
-                        this.props.setCurrentCompetition(competitions[itemIndex])
+                <View style={styles.compPickerView}>
+                    <Picker
+                        selectedValue={selected}
+                        style={styles.compPicker}
+                        onValueChange={(itemValue, itemIndex) =>
+                            this.props.setCurrentCompetition(competitions[itemIndex])
 
-                    }>
-                        {pickerItems}
-                </Picker>
+                        }>
+                            {pickerItems}
+                    </Picker>
+                </View>
             </View>
         )
     }
@@ -84,6 +91,7 @@ class AdminScreen extends React.Component {
                         <Button
                             onPress={()=>{}}
                             title="Configuració de la competició"
+                            disabled
                             color="#303030"
                             accessibilityLabel="Tancar Mes"
                         />
@@ -109,6 +117,7 @@ class AdminScreen extends React.Component {
                     <View style={styles.buttonRow}>
                         <Button
                             onPress={this.tancarMes}
+                            disabled
                             title="Finalitzar periode de competició"
                             color="#303030"
                             accessibilityLabel="Finalitzar periode de competició"
@@ -116,8 +125,7 @@ class AdminScreen extends React.Component {
                     </View>
                     <View style={styles.buttonRow}>
                         <Button
-                            onPress={() => {
-                            }}
+                            onPress={()=>{this.props.navigation.navigate("CompetitionScreen")}}
                             title="Modificar partits"
                             color="#303030"
                             accessibilityLabel="Modificar partits"
@@ -228,12 +236,23 @@ const mapDispatchToProps = dispatch => ({
 export default connect(mapStateToProps, mapDispatchToProps)(AdminScreen);
 
 const styles = StyleSheet.create({
+
     container: {
         flex: 1,
         paddingHorizontal: 20,
         backgroundColor: "white",
         paddingTop: 30,
     },
+
+    compSelectionView: {
+        justifyContent: "center",
+        alignItems: "center"
+    },
+
+    compPickerView: {
+        width: w(80)
+    },
+
     titleView: {
         justifyContent: "center",
         alignItems: "center"

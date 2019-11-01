@@ -1,4 +1,10 @@
-import { STORE_CURRENTUSERDATA, SET_CURRENTCOMPETITION, SET_CURRENTMATCH, UPDATE_IDSANDNAMES} from './actionTypes'
+import { 
+    STORE_CURRENTUSERDATA,
+    SET_CURRENTCOMPETITION,
+    SET_CURRENTMATCH,
+    UPDATE_IDSANDNAMES,
+    UPDATE_COMPETITIONS
+} from './actionTypes'
 
 export const storeUserData = (userData) => ({
     type: STORE_CURRENTUSERDATA,
@@ -20,6 +26,11 @@ export const setCurrentMatch = (matchInfo, config = {}) => ({
 export const updateIDsAndNames = (newIDsAndNames) => ({
     type: UPDATE_IDSANDNAMES,
     newIDsAndNames
+})
+
+export const updateCompetitions = (newCompetitions) => ({
+    type: UPDATE_COMPETITIONS,
+    newCompetitions
 })
 
 

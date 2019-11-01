@@ -40,7 +40,6 @@ class Table extends Component {
         this.props.setCurrentMatch({
             context: {
                 matchID: this.props.matchesIDs[iMatch],
-                ranks: [this.props.ranks[iRow], this.props.ranks[iCol]],
                 competition: this.props.competition,
                 pending: data ? false : true
             },
@@ -99,7 +98,9 @@ class Table extends Component {
 
         let players = playersIDs.map( uid => this.props.IDsAndNames[uid] || "Sense nom" )
 
-        let ranks  = this.props.ranks || Array.from( new Array(players.length), (x,i) => i + 1)
+        let ranks = playersIDs.map( uid => {
+            return this.props.competitions[this.props.competition.id].playersIDs.indexOf(uid) + 1
+        })
 
         this.scores = transpose( reshape(scores, players.length) )
 
@@ -231,7 +232,8 @@ class Column extends Component{
 
 const mapStateToProps = state => ({
     currentUser: state.currentUser || null,
-    IDsAndNames: state.IDsAndNames
+    IDsAndNames: state.IDsAndNames,
+    competitions: state.competitions,
 })
 
 const mapDispatchToProps = dispatch => ({
