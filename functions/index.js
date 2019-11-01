@@ -81,77 +81,36 @@ exports.initCompetition = firestoreFunction.document(Collections.GYMS + "/{gymID
     const {gymID, compID} = context.params
     const {players, name: compName, type: compType} = snap.data()
 
-    let promises = [];
+    let batch = firestore.batch()
+    let playersIDs = [];
 
     //Create all the unasigned users of this new competition
     players.forEach( player => {
 
-        promises.push(
-            __createUnasignedUser(player.name, player.email, {
+        var newRef = firestore.collection(Collections.USERS).doc();
+        playersIDs.push(newRef.id)
+
+        batch.set( newRef, {
+            displayName: player.name,
+            email: player.email,
+            activeCompetitions: [{
                 gymID: gymID,
                 id: compID,
                 name: compName,
                 type: compType,
-            })
-        )
+            }],
+            asigned: false
+        })
+
     })
 
-    //When all of them are created, retrieve their IDs and 
-    return Promise.all(promises).then( (references) => {
-        let playersIDs = references.map(ref => ref.id)
-        snap.ref.update({
-            playersIDs,
-            players: admin.firestore.FieldValue.delete()
-        })
+    //Update also the competition players (create a playersIDs list and remove the helper players list)
+    batch.update(snap.ref, {
+        playersIDs,
+        players: admin.firestore.FieldValue.delete()
     })
-    
-})
 
-//This function will detect the creation of a pending match and pass the reference to the relevant user
-exports.pendingMatches = firestoreFunction.document("V3dev_gyms/{gymID}/competitions/{compID}/pendingMatches/{pendMatchID}" )
-.onWrite((change, context) => {
-
-    if (change.after.exists){
-
-        let {playersIDs, playersNames, scheduled, due} = change.after.data()
-
-        playersIDs.forEach( playerID => {
-
-            var newPendingMatch = {playersIDs, playersNames, scheduled, due, ref: change.after.ref}
-
-            playerRef = "V3dev_users/"+ playerID
-
-            firestore.runTransaction(t => {
-                return t.get(playerRef)
-                  .then(doc => {
-
-                    let {pendingMatches} = doc.data();
-
-                    if (!pendingMatches) { 
-                        pendingMatches = [newPendingMatch]
-                    } else {
-                        pendingMatches = pendingMatches.filter( match => match.ref != change.after.ref)
-                        pendingMatches = [ ...pendingMatches, newPendingMatch]
-                    }
-
-                    t.update(playerRef, {pendingMatches});
-                    });
-              }).then(result => {
-                console.log('Transaction success!');
-              }).catch(err => {
-                console.log('Transaction failure:', err)
-            });
-
-        })
-
-    } else {
-        //The pending match has either been deleted or played
-        let {playersIDs} = change.before.data()
-
-        playersIDs.forEach( playerID => {
-            firestore.doc("V3dev_users/"+ playerID).set({pendingMatches: firestore.FieldValue.arrayRemove(change.after.ref)}, {merge: true}).then(() => {})
-        })
-    }
+    return batch.commit()
     
 })
 
@@ -201,7 +160,7 @@ exports.messageNotification = firestoreFunction.document('groups/{iGroup}/chatMe
 });
 
 //Enviar notificacions quan s'afegeixen partits
-exports.matchNotification = firestoreFunction.document('matches/{id}').onCreate((event, context) => {
+exports.matchNotification = firestoreFunction.document(Collections.GYMS + "/{gymID}/"+ Subcollections.COMPETITIONS + "/{compID}"+ SubCollections.MATCHES + '/{matchid}').onCreate((event, context) => {
 
     const {iGroup, matchPlayers, matchResult} = event.data();
     const iWinner = matchResult.indexOf(3);
@@ -514,15 +473,6 @@ const __getDBPrefix = (req) => {
         console.log("__getDBPrefix::USING DE PREFIX " + ret);
     }
     return ret;
-}
-
-const __createUnasignedUser = (displayName, email, comp) => {
-    return firestore.collection(Collections.USERS).add({
-        displayName,
-        email,
-        activeCompetitions: [comp],
-        asigned: false
-    })
 }
 
 const __untie = (iPlayers, results, criteria) => {

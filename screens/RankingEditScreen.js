@@ -16,25 +16,55 @@ import { translate } from '../assets/translations/translationManager';
 import { w } from '../api/Dimensions';
 import { COMPSETTINGS } from '../constants/Settings';
 
+//Redux stuff
+import { connect } from 'react-redux'
+import {setCurrentCompetition} from "../redux/actions"
+import HeaderIcon from '../components/header/HeaderIcon';
+
+import Firebase from "../api/Firebase"
+
 const window = Dimensions.get('window');
 
 
-export default class RankingEditScreen extends Component {
+class RankingEditScreen extends Component {
 
     constructor(props){
         super(props)
 
         this.state = {
-            editable: true,
-            deleteMode: false,
-            ranking: ["Josep", "Ramón", "Gilbert", "Amadeu", "Francesc", "Josep", "Ramón", "Gilbert", "Amadeu", "Francesc"]
+          editable: true,
+          deleteMode: false,
+          ranking: props.competition.playersIDs || []
         }
 
     }
 
-    updateRankingOrder = (keys) => {
-        this.setState({ranking: keys.map( key => this.state.ranking[key])})
+    componentDidMount(){
+      this.props.navigation.setParams({submitNewRanking: this.submitNewRanking})
+    }
 
+    static navigationOptions = ({navigation}) => {
+      return {
+        headerTitle: translate("tabs.ranking editing"), 
+        headerRight: <HeaderIcon name="checkmark" onPress={navigation.getParam("submitNewRanking")} />
+      }
+  };
+
+  submitNewRanking = () => {
+
+    let {gymID, id: compID} = this.props.competition 
+
+    Firebase.updateCompetitionDoc(gymID, compID, {playersIDs: this.state.ranking},
+      () => {
+        this.props.setCurrentCompetition({...this.props.competition, playersIDs: this.state.ranking});
+        this.props.navigation.goBack()
+      }
+    )
+
+  }
+
+    updateRankingOrder = (keys) => {
+      this.setState({ranking: keys.map( key => this.state.ranking[key])})
     }
 
     deleteItem = (key, marginHorizontal) => {
@@ -63,9 +93,9 @@ export default class RankingEditScreen extends Component {
     );
   }
 
-  _renderRow = ({data, active, index}) => {
+  _renderRow = ({data: uid, active, index}) => {
     return <Row 
-            data={data} 
+            data={this.props.IDsAndNames[uid] || "Sense nom"} 
             active={active} 
             index={index}
             deletable={this.state.deleteMode}
@@ -152,6 +182,18 @@ class Row extends Component {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  competition: state.competition,
+  IDsAndNames: state.IDsAndNames,
+  currentUser: state.currentUser
+})
+
+const mapDispatchToProps = dispatch => ({
+  setCurrentCompetition: (compInfo) => dispatch(setCurrentCompetition(compInfo))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(RankingEditScreen);
 
 const styles = StyleSheet.create({
   container: {

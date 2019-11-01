@@ -8,6 +8,7 @@ import {Collections, Subcollections, Constants, Documents} from "../constants/CO
 import * as Google from 'expo-google-app-auth';
 import { translate } from "../assets/translations/translationManager";
 
+import 'lodash.combinations';
 import _ from "lodash"
 
 class Firebase {
@@ -91,7 +92,6 @@ class Firebase {
             displayName: result.additionalUserInfo.profile.name,
             firstName: result.additionalUserInfo.profile.given_name,
             lastName: result.additionalUserInfo.profile.family_name,
-            email: result.additionalUserInfo.profile.email,
           }
           this.userRef(result.user.uid).get()
             .then(docSnapshot => {
@@ -247,6 +247,11 @@ class Firebase {
     })
     .catch((err) => alert(err))
   }
+
+  //Update competition
+  updateCompetitionDoc = (gymID, compID, updates, callback) => {
+    this.updateDocInfo( this.compRef(gymID, compID), updates, callback)
+  }
   
   //Update user settings
   updateUserSettings = (uid, newSettings, callback) => {
@@ -359,7 +364,8 @@ class Firebase {
       if (!getData) callback(querySnapshot)
       else callback( querySnapshot.docs.map(doc => ({
           ...doc.data(),
-          id: doc.id
+          id: doc.id,
+          gymID
         })
       ))
 
@@ -491,6 +497,68 @@ class Firebase {
         
     }).catch( reason => alert(reason))
 
+  }
+
+  generateGroups = (gymID, compID, ranking, compsettings, {due}, callback = () => {}) => {
+
+    /*Function that, given a ranking, generates groups according to some settings*/
+
+    let batch = this.firestore.batch()
+
+    //Divide the ranking in groups of size determined by the competition settings
+    let playersGroups = _.chunk(ranking, compsettings.groupSize)
+
+    //If last group is too small, join the last two groups (maybe it would be good to let the admin choose here)
+    if (_.last(playersGroups).length < compsettings.minGroupSize){
+
+      orphans = playersGroups.pop()
+      lastGroup = _.concat(playersGroups.pop(), orphans)
+      playersGroups.push(lastGroup)
+
+    }
+
+    //And we start to really generate the groups here
+    playersGroups.forEach( (playersGroup, i) => {
+
+      //Initial scores array
+      let scores = Array(playersGroup.length**2).fill(false)
+      //Ranks array
+      let ranks = playersGroup.map(playerID => ranking.indexOf(playerID) + 1)
+      //Define the name and the order of the group
+      let name = String(i + 1), order = i + 1
+
+      //Generate the pendingMatches for this group
+      let matches = _.combinations(playersGroup, 2)
+      let matchesIDs = []
+
+      //And store them in the pendingMatches collection of the competition
+      matches.forEach(match => {
+
+        var matchRef = this.pendingMatchesRef(gymID, compID).doc()
+        matchesIDs.push(matchRef.id)
+
+        batch.set(matchRef, {
+          playersIDs: match,
+          due,
+          scheduled: false
+        })
+
+      })
+
+      //Finally, store the group
+      var groupRef = this.groupsRef(gymID, compID).doc(name)
+      batch.set( groupRef, {
+        scores,
+        ranks,
+        name, order,
+        matchesIDs,
+        playersIDs: playersGroup
+      })
+
+    })
+
+    return batch.commit().then(()=> callback()).catch(err => alert(err))
+    
   }
 
   callHttpsFunction = (functionName, argsObject, callback, errorFn) => {

@@ -29,6 +29,8 @@ import PendingMatches from "../components/home/PendingMatches"
 import Notifications from "../components/home/Notifications"
 import Card from "../components/home/Card"
 
+import _ from "lodash"
+
 class HomeScreen extends Component {
 
     constructor(props) {
@@ -51,6 +53,14 @@ class HomeScreen extends Component {
         //Update the header color when the background color is updated :)
         if ( prevProps.currentUser.settings["General appearance"].backgroundColor !== currentbackCol){
             this.props.navigation.setParams({backgroundColor: currentbackCol})
+        }
+
+        if ( ! _.isEqual(prevProps.currentUser.gymAdmin, this.props.currentUser.gymAdmin)
+            || ( prevProps.currentUser.admin != this.props.admin) ) {
+
+            this.props.navigation.setParams({
+                isAdmin: (this.props.currentUser.gymAdmin && this.props.currentUser.gymAdmin.length > 0) || this.props.currentUser.admin
+            })
         }
     }
 

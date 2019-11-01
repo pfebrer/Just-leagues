@@ -27,7 +27,8 @@
         "home":"Inici",
         "settings": "Configuració",
         "competitions handling": "Gestió de competicions",
-        "match view": "Vista de partit"
+        "match view": "Vista de partit",
+        "ranking editing": "Edició del rànquing"
     },
     "cardTitles": {
         "match schedule": "Previsió de data",
@@ -40,7 +41,8 @@
         "no pending matches": "No tens cap partit pendent. Pots relaxar-te :)",
         "there are competitions waiting for you": "Hi ha competicions que t'estan esperant!",
         "no date limit to play match": "No hi ha data límit per jugar aquest partit.",
-        "limit to play": "Límit per jugar"
+        "limit to play": "Límit per jugar",
+        "choose the competition that you would like to edit":"Tria la competició que vols editar"
     },
     "vocabulary": {
         "group": "Grup",

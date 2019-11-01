@@ -9,6 +9,7 @@ import {Constants} from "../constants/CONSTANTS";
 import { connect } from 'react-redux'
 import {setCurrentCompetition} from "../redux/actions"
 import { translate } from '../assets/translations/translationManager';
+import { COMPSETTINGS } from '../constants/Settings';
 
 class AdminScreen extends React.Component {
 
@@ -49,18 +50,21 @@ class AdminScreen extends React.Component {
         if (this.compListener) this.compListeners.forEach(listener => listener())
     }
 
-    renderCompPicker = (competitions) => {
+    renderCompPicker = (competitions, currentComp) => {
 
-        let pickerItems = competitions.map(comp => <Picker.Item label={comp.name} value={comp} /> )
+        let pickerItems = competitions.map(comp=> <Picker.Item label={comp.name} value={comp.id} /> )
+
+        let selected = currentComp ? currentComp.id : competitions.length > 0 ? competitions.id : null;
 
         return (
             <View>
-                <Text>Tria la competició que vols editar</Text>
+                <Text>{translate("info.choose the competition that you would like to edit")}</Text>
                 <Picker
-                    selectedValue={this.state.competitions[0]}
+                    selectedValue={selected}
                     style={styles.compPicker}
                     onValueChange={(itemValue, itemIndex) =>
-                        this.props.setCurrentCompetition(itemValue)
+                        this.props.setCurrentCompetition(competitions[itemIndex])
+
                     }>
                         {pickerItems}
                 </Picker>
@@ -82,6 +86,14 @@ class AdminScreen extends React.Component {
                             title="Configuració de la competició"
                             color="#303030"
                             accessibilityLabel="Tancar Mes"
+                        />
+                    </View>
+                    <View style={styles.buttonRow}>
+                        <Button
+                            onPress={this.generateGroups}
+                            title="Generar grups"
+                            color="#303030"
+                            accessibilityLabel="Generar grups"
                         />
                     </View>
                     <View style={styles.buttonRow}>
@@ -113,7 +125,7 @@ class AdminScreen extends React.Component {
                     </View>
                     <View style={styles.buttonRow}>
                         <Button
-                            onPress={()=>{}}
+                            onPress={()=>{this.props.navigation.navigate("CompetitionScreen")}}
                             title="Anar a pantalla de competició"
                             color="#303030"
                             accessibilityLabel="Tancar Mes"
@@ -141,6 +153,15 @@ class AdminScreen extends React.Component {
         this.callFunction('updateGroups');
     };
 
+    generateGroups = () => {
+
+        let {gymID, id: compID} = this.props.currentComp
+
+        Firebase.generateGroups(gymID, compID, this.props.currentComp.playersIDs, COMPSETTINGS.groups, {due: new Date("11/30/2019")},
+            () => this.props.navigation.navigate("CompetitionScreen")
+        )
+    }
+
     tancarMes = () => {
         /*S'hauria de fer per passos:
             - Comprovar que tots els grups estan bé (mostrant la pantalla de la competició.
@@ -148,10 +169,10 @@ class AdminScreen extends React.Component {
             - Modificar manualment el rànquing si es vol
             - Generar els nous grups
         */
-        this.callFunction('updateRanking', this.callFunction('updateGroups'));
+        this.callFunction('updateRanking', {callback: this.callFunction('updateGroups')} );
     };
 
-    callFunction = (functionName, callback, errorFn) => {
+    callFunction = (functionName, {callback, errorFn, args}) => {
 
         this.setState({spinner: true});
         if (callback === undefined || callback === null) {
@@ -170,7 +191,7 @@ class AdminScreen extends React.Component {
         }
         console.log("AdminScreen::callFunction functionName[" + functionName + "]");
 
-        Firebase.functions.httpsCallable(functionName)({dbPrefix: Constants.dbPrefix}).then(callback).catch(errorFn);
+        Firebase.functions.httpsCallable(functionName)({dbPrefix: Constants.dbPrefix, ...args}).then(callback).catch(errorFn);
     };
 
     render() {
@@ -187,7 +208,7 @@ class AdminScreen extends React.Component {
                     textContent={this.state.spinnerText}
                     textStyle={styles.spinnerTextStyle}
                 />
-                {this.renderCompPicker(this.state.competitions)}
+                {this.renderCompPicker(this.state.competitions, this.props.currentComp)}
                 {this.renderEditingOptions(this.props.currentComp)}
                 {endingPeriodModal}
             </View>

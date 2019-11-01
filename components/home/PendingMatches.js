@@ -179,6 +179,9 @@ const styles = StyleSheet.create({
 
     pendingMatchHeader: {
         flexDirection: "row",
+        minHeight: h(8),
+        justifyContent: "center",
+        alignItems: "center"
     },
 
     pendingMatchContainer: {
