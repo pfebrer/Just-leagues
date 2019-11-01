@@ -582,8 +582,6 @@ class Firebase {
     //And we start to really generate the groups here
     playersGroups.forEach( (playersGroup, i) => {
 
-      //Initial scores array
-      let scores = Array(playersGroup.length**2).fill(false)
       //Define the name and the order of the group
       let name = String(i + 1), order = i + 1
 
