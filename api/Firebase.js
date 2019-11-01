@@ -606,7 +606,6 @@ class Firebase {
       //Finally, store the group
       var groupRef = this.groupsRef(gymID, compID).doc(name)
       batch.set( groupRef, {
-        scores,
         name, order,
         matchesIDs,
         playersIDs: playersGroup
