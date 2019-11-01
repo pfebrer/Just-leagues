@@ -334,7 +334,7 @@ class Firebase {
 
   onPendingMatchSnapshot = (gymID, compID, matchID, callback, getData = true) => {
 
-    this.pendingMatchRef(gymID,compID, matchID).onSnapshot( docSnapshot => {
+    return this.pendingMatchRef(gymID,compID, matchID).onSnapshot( docSnapshot => {
 
       if (!getData){
 
@@ -349,6 +349,31 @@ class Firebase {
           due: data.due ? data.due.toDate() : null,
           scheduled: data.scheduled ? { ...data.scheduled, time: data.scheduled.time.toDate()} : null
         }, docSnapshot)
+
+      }
+
+    })
+  }
+
+  onMatchSnapshot = (gymID, compID, matchID, callback, getData = true) => {
+
+    return this.matchRef(gymID,compID, matchID).onSnapshot( docSnapshot => {
+
+      if (!getData){
+
+        callback(docSnapshot)
+
+      } else {
+
+        let data = docSnapshot.data()
+
+        if (data){
+          callback({
+            ...data,
+            playedOn: data.playedOn ? data.playedOn.toDate() : null,
+          }, docSnapshot)
+        }
+        
 
       }
 
@@ -426,6 +451,30 @@ class Firebase {
   }
 
   //FUNCTIONS TO DO COMPLEX OPERATIONS
+  submitNewPlayedMatch = (matchInfo, callback) => {
+    
+    let batch = this.firestore.batch()
+
+    //Pick only the relevant info
+    let {result, playersIDs, scheduled, context} = matchInfo
+
+    let {matchID, competition} = context
+    let {id: compID, gymID, type: typeOfComp} = competition
+
+    let playedOn = scheduled ? scheduled.time : null;
+    if (!playedOn) playedOn = new Date()
+
+    batch.set(this.matchRef(gymID, compID, matchID),{
+      result,
+      playersIDs,
+      playedOn
+    })
+
+    batch.delete(this.pendingMatchRef(gymID, compID, matchID))
+
+    batch.commit().then(callback).catch(err => alert(err))
+  }
+
   mergeUsers = (userToMerge, requestingUser, callback = () => {}) => {
 
     /*
@@ -619,6 +668,10 @@ class Firebase {
 
   matchesRef = (gymID, compID) => {
     return this.compRef(gymID, compID).collection(Subcollections.MATCHES)
+  }
+
+  matchRef = (gymID, compID, matchID) => {
+    return this.matchesRef(gymID, compID).doc(matchID)
   }
 
   pendingMatchesRef = (gymID, compID) => {

@@ -76,5 +76,18 @@
             "name": "Columnes visibles en grups",
             "description": "En les competicions de grups, el màxim de columnes que es veuen amb comoditat depenen de l'amplada del teu mòbil."
         }
+    },
+    "actions": {
+        "go back": "Torna enrere"
+    },
+
+    "admin": {
+        "choose a time limit to play matches": "Tria una data límit per jugar els partits",
+        "edit ranking manually": "Edita el rànquing manualment",
+        "end competition period": "Finalitza el període de competició",
+        "modify matches": "Modifica partits",
+        "go to competition screen": "Anar a la pantalla de la competició",
+        "generate groups": "Genera grups",
+        "competition settings": "Configuració de la competició"
     }
 }

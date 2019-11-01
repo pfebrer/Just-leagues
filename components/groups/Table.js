@@ -1,16 +1,70 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
-import { iLeaderLoser, transpose, reshape, deepClone } from "../../assets/utils/utilFuncs"
+import { iLeaderLoser, setsToPoints , deepClone } from "../../assets/utils/utilFuncs"
 import { translate } from '../../assets/translations/translationManager';
 import { w, h, totalSize } from '../../api/Dimensions';
 import { ScrollView } from 'react-native-gesture-handler';
+
+import Firebase from "../../api/Firebase"
 
 //Redux stuff
 import { connect } from 'react-redux'
 import {setCurrentMatch} from "../../redux/actions"
 
+import _ from "lodash"
+import { COMPSETTINGS } from '../../constants/Settings';
+
 class Table extends Component {
+
+    constructor(props){
+        super(props)
+
+        this.state = {
+            scores: this.generateEmptyScores()
+        }
+    }
+
+    generateEmptyScores = () => {
+       
+        return  _.zip.apply(_, _.chunk(Array(this.props.playersIDs.length**2).fill(false), this.props.playersIDs.length));
+    }
+
+    componentDidMount() {
+
+        this.matchListeners = {}
+
+        let {gymID, id: compID} = this.props.competition
+
+        //We will be listening to changes in the matches to update the scores of the group
+        this.props.matchesIDs.forEach( matchID => {
+
+            this.matchListeners[matchID] = Firebase.onMatchSnapshot(gymID, compID, matchID, 
+                match => {
+
+                    let {result, playersIDs} = match
+
+                    let points = setsToPoints(result, COMPSETTINGS.groups.pointsScheme)
+
+                    let iPlayers = playersIDs.map( uid => this.props.playersIDs.indexOf(uid))
+
+                    let newScores = _.cloneDeep(this.state.scores)
+
+                    newScores[iPlayers[0]][iPlayers[1]] = points[0]
+                    newScores[iPlayers[1]][iPlayers[0]] = points[1]
+
+                    this.setState({scores: newScores})
+
+                }
+            )
+
+        })
+    }
+
+    componentWillUnmount() {
+        //Unsubscribe from all listeners
+        Object.keys(this.matchListeners).forEach(matchID => this.matchListeners[matchID]() )
+    }
 
     goToUserProfile = ({iRow}) => {
 
@@ -92,9 +146,9 @@ class Table extends Component {
 
     render() {
 
-        let {playersIDs, scores} = deepClone(this.props)
+        let {playersIDs} = deepClone(this.props)
 
-        if( !(playersIDs.length > 0 && scores.length > 0) ) { return null }
+        if( !playersIDs.length > 0 ) { return null }
 
         let players = playersIDs.map( uid => this.props.IDsAndNames[uid] || "Sense nom" )
 
@@ -102,14 +156,12 @@ class Table extends Component {
             return this.props.competitions[this.props.competition.id].playersIDs.indexOf(uid) + 1
         })
 
-        this.scores = transpose( reshape(scores, players.length) )
-
-        let totals = this.props.totals || this.scores.map( playerScores => playerScores.reduce((a, b) => a + b, 0) )
+        let totals = this.props.totals || this.state.scores.map( playerScores => playerScores.reduce((a, b) => a + b, 0) )
 
         return (
             <View style={this.props.containerStyles}>
                 <View style={{...styles.tableContainer, ...this.props.tableStyles}}>
-                    {this.renderTable(ranks, players, this.scores, totals)}
+                    {this.renderTable(ranks, players, this.state.scores, totals)}
                 </View>
             </View>
             

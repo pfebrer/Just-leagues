@@ -156,23 +156,29 @@ exports.pointsToSets = (point) => {
 }
 
 //Function that recieves the result in sets and converts it to points.
-exports.setsToPoints = (setsInp) => {
+exports.setsToPoints = (setsInp, pointsScheme) => {
 
     let sets = JSON.stringify(setsInp);
+    let convertedPoints;
 
-    SETTINGS.pointsScheme.forEach(({result, points}) => {
+    pointsScheme.forEach(({result, points}) => {
 
         if (sets === JSON.stringify(result)) {
 
-            return points
+            convertedPoints = points
+
+            return false
 
         } else if (sets === JSON.stringify(result.reverse())) {
 
-            return points.reverse()
+            convertedPoints = points.reverse()
+            return false
             
         }
 
     })
+
+    return convertedPoints
     
 }
 

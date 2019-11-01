@@ -71,11 +71,22 @@ class MatchScreen extends Component {
             );
 
         } else {
-            //Listen to the match
+
+            this.matchSub = Firebase.onMatchSnapshot(this.gymID, this.compID, this.matchID,
+            
+                (match, docSnapshot) => {
+
+                    this.matchRef = docSnapshot.ref
+
+                    this.props.setCurrentMatch( {...match}, {merge: true} )
+
+                    this.grantEditRights()
+    
+                }
+    
+            );
         }
 
-        
-        
     }
 
     componentDidMount() {
@@ -144,11 +155,25 @@ class MatchScreen extends Component {
             } else if ( this.props.currentMatch.context.pending) {
                 //If this is the first result for this match we have to submit a new match and delete this pending match
 
+                if (this.matchSub) this.matchSub(); //Stop listening to the match (we are going to change its location)
+
+                Firebase.submitNewPlayedMatch(this.props.currentMatch,
+                    
+                    () => {
+                        this.props.setCurrentMatch({context: {...this.props.currentMatch.context, pending: false}}, {merge: true})
+                        callback()
+
+                        //Listen to the match again
+                        this.listenToMatch()
+                    }
+                )
+                
+                return true
             }
             
         }
 
-        Firebase.updateDocInfo(this.matchRef, this.props.currentMatch, callback, merge = true, params = params, omit = ["context"])
+        Firebase.updateDocInfo(this.matchRef, this.props.currentMatch, callback, merge = true, params = params, omit = ["context", "playersNames"])
     }
 
     render() {

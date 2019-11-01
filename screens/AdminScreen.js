@@ -1,5 +1,10 @@
 import React from 'react';
-import {Button, StyleSheet, Text, View, Picker} from 'react-native';
+import {StyleSheet, Text, View, Picker} from 'react-native';
+import {Button} from "native-base"
+import DatePicker from 'react-native-datepicker'
+import Modal from "react-native-modal";
+import moment from "moment"
+
 import Firebase from "../api/Firebase";
 import EndingPeriodModal from "../components/editing/EndingPeriodModal";
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -10,7 +15,10 @@ import { connect } from 'react-redux'
 import {setCurrentCompetition} from "../redux/actions"
 import { translate } from '../assets/translations/translationManager';
 import { COMPSETTINGS } from '../constants/Settings';
-import { w } from '../api/Dimensions';
+import { w, totalSize } from '../api/Dimensions';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+
+
 
 class AdminScreen extends React.Component {
 
@@ -18,6 +26,8 @@ class AdminScreen extends React.Component {
         super(props);
         this.state = {
             endingPeriodModal: false,
+            groupGeneratingModal: false,
+            newPeriodDue: undefined,
             spinner: false,
             competitions: [],
         };
@@ -56,7 +66,6 @@ class AdminScreen extends React.Component {
 
     renderCompPicker = (competitions, currentComp) => {
 
-        console.warn(competitions)
         let pickerItems = competitions.map(comp=> <Picker.Item key={comp.id} label={comp.name} value={comp.id} /> )
 
         let selected = currentComp ? currentComp.id : competitions.length > 0 ? competitions.id : null;
@@ -89,55 +98,55 @@ class AdminScreen extends React.Component {
                 <View>
                     <View style={styles.buttonRow}>
                         <Button
+                            style={styles.button}
                             onPress={()=>{}}
-                            title="Configuració de la competició"
                             disabled
-                            color="#303030"
-                            accessibilityLabel="Tancar Mes"
-                        />
+                            >
+                            <Text style={styles.buttonText}>{translate("admin.competition settings")}</Text>
+                        </Button>
                     </View>
                     <View style={styles.buttonRow}>
                         <Button
-                            onPress={this.generateGroups}
-                            title="Generar grups"
-                            color="#303030"
-                            accessibilityLabel="Generar grups"
-                        />
+                            style={styles.button}
+                            onPress={this.toggleGroupGeneratingModal}
+                            >
+                            <Text style={styles.buttonText}>{translate("admin.generate groups")}</Text>
+                        </Button>
                     </View>
                     <View style={styles.buttonRow}>
                         <Button
+                            style={styles.button}
                             onPress={() => {
                                 this.props.navigation.navigate("EditRankingScreen")
                             }}
-                            title="Editar el ranking manualment"
-                            color="#303030"
-                            accessibilityLabel="Editar el ranking manualment"
-                        />
+                            >
+                            <Text style={styles.buttonText}>{translate("admin.edit ranking manually")}</Text>
+                        </Button>
                     </View>
                     <View style={styles.buttonRow}>
                         <Button
+                            style={styles.button}
                             onPress={this.tancarMes}
                             disabled
-                            title="Finalitzar periode de competició"
-                            color="#303030"
-                            accessibilityLabel="Finalitzar periode de competició"
-                        />
+                            >
+                            <Text style={styles.buttonText}>{translate("admin.end competition period")}</Text>
+                        </Button>
                     </View>
                     <View style={styles.buttonRow}>
                         <Button
+                            style={styles.button}
                             onPress={()=>{this.props.navigation.navigate("CompetitionScreen")}}
-                            title="Modificar partits"
-                            color="#303030"
-                            accessibilityLabel="Modificar partits"
-                        />
+                            >
+                            <Text style={styles.buttonText}>{translate("admin.modify matches")}</Text>
+                        </Button>
                     </View>
                     <View style={styles.buttonRow}>
                         <Button
+                            style={styles.button}   
                             onPress={()=>{this.props.navigation.navigate("CompetitionScreen")}}
-                            title="Anar a pantalla de competició"
-                            color="#303030"
-                            accessibilityLabel="Tancar Mes"
-                        />
+                            >
+                            <Text style={styles.buttonText}>{translate("admin.go to competition screen")}</Text>
+                        </Button>
                     </View>
                 </View>
             )
@@ -161,13 +170,21 @@ class AdminScreen extends React.Component {
         this.callFunction('updateGroups');
     };
 
+    toggleGroupGeneratingModal = () => {
+        this.setState({groupGeneratingModal: !this.state.groupGeneratingModal})
+    }
+
     generateGroups = () => {
 
         let {gymID, id: compID} = this.props.currentComp
 
-        Firebase.generateGroups(gymID, compID, this.props.currentComp.playersIDs, COMPSETTINGS.groups, {due: new Date("11/30/2019")},
-            () => this.props.navigation.navigate("CompetitionScreen")
+        Firebase.generateGroups(gymID, compID, this.props.currentComp.playersIDs, COMPSETTINGS.groups, {due: this.state.newPeriodDue},
+            () => {
+                this.setState({groupGeneratingModal: false})
+                this.props.navigation.navigate("CompetitionScreen")
+            }
         )
+
     }
 
     tancarMes = () => {
@@ -219,6 +236,49 @@ class AdminScreen extends React.Component {
                 {this.renderCompPicker(this.state.competitions, this.props.currentComp)}
                 {this.renderEditingOptions(this.props.currentComp)}
                 {endingPeriodModal}
+                <Modal
+                    isVisible={this.state.groupGeneratingModal}
+                    swipeDirection={["left", "right"]}
+                    onSwipeComplete={(swipeDirection) => this.toggleGroupGeneratingModal()}
+                    onBackdropPress={this.toggleGroupGeneratingModal}
+                    >
+                    <View style={styles.modalContent}>
+                        <Text>{translate("admin.choose a time limit to play matches")}</Text>
+                        <DatePicker
+                            minDate={new Date()}
+                            date={this.state.newPeriodDue}
+                            onDateChange={(date) => {this.setState({newPeriodDue: moment(date, "DD-MM-YYYY HH:mm" ).toDate()})}}
+                            style={{paddingHorizontal: 20, marginVertical: 20, width: "100%", justifyContent: "center", alignItems: "center"}}
+                            mode="datetime"
+                            placeholder={translate("vocabulary.fix a date")}
+                            format="DD-MM-YYYY HH:mm"
+                            customStyles={{
+                                dateInput: {
+                                borderWidth: 0,
+                                },
+                                dateText: {
+                                    fontSize: totalSize(2)
+                                }
+                            }}/>
+
+                        <Button
+                            style={{...styles.button, ...styles.modalActionButton}}
+                            onPress={this.generateGroups}>
+                            <Text style={styles.buttonText}>{translate("admin.generate groups")}</Text>
+                        </Button>
+
+                        <Button
+                            danger
+                            style={{...styles.button, ...styles.modalActionButton}}
+                            onPress={this.toggleGroupGeneratingModal}>
+                            <Text style={styles.buttonText}>{translate("actions.go back")}</Text>
+                        </Button>
+
+                        
+                        
+                    </View>
+                    
+                </Modal>
             </View>
         );
     }
@@ -241,6 +301,7 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingHorizontal: 20,
         backgroundColor: "white",
+        alignItems: "center",
         paddingTop: 30,
     },
 
@@ -263,5 +324,29 @@ const styles = StyleSheet.create({
     },
     buttonRow: {
         paddingTop: 30
+    },
+
+    button: {
+        justifyContent:"center",
+        alignItems:"center",
+        paddingHorizontal: 30
+    },
+
+    buttonText: {
+        color: "white",
+        textTransform: "uppercase",
+        fontFamily: "bold",
+        fontSize: totalSize(1.6)
+    },
+
+    //Group generating modal
+    modalContent: {
+        backgroundColor: "white",
+        padding: 20,
+        borderRadius: 5
+    },
+
+    modalActionButton: {
+        marginVertical: 10
     }
 });

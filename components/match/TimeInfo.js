@@ -57,7 +57,7 @@ class TimeInfo extends Component {
 
         let cardProps = {
             titleIcon: "calendar",
-            title: this.props.matchPlayed ? translate("cardTitles.match date") : translate("cardTitles.match schedule"),
+            title: !this.props.currentMatch.context.pending ? translate("cardTitles.match date") : translate("cardTitles.match schedule"),
             contentContainerStyles: {justifyContent:"center", alignItems: "center"}
         }
 
@@ -65,7 +65,7 @@ class TimeInfo extends Component {
 
             return (
                 <Card {...cardProps}>
-                    <Text>Va ser jugat el dia 10 d'octubre</Text>
+                    <Text style={{textAlign: "center", fontFamily: "bold", fontSize: totalSize(2) }}>{moment(this.props.currentMatch.playedOn).format("DD-MM-YYYY HH:mm")}</Text>
                 </Card>
             )
 
