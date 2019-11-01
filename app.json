@@ -30,7 +30,8 @@
     "android": {
       "config": {
         "googleSignIn": {
-          "certificateHash": "CA8947D07BBA0FC5A4066EE809961C88A76BD8F0758F1912B822DB36F833AF10"
+          "apiKey": "AIzaSyBo87T9t5sl8jX6YaJqsYylHsN2ZcZ95Xs",
+          "certificateHash": "E3CB786C725BFB98DD12AECB3B31BDF59B330A91"
         }
       },
       "package": "com.pol.esquaixlligues"
