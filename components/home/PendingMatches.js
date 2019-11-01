@@ -47,7 +47,7 @@ class PendingMatches extends Component {
 
                 matches = sortMatchesByDate(matches)
 
-                this.MAX_HEIGHT =Math.max(0, h(5)*(matches.length - 1))
+                this.MAX_HEIGHT =Math.max(0, h(8)*(matches.length - 1))
 
                 this.setState({matches})
             }
@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
 
     pendingMatchContainer: {
         flexDirection: "row",
-        height: h(5),
+        height: h(8),
     }
 
 });

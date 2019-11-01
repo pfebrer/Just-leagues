@@ -93,8 +93,13 @@ class Firebase {
             lastName: result.additionalUserInfo.profile.family_name,
             email: result.additionalUserInfo.profile.email,
           }
-          this.userRef(result.user.uid)
-            .set( userProfile, {merge: true})
+          this.userRef(result.user.uid).get()
+            .then(docSnapshot => {
+              docSnapshot.ref.set({
+                ...docSnapshot.data(),
+                ...userProfile
+              }, {merge: true})
+            })
             .then(function(snapshot) {
             });
         })
@@ -270,7 +275,9 @@ class Firebase {
     The callback recieves the user's complete data if getData = true, else the documentSnapshot*/
 
     return this.userRef(uid).onSnapshot(
-      docSnapshot => callback( getData ? docSnapshot.data() : docSnapshot)
+      docSnapshot => {
+        callback( getData ? {...docSnapshot.data(), id: docSnapshot.id} : docSnapshot)
+      }
     )
   }
 

@@ -81,7 +81,9 @@ class HomeScreen extends Component {
     render() {
 
         return (
-            <ScrollView style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
+            <ScrollView 
+                style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}
+                contentContainerStyle={{paddingVertical: 20}}>
                 <Notifications/>
                 <PendingMatches/>
                 {this.renderCompetitionStates(this.props.currentUser.activeCompetitions)}
@@ -169,7 +171,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingHorizontal: 10,
-        paddingVertical: 20,
         backgroundColor: USERSETTINGS["General appearance"].backgroundColor.default
     },
 

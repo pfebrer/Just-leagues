@@ -17,36 +17,30 @@ const runtimeOpts = {
 
 const Constants = {
     GROUP_SIZE: 4,
-    UNTYING_CRITERIA: ["directMatch", "position"]
+    UNTYING_CRITERIA: ["directMatch","position"],
+    dbPrefix: "V3dev_",
+    paddingTopHeader: 20,
 };
 
 const Collections = {
-    //Make collections dynamics
-    RANKINGS: (prefix) => {
-        return (prefix && prefix ) + "rankings"
-    },
-    GROUPS: (prefix) => {
-        return (prefix && prefix ) + "groups"
-    },
-    PLAYERS: (prefix) => {
-        return (prefix && prefix ) + "players"
-    },
-    TOURNAMENT: (prefix) => {
-        return (prefix && prefix ) + "Torneig"
-    },
-    MATCHES: (prefix) => {
-        return (prefix && prefix ) + "matches"
-    },
-    MONTH_INFO: (prefix) => {
-        return (prefix && prefix ) + "monthInfo"
-    },
-    CHALLENGE: (prefix) => {
-        return (prefix && prefix ) + "Reptes"
-    },
-    GYMS: (prefix) => {
-        return (prefix && prefix ) + "gyms"
-    }
+    GYMS: (Constants.dbPrefix && Constants.dbPrefix) + "gyms",
+    USERS: (Constants.dbPrefix && Constants.dbPrefix) + "users",
+    RANKINGS: (Constants.dbPrefix && Constants.dbPrefix) + "rankings",
+    GROUPS: (Constants.dbPrefix && Constants.dbPrefix) + "groups",
+    PLAYERS: (Constants.dbPrefix && Constants.dbPrefix) + "players",
+    TOURNAMENT: (Constants.dbPrefix && Constants.dbPrefix) + "Torneig",
+    MATCHES: (Constants.dbPrefix && Constants.dbPrefix) + "matches",
+    MONTH_INFO: (Constants.dbPrefix && Constants.dbPrefix) + "monthInfo",
+    CHALLENGE: (Constants.dbPrefix && Constants.dbPrefix) + "Reptes"
 };
+
+const Subcollections = {
+    COMPETITIONS: "competitions",
+    GROUPS: "groups",
+    MATCHES: "matches",
+    PENDINGMATCHES: "pendingMatches"
+}
+
 const Documents = {
     RANKINGS: {
         squashRanking: "squashRanking",
@@ -56,16 +50,17 @@ const Documents = {
         updateRanking: "updateRanking"
     },
     GROUPS: {
-        chatMessages: "chatMessages"
+        chatMessages: "chatMessages",
+        generalMessages: "generalMessages"
     },
     PLAYERS: {
         props: {
             currentGroup: "currentGroup",
-            playerName: "playerName",
-            isAdmin: 'admin'
+            playerName: "playerName"
         }
     }
 };
+
 // REMEMBER TO KEEP IN SYNC WITH CONSTANTS.js
 const functions = require('firebase-functions');
 const fetch = require('node-fetch');
@@ -80,9 +75,36 @@ const firestoreFunction = functions.region('europe-west1').runWith(runtimeOpts).
 const httpsFunction = functions.region('europe-west1').runWith(runtimeOpts).https
 
 
-exports.initCompetition = firestoreFunction.document("V3dev_gyms/{gymID}/competitions/{compID}"  )
-.onCreate((event, context) => {
-    console.log("NEW COMPETITION!")
+exports.initCompetition = firestoreFunction.document(Collections.GYMS + "/{gymID}/"+ Subcollections.COMPETITIONS + "/{compID}"  )
+.onCreate((snap, context) => {
+
+    const {gymID, compID} = context.params
+    const {players, name: compName, type: compType} = snap.data()
+
+    let promises = [];
+
+    //Create all the unasigned users of this new competition
+    players.forEach( player => {
+
+        promises.push(
+            __createUnasignedUser(player.name, player.email, {
+                gymID: gymID,
+                id: compID,
+                name: compName,
+                type: compType,
+            })
+        )
+    })
+
+    //When all of them are created, retrieve their IDs and 
+    return Promise.all(promises).then( (references) => {
+        let playersIDs = references.map(ref => ref.id)
+        snap.ref.update({
+            playersIDs,
+            players: admin.firestore.FieldValue.delete()
+        })
+    })
+    
 })
 
 //This function will detect the creation of a pending match and pass the reference to the relevant user
@@ -492,6 +514,15 @@ const __getDBPrefix = (req) => {
         console.log("__getDBPrefix::USING DE PREFIX " + ret);
     }
     return ret;
+}
+
+const __createUnasignedUser = (displayName, email, comp) => {
+    return firestore.collection(Collections.USERS).add({
+        displayName,
+        email,
+        activeCompetitions: [comp],
+        asigned: false
+    })
 }
 
 const __untie = (iPlayers, results, criteria) => {

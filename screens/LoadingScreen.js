@@ -65,64 +65,55 @@ class LoadingScreen extends React.Component {
 
                     userData => {
 
-                    if (!userData) {
-                        //This fixes the problem of a user being deleted from the database while logged in (logged in forever, weird but it's better to prevent)
-                        //THIS DOESN'T ALLOW CREATING NEW USERS THROUGH EMAIL, I HAVE TO FIND A DIFFERENT WORKAROUND
-                        Firebase.signOut()
+                    //In this case, it is just the object coming from google sign in (I don't fully understand the flow)
+                    if( !userData) return null
 
+                    //Update the settings fields if some new settings have been produced
+                    let newSettings = updateSettingsFields(userData.settings || {}, USERSETTINGS)
+
+                    if (userData.activeCompetitions){
+                        //Create a listener for each competition in active competitions to retrieve the users ids and names
+                        userData.activeCompetitions.forEach( comp => {
+
+                            if (!this.usersListeners[comp.id]){
+
+                                this.usersListeners[comp.id] = Firebase.onCompUsersSnapshot(comp, 
+                                    IDsAndNames => this.props.updateIDsAndNames(IDsAndNames)
+                                )
+                            }
+
+                        });
+                    }
+                    
+                    if (newSettings){
+
+                        Firebase.updateUserSettings(user.uid, newSettings)
+                        
                     } else {
 
-                        //If there are no settings, it is just the object coming from google sign in (I don't fully understand the flow)
-                        if (!userData.settings) return null 
+                        this.props.storeUserData({activeCompetitions: [], id: user.uid,...userData})
 
-                        //Update the settings fields if some new settings have been produced
-                        let newSettings = updateSettingsFields(userData.settings, USERSETTINGS)
+                        console.log("User signed in ---> Redirect to the home screen")
 
-                        if (userData.activeCompetitions){
-                            //Create a listener for each competition in active competitions to retrieve the users ids and names
-                            userData.activeCompetitions.forEach( comp => {
+                        this.props.navigation.navigate('App');
 
-                                if (!this.usersListeners[comp.id]){
+                        /*Toast.show({
+                        text: 'Benvingut, ' + userData.firstName + '!',
+                        duration: 3000
+                        })*/
 
-                                    this.usersListeners[comp.id] = Firebase.onCompUsersSnapshot(comp, 
-                                        IDsAndNames => this.props.updateIDsAndNames(IDsAndNames)
-                                    )
-                                }
+                        /* Firebase.gymRef("nickspa").collection("matches").get()
+                        .then((query) => {
 
-                            });
-                        }
-                        
-                        if (newSettings){
-
-                            Firebase.updateUserSettings(user.uid, newSettings)
+                            query.forEach(doc => {
+                                Firebase.gymRef("nickspa").collection("competitions").doc("UmtaUDr98rdx5pFKrygI").collection("matches").doc(doc.id).set(doc.data()).then(()=>{}).catch(()=>{})
+                            })
                             
-                        } else {
-
-
-
-                            this.props.storeUserData({activeCompetitions: [], id: user.uid,...userData})
-
-                            console.log("User signed in ---> Redirect to the home screen")
-
-                            this.props.navigation.navigate('App');
-
-                            /*Toast.show({
-                            text: 'Benvingut, ' + userData.firstName + '!',
-                            duration: 3000
-                            })*/
-
-                            /* Firebase.gymRef("nickspa").collection("matches").get()
-                            .then((query) => {
-
-                                query.forEach(doc => {
-                                    Firebase.gymRef("nickspa").collection("competitions").doc("UmtaUDr98rdx5pFKrygI").collection("matches").doc(doc.id).set(doc.data()).then(()=>{}).catch(()=>{})
-                                })
-                                
-                            }).catch(()=>{}) */
-
-                        }
+                        }).catch(()=>{}) */
 
                     }
+
+                    
 
                     
 

@@ -35,23 +35,6 @@ class Notifications extends Component {
             unasignedUsers => this.setState({unasignedUsers})
         )
 
-        createUnasignedUser = (displayName, email, comp) => {
-            Firebase.usersRef.add({
-                displayName,
-                email,
-                activeCompetitions: [comp],
-                asigned: false
-            }).then(() => {}).catch(err => console.log(error))
-        }
-
-        /* createUnasignedUser("Pol Febrer", "pfebrer96@gmail.com", {
-            gymID: "nickspa",
-            id: "UmtaUDr98rdx5pFKrygI",
-            name: "Lliga social esquaix",
-            type: "groups",
-          }
-        ) */
-
     }
 
     mergeUnasignedUser = (unasignedUser, requestingUser) => {
