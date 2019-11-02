@@ -158,18 +158,19 @@ exports.pointsToSets = (point) => {
 //Function that recieves the result in sets and converts it to points.
 exports.setsToPoints = (setsInp, pointsScheme) => {
 
-    let sets = JSON.stringify(setsInp);
+    let sets = _.cloneDeep(setsInp);
+    pointsScheme = _.cloneDeep(pointsScheme);
     let convertedPoints;
 
     pointsScheme.forEach(({result, points}) => {
 
-        if (sets === JSON.stringify(result)) {
+        if (_.isEqual(sets , result)) {
 
             convertedPoints = points
 
             return false
 
-        } else if (sets === JSON.stringify(result.reverse())) {
+        } else if (_.isEqual(sets , result.slice().reverse())) {
 
             convertedPoints = points.reverse()
             return false

@@ -27,7 +27,7 @@ class Table extends Component {
 
     generateEmptyScores = () => {
        
-        return  _.zip.apply(_, _.chunk(Array(this.props.playersIDs.length**2).fill(false), this.props.playersIDs.length));
+        return  _.chunk(Array(this.props.playersIDs.length**2).fill(false), this.props.playersIDs.length);
     }
 
     componentDidMount() {
@@ -108,6 +108,10 @@ class Table extends Component {
         let [iLeader, iLoser] = iLeaderLoser(totals)
         let nPlayers = players.length
 
+        //To render, it is better that we pass the scores transposed
+        //In this way, map (or forEach) will return the scores column by column
+        scores = _.zip.apply(_, _.cloneDeep(scores))
+
         return [
 
             <Column 
@@ -156,7 +160,7 @@ class Table extends Component {
             return this.props.competitions[this.props.competition.id].playersIDs.indexOf(uid) + 1
         })
 
-        let totals = this.props.totals || _.zip.apply(_, this.state.scores).map( playerScores => playerScores.reduce((a, b) => a + b, 0) )
+        let totals = this.props.totals || this.state.scores.map( playerScores => playerScores.reduce((a, b) => a + b, 0) )
 
         return (
             <View style={this.props.containerStyles}>
