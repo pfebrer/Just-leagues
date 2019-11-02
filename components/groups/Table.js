@@ -156,7 +156,7 @@ class Table extends Component {
             return this.props.competitions[this.props.competition.id].playersIDs.indexOf(uid) + 1
         })
 
-        let totals = this.props.totals || this.state.scores.map( playerScores => playerScores.reduce((a, b) => a + b, 0) )
+        let totals = this.props.totals || _.zip.apply(_, this.state.scores).map( playerScores => playerScores.reduce((a, b) => a + b, 0) )
 
         return (
             <View style={this.props.containerStyles}>
