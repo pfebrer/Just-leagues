@@ -10,6 +10,7 @@ import {
 import { Icon, Text} from 'native-base';
 
 import _ from "lodash"
+import moment from "moment"
 
 import Firebase from "../../api/Firebase"
 
@@ -50,7 +51,7 @@ class PendingMatches extends Component {
 
                 matches = sortMatchesByDate(matches)
 
-                this.MAX_HEIGHT =Math.max(0, h(8)*(matches.length - 1))
+                this.MAX_HEIGHT =Math.max(0, h(10)*(matches.length - 1))
 
                 this.setState({matches})
             }
@@ -104,37 +105,35 @@ class PendingMatches extends Component {
         if (match.scheduled) {
 
             let {time, location} = match.scheduled
-
-            if (convertDate(time.toDate(), "dd/mm/yyyy") ==  convertDate(Date.now(), "dd/mm/yyyy")) {
-                time = "Today at " + convertDate(time.toDate(), "hh:mm")
-            } else {
-                time = convertDate(time.toDate(), "dd/mm hh:mm")
-            }
+            time = moment(time)
 
             var locationInfo = location ? <Text note style={{textAlign: "right"}}>{location}</Text> : null
 
             timeInfo = <View style={styles.timeInfoView}>
-                            <Text note style={{color: "green", textAlign: "right"}}>{translate("vocabulary.scheduled match")}</Text>
-                            <Text style={{fontFamily: "bold", textAlign:"right"}}>{time}</Text>
+                            <Text style={{fontFamily: "bold", textAlign:"right", fontSize: totalSize(1.5)}}>{time.calendar()}</Text>
+                            <Text note style={{textAlign: "right", fontSize: totalSize(1.5)}}>{"("+ time.fromNow() + ")"}</Text>
                             {locationInfo}
                         </View>
                         
 
         } else {
 
-            const matchDue = convertDate(match.due.toDate(), "dd/mm")
+            const matchDue = moment(match.due)
 
             timeInfo = <View style={styles.timeInfoView}>
-                            <Text note style={{color: "darkred",textAlign: "right"}}>{translate("vocabulary.not scheduled match")}</Text>
-                            <Text note style={{textAlign: "right"}}>{translate("vocabulary.limit") + ": " + matchDue}</Text>
+                            <Text note style={{textAlign: "right", fontSize: totalSize(1.5)}}>{matchDue.calendar()}</Text>
+                            <Text note style={{textAlign: "right", fontSize: totalSize(1.5)}}>{"("+ matchDue.fromNow() + ")"}</Text>
                         </View>
         }
+
+        let additionalPadStyles = match.scheduled ? styles.scheduledPad : styles.notScheduledPad
 
         return (
             <TouchableOpacity 
                 key={match.id} 
                 style={ header ? styles.pendingMatchHeader : styles.pendingMatchContainer}
                 onPress={() => this.goToMatch(match)}>
+                <View style={{...styles.pendingMatchPad, ...additionalPadStyles}}/>
                 <View style={{flex:1, justifyContent: "center"}}>
                     {matchInfo}
                     <Text note>{match.competition.name}</Text>
@@ -204,7 +203,7 @@ const styles = StyleSheet.create({
 
     pendingMatchHeader: {
         flexDirection: "row",
-        minHeight: h(8),
+        minHeight: h(10),
         justifyContent: "center",
         alignItems: "center"
     },
@@ -213,7 +212,22 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "row",
-        height: h(8),
+        height: h(10),
+    },
+
+    pendingMatchPad: {
+        width: 6,
+        height: "90%",
+        marginRight: 15,
+        borderRadius: 3
+    },
+
+    scheduledPad: {
+        backgroundColor: "#c6e17b",
+    },
+
+    notScheduledPad: {
+        backgroundColor: "#e1947b"
     },
 
 });

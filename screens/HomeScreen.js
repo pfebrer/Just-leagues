@@ -102,8 +102,6 @@ class HomeScreen extends Component {
 
                 {this.renderCompetitionStates(this.props.currentUser.activeCompetitions)}
 
-                <Text>{moment(Date.now()).fromNow()}</Text>
-
             </ScrollView>
         )
     }

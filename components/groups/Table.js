@@ -32,38 +32,40 @@ class Table extends Component {
 
     componentDidMount() {
 
-        this.matchListeners = {}
-
         let {gymID, id: compID} = this.props.competition
 
-        //We will be listening to changes in the matches to update the scores of the group
-        this.props.matchesIDs.forEach( matchID => {
+        this.matchesListener = Firebase.matchesRef(gymID, compID).where("context.group.id", "==", this.props.id).onSnapshot(
 
-            this.matchListeners[matchID] = Firebase.onMatchSnapshot(gymID, compID, matchID, 
-                match => {
 
-                    let {result, playersIDs} = match
+            matches => {
 
-                    let points = setsToPoints(result, COMPSETTINGS.groups.pointsScheme)
+                let newScores = _.cloneDeep(this.state.scores)
+                
+                matches.forEach(
 
-                    let iPlayers = playersIDs.map( uid => this.props.playersIDs.indexOf(uid))
+                    match => {
 
-                    let newScores = _.cloneDeep(this.state.scores)
+                        let {result, playersIDs} = match.data()
 
-                    newScores[iPlayers[0]][iPlayers[1]] = points[0]
-                    newScores[iPlayers[1]][iPlayers[0]] = points[1]
+                        let points = setsToPoints(result, COMPSETTINGS.groups.pointsScheme)
 
-                    this.setState({scores: newScores})
+                        let iPlayers = playersIDs.map( uid => this.props.playersIDs.indexOf(uid))
 
-                }
-            )
+                        newScores[iPlayers[0]][iPlayers[1]] = points[0]
+                        newScores[iPlayers[1]][iPlayers[0]] = points[1]
 
-        })
+                    }
+                )
+
+                this.setState({scores: newScores})
+            }
+        )
+
     }
 
     componentWillUnmount() {
-        //Unsubscribe from all listeners
-        Object.keys(this.matchListeners).forEach(matchID => this.matchListeners[matchID]() )
+        //Unsubscribe from listeners
+        this.matchesListener()
     }
 
     goToUserProfile = ({iRow}) => {
@@ -94,6 +96,10 @@ class Table extends Component {
         this.props.setCurrentMatch({
             context: {
                 matchID: this.props.matchesIDs[iMatch],
+                group: {
+                    id: this.props.id,
+                    name: this.props.name
+                },
                 competition: this.props.competition,
                 pending: data ? false : true
             },

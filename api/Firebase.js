@@ -304,17 +304,6 @@ class Firebase {
     )
   }
 
-  onPlayerGroupSnapshot = (gymID, compID, uid, callback, getData = true) => {
-    /*Listener to changes on the group where the player is in a competition
-    /The callback recieves the group data if getData = true, otherwise it recieves the document snapshot*/
-
-    return this.groupsRef(gymID, compID).where("playersIDs", "array-contains", uid )
-    .onSnapshot( querySnapshot =>{
-        querySnapshot.forEach(doc => callback( getData ? doc.data() : doc ) )
-    });
-
-  }
-
   onPendingMatchesSnapshot = (uid, callback, getData = true) => {
     /*Listen to changes in the pendingMatches of a given user
     Callback recieves an array with all the pendings matches complete info if getData = true,
@@ -324,12 +313,19 @@ class Firebase {
     .onSnapshot(querySnapshot => { 
 
       if (!getData) callback(querySnapshot)
-      else callback( querySnapshot.docs.map(doc => ({
-          ...doc.data(),
-          id: doc.id,
-          gymID: doc.ref.parent.parent.parent.parent.id,
-          compID: doc.ref.parent.parent.id
-        })
+      else callback( querySnapshot.docs.map(doc => {
+          let data = doc.data()
+
+          return {
+            ...data,
+            id: doc.id,
+            due: data.due ? data.due.toDate() : null,
+            scheduled: data.scheduled ? { ...data.scheduled, time: data.scheduled.time.toDate()} : null,
+            gymID: doc.ref.parent.parent.parent.parent.id,
+            compID: doc.ref.parent.parent.id
+          }
+          
+        }
       ))
 
     })
@@ -440,7 +436,7 @@ class Firebase {
       if (getData){
 
         let groups = querySnapshot.docs.map((group) => {
-          return {...group.data(), iGroup: group.get("order")}
+          return {...group.data(), iGroup: group.get("order"), id: group.id}
         });
 
         callback(groups)
@@ -451,6 +447,17 @@ class Firebase {
       
 
   })
+
+  }
+
+  onPlayerGroupSnapshot = (gymID, compID, uid, callback, getData = true) => {
+    /*Listener to changes on the group where the player is in a competition
+    /The callback recieves the group data if getData = true, otherwise it recieves the document snapshot*/
+
+    return this.groupsRef(gymID, compID).where("playersIDs", "array-contains", uid )
+    .onSnapshot( querySnapshot =>{
+        querySnapshot.forEach(doc => callback( getData ? {...doc.data(), id: doc.id} : doc ) )
+    });
 
   }
 
@@ -469,6 +476,7 @@ class Firebase {
     if (!playedOn) playedOn = new Date()
 
     batch.set(this.matchRef(gymID, compID, matchID),{
+      context: _.omit(context, ["pending", "matchID"]),
       result,
       playersIDs,
       playedOn
@@ -608,7 +616,7 @@ class Firebase {
       })
 
       //Finally, store the group
-      var groupRef = this.groupsRef(gymID, compID).doc(name)
+      var groupRef = this.groupsRef(gymID, compID).doc()
       batch.set( groupRef, {
         name, order,
         matchesIDs,

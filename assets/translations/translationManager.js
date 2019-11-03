@@ -15,6 +15,7 @@ import {
   I18nManager,
 } from "react-native";
 
+//Import the moment locales of the languages that the app supports
 import caLocale from "moment/locale/ca"
 import esLocale from "moment/locale/es"
 
@@ -47,16 +48,14 @@ findBestAvailableLanguage = (keys, fallback) => {
 
 }
     
-const setI18nConfig = async (defaultLanguage) => {
+const setI18nConfig = async (langToImpose) => {
     // fallback if no available language fits
-    const fallback = { languageTag: defaultLanguage, isRTL: false };
+    const fallback = { languageTag: "ca", isRTL: false };
 
     //Get the locale
     var { languageTag, isRTL } = findBestAvailableLanguage(Object.keys(translationGetters), fallback)
 
-    languageTag = defaultLanguage
-
-    console.warn(languageTag)
+    if (langToImpose) languageTag = langToImpose
 
     // clear translation cache
     translate.cache.clear();

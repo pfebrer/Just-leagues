@@ -78,7 +78,7 @@ class MatchScreen extends Component {
 
                     this.matchRef = docSnapshot.ref
 
-                    this.props.setCurrentMatch( {...match}, {merge: true} )
+                    this.props.setCurrentMatch( {...match, context: {...match.context, matchID: this.matchID} }, {merge: true} )
 
                     this.grantEditRights()
     
@@ -160,6 +160,7 @@ class MatchScreen extends Component {
                 Firebase.submitNewPlayedMatch(this.props.currentMatch,
                     
                     () => {
+
                         this.props.setCurrentMatch({context: {...this.props.currentMatch.context, pending: false}}, {merge: true})
                         callback()
 

@@ -60,7 +60,8 @@
         "match score": "Resultat del partit",
         "fix a date":"Fixa una data...",
         "days": "Dies",
-        "hours": "Hores"
+        "hours": "Hores",
+        "played": "Jugat"
     },
     "errors": {
         "you entered an ivalid result":"No ens enganyis, aquest resultat és impossible :(",

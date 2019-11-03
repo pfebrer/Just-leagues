@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, StyleSheet, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import DatePicker from 'react-native-datepicker'
 import moment from "moment"
 
@@ -13,6 +13,7 @@ import { connect } from 'react-redux'
 import {setCurrentMatch} from "../../redux/actions"
 import { totalSize } from '../../api/Dimensions'
 import UpdatableCard from './UpdatableCard'
+import { Text } from 'native-base'
 
 
 class TimeInfo extends Component {
@@ -22,29 +23,35 @@ class TimeInfo extends Component {
         this.state = {
             pendingUpdate: false
         }
+
+        this.datePickerFormat = "DD-MM HH:mm"
     }
 
     DateLimit = ({limitDate, textStyles }) => {
 
-        let daysLeft = ( limitDate - Date.now() ) / (1000*60*60*24)
+        let momentLimit = moment(limitDate)
+
+        let daysLeft = momentLimit.diff( moment(), "days")
 
         textStyles = {
             color: daysLeft > 7 ? "green" : daysLeft > 3 ? "yellow" : "darkred",
             ...textStyles 
         }
 
-        let timeLeft = daysLeft > 1 ? 
-            daysLeft + " "  + translate("vocabulary.days").toLowerCase() :
-            daysLeft*24 + " "  + translate("vocabulary.hours").toLowerCase()
-        
-        let displayDate = convertDate(limitDate , "dd/mm hh:mm")
-
-        return <Text style={{ ...textStyles, textAlign: "center"}}>{displayDate}</Text>
+        return (
+            <View>
+                <View style={{paddingTop:10, flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
+                    <Text style={{textAlign: "center"}}>{translate("info.limit to play") + ":" }</Text>
+                    <Text style={{ ...textStyles, textAlign: "center"}}>{moment(limitDate).fromNow()}</Text>
+                </View>
+                <Text note style={{ textAlign: "center"}}>{"(" + moment(limitDate).calendar() + ")"}</Text>
+            </View>
+        )
     }
 
     updateScheduledTime = (newDate) => {
 
-        newDate = moment(newDate, "DD-MM HH:mm" ).toDate()
+        newDate = moment(newDate, this.datePickerFormat ).toDate()
 
         this.props.setCurrentMatch({ scheduled: {...this.props.currentMatch.scheduled, time: newDate} }, {merge: true})
 
@@ -65,19 +72,19 @@ class TimeInfo extends Component {
 
             return (
                 <Card {...cardProps}>
-                    <Text style={{textAlign: "center", fontFamily: "bold", fontSize: totalSize(2) }}>{moment(this.props.currentMatch.playedOn).format("DD-MM-YYYY HH:mm")}</Text>
+                    <Text style={{textAlign: "center", fontFamily: "bold", fontSize: totalSize(2) }}>{[translate("vocabulary.played"), moment(this.props.currentMatch.playedOn).fromNow()].join(" ")}</Text>
+                    <Text note style={{textAlign: "center"}}>{"(" + moment(this.props.currentMatch.playedOn).calendar() + ")"}</Text>
                 </Card>
             )
 
         } else {
 
             let timeLimit = this.props.currentMatch.due ? (
-                <View style={{paddingTop:10, flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
-                    <Text style={{textAlign: "center"}}>{translate("info.limit to play") + ":" }</Text>
-                    <this.DateLimit 
+
+                <this.DateLimit 
                         limitDate={this.props.currentMatch.due}
                         textStyles={{textAlign: "center", ...styles.dateLimit}}/>
-                </View>
+                
             ) : (
                 <View style={{paddingTop:10}}>
                     <Text style={{textAlign: "center"}}>{translate("info.no date limit to play match")}</Text>
@@ -97,7 +104,7 @@ class TimeInfo extends Component {
                         style={{paddingHorizontal: 20, width: "100%", justifyContent: "center", alignItems: "center"}}
                         mode="datetime"
                         placeholder={translate("vocabulary.fix a date")}
-                        format="DD-MM HH:mm"
+                        format={this.datePickerFormat}
                         disabled={!this.props.editable}
                         showIcon={this.props.editable}
                         customStyles={{
