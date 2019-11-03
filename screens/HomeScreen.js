@@ -30,6 +30,7 @@ import Notifications from "../components/home/Notifications"
 import Card from "../components/home/Card"
 
 import _ from "lodash"
+import moment from 'moment';
 
 class HomeScreen extends Component {
 
@@ -100,6 +101,8 @@ class HomeScreen extends Component {
                 <PendingMatches navigation={this.props.navigation}/>
 
                 {this.renderCompetitionStates(this.props.currentUser.activeCompetitions)}
+
+                <Text>{moment(Date.now()).fromNow()}</Text>
 
             </ScrollView>
         )
