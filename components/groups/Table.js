@@ -370,7 +370,8 @@ const styles = StyleSheet.create({
 
     tableText: {
         color: "black",
-        fontSize: totalSize(1.6)
+        fontSize: totalSize(1.6),
+        textAlign: "center"
     },
 
     leaderText: {

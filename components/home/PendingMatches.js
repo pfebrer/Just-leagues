@@ -45,7 +45,6 @@ class PendingMatches extends Component {
 
                 matches = matches.map( match => ({
                     ...match,
-                    playersNames: match.playersIDs.map( uid => this.props.IDsAndNames[uid] || "Sense nom"),
                     competition: this.props.currentUser.activeCompetitions.filter(comp => comp.id == match.compID )[0] || {name: "Competició desconeguda"}
                 }) )
 
@@ -94,7 +93,8 @@ class PendingMatches extends Component {
         //Determine the match information that should be displayed
         if (match.playersIDs.length == 2){
             //then we need to display just the rival
-            let rival = match.playersNames.filter( (name, i) => match.playersIDs[i] != this.props.currentUser.id )[0]
+            let rival = match.playersIDs.map( uid => this.props.IDsAndNames[uid] || "Sense nom")
+                        .filter( (name, i) => match.playersIDs[i] != this.props.currentUser.id )[0]
 
             matchInfo = <Text>{rival}</Text>
         }
@@ -107,11 +107,11 @@ class PendingMatches extends Component {
             let {time, location} = match.scheduled
             time = moment(time)
 
-            var locationInfo = location ? <Text note style={{textAlign: "right"}}>{location}</Text> : null
+            var locationInfo = location ? <Text note style={{...styles.scheduleText}}>{location}</Text> : null
 
             timeInfo = <View style={styles.timeInfoView}>
-                            <Text style={{fontFamily: "bold", textAlign:"right", fontSize: totalSize(1.5)}}>{time.calendar()}</Text>
-                            <Text note style={{textAlign: "right", fontSize: totalSize(1.5)}}>{"("+ time.fromNow() + ")"}</Text>
+                            <Text style={{fontFamily: "bold", ...styles.scheduleText}}>{time.calendar()}</Text>
+                            <Text note style={{...styles.scheduleText}}>{"("+ time.fromNow() + ")"}</Text>
                             {locationInfo}
                         </View>
                         
@@ -121,8 +121,9 @@ class PendingMatches extends Component {
             const matchDue = moment(match.due)
 
             timeInfo = <View style={styles.timeInfoView}>
-                            <Text note style={{textAlign: "right", fontSize: totalSize(1.5)}}>{matchDue.calendar()}</Text>
-                            <Text note style={{textAlign: "right", fontSize: totalSize(1.5)}}>{"("+ matchDue.fromNow() + ")"}</Text>
+                            <Text note style={{...styles.scheduleText, color: "darkred"}}>{translate("vocabulary.not scheduled match")}</Text>
+                            <Text note style={{...styles.scheduleText}}>{matchDue.calendar()}</Text>
+                            <Text note style={{...styles.scheduleText}}>{"("+ matchDue.fromNow() + ")"}</Text>
                         </View>
         }
 
@@ -220,6 +221,15 @@ const styles = StyleSheet.create({
         height: "90%",
         marginRight: 15,
         borderRadius: 3
+    },
+
+    timeInfoView: {
+        marginLeft: 10,
+    },
+
+    scheduleText: {
+        textAlign: "right",
+        fontSize: totalSize(1.6)
     },
 
     scheduledPad: {
