@@ -319,7 +319,8 @@ const styles = StyleSheet.create({
     },
 
     column: {
-        borderRightWidth: 1
+        borderRightWidth: 1,
+        overflow: "hidden"
     },
 
     ranksCol: {
@@ -341,7 +342,7 @@ const styles = StyleSheet.create({
 
     totalsCol: {
         flex: 3,
-        borderRightWidth: 0
+        borderRightWidth: 0,
     },
 
     tableCell: {
@@ -349,7 +350,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderBottomColor: "black",
         borderBottomWidth: 1,
-        height: h(4)
+        height: h(4),
     },
 
     samePlayerCell: {
