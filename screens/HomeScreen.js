@@ -57,7 +57,7 @@ class HomeScreen extends Component {
         }
 
         if ( ! _.isEqual(prevProps.currentUser.gymAdmin, this.props.currentUser.gymAdmin)
-            || ( prevProps.currentUser.admin != this.props.admin) ) {
+            || ( prevProps.currentUser.admin != this.props.currentUser.admin) ) {
 
             this.props.navigation.setParams({
                 isAdmin: (this.props.currentUser.gymAdmin && this.props.currentUser.gymAdmin.length > 0) || this.props.currentUser.admin
