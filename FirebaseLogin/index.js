@@ -6,8 +6,6 @@ import Register from './screens/Register';
 import ForgotPassword from './screens/ForgotPassword';
 import { w } from '../api/Dimensions';
 
-import Firebase from "../api/Firebase";
-
 export default class FirebaseLogin extends Component {
 
   constructor(props) {

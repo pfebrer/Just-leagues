@@ -158,7 +158,7 @@ class LoadingScreen extends React.Component {
     render() {
         return <View style={styles.container}>
                     <Text style={styles.userCheck}>{this.status.msg}</Text>
-                    <ActivityIndicator size="large" color="#FFFFFF"/>
+                    <ActivityIndicator size="large" color="#000000"/>
                     <StatusBar barStyle="default"/>
                 </View>
         

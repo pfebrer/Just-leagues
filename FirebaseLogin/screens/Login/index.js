@@ -124,8 +124,8 @@ const styles = StyleSheet.create({
   icon: {
     width: w(70),
     height: h(30),
-    marginTop: h(10),
-    marginBottom: h(7),
+    marginTop: h(7),
+    marginBottom: h(5),
   },
   textContainer: {
     width: w(100),
