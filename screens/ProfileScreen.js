@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {Component} from 'react';
 import {ImageBackground, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import Firebase from "../api/Firebase"
 import ChangePWModal from '../components/ChangePWModal';
@@ -7,8 +7,11 @@ import PlayerProfile from '../components/statDisplays/UserProfile';
 //Redux stuff
 import { connect } from 'react-redux'
 import { USERSETTINGS } from "../constants/Settings"
+import Card from '../components/home/Card';
+import DetailedStats from '../components/statDisplays/DetailedStats';
+import { translate } from '../assets/translations/translationManager';
 
-class Stats extends React.Component {
+class ProfileScreen extends React.Component {
 
     constructor(props) {
         super(props)
@@ -19,41 +22,10 @@ class Stats extends React.Component {
 
     componentDidMount() {
 
-        /*Firebase.userRef(this.userId).get()
-        .then((docSnapshot) => {
-            let {playerName} = docSnapshot.data()
-            if (this.state.playerName == "... ...") {
-                this.setState({playerName, currentUserName: playerName})
-            } else {
-                this.setState({currentUserName: playerName})
-            }
-        })
-        .catch(err => {
-            alert("No s'ha pogut carregar la informació de l'usuari", err);
-        });
+        this.matchesListener = Firebase.onUserMatchesSnapshot(this.props.currentUser.id, () => {
 
-        Firebase.matchesRef.orderBy("date").get().then((querySnapshot) => {
-            let playerMatches = [];
-            querySnapshot.forEach((doc) => {
-                const {matchPlayers, matchResult, iGroup} = doc.data()
-                let playerName = this.state.playerName
-                const iPlayer = matchPlayers.indexOf(playerName);
-                if (iPlayer >= 0) {
-                    const iRival = iPlayer == 0 ? 1 : 0;
-                    const matchWon = matchResult[iPlayer] > matchResult[iRival] ? true : false;
-                    playerMatches.push({
-                        rival: matchPlayers[iRival],
-                        rivalSets: matchResult[iRival],
-                        playerSets: matchResult[iPlayer],
-                        matchWon,
-                        iGroup
-                    })
-                }
-            });
-            this.setState({playerMatches: playerMatches.reverse()});
-        }).catch(err => {
-            alert("Hi ha problemes per carregar les estadístiques\nError: " + err.message)
-        })*/
+        })
+
     }
 
     static getDerivedStateFromProps(nextProps, prevState) {
@@ -80,8 +52,70 @@ class Stats extends React.Component {
 
         return (
             <View style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
+                <Card>
+                    <Text>{this.props.currentUser.displayName}</Text>
+                </Card>
+
+                <StatsCarousel groupedMatches={[[],[],[]]}/>
+
                 <PlayerProfile uid={uid}/>
                 {changePWModal}
+            </View>
+        );
+    }
+}
+
+import Carousel, {Pagination} from 'react-native-snap-carousel';
+import { w } from '../api/Dimensions';
+
+class StatsCarousel extends Component {
+
+    constructor(props){
+        super(props)
+
+        this.state = {
+            slider1ActiveSlide: 0
+        }
+    }
+
+    _renderItem ({item, index}) {
+        return (
+            <DetailedStats playerMatches={item}/>
+        );
+    }
+
+    render () {
+        return (
+            <View style={styles.exampleContainer}>
+                <Carousel
+                  ref={c => this._slider1Ref = c}
+                  data={this.props.groupedMatches}
+                  renderItem={this._renderItem}
+                  sliderWidth={w(100)}
+                  itemWidth={w(80)}
+                  inactiveSlideScale={0.94}
+                  inactiveSlideOpacity={0.7}
+                  // inactiveSlideShift={20}
+                  containerCustomStyle={styles.slider}
+                  contentContainerCustomStyle={styles.sliderContentContainer}
+                  loop={true}
+                  loopClonesPerSide={2}
+                  autoplayDelay={500}
+                  autoplayInterval={3000}
+                  onSnapToItem={(index) => this.setState({ slider1ActiveSlide: index }) }
+                />
+                <Pagination
+                  dotsLength={this.props.groupedMatches.length}
+                  activeDotIndex={this.state.slider1ActiveSlide}
+                  containerStyle={styles.paginationContainer}
+                  dotColor={'rgba(255, 255, 255, 0.92)'}
+                  dotStyle={styles.paginationDot}
+                  inactiveDotColor="black"
+                  inactiveDotOpacity={0.4}
+                  inactiveDotScale={0.6}
+                  carouselRef={this._slider1Ref}
+                  tappableDots={!!this._slider1Ref}
+                />
             </View>
         );
     }
@@ -91,12 +125,11 @@ const mapStateToProps = state => ({
     currentUser: state.currentUser
 })
 
-export default connect(mapStateToProps)(Stats);
+export default connect(mapStateToProps)(ProfileScreen);
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingHorizontal: 20,
         backgroundColor: USERSETTINGS["General appearance"].backgroundColor.default,
         paddingTop: 30,
     },

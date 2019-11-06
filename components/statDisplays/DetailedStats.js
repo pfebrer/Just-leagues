@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Text} from 'react-native';
+import { w } from '../../api/Dimensions';
 
 
 export default class DetailedStats extends React.Component {
@@ -22,18 +23,10 @@ export default class DetailedStats extends React.Component {
             <View key="headerRow" style={[styles.rowView,styles.headerRowView]}>{header}</View>
         )
         if (playerMatches.length > 0){
-            let separatedMatches = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
-            let playedWonLost = [[],[],[],[],[],[],[],[],[],[],[],[],[],[],[],[]]
-            playerMatches.forEach((match) => {
-                let iGroup = match.iGroup;
-                if (iGroup == "Torneig") {
-                    separatedMatches[14].push(match)
-                } else if (iGroup == "Reptes"){
-                    separatedMatches[15].push(match)
-                } else {
-                    separatedMatches[iGroup].push(match)
-                }  
-            })
+
+            //let separatedMatches = _.groupBy(playerMatches, "context.group.id")
+            separatedMatches = []
+
             separatedMatches.forEach((group,index)=>{
                 if (group.length > 0){
                     let playedMatches = 0;
@@ -106,6 +99,7 @@ export default class DetailedStats extends React.Component {
 
   render() {
       let stats = this.getStats()
+
     return (
         <View style={styles.statsContainer}>
             <View style={styles.headerTitlesRowView}>

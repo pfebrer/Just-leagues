@@ -32,7 +32,8 @@
     },
     "cardTitles": {
         "match schedule": "Previsió de data",
-        "match date": "Data del partit"
+        "match date": "Data del partit",
+        "general stats": "Estadístiques generals"
     },
 
     "info": {

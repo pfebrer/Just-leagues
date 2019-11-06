@@ -355,6 +355,31 @@ class Firebase {
     })
   }
 
+  onUserMatchesSnapshot = (uid, callback, getData = true) => {
+    /*Listen to changes in the matches of a given user
+    Callback recieves an array with all the matches complete info if getData = true,
+    else it recieves the querySnapshot*/
+
+    return this.firestore.collectionGroup(Subcollections.MATCHES).where("playersIDs", "array-contains", uid )
+    .onSnapshot(querySnapshot => { 
+
+      if (!getData) callback(querySnapshot)
+      else callback( querySnapshot.docs.map(doc => {
+          let data = doc.data()
+
+          return {
+            ...data,
+            id: doc.id,
+            playedOn: data.playedOn ? data.playedOn.toDate() : null,
+          }
+          
+        }
+      ))
+
+    })
+
+  }
+
   onMatchSnapshot = (gymID, compID, matchID, callback, getData = true) => {
 
     return this.matchRef(gymID,compID, matchID).onSnapshot( docSnapshot => {
@@ -463,7 +488,8 @@ class Firebase {
 
   //FUNCTIONS TO DO COMPLEX OPERATIONS
   submitNewPlayedMatch = (matchInfo, callback) => {
-    
+    /*Takes a match from pendingMatches and puts it into matches.
+    It also deletes the already played pendingMatch. ID of the match is preserved.*/
     let batch = this.firestore.batch()
 
     //Pick only the relevant info

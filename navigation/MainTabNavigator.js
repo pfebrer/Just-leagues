@@ -105,7 +105,7 @@ export default createBottomTabNavigator({
                     <Icon name="chatbubbles" style={{color: tintColor}}/>
                 )
             }
-        },
+        },*/
         Profile: {
             screen: ProfileScreen,
             navigationOptions: {
@@ -113,7 +113,7 @@ export default createBottomTabNavigator({
                     <Icon name="person" style={{color: tintColor}}/>
                 )
             }
-        },*/
+        },
         /*MatchSearcher: {
             screen: MatchSearcher,
 
