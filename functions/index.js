@@ -61,7 +61,8 @@ const Documents = {
 };
 
 const strings ={
-    "new date for match" : "Nova data de partit"
+    "new date for match" : "Nova data de partit",
+    "new result": "Nou resultat!"
 }
 
 // REMEMBER TO KEEP IN SYNC WITH CONSTANTS.js
@@ -173,6 +174,89 @@ exports.newDateForMatchNotification = firestoreFunction.document(Collections.GYM
         
     } else {
         console.log("Date did not change")
+        return null
+    }
+    
+});
+
+//Send a push notification when date of a match changes
+exports.newPlayedMatchNotification = firestoreFunction.document(Collections.GYMS + "/{gymID}/"+ Subcollections.COMPETITIONS + "/{compID}/" + Subcollections.MATCHES +"/{matchID}")
+.onCreate((docSnapshot, context) => {
+
+    const {context : matchContext, result: matchResult, playersIDs: matchPlayersIDs} = docSnapshot.data();
+
+    let typeOfComp = matchContext.competition.type
+
+    if (typeOfComp == "groups"){
+
+        let groupID = matchContext.group.id
+
+        return firestore.collection(Collections.GYMS).doc(context.params.gymID).collection(Subcollections.COMPETITIONS).doc(context.params.compID).collection(Subcollections.GROUPS).doc(groupID).get().then( groupSnapshot => {
+
+            let {playersIDs: groupPlayersIDs} = groupSnapshot.data()
+
+            promises = groupPlayersIDs.map( uid => firestore.collection(Collections.USERS).doc(uid).get())
+
+            Promise.all(promises).then( playersSnapshots => {
+
+                let matchPlayersNames = []
+
+                let users = playersSnapshots.map( docSnapshot => {
+                
+                    var { expoToken, displayName } = docSnapshot.data()
+
+                    let uid = docSnapshot.id
+
+                    let iMatchPlayer = matchPlayersIDs.indexOf(uid)
+
+                    if ( iMatchPlayer >= 0 ){
+                        matchPlayersNames[iMatchPlayer] = displayName
+                    }
+    
+                    return {expoToken, displayName}
+    
+                })
+
+                let messages = []
+    
+                users.forEach(user => {
+                    if (user.expoToken) {
+                        messages.push({
+                            "to": user.expoToken,
+                            "sound": "default",
+                            "title": strings["new result"],
+                            "body": matchPlayersNames.join(" - ") +" : " + matchResult.join(" - ")
+                        });
+                    }
+                })
+
+                console.log("Messages", messages)
+    
+                fetch('https://exp.host/--/api/v2/push/send', {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(messages)
+    
+                });
+                
+            })
+            .catch(err => {
+                console.log("ERROR-- Could not retrieve all players information: ", groupPlayersIDs)
+                console.log(err)
+            })
+
+        })
+        .catch(err => {
+            console.log("ERROR-- Could not retrieve group info: ", groupID)
+            console.log(err)
+        })
+        
+        
+    } else {
+        console.log("WARNING-- The type of competition of this match (" + typeOfComp + ") is not implemented")
         return null
     }
     
