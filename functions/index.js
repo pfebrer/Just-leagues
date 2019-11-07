@@ -60,11 +60,16 @@ const Documents = {
     }
 };
 
+const strings ={
+    "new date for match" : "Nova data de partit"
+}
+
 // REMEMBER TO KEEP IN SYNC WITH CONSTANTS.js
 const functions = require('firebase-functions');
 const fetch = require('node-fetch');
 const admin = require('firebase-admin');
 
+const moment = require('moment')
 
 admin.initializeApp();
 const firestore = admin.firestore();
@@ -91,7 +96,7 @@ exports.initCompetition = firestoreFunction.document(Collections.GYMS + "/{gymID
 
         batch.set( newRef, {
             displayName: player.name,
-            email: player.email,
+            email: player.email.toLowerCase(),
             activeCompetitions: [{
                 gymID: gymID,
                 id: compID,
@@ -112,6 +117,66 @@ exports.initCompetition = firestoreFunction.document(Collections.GYMS + "/{gymID
     return batch.commit()
     
 })
+
+
+//Send a push notification when date of a match changes
+exports.newDateForMatchNotification = firestoreFunction.document(Collections.GYMS + "/{gymID}/"+ Subcollections.COMPETITIONS + "/{compID}/" + Subcollections.PENDINGMATCHES +"/{matchID}")
+.onWrite((change, event) => {
+
+    const {playersIDs, scheduled} = change.after.data();
+    const {scheduled: prevScheduled} = change.before.data();
+
+    if (scheduled && scheduled.time && (!prevScheduled || prevScheduled.time.toDate() != scheduled.time.toDate())){
+        
+        promises = []
+
+        playersIDs.forEach( uid => {
+            promises.push(firestore.collection(Collections.USERS).doc(uid).get())
+        })
+
+        return Promise.all(promises).then(snapshots => {
+
+            messages = []
+            players = []
+
+            snapshots.forEach( docSnapshot => {
+                
+                var { expoToken, displayName } = docSnapshot.data()
+
+                players.push({expoToken, displayName})
+
+            })
+
+            players.forEach(player => {
+                if (player.expoToken) {
+                    messages.push({
+                        "to": player.expoToken,
+                        "sound": "default",
+                        "title": strings["new date for match"],
+                        "body": players[0].displayName+ " - "+players[1].displayName+" :" + moment(scheduled.time.toDate()).calendar()
+                    });
+                }
+            })
+
+            fetch('https://exp.host/--/api/v2/push/send', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(messages)
+
+            });
+            
+        })
+        .catch(err => console.log(err))
+        
+    } else {
+        console.log("Date did not change")
+        return null
+    }
+    
+});
 
 //Send a push notification
 exports.messageNotification = firestoreFunction.document('groups/{iGroup}/chatMessages/{id}').onCreate((event, context) => {

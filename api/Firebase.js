@@ -124,7 +124,6 @@ class Firebase {
   /***Email***/
   userLogin = (email, password) => {
     let me = this;
-    email += "@" + "nickspa.cat"; //+ Constants.dbPrefix.replace("_", ".") +
     return new Promise(resolve => {
       me.auth.signInWithEmailAndPassword(email, password)
         .catch(error => {
@@ -291,7 +290,7 @@ class Firebase {
   }
 
   onUnasignedUsersSnapshot = (userEmail, callback, getData = true) => {
-    return this.unasignedUsersRef.where("email", "==", userEmail).onSnapshot(
+    return this.unasignedUsersRef.where("email", "==", userEmail.toLowerCase()).onSnapshot(
       query => {
 
         if (getData){
