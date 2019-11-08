@@ -1,4 +1,5 @@
 import _ from "lodash"
+import { translate } from "../translations/translationManager";
 
 //Get a deep copy of an object
 exports.deepClone = (obj) => JSON.parse(JSON.stringify(obj));
@@ -82,11 +83,12 @@ exports.updateSettingsFields = (currentSettings, upToDateSettings) => {
     
                 Object.keys(upToDateSettings[settingType]).forEach( setting => {
     
-                    if ( ! currentSettings[settingType][setting]){
+                    if ( currentSettings[settingType][setting] == undefined){
     
                         newSettings[settingType][setting] = defaultSettings[settingType][setting]
     
                         changed = true
+                        
                     }
     
                 })
@@ -97,6 +99,22 @@ exports.updateSettingsFields = (currentSettings, upToDateSettings) => {
     }
 
     return  changed ? newSettings : false
+}
+
+//Function that returns how the name should be rendered given the competition settings
+exports.renderName = (nameObject, nameDisplaySettings) => {
+
+    if (!nameObject){
+        return translate("vocabulary.no name")
+    } if (nameDisplaySettings == "Name Lastname"){
+        return [ nameObject.firstName, nameObject.lastName].join(" ")
+    } else if (nameDisplaySettings == "Lastname, Name" ) {
+        return [ nameObject.lastName, nameObject.firstName].join(", ")
+    } else if (nameDisplaySettings == "Name") {
+        return nameObject.firstName
+    } else if (nameDisplaySettings == "free"){
+        return nameObject.aka
+    }
 }
 
 //Recieves the points a player has for a certain match and returns the points of its rival.

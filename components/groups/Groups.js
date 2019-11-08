@@ -7,12 +7,14 @@ import { translate } from '../../assets/translations/translationManager';
 //Redux stuff
 import { connect } from 'react-redux'
 import { totalSize } from '../../api/Dimensions';
+import { FlatList } from 'react-native-gesture-handler';
 
 class Groups extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
+            loadingData: true,
             groups: [],
         };
 
@@ -24,7 +26,7 @@ class Groups extends React.Component {
 
         this.groupsSub = Firebase.onGroupsSnapshot(gymID, compID, 
             
-            groups => this.setState({groups})
+            groups => this.setState({groups, loadingData: false})
 
         );
 
@@ -50,12 +52,12 @@ class Groups extends React.Component {
         //Dessubscribirse dels listeners
         this.groupsSub();
     }
+    
+    renderGroup = (group) => {
+         
+        return (
 
-    renderGroups = (groups) => {
-
-        return groups.map( (group) => (
-
-            <View key={group.iGroup} style={{...styles.groupContainer}}>
+            <View style={{...styles.groupContainer}}>
                 <View style={{...styles.groupTitleView}}>
                     <Text style={styles.groupTitleText}>{translate("vocabulary.group") + " " + (group.name)}</Text>
                 </View>
@@ -66,32 +68,32 @@ class Groups extends React.Component {
                     handlePress={this.props.handlePress}
                 />
             </View>
-        
-        ))
-
-    }
     
+        )
+    }
+
     render() {
 
-        if (this.state.groupsResults == 0) {
+        if (this.state.loadingData) {
             return (
                 <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
                     <Text>{translate("info.loading classifications")}</Text>
-                    <ActivityIndicator size="large"/>
+                    <ActivityIndicator size="large" color="black"/>
                 </View>
             );
         }
 
         return (
-            <ScrollView 
+            <FlatList 
                 style={styles.scrollView} 
                 ref={(scroller) => {
                     this.scroller = scroller
                 }}
+                data={this.state.groups}
+                renderItem={({ item }) => this.renderGroup(item)}
+                keyExtractor={group => group.iGroup}
                 contentContainerStyle={styles.contentContainer}
-                bounces={true}>
-                {this.renderGroups(this.state.groups)}
-            </ScrollView>
+                bounces={true}/>
         );
     }
 }
@@ -103,11 +105,6 @@ const mapStateToProps = state => ({
 export default connect(mapStateToProps)(Groups);
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        paddingTop: 30,
-        marginBottom: 50
-    },
 
     groupContainer : {
         elevation: 5,
@@ -144,7 +141,7 @@ const styles = StyleSheet.create({
     },
 
     contentContainer: {
-        paddingTop: 30,
+        paddingVertical: 10,
     },
 });
 

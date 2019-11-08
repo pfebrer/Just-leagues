@@ -7,7 +7,7 @@ import { w, totalSize, h } from '../api/Dimensions';
 
 import { USERSETTINGS } from "../constants/Settings"
 import { connect } from 'react-redux'
-import { List, ListItem, Body, Right, Icon, Text, Button} from 'native-base';
+import { List, ListItem, Body, Right, Icon, Text, Button, Form, Item, Label, Input} from 'native-base';
 import { ColorPicker , fromHsv} from 'react-native-color-picker'
 
 import HeaderIcon from "../components/header/HeaderIcon"
@@ -168,18 +168,39 @@ class SettingsScreen extends React.Component {
             let setting = settings[key]
 
             let rightContent = this.getRightContent(setting.control, values[key], settingsType, key)
+            let description = setting.description ? <Text note>{translate(setting.description)}</Text> : null
 
-            return (
-                <ListItem key={key}>
-                    <Body>
-                        <Text>{translate(setting.name)}</Text>
-                        <Text note>{translate(setting.description)}</Text>
-                    </Body>
-                    <Right style={styles.rightView}>
-                        {rightContent}
-                    </Right>
-                </ListItem>
-            )
+            /*There are two types of settings: Those that use an input field of the full width, and those whose control is only in
+            the right side and the description and name stays at the left side.*/
+            if (setting.control.type == "text"){
+                return (
+                    <ListItem key={key}>
+                        <Form style={{width: "100%"}}>
+                            <Item inlineLabel style={{marginTop: 0, marginBottom: 10}}>
+                                <Label >{translate(setting.name)}</Label>
+                                <Input 
+                                    onChangeText={ text => this.updateStateSettings(settingsType, key, text)}
+                                    value={values[key]}/>
+                            </Item>
+                            <View style={{paddingLeft: 15}}>
+                                {description}
+                            </View> 
+                        </Form>
+                    </ListItem>
+                )
+            } else {
+                return (
+                    <ListItem key={key}>
+                        <Body>
+                            <Text>{translate(setting.name)}</Text>
+                            {description}
+                        </Body>
+                        <Right style={styles.rightView}>
+                            {rightContent}
+                        </Right>
+                    </ListItem>
+                )
+            }
         })
     }
 
@@ -199,12 +220,15 @@ class SettingsScreen extends React.Component {
                             })}>
                     </TouchableOpacity>
 
-        } else {
+        } else if (settingControl.type == "integer") {
 
             return <NumericInput 
                     control={settingControl} 
                     value={currentValue} 
                     onValueChange={(value) => this.updateStateSettings(settingType, settingKey, value)}/>
+        } else if (settingControl.type == "text") {
+
+            return null
         }
     }
 

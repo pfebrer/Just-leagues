@@ -62,7 +62,8 @@
         "fix a date":"Fixa una data...",
         "days": "Dies",
         "hours": "Hores",
-        "played": "Jugat"
+        "played": "Jugat",
+        "no name": "Sense nom"
     },
     "errors": {
         "you entered an ivalid result":"No ens enganyis, aquest resultat és impossible :(",
@@ -72,6 +73,7 @@
         "you are about to restore default settings": "Estàs a punt de tornar a la configuració inicial.",
         "General appearance": "Aparença general",
         "Competition display": "Presentació de competicions",
+        "Profile": "Perfil",
         "background color": {
             "name":"Color principal",
             "description":"Tria el color principal de la app."
@@ -79,6 +81,16 @@
         "max visible cols": {
             "name": "Columnes visibles en grups",
             "description": "En les competicions de grups, el màxim de columnes que es veuen amb comoditat depenen de l'amplada del teu mòbil."
+        },
+        "aka": {
+            "name":"Alies",
+            "description":"És el nom que es mostrarà en les competicions que permetin un nom lliure."
+        },
+        "first name": {
+            "name":"Nom"
+        },
+        "last name": {
+            "name":"Primer Cognom"
         }
     },
     "actions": {

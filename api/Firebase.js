@@ -90,19 +90,31 @@ class Firebase {
 
           let userProfile = {
             profilePic: result.additionalUserInfo.profile.picture,
-            displayName: result.additionalUserInfo.profile.name,
+            aka: result.additionalUserInfo.profile.name,
             firstName: result.additionalUserInfo.profile.given_name,
             lastName: result.additionalUserInfo.profile.family_name,
           }
+
           this.userRef(result.user.uid).get()
+
             .then(docSnapshot => {
+
+              let userSettings = docSnapshot.get("settings") || {}
+
               docSnapshot.ref.set({
                 ...docSnapshot.data(),
-                ...userProfile
+                settings: {
+                  ...userSettings,
+                  ["Profile"]: {
+                    ...userProfile,
+                    ...userSettings["Profile"],
+                  }
+                },
+                
               }, {merge: true})
+
             })
-            .then(function(snapshot) {
-            });
+
         })
         .catch(function(error) {
           // Handle Errors here.
@@ -442,7 +454,15 @@ class Firebase {
 
       querySnapshot => {
         callback( querySnapshot.docs.reduce((IDsAndNames,user) => {
-            IDsAndNames[user.id] = user.get("displayName");
+
+            let userSettings = user.get("settings")
+
+            let names = userSettings && userSettings["Profile"] ? 
+              _.pick( userSettings["Profile"] , ["aka", "firstName", "lastName"])
+              : {aka: user.get("displayName") , firstName: user.get("displayName"), lastName: ""} //This is just to account for users that may not have their settings updated (or unasigned users)
+              
+            IDsAndNames[user.id] = names;
+
             return IDsAndNames;
           }, {})
         )

@@ -1,5 +1,8 @@
 //Contains all the parameters that can be used to tune the app
 exports.COMPSETTINGS = {
+    general: {
+        nameDisplay: "Name Lastname" //One of ["Name Lastname", "Lastname, Name", "Name", "free"]
+    },
     groups: {
         nPromotingPlayers: 1, //Number of players that go up or down on period closing
         untyingCriteria: ["directMatch","position"],//How to decide which player is higher in the ranking when there is a points tie 
@@ -26,6 +29,32 @@ exports.COMPSETTINGS = {
 
 //Remember to set a translation for each setting that you add!
 exports.USERSETTINGS = {
+    "Profile": {
+        aka: {
+            control: {
+                type: "text",
+            },
+            name: "settings.aka.name",
+            description: "settings.aka.description",
+            default: "",
+            
+        },
+        firstName: {
+            control: {
+                type: "text",
+            },
+            name: "settings.first name.name",
+            default: "",
+            
+        },
+        lastName: {
+            control: {
+                type: "text",
+            },
+            name: "settings.last name.name",
+            default: "",
+        }
+    },
     "General appearance": {
         backgroundColor: {
             control: {
