@@ -9,14 +9,23 @@ import {
     Easing,
 } from 'react-native';
 
+import ContentLoader, { Code } from 'react-content-loader/native'
+
 import { Icon, Text} from 'native-base';
 
 import { totalSize, w, h } from '../../api/Dimensions';
 
-
 export default class Card extends Component{
 
     render(){
+
+        if (this.props.loading){
+            return(
+                <Animated.View style={{...styles.gridItem, ...this.props.cardContainerStyles}}>
+                    <Code style={{margin:20}}/>
+                </Animated.View>
+            )
+        }
 
         return(
             <Animated.View style={{...styles.gridItem, ...this.props.cardContainerStyles}}>

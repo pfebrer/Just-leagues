@@ -21,7 +21,7 @@ import {setCurrentMatch} from "../../redux/actions"
 import { totalSize, w, h } from '../../api/Dimensions';
 
 import { translate } from '../../assets/translations/translationManager';
-import { convertDate, sortMatchesByDate, renderName } from "../../assets/utils/utilFuncs";
+import { convertDate, sortMatchesByDate, renderName, getCompetitionName } from "../../assets/utils/utilFuncs";
 import Card from './Card';
 import { COMPSETTINGS } from '../../constants/Settings';
 
@@ -46,7 +46,6 @@ class PendingMatches extends Component {
 
                 matches = matches.map( match => ({
                     ...match,
-                    competition: this.props.currentUser.activeCompetitions.filter(comp => comp.id == match.compID )[0] || {name: "Competició desconeguda"}
                 }) )
 
                 matches = sortMatchesByDate(matches)
@@ -76,11 +75,12 @@ class PendingMatches extends Component {
 
         this.props.setCurrentMatch({
             context: {
+                ...match.context, //This info depends on how the pending match has been generated (type of competition)
                 matchID: match.id,
-                competition: match.competition,
+                competition: this.props.competitions[match.compID],
                 pending: true
             },
-            ..._.omit(match, ["id", "competition"])
+            ..._.omit(match, ["id", "compID","gymID", "context"])
         })
 
         this.props.navigation.navigate("MatchScreen")
@@ -138,7 +138,7 @@ class PendingMatches extends Component {
                 <View style={{...styles.pendingMatchPad, ...additionalPadStyles}}/>
                 <View style={{flex:1, justifyContent: "center"}}>
                     {matchInfo}
-                    <Text note>{match.competition.name}</Text>
+                    <Text note>{ getCompetitionName(this.props.competitions[match.compID])}</Text>
                 </View>
                 {timeInfo}
             </TouchableOpacity>

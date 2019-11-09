@@ -105,7 +105,7 @@ exports.updateSettingsFields = (currentSettings, upToDateSettings) => {
 exports.renderName = (nameObject, nameDisplaySettings) => {
 
     if (!nameObject){
-        return translate("vocabulary.no name")
+        return translate("errors.no name")
     } if (nameDisplaySettings == "Name Lastname"){
         return [ nameObject.firstName, nameObject.lastName].join(" ")
     } else if (nameDisplaySettings == "Lastname, Name" ) {
@@ -116,6 +116,9 @@ exports.renderName = (nameObject, nameDisplaySettings) => {
         return nameObject.aka
     }
 }
+
+//Function that gets the name of the competition or returns "unknown competition"
+exports.getCompetitionName = (competition) => competition ? competition.name : translate("errors.unknown competition")
 
 //Recieves the points a player has for a certain match and returns the points of its rival.
 exports.oppositePoints = (points) => {

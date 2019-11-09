@@ -2,19 +2,15 @@ import React, {Component} from 'react';
 import {ImageBackground, StyleSheet, Text, TouchableOpacity, View, ScrollView} from 'react-native';
 import _ from "lodash"
 import Firebase from "../api/Firebase"
-import {Collections, Subcollections} from "../constants/CONSTANTS";
 
-import {pointsToSets, setsToPoints, resultIsCorrect} from "../assets/utils/utilFuncs"
+import {resultIsCorrect} from "../assets/utils/utilFuncs"
 import { translate } from '../assets/translations/translationManager';
 
 //Redux stuff
 import { connect } from 'react-redux'
 import {setCurrentMatch} from "../redux/actions"
 
-import PressPicker from '../components/match/PressPicker';
 import { Icon, Toast } from 'native-base';
-import { h, totalSize } from '../api/Dimensions';
-import Card from '../components/home/Card';
 import HeaderIcon from "../components/header/HeaderIcon"
 
 import TimeInfo from "../components/match/TimeInfo"
@@ -48,15 +44,15 @@ class MatchScreen extends Component {
 
         if (this.matchSub) this.matchSub();
 
-        let {gymID, id: compID} = this.props.currentMatch.context.competition
-        let { matchID } = this.props.currentMatch.context
+        let { matchID, compID } = this.props.currentMatch.context
+        this.competition = this.props.currentMatch.context.competition
 
-        this.gymID = gymID, this.compID = compID, this.matchID = matchID
+        this.matchID = matchID
 
         if (this.props.currentMatch.context.pending){
             //Listen to the pendingMatch
 
-            this.matchSub = Firebase.onPendingMatchSnapshot(this.gymID, this.compID, this.matchID,
+            this.matchSub = Firebase.onPendingMatchSnapshot(this.competition.gymID, this.competition.id, this.matchID,
             
                 (match, docSnapshot) => {
 
@@ -72,13 +68,13 @@ class MatchScreen extends Component {
 
         } else {
 
-            this.matchSub = Firebase.onMatchSnapshot(this.gymID, this.compID, this.matchID,
+            this.matchSub = Firebase.onMatchSnapshot(this.competition.gymID, this.competition.id, this.matchID,
             
                 (match, docSnapshot) => {
 
                     this.matchRef = docSnapshot.ref
 
-                    this.props.setCurrentMatch( {...match, context: {...match.context, matchID: this.matchID} }, {merge: true} )
+                    this.props.setCurrentMatch( {...match, context: {...match.context, matchID: this.matchID, competition: this.competition} }, {merge: true} )
 
                     this.grantEditRights()
     
@@ -103,7 +99,7 @@ class MatchScreen extends Component {
             //Don't let people edit other people's matches or edit already played matches
             (this.props.currentMatch.playersIDs.indexOf(this.props.currentUser.id) >= 0 && this.props.currentMatch.context.pending)
             //Unless it is an admin of this gym
-            || (this.props.currentUser.gymAdmin && this.props.currentUser.gymAdmin.indexOf(this.gymID) >= 0)
+            || (this.props.currentUser.gymAdmin && this.props.currentUser.gymAdmin.indexOf(this.competition.gymID) >= 0)
             //Or an app admin
             || this.props.currentUser.admin
 
@@ -232,6 +228,7 @@ class ScoreInput extends Component {
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
     currentMatch: state.match,
+    competitions: state.competitions,
     IDsAndNames: state.IDsAndNames
 })
 

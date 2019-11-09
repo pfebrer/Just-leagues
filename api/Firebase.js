@@ -31,6 +31,28 @@ class Firebase {
 
   }
 
+  //FUNCTIONS TO MIGRATE (Use for developement)
+  migrateUsers = (prefix) => {
+    this.usersRef.get().then(snap => {
+      snap.forEach(doc => {
+          this.firestore.collection(prefix + "_" + Collections.USERS).doc(doc.id).set(doc.data())
+      });
+    })
+  }
+
+  activeCompsToIDs = () => {
+    this.usersRef.get().then(snap => {
+      snap.forEach(doc => {
+
+        if (doc.get("activeCompetitions")){
+          this.firestore.collection(Collections.USERS).doc(doc.id)
+          .set({activeCompetitions: doc.get("activeCompetitions").map(comp => comp.id)}, { merge: true})
+        }
+        
+      });
+    })
+  }
+  
   //AUTHENTICATION STUFF
   /***Google***/
   signInWithGoogleAsync = async () => {
@@ -278,6 +300,9 @@ class Firebase {
     this.updateUserSettings(uid, {}, callback)
   }
 
+  //FUNCTIONS TO GET DATA FROM DATABASE ONCE (don't keep listening)
+  getCompetition = (compID) => this.compsGroupRef.where("id", "==", compID).get()
+  
   //LISTENERS TO THE DATABASE
 
   onSnapshot = (path, callback, isColection= false) => {
@@ -393,7 +418,7 @@ class Firebase {
 
   onMatchSnapshot = (gymID, compID, matchID, callback, getData = true) => {
 
-    return this.matchRef(gymID,compID, matchID).onSnapshot( docSnapshot => {
+    return this.matchRef(gymID, compID, matchID).onSnapshot( docSnapshot => {
 
       if (!getData){
 
@@ -433,24 +458,26 @@ class Firebase {
     })
   }
 
-  onCompetitionSnapshot = (gymID, compID, callback, getData = true) => {
+  onCompetitionSnapshot = (compID, callback, getData = true) => {
     /*Listens for changes in a given competition*/
-    return this.compRef(gymID, compID).onSnapshot(
-      docSnapshot => {
+    return this.compsGroupRef.where("id", "==", compID).onSnapshot(
+      querySnapshot => {
 
-        if(!getData) callback(docSnapshot)
+        let compSnapshot = querySnapshot.docs[0]
+
+        if(!getData) callback(compSnapshot)
         else {
-          callback(docSnapshot.data())
+          callback({ ...compSnapshot.data(), gymID: compSnapshot.ref.parent.parent.id})
         }
       }
     )
   }
 
-  onCompUsersSnapshot = (comp, callback) => {
+  onCompUsersSnapshot = (compID, callback) => {
     /*Listen to users that are active in a given competition
     Returns and object like {id1: name1, id2:name2 ....}*/
 
-    return this.usersRef.where("activeCompetitions", "array-contains", comp).onSnapshot(
+    return this.usersRef.where("activeCompetitions", "array-contains", compID).onSnapshot(
 
       querySnapshot => {
         callback( querySnapshot.docs.reduce((IDsAndNames,user) => {
@@ -639,6 +666,8 @@ class Firebase {
     //And we start to really generate the groups here
     playersGroups.forEach( (playersGroup, i) => {
 
+      var groupRef = this.groupsRef(gymID, compID).doc()
+
       //Define the name and the order of the group
       let name = String(i + 1), order = i + 1
 
@@ -653,6 +682,12 @@ class Firebase {
         matchesIDs.push(matchRef.id)
 
         batch.set(matchRef, {
+          context:{
+            group: {
+              id: groupRef.id,
+              name
+            }
+          },
           playersIDs: match,
           due,
           scheduled: false
@@ -661,7 +696,7 @@ class Firebase {
       })
 
       //Finally, store the group
-      var groupRef = this.groupsRef(gymID, compID).doc()
+      
       batch.set( groupRef, {
         name, order,
         matchesIDs,
@@ -715,6 +750,10 @@ class Firebase {
   compsRef = (gymID) => {
     return this.gymRef(gymID).collection(Subcollections.COMPETITIONS)
   }
+
+  get compsGroupRef() {
+    return this.firestore.collectionGroup(Subcollections.COMPETITIONS)
+  } 
 
   compRef = (gymID, compID) => {
     return this.compsRef(gymID).doc(compID)

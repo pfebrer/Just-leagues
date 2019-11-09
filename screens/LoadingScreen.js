@@ -76,19 +76,19 @@ class LoadingScreen extends React.Component {
 
                     if (userData.activeCompetitions){
                         //Create a listener for each competition in active competitions to retrieve the users ids and names
-                        userData.activeCompetitions.forEach( comp => {
+                        userData.activeCompetitions.forEach( compID => {
 
-                            if (!this.usersListeners[comp.id]){
+                            if (!this.usersListeners[compID]){
 
-                                this.usersListeners[comp.id] = Firebase.onCompUsersSnapshot(comp, 
+                                this.usersListeners[compID] = Firebase.onCompUsersSnapshot(compID, 
                                     IDsAndNames => this.props.updateIDsAndNames(IDsAndNames)
                                 )
                             }
 
-                            if (!this.compListeners[comp.id]){
+                            if (!this.compListeners[compID]){
 
-                                this.compListeners[comp.id] = Firebase.onCompetitionSnapshot(comp.gymID, comp.id, 
-                                    compData => this.props.updateCompetitions({ [comp.id]: {...compData, gymID: comp.gymID}})
+                                this.compListeners[compID] = Firebase.onCompetitionSnapshot( compID,
+                                    compData => this.props.updateCompetitions({ [compID]: {...compData}})
                                 )
                             }
 

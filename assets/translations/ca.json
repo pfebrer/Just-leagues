@@ -63,11 +63,12 @@
         "days": "Dies",
         "hours": "Hores",
         "played": "Jugat",
-        "no name": "Sense nom"
     },
     "errors": {
         "you entered an ivalid result":"No ens enganyis, aquest resultat és impossible :(",
-        "unable to merge users": "No s'han pogut unir els jugadors"
+        "unable to merge users": "No s'han pogut unir els jugadors",
+        "unknown competition": "Competició desconeguda",
+        "no name": "Sense nom"
     },
     "settings": {
         "you are about to restore default settings": "Estàs a punt de tornar a la configuració inicial.",

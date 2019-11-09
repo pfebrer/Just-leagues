@@ -13,10 +13,13 @@ import {Constants} from "../constants/CONSTANTS";
 //Redux stuff
 import { connect } from 'react-redux'
 import {setCurrentCompetition} from "../redux/actions"
+
 import { translate } from '../assets/translations/translationManager';
 import { COMPSETTINGS } from '../constants/Settings';
 import { w, totalSize } from '../api/Dimensions';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+
+import _ from "lodash"
 
 
 
@@ -42,26 +45,14 @@ class AdminScreen extends React.Component {
 
     componentDidMount() {
 
-        this.compListeners = [];
+        let editableComps = _.filter(this.props.competitions, (obj) => this.props.currentUser.gymAdmin.indexOf(obj.gymID) >= 0)
 
-        this.props.currentUser.gymAdmin.forEach(gymID => {
+        this.props.setCurrentCompetition(editableComps[0])
 
-            this.compListeners.push(Firebase.onCompetitionsSnapshot(gymID,
-                    //THIS LINE DOES NOT REALLY SUPPORT DIFFERENT GYMS, YOU WILL GET THE COMPETITIONS OF THE LAST GYM
-                    competitions => {
-                        this.setState({competitions})
-                        this.props.setCurrentCompetition(competitions[0])
-                    }
-                )
-            )
-
-        });
+        this.setState({
+            competitions: editableComps
+        })
         
-    }
-
-    componentWillUnmount(){
-        //Dessubscribirse de listeners
-        if (this.compListener) this.compListeners.forEach(listener => listener())
     }
 
     renderCompPicker = (competitions, currentComp) => {
@@ -282,11 +273,13 @@ class AdminScreen extends React.Component {
             </View>
         );
     }
+    
 }
 
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
-    currentComp: state.competition
+    currentComp: state.competition,
+    competitions: state.competitions
 })
 
 const mapDispatchToProps = dispatch => ({

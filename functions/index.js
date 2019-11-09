@@ -98,12 +98,7 @@ exports.initCompetition = firestoreFunction.document(Collections.GYMS + "/{gymID
         batch.set( newRef, {
             displayName: player.name,
             email: player.email.toLowerCase(),
-            activeCompetitions: [{
-                gymID: gymID,
-                id: compID,
-                name: compName,
-                type: compType,
-            }],
+            activeCompetitions: [compID],
             asigned: false
         })
 
@@ -111,6 +106,7 @@ exports.initCompetition = firestoreFunction.document(Collections.GYMS + "/{gymID
 
     //Update also the competition players (create a playersIDs list and remove the helper players list)
     batch.update(snap.ref, {
+        id: compID,
         playersIDs,
         players: admin.firestore.FieldValue.delete()
     })

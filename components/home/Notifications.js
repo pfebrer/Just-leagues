@@ -32,14 +32,24 @@ class Notifications extends Component {
     componentDidMount() {
 
         this.unasignedListener = Firebase.onUnasignedUsersSnapshot(this.props.currentUser.email,
-            unasignedUsers => this.setState({unasignedUsers})
+            unasignedUsers => {
+
+                
+                let promises = unasignedUsers.map( unasignedUser => Firebase.getCompetition( unasignedUser.activeCompetitions[0]))
+
+                Promise.all(promises).then( querysnapShots => {
+                    this.setState({
+                        unasignedUsers: unasignedUsers.map( (user, i) => ({...user, competition: querysnapShots[i].docs[0].data() }) )
+                    })
+                }).catch(err => alert("Could not retrieve competition data from unasigned users:", err))
+            }
         )
 
     }
 
     mergeUnasignedUser = (unasignedUser, requestingUser) => {
 
-        Firebase.mergeUsers(unasignedUser, requestingUser)
+        Firebase.mergeUsers(_.omit(unasignedUser, ["competition"]), requestingUser)
 
     }
 
@@ -58,7 +68,7 @@ class Notifications extends Component {
                         <Icon name="checkmark" style={{...styles.unasignedUserAcceptIcon}}/>
                     </TouchableOpacity>
                     <View style={{justifyContent: "center", alignItems: "center", flex: 1}}>
-                        <Text style={{fontFamily: "bold"}}>{user.activeCompetitions[0].name}</Text>
+                        <Text style={{fontFamily: "bold"}}>{user.competition.name}</Text>
                         <Text>{user.displayName}</Text>
                     </View>
                     <TouchableOpacity style={{...styles.unasignedUserAction, ...styles.unasignedUserReject}}>

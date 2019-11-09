@@ -30,7 +30,6 @@ import Notifications from "../components/home/Notifications"
 import Card from "../components/home/Card"
 
 import _ from "lodash"
-import moment from 'moment';
 
 class HomeScreen extends Component {
 
@@ -79,14 +78,17 @@ class HomeScreen extends Component {
     renderCompetitionStates = (activeCompetitions) =>{
 
         if (!activeCompetitions) {return null}
-        return activeCompetitions.map(comp => (
-            <CompetitionState
-                key={comp.id}
+        return activeCompetitions.map(compID => {
+
+            if (!this.props.competitions[compID]) return <Card loading/>
+            
+            return <CompetitionState
+                key={compID}
                 uid={this.props.currentUser.id} 
-                competition={comp}
+                competition={this.props.competitions[compID]}
                 navigation={this.props.navigation}
                 setCurrentCompetition={this.props.setCurrentCompetition}/>
-        ))
+        })
     }
 
     render() {
@@ -173,6 +175,7 @@ class CompetitionState extends Component {
 
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
+    competitions: state.competitions
 })
 
 const mapDispatchToProps = dispatch => ({
