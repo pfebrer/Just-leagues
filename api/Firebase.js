@@ -548,7 +548,10 @@ class Firebase {
     if (!playedOn) playedOn = new Date()
 
     batch.set(this.matchRef(gymID, compID, matchID),{
-      context: _.omit(context, ["pending", "matchID"]),
+      context: {
+        ..._.omit(context, ["pending", "matchID"]),
+        competition: _.omit(competition, ["playersIDs"])
+      },
       result,
       playersIDs,
       playedOn

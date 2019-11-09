@@ -58,7 +58,7 @@ class MatchScreen extends Component {
 
                     this.matchRef = docSnapshot.ref
 
-                    this.props.setCurrentMatch( { ...match, result: match.result || this.defaultResult}, {merge: true} )
+                    this.props.setCurrentMatch( { ...match, result: match.result || this.defaultResult, context:{...match.context, ...this.props.currentMatch.context}}, {merge: true} )
 
                     this.grantEditRights()
     
