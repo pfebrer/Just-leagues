@@ -94,7 +94,7 @@ class PendingMatches extends Component {
         //Determine the match information that should be displayed
         if (match.playersIDs.length == 2){
             //then we need to display just the rival
-            let rival = match.playersIDs.map( uid => renderName(this.props.IDsAndNames[uid], COMPSETTINGS.general.nameDisplay))
+            let rival = match.playersIDs.map( uid => renderName(this.props.relevantUsers[uid].names, COMPSETTINGS.general.nameDisplay))
                         .filter( (name, i) => match.playersIDs[i] != this.props.currentUser.id )[0]
 
             matchInfo = <Text>{rival}</Text>
@@ -191,7 +191,7 @@ class PendingMatches extends Component {
 
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
-    IDsAndNames: state.IDsAndNames,
+    relevantUsers: state.relevantUsers,
     competitions: state.competitions,
 })
 

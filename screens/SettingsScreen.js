@@ -16,19 +16,17 @@ import NumericInput from "../components/settings/NumericInput"
 import { withNavigationFocus } from 'react-navigation';
 
 import {deepClone} from "../assets/utils/utilFuncs"
+
+import _ from "lodash"
  
 const Picker = (props) => (
-    <View style={{flex: 1, paddingHorizontal: 50, paddingVertical: 80}}>
+    <View style={{height: h(60)}}>
         <ColorPicker
-            oldColor={props.currentValue}
-            onColorChange={props.onColorChange}
-            style={{flex: 1, paddingHorizontal: 50, paddingVertical: 80}}
-        />
-        <View>
-            <Text></Text>
-        </View>
-
+        oldColor={props.currentValue}
+        onColorChange={props.onColorChange}
+        style={{flex: 1, paddingHorizontal: 30}}/>
     </View>
+    
 )
 
 
@@ -79,7 +77,7 @@ class SettingsScreen extends React.Component {
     restoreDefaults = () => {
 
         reallyRestore = () => {
-            Firebase.restoreDefaultUserSettings(this.props.currentUser.id, () => {
+            Firebase.restoreDefaultUserSettings(this.props.currentUser.id, _.pick(this.props.currentUser.settings, ["Profile"]), () => {
                 this.setState({
                     settings: deepClone(this.props.currentUser.settings)
                 })
@@ -178,7 +176,8 @@ class SettingsScreen extends React.Component {
                         <Form style={{width: "100%"}}>
                             <Item inlineLabel style={{marginTop: 0, marginBottom: 10}}>
                                 <Label >{translate(setting.name)}</Label>
-                                <Input 
+                                <Input
+                                    disabled
                                     onChangeText={ text => this.updateStateSettings(settingsType, key, text)}
                                     value={values[key]}/>
                             </Item>
@@ -213,7 +212,7 @@ class SettingsScreen extends React.Component {
                         onPress={() => this.setState( 
                             {
                                 modalComponent: Picker({
-                                    currentValue,
+                                    currentValue: _.cloneDeep(currentValue),
                                     onColorChange: (color) => {this.temp = {value: fromHsv(color), settingType, settingKey}}
                                 }),
                                 headerTitle: translate("settings."+ settingKey)
@@ -254,25 +253,11 @@ class SettingsScreen extends React.Component {
         
     }
 
-    settingControlModal = (component, headerTitle) => {
-
-        
-
-        if (component) {
-
-            return <View style={{...StyleSheet.absoluteFill, backgroundColor: "white"}}>
-                    {component}
-                </View>
-
-        } else {
-            
-            return null
-        }
-
-        
-    }
-
     render() {
+
+        if (this.state.modalComponent){
+            return this.state.modalComponent
+        }
 
         return (
             <View style={styles.container}>
@@ -287,7 +272,6 @@ class SettingsScreen extends React.Component {
                         <Text style={styles.signOutText}> {translate("auth.sign out")}</Text>
                     </TouchableOpacity>
                 </ScrollView>
-                {this.settingControlModal(this.state.modalComponent, this.state.headerTitle)}
             </View>
             
         );

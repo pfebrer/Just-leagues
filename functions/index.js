@@ -19,25 +19,20 @@ const Constants = {
     GROUP_SIZE: 4,
     UNTYING_CRITERIA: ["directMatch","position"],
     dbPrefix: "",
+    paddingTopHeader: 20,
 };
 
 const Collections = {
-    GYMS: (Constants.dbPrefix && Constants.dbPrefix) + "gyms",
+    GYMS:  (Constants.dbPrefix && Constants.dbPrefix) + "gyms",
     USERS: (Constants.dbPrefix && Constants.dbPrefix) + "users",
-    RANKINGS: (Constants.dbPrefix && Constants.dbPrefix) + "rankings",
-    GROUPS: (Constants.dbPrefix && Constants.dbPrefix) + "groups",
-    PLAYERS: (Constants.dbPrefix && Constants.dbPrefix) + "players",
-    TOURNAMENT: (Constants.dbPrefix && Constants.dbPrefix) + "Torneig",
-    MATCHES: (Constants.dbPrefix && Constants.dbPrefix) + "matches",
-    MONTH_INFO: (Constants.dbPrefix && Constants.dbPrefix) + "monthInfo",
-    CHALLENGE: (Constants.dbPrefix && Constants.dbPrefix) + "Reptes"
 };
 
 const Subcollections = {
     COMPETITIONS: "competitions",
     GROUPS: "groups",
     MATCHES: "matches",
-    PENDINGMATCHES: "pendingMatches"
+    PENDINGMATCHES: "pendingMatches",
+    MESSAGES: "messages"
 }
 
 const Documents = {
@@ -62,7 +57,8 @@ const Documents = {
 
 const strings ={
     "new date for match" : "Nova data de partit",
-    "new result": "Nou resultat!"
+    "new result": "Nou resultat!",
+    "new message": "Nou missatge"
 }
 
 // REMEMBER TO KEEP IN SYNC WITH CONSTANTS.js
@@ -114,7 +110,6 @@ exports.initCompetition = firestoreFunction.document(Collections.GYMS + "/{gymID
     return batch.commit()
     
 })
-
 
 //Send a push notification when date of a match changes
 exports.newDateForMatchNotification = firestoreFunction.document(Collections.GYMS + "/{gymID}/"+ Subcollections.COMPETITIONS + "/{compID}/" + Subcollections.PENDINGMATCHES +"/{matchID}")
@@ -256,6 +251,73 @@ exports.newPlayedMatchNotification = firestoreFunction.document(Collections.GYMS
         return null
     }
     
+});
+
+//Send a push notification when there is a new message in the competition
+exports.newCompMessageNotification = firestoreFunction.document(Collections.GYMS + "/{gymID}/"+ Subcollections.COMPETITIONS + "/{compID}/" + Subcollections.MESSAGES +"/{messageID}")
+.onCreate((docSnapshot, context) => {
+
+    const {text: messageText, user: messageAuthor} = docSnapshot.data();
+
+    const { gymID, compID } = context.params
+
+    return firestore.collection(Collections.GYMS).doc(gymID).collection(Subcollections.COMPETITIONS).doc(compID).get().then( compSnapshot => {
+
+        let {playersIDs: compPlayersIDs, name: compName} = compSnapshot.data()
+
+        promises = compPlayersIDs.map( uid => firestore.collection(Collections.USERS).doc(uid).get())
+
+        Promise.all(promises).then( playersSnapshots => {
+
+            let messageAuthorName;
+
+            let users = playersSnapshots.map( docSnapshot => {
+            
+                var { expoToken, displayName } = docSnapshot.data()
+
+                if (messageAuthor._id == docSnapshot.id){
+                    messageAuthorName = displayName
+                }
+
+                return {expoToken, displayName}
+
+            })
+
+            let messages = []
+
+            users.forEach(user => {
+                if (user.expoToken) {
+                    messages.push({
+                        "to": user.expoToken,
+                        "sound": "default",
+                        "title": strings["new message"] + " ("+compName+")",
+                        "body": messageAuthorName + ": "+ messageText
+                    });
+                }
+            })
+
+            fetch('https://exp.host/--/api/v2/push/send', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(messages)
+
+            });
+            
+        })
+        .catch(err => {
+            console.log("ERROR-- Could not retrieve all players information: ", compPlayersIDs)
+            console.log(err)
+        })
+
+    })
+    .catch(err => {
+        console.log("ERROR-- Could not retrieve competition info: ", compID)
+        console.log(err)
+    })
+
 });
 
 //Send a push notification

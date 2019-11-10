@@ -73,9 +73,9 @@ class Table extends Component {
         let uid = this.props.playersIDs[iRow]
 
         if (uid == this.props.currentUser.id){
-            console.warn("Go to profile: ", renderName(this.props.IDsAndNames[uid], COMPSETTINGS.general.nameDisplay))
+            console.warn("Go to profile: ", renderName(this.props.relevantUsers[uid].names, COMPSETTINGS.general.nameDisplay))
         } else {
-            console.warn("Go to stats: ", renderName(this.props.IDsAndNames[uid], COMPSETTINGS.general.nameDisplay))
+            console.warn("Go to stats: ", renderName(this.props.relevantUsers[uid].names, COMPSETTINGS.general.nameDisplay))
         }
         
     }
@@ -160,7 +160,7 @@ class Table extends Component {
 
         if( !playersIDs.length > 0 ) { return null }
 
-        let players = playersIDs.map( uid => renderName(this.props.IDsAndNames[uid], COMPSETTINGS.general.nameDisplay))
+        let players = playersIDs.map( uid => renderName(this.props.relevantUsers[uid].names, COMPSETTINGS.general.nameDisplay))
 
         let ranks = playersIDs.map( uid => {
             return this.props.competitions[this.props.competition.id].playersIDs.indexOf(uid) + 1
@@ -294,7 +294,7 @@ class Column extends Component{
 
 const mapStateToProps = state => ({
     currentUser: state.currentUser || null,
-    IDsAndNames: state.IDsAndNames,
+    relevantUsers: state.relevantUsers,
     competitions: state.competitions,
 })
 

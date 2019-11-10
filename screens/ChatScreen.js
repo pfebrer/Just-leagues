@@ -59,7 +59,7 @@ class ChatScreen extends React.Component {
                     createdAt: message.createdAt.toDate(),
                     user: {
                         ...message.user,
-                        name: renderName(this.props.IDsAndNames[message.user._id], COMPSETTINGS.general.nameDisplay )
+                        name: renderName(this.props.relevantUsers[message.user._id].names, COMPSETTINGS.general.nameDisplay )
                     }
                 }
             })
@@ -181,7 +181,7 @@ class ChatScreen extends React.Component {
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
     currentComp: state.competition,
-    IDsAndNames: state.IDsAndNames
+    relevantUsers: state.relevantUsers
 })
 
 export default connect(mapStateToProps)(ChatScreen);

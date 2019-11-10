@@ -281,7 +281,7 @@ class Firebase {
 
   //FUNCTIONS TO OPERATE ON THE DATABASE
   //Generic document updater
-  updateDocInfo = (ref, updates, callback, merge = true, params = false, omit = false) => {
+  updateDocInfo = (ref, updates, callback, method = "set", merge = true, params = false, omit = false) => {
 
     if (typeof ref == "string") {
       ref = this.firestore.doc(ref)
@@ -295,7 +295,14 @@ class Firebase {
       updates = _.omit(updates, omit)
     }
 
-    ref.set(updates, {merge}).then(() => {
+    let promise;
+    if (method == "set"){
+      promise = ref.set(updates, {merge})
+    } else if (method == "update"){
+      promise = ref.update(updates)
+    }
+
+    promise.then(() => {
       if (callback) {callback()}
     })
     .catch((err) => alert(err))
@@ -307,13 +314,14 @@ class Firebase {
   }
   
   //Update user settings
-  updateUserSettings = (uid, newSettings, callback) => {
-    this.updateDocInfo( this.userRef(uid), {settings: newSettings}, callback, merge = true )
+  updateUserSettings = (uid, newSettings, callback, method = "set") => {
+    this.updateDocInfo( this.userRef(uid), {settings: newSettings}, callback, method, merge = true)
   }
 
-  //Set default settings
-  restoreDefaultUserSettings = (uid, callback) => {
-    this.updateUserSettings(uid, {}, callback)
+  //Set default settings (pass the settings to )
+  restoreDefaultUserSettings = (uid, settingsToKeep, callback) => {
+    console.warn(settingsToKeep)
+    this.updateUserSettings(uid, settingsToKeep, callback, method = "update")
   }
 
   //Function to add new messages to a messages collection. The path should be already known because
@@ -504,17 +512,20 @@ class Firebase {
     return this.usersRef.where("activeCompetitions", "array-contains", compID).onSnapshot(
 
       querySnapshot => {
-        callback( querySnapshot.docs.reduce((IDsAndNames,user) => {
+        callback( querySnapshot.docs.reduce((relevantUsers,user) => {
 
-            let userSettings = user.get("settings")
+            let {settings: userSettings, expoToken} = user.data()
 
             let names = userSettings && userSettings["Profile"] ? 
               _.pick( userSettings["Profile"] , ["aka", "firstName", "lastName"])
               : {aka: user.get("displayName") , firstName: user.get("displayName"), lastName: ""} //This is just to account for users that may not have their settings updated (or unasigned users)
               
-            IDsAndNames[user.id] = names;
+            relevantUsers[user.id] = {
+              names,
+              expoToken
+            }
 
-            return IDsAndNames;
+            return relevantUsers;
           }, {})
         )
       }

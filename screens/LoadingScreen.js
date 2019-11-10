@@ -3,15 +3,15 @@ import {ActivityIndicator, ImageBackground, StatusBar, StyleSheet, Text, View,} 
 import Firebase from "../api/Firebase"
 import { translate } from '../assets/translations/translationManager';
 import { Toast } from 'native-base';
-import {Notifications} from "expo";
-import * as Permissions from "expo-permissions";
 
 import { updateSettingsFields } from "../assets/utils/utilFuncs"
 import { USERSETTINGS } from "../constants/Settings"
 
 //Redux stuff
 import { connect } from 'react-redux'
-import { storeUserData, updateIDsAndNames, updateCompetitions} from "../redux/actions"
+import { storeUserData, updateRelevantUsers, updateCompetitions} from "../redux/actions"
+
+import NotificationManager from "../api/Notifications"
 
 class LoadingScreen extends React.Component {
 
@@ -62,7 +62,9 @@ class LoadingScreen extends React.Component {
             //If there is a logged in user, do all the preparatory stuff
             if (user) {
 
-                this.registerForPushNotificationsAsync(user.uid)
+                NotificationManager.registerForPushNotificationsAsync(user.uid)
+
+                NotificationManager.listenToNotifications(this.props.navigation)
 
                 this.userListener = Firebase.onUserSnapshot(user.uid,
 
@@ -81,7 +83,7 @@ class LoadingScreen extends React.Component {
                             if (!this.usersListeners[compID]){
 
                                 this.usersListeners[compID] = Firebase.onCompUsersSnapshot(compID, 
-                                    IDsAndNames => this.props.updateIDsAndNames(IDsAndNames)
+                                    relevantUsers => this.props.updateRelevantUsers(relevantUsers)
                                 )
                             }
 
@@ -124,36 +126,6 @@ class LoadingScreen extends React.Component {
             }
         });
     }
-
-    registerForPushNotificationsAsync = async (uid) => {
-        const {status: existingStatus} = await Permissions.getAsync(
-            Permissions.NOTIFICATIONS
-        );
-        let finalStatus = existingStatus;
-    
-        // only ask if permissions have not already been determined, because
-        // iOS won't necessarily prompt the user a second time.
-        if (existingStatus !== 'granted') {
-            // Android remote notification permissions are granted during the app
-            // install, so this will only ask on iOS
-            const {status} = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-            finalStatus = status;
-    
-        }
-    
-        // Stop here if the user did not grant permissions
-        if (finalStatus !== 'granted') {
-            return;
-        }
-    
-        // Get the token that uniquely identifies this device
-        let token = await Notifications.getExpoPushTokenAsync();
-    
-        let updates = {};
-        updates["expoToken"] = token;
-        Firebase.userRef(uid).update(updates);
-    
-    };
     
     render() {
         return <View style={styles.container}>
@@ -167,7 +139,7 @@ class LoadingScreen extends React.Component {
 
 const mapDispatchToProps = dispatch => ({
     storeUserData: (uid, userData) => dispatch(storeUserData(uid, userData)),
-    updateIDsAndNames: (newIDsAndNames) => dispatch(updateIDsAndNames(newIDsAndNames)),
+    updateRelevantUsers: (newRelevantUsers) => dispatch(updateRelevantUsers(newRelevantUsers)),
     updateCompetitions: (newCompetitions) => dispatch(updateCompetitions(newCompetitions))
 })
 
