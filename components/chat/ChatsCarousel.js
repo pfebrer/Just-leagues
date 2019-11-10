@@ -25,7 +25,7 @@ class ChatsCarousel extends Component {
         super(props)
 
         this.state = {
-            activeSlide: 0
+            activeSlide: props.currentComp ? props.currentUser.activeCompetitions.indexOf(props.currentComp.id) : 0
         }
     }
 
@@ -36,9 +36,8 @@ class ChatsCarousel extends Component {
             let defaultComp = this.props.competitions[this.props.currentUser.activeCompetitions[0]]
             if (defaultComp) this.props.setCurrentCompetition(defaultComp)
             
-        } else {
-            this._slider1Ref.snapToItem(this.props.currentUser.activeCompetitions.indexOf(this.props.currentComp.id))
         }
+
     }
 
     componentDidUpdate(prevProps){
@@ -105,6 +104,7 @@ class ChatsCarousel extends Component {
                 <Carousel
                   ref={c => this._slider1Ref = c}
                   data={availableComps}
+                  firstItem={this.state.activeSlide}
                   renderItem={(args) => this._renderItem(args)}
                   sliderWidth={w(100)}
                   itemWidth={w(80)}
