@@ -36,16 +36,20 @@ class ChatsCarousel extends Component {
             let defaultComp = this.props.competitions[this.props.currentUser.activeCompetitions[0]]
             if (defaultComp) this.props.setCurrentCompetition(defaultComp)
             
+        } else {
+            this._slider1Ref.snapToItem(this.props.currentUser.activeCompetitions.indexOf(this.props.currentComp.id))
         }
     }
 
-    componentDidUpdate(){
+    componentDidUpdate(prevProps){
 
         if (!this.props.currentComp){
 
             let defaultComp = this.props.competitions[this.props.currentUser.activeCompetitions[0]]
             if (defaultComp) this.props.setCurrentCompetition(defaultComp)
             
+        } else if ( this.props.currentComp && ( !prevProps.currentComp || prevProps.currentComp.id != this.props.currentComp.id) ){
+            this._slider1Ref.snapToItem(this.props.currentUser.activeCompetitions.indexOf(this.props.currentComp.id))
         }
     }
 

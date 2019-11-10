@@ -12,9 +12,6 @@ import RankingEditScreen from "../screens/RankingEditScreen";
 import HomeScreen from "../screens/HomeScreen"
 import MatchScreen from "../screens/MatchScreen"
 
-import {ChatWorkMode, Constants} from "../constants/CONSTANTS";
-import { translate } from '../assets/translations/translationManager';
-import {AntDesign, Entypo, Ionicons, MaterialCommunityIcons, MaterialIcons} from '@expo/vector-icons';
 import { Icon } from 'native-base';
 import ChatScreen from '../screens/ChatScreen';
 
@@ -39,38 +36,6 @@ const HomeStack = createStackNavigator({
 const AdminStack = createStackNavigator({
     AdminScreen: AdminScreen,
 });
-
-//createMaterialTopTabNavigator(RouteConfigs, TabNavigatorConfig);
-// const chatsStack = createMaterialTopTabNavigator({
-//         GroupChat: {
-//             screen: GroupChat,
-//             params: {workMode: ChatWorkMode.group},
-//             navigationOptions: {
-//                 tabBarLabel: "Grup",
-//                 tabBarIcon: ({tintColor}) => (
-//                     <MaterialCommunityIcons name="tournament" size={20} color={tintColor}/>
-//                 )
-//             }
-//         },
-//         GeneralChat: {
-//             screen: GroupChat,
-//             params: {workMode: ChatWorkMode.general},
-//             navigationOptions: {
-//                 tabBarLabel: "General",
-//                 tabBarIcon: ({tintColor}) => (
-//                     <MaterialCommunityIcons name="tournament" size={20} color={tintColor}/>
-//                 )
-//             }
-//         },
-//     }, {
-//         headerMode: "none",
-//         mode: "modal",
-//         tabBarOptions: {
-//             style: {
-//                 paddingTop: Constants.paddingTopHeader   //Padding 0 here
-//             }
-//         }
-// });
 
 export default createBottomTabNavigator({
         /* Stats: {
@@ -136,7 +101,7 @@ export default createBottomTabNavigator({
         }*/
     },
     {
-        initialRouteName: "Chat",
+        initialRouteName: "Home",
         tabBarOptions: {
             showLabel: false,
             activeTintColor: 'tomato',
