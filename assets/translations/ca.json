@@ -45,7 +45,8 @@
         "limit to play": "Límit per jugar",
         "choose the competition that you would like to edit":"Tria la competició que vols editar",
         "you don't have any notifications at the moment": "De moment no tens notificacions",
-        "if you expected to have any, please talk with your competition administrator": "Si esperaves tenir alguna, parla amb l'administrador de la teva competició, siusplau :)"
+        "if you expected to have any, please talk with your competition administrator": "Si esperaves tenir alguna, parla amb l'administrador de la teva competició, siusplau :)",
+        "no messages yet": "Encara no hi ha cap missatge"
     },
     "vocabulary": {
         "group": "Grup",
@@ -62,13 +63,15 @@
         "fix a date":"Fixa una data...",
         "days": "Dies",
         "hours": "Hores",
-        "played": "Jugat"
+        "played": "Jugat",
+        "general": "General"
     },
     "errors": {
         "you entered an ivalid result":"No ens enganyis, aquest resultat és impossible :(",
         "unable to merge users": "No s'han pogut unir els jugadors",
         "unknown competition": "Competició desconeguda",
-        "no name": "Sense nom"
+        "no name": "Sense nom",
+        "could not send message": "No s'ha pogut enviar el missatge"
     },
     "settings": {
         "you are about to restore default settings": "Estàs a punt de tornar a la configuració inicial.",
@@ -95,7 +98,8 @@
         }
     },
     "actions": {
-        "go back": "Torna enrere"
+        "go back": "Torna enrere",
+        "type a message": "Escriu un missatge"
     },
 
     "admin": {

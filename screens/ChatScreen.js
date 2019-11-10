@@ -9,221 +9,204 @@ import {
     TextInput,
     TouchableOpacity,
     View,
-    Dimensions
+    Platform,
+    StatusBar
 } from 'react-native';
-import ChatMessage from "../components/chat/ChatMessage"
+
+import { GiftedChat, Bubble, Send} from 'react-native-gifted-chat'
+
+import _ from "lodash"
+
 import Firebase from "../api/Firebase"
-import {MaterialIcons} from '@expo/vector-icons';
-import {ChatWorkMode, Collections, Documents, Constants} from "../constants/CONSTANTS";
-import {USERSETTINGS} from "../constants/Settings"
 
 //Redux stuff
 import { connect } from 'react-redux'
 
-class GroupChat extends React.Component {
+import { translate } from '../assets/translations/translationManager';
+import {renderName} from '../assets/utils/utilFuncs'
+import moment from 'moment';
+import { h, totalSize } from '../api/Dimensions';
+import ChatsCarousel from '../components/chat/ChatsCarousel';
+import { COMPSETTINGS } from '../constants/Settings';
+import { Icon } from 'native-base';
+
+class ChatScreen extends React.Component {
 
     constructor(props) {
         super(props);
         this.state = {
+            target: {particularChat: false},
             messages: [],
         };
 
-        this.textInputRef = React.createRef()
+    }
+
+    listenToMessages = () => {
+
+        let {gymID, id: compID} = this.props.currentComp
+
+        let target = {
+            ...this.state.target,
+            compType: this.props.currentComp.type,
+            uid: this.props.currentUser.id
+        }
+
+        this.messagesListener = Firebase.onChatMessagesSnapshot(gymID, compID, target , ({context, messages}) => {
+
+            messages = messages.map(message => {
+                return {
+                    ...message,
+                    createdAt: message.createdAt.toDate(),
+                    user: {
+                        ...message.user,
+                        name: renderName(this.props.IDsAndNames[message.user._id], COMPSETTINGS.general.nameDisplay )
+                    }
+                }
+            })
+
+            this.setState({
+                context,
+                messages
+            })
+
+        })
     }
 
     componentDidMount() {
-        //BackHandler.addEventListener('hardwareBackPress', ()=>{return true;});
-        this.userId = Firebase.auth.currentUser.uid;
-        this.groupsRef = Firebase.firestore.collection(Collections.GROUPS);
-        this.playerRef = Firebase.firestore.collection(Collections.PLAYERS).doc(this.userId);
-        this.playerRef.get().then((docSnapshot) => {
-            const {playerName, currentGroup} = docSnapshot.data();
-            debugger;
-            let title = "";
-            let workMode = this.props.navigation.getParam('workMode', 'group');
-            if (workMode === ChatWorkMode.group) {
-                title = "Xat del grup " + currentGroup;
-            } else {
-                title = "Xat general";
-            }
-            this.props.navigation.setParams({title: title});
-            this.setState({
-                workMode: workMode,
-                group: currentGroup,
-                title: title,
-                playerName
-            });
-        }).catch(err => alert("No s'ha pogut determinar de quin grup ets.\nError: " + err.message));
-
+        if (this.props.currentComp) this.listenToMessages()
     }
 
     componentDidUpdate(prevProps, prevState) {
-        let groupCollection = this.state.workMode === ChatWorkMode.group ? String(this.state.group) : Documents.GROUPS.generalMessages;
-        if (prevState.group !== this.state.group) {
-            this.unsub = this.groupsRef.doc(groupCollection).collection(Documents.GROUPS.chatMessages).orderBy("date").onSnapshot((querySnapshot) => {
-                let messages = this.state.messages;
-                querySnapshot.docChanges().forEach((change) => {
-                    if (change.type === "added") {
-                        const {playerName, message, date} = change.doc.data();
-                        messages.push([playerName, message, date])
-                    }
-                });
-                this.setState({
-                    messages
-                });
-            }, err => {
-                console.error(err)
-            });
+        if ( ! _.isEqual(prevProps.currentComp, this.props.currentComp) || ! _.isEqual(prevState.target, this.state.target) ) {
+
+            this.listenToMessages()
         }
+    }
+
+    setNewMessagesTarget = (newTarget) => {
+        //Target must be an object as following {particularChat: bool}
+
+        if (  ! _.isEqual(newTarget, this.state.target) ){
+            this.setState({target: newTarget})
+        }
+
     }
 
     componentWillUnmount() {
-        BackHandler.removeEventListener('hardwareBackPress', () => {
-        });
-        this.unsub()
+        if (this.messagesListener) this.messagesListener()
     }
 
-    renderMessages = () => {
-        let messages = this.state.messages;
-        let renderedMessages = [];
-        let fullMessage = [];
-        let timeToSplit = 1800 * 1000;
-        messages.forEach(([playerName, message, date], index) => {
-            let lastMessage = messages[index - 1] || false;
-            let nextMessage = messages[index + 1] || false;
-
-            //Anem construint el missatge
-            if (lastMessage[0] != playerName || date - lastMessage[2] > timeToSplit) {
-                fullMessage = [];
-            }
-            fullMessage.push(message);//El renderitzem quan ja el tenim tot
-            if (nextMessage[0] != playerName || nextMessage[2] - date > timeToSplit) {
-                fullMessage.unshift(date)
-                renderedMessages.push(
-                    <ChatMessage key={"message" + index} loggedInUser={this.state.playerName}
-                                 playerName={playerName} message={fullMessage}/>
-                );
-            }
+    sendMessages = (messages) => {
+        messages.forEach( message => {
+            Firebase.addNewMessage(this.state.context.messagesPath, message)
         })
-
-        return renderedMessages;
     }
 
-    sendMessage = () => {
-        let groupCollection = this.state.workMode === ChatWorkMode.group ? String(this.state.group) : Documents.GROUPS.generalMessages;
-        if (this.state.newMessage) {
-            const date = Date.now()
-            this.groupsRef.doc(groupCollection).collection(Documents.GROUPS.chatMessages).doc(String(date)).set({
-                date,
-                playerName: this.state.playerName,
-                message: this.state.newMessage.trim()
-            }).then(() => {
-                this.textInputRef.current.clear();
-            }).catch(err => alert("No s'ha pogut enviar el missatge\nError: " + err.message))
+    renderHeaderContent(){
+
+    }
+
+    renderBubble(props){
+        return (
+            <Bubble
+            {...props}
+            wrapperStyle={{
+                left: {
+                    backgroundColor: "white",
+                    elevation: 2
+                },
+                right: {
+                    elevation: 2
+                }
+            }}
+            />
+        ) 
+    }
+
+    renderSend(props) {
+        return (
+            <Send
+                {...props}
+            >
+                <View style={{paddingBottom: 10, paddingRight: 10, justifyContent: "center", alignContent: "center"}}>
+                    <Icon name="send" style={{color: "#147efb"}}/>
+                </View>
+            </Send>
+        );
+    }
+
+    /* renderFooter(props) {
+        if (props.messages.length == 0) {
+          return (
+              <Text>{translate("info.no messages yet")}</Text>
+          );
         }
-
-    }
-
-    //This function determines where is the title located in the Y dimension to provide the vertical offset
-    //for the keyboard avoiding view (otherwise it doesn't take the header into account)
-    handleLayoutChange() {
-        this.titleRef.measure( (fx, fy, width, height, px, py) => {
-          this.setState({verticalOffset: py - Constants.paddingTopHeader})
-        })
-    }
+        return null;
+      } */
 
     render() {
 
         return (
-            <KeyboardAvoidingView 
-                style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}
-                behavior="padding"
-                keyboardVerticalOffset={this.state.verticalOffset} enabled>
-                <View style={styles.chatTitleView} onLayout={(event) => {this.handleLayoutChange() }} 
-                    ref={view => { this.titleRef = view; }}>
-                    <Text style={styles.chatTitleText}>{this.state.title}</Text>
+            <View style={ {...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
+                <View style={{...styles.chatCarousel}}>
+                    <ChatsCarousel
+                        setNewMessagesTarget={this.setNewMessagesTarget}
+                        messagesTarget={this.state.target}
+                        titleTextStyle={styles.carouselItemTitleText}
+                        chatSelectorTextStyle={styles.chatSelectorText}/>
                 </View>
-                <ScrollView style={styles.chatContainer}
-                            ref={ref => this.scrollView = ref}
-                            onContentSizeChange={(contentWidth, contentHeight) => {
-                                this.scrollView.scrollToEnd({animated: true});
-                            }}>
-                    {this.renderMessages()}
-                </ScrollView>
-                <View style={styles.userInput}>
-                    <View style={styles.textInputView}>
-                        <TextInput style={styles.textInput}
-                            onChangeText={(text) => this.setState({newMessage: text})}
-                            ref={this.textInputRef}
-                            placeholder="Escriu aquí el teu missatge..."
-                            multiline={true}/>
-                    </View>
-
-                        <TouchableOpacity style={styles.sendButton} onPress={() => {
-                            this.sendMessage()
-                        }}>
-                        <MaterialIcons name="send" size={25} color="white"/>
-                    </TouchableOpacity>
-                </View>
-            </KeyboardAvoidingView>
-        );
+                <GiftedChat
+                    //Functionality
+                    messages={this.state.messages}
+                    user={{
+                        _id: this.props.currentUser.id,
+                    }}
+                    onSend={(messages) => {this.sendMessages(messages)}}
+                    loadEarlier={false}
+                    renderBubble={this.renderBubble}
+                    renderSend={this.renderSend}
+                    //Aestethics
+                    locale={moment.locale()}
+                    placeholder={translate("actions.type a message") + "..."}
+                    renderUsernameOnMessage
+                    />
+                {
+                    Platform.OS === 'android' && <KeyboardAvoidingView behavior="padding" />
+                }
+            </View>
+        )
     }
 }
 
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
+    currentComp: state.competition,
+    IDsAndNames: state.IDsAndNames
 })
 
-export default connect(mapStateToProps)(GroupChat);
+export default connect(mapStateToProps)(ChatScreen);
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 20,
-        backgroundColor: USERSETTINGS["General appearance"].backgroundColor.default,
     },
-    chatTitleView: {
-        alignItems: "center",
-        justifyContent: "center",
-        paddingVertical: 20,
+
+    chatCarousel: {
+        height: h(20),
+        elevation: 5,
+        backgroundColor: "white",
+        paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0
     },
-    chatTitleText: {
-        fontSize: 25,
+
+    carouselItemTitleText: {
+        fontSize: totalSize(2),
         fontFamily: "bold"
     },
-    chatContainer: {
-        flex: 1,
+
+    chatSelectorText: {
+        fontSize: totalSize(1.6),
+        textTransform: "uppercase"
     },
 
-    userInput: {
-        flexDirection: "row",
-        marginBottom: 10,
-        marginHorizontal: 10,
-        height: "auto"
-    },
 
-    textInputView: {
-        flex: 4,
-        marginRight: 10,
-    },
-
-    textInput: {
-        backgroundColor: "white",
-        flex:1,
-        borderRadius: 30,
-        paddingVertical: 15,
-        paddingHorizontal: 20,
-        elevation:2,
-        fontSize: 15,
-    },
-
-    sendButton: {
-        elevation: 2,
-        borderRadius: 50,
-        paddingVertical: 20,
-        backgroundColor: "green",
-        alignItems: "center",
-        justifyContent: "center",
-        flex: 1,
-    }
 });

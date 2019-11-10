@@ -16,6 +16,7 @@ import {ChatWorkMode, Constants} from "../constants/CONSTANTS";
 import { translate } from '../assets/translations/translationManager';
 import {AntDesign, Entypo, Ionicons, MaterialCommunityIcons, MaterialIcons} from '@expo/vector-icons';
 import { Icon } from 'native-base';
+import ChatScreen from '../screens/ChatScreen';
 
 
 
@@ -40,36 +41,36 @@ const AdminStack = createStackNavigator({
 });
 
 //createMaterialTopTabNavigator(RouteConfigs, TabNavigatorConfig);
-const chatsStack = createMaterialTopTabNavigator({
-        GroupChat: {
-            screen: GroupChat,
-            params: {workMode: ChatWorkMode.group},
-            navigationOptions: {
-                tabBarLabel: "Grup",
-                tabBarIcon: ({tintColor}) => (
-                    <MaterialCommunityIcons name="tournament" size={20} color={tintColor}/>
-                )
-            }
-        },
-        GeneralChat: {
-            screen: GroupChat,
-            params: {workMode: ChatWorkMode.general},
-            navigationOptions: {
-                tabBarLabel: "General",
-                tabBarIcon: ({tintColor}) => (
-                    <MaterialCommunityIcons name="tournament" size={20} color={tintColor}/>
-                )
-            }
-        },
-    }, {
-        headerMode: "none",
-        mode: "modal",
-        tabBarOptions: {
-            style: {
-                paddingTop: Constants.paddingTopHeader   //Padding 0 here
-            }
-        }
-});
+// const chatsStack = createMaterialTopTabNavigator({
+//         GroupChat: {
+//             screen: GroupChat,
+//             params: {workMode: ChatWorkMode.group},
+//             navigationOptions: {
+//                 tabBarLabel: "Grup",
+//                 tabBarIcon: ({tintColor}) => (
+//                     <MaterialCommunityIcons name="tournament" size={20} color={tintColor}/>
+//                 )
+//             }
+//         },
+//         GeneralChat: {
+//             screen: GroupChat,
+//             params: {workMode: ChatWorkMode.general},
+//             navigationOptions: {
+//                 tabBarLabel: "General",
+//                 tabBarIcon: ({tintColor}) => (
+//                     <MaterialCommunityIcons name="tournament" size={20} color={tintColor}/>
+//                 )
+//             }
+//         },
+//     }, {
+//         headerMode: "none",
+//         mode: "modal",
+//         tabBarOptions: {
+//             style: {
+//                 paddingTop: Constants.paddingTopHeader   //Padding 0 here
+//             }
+//         }
+// });
 
 export default createBottomTabNavigator({
         /* Stats: {
@@ -98,14 +99,14 @@ export default createBottomTabNavigator({
                 )
             }
         },
-        /*GroupChat: {
-            screen: chatsStack,
+        Chat: {
+            screen: ChatScreen,
             navigationOptions: {
                 tabBarIcon: ({tintColor}) => (
                     <Icon name="chatbubbles" style={{color: tintColor}}/>
                 )
             }
-        },
+        },/*
         Profile: {
             screen: ProfileScreen,
             navigationOptions: {
@@ -135,7 +136,7 @@ export default createBottomTabNavigator({
         }*/
     },
     {
-        initialRouteName: "Home",
+        initialRouteName: "Chat",
         tabBarOptions: {
             showLabel: false,
             activeTintColor: 'tomato',

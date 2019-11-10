@@ -40,6 +40,22 @@ class Firebase {
     })
   }
 
+  addNameSettings = () => {
+    this.usersRef.get().then(snap => {
+      snap.forEach(doc => {
+
+        let {settings, displayName, firstName, lastName, asigned} = doc.data()
+        if (asigned != false && settings && (!settings["Profile"] || !settings["Profile"].aka)){
+          doc.ref.update({settings: {...settings, ["Profile"]: {
+            aka: displayName,
+            firstName: firstName || displayName,
+            lastName: lastName || ""
+          }}})
+        }
+      })
+    })
+  }
+
   activeCompsToIDs = () => {
     this.usersRef.get().then(snap => {
       snap.forEach(doc => {
@@ -300,6 +316,14 @@ class Firebase {
     this.updateUserSettings(uid, {}, callback)
   }
 
+  //Function to add new messages to a messages collection. The path should be already known because
+  //the onChatMessagesSnapshot method (see below) returns it when delivering messages.
+  addNewMessage = (messagesPath, message, callback = () => {}) => {
+    this.firestore.collection(messagesPath).add({
+      ..._.omit(message, ["_id"])
+    }).then(() => callback()).catch(err => alert( translate("errors.could not send message"), err))
+  }
+
   //FUNCTIONS TO GET DATA FROM DATABASE ONCE (don't keep listening)
   getCompetition = (compID) => this.compsGroupRef.where("id", "==", compID).get()
   
@@ -525,11 +549,44 @@ class Firebase {
     /*Listener to changes on the group where the player is in a competition
     /The callback recieves the group data if getData = true, otherwise it recieves the document snapshot*/
 
-    return this.groupsRef(gymID, compID).where("playersIDs", "array-contains", uid )
-    .onSnapshot( querySnapshot =>{
+    return this.playerGroupQuery(gymID, compID, uid).onSnapshot( querySnapshot =>{
         querySnapshot.forEach(doc => callback( getData ? {...doc.data(), id: doc.id} : doc ) )
     });
 
+  }
+
+  onChatMessagesSnapshot = (gymID, compID, {particularChat, compType, uid}, callback) => {
+    /*Listener to messages of the chat for a certain competition */
+
+    let listener = (messagesRef, extraContext = {}) => {
+
+      return messagesRef.orderBy("createdAt", "desc").onSnapshot( querySnapshot =>{
+        callback({
+          context: {messagesPath: messagesRef.path, gymID, compID, ...extraContext},
+          messages: querySnapshot.docs.map(doc => ({...doc.data(), _id: doc.id}) )
+        })
+      })
+
+    }
+
+    if ( !particularChat ){
+      //Get the general chat
+
+      let messagesRef = this.compMessagesRef(gymID, compID)
+
+      return listener(messagesRef)
+
+    } else if (compType == "groups"){
+      //Get the player's group chat
+
+      this.playerGroupQuery(gymID, compID, uid).get().then( groupsSnapshot => {
+
+        let messagesRef = groupsSnapshot.docs[0].ref.collection(Subcollections.MESSAGES)
+        
+        return listener(messagesRef, {groupID: groupsSnapshot.docs[0].id } )
+
+      })
+    }
   }
 
   //FUNCTIONS TO DO COMPLEX OPERATIONS
@@ -756,10 +813,18 @@ class Firebase {
 
   get compsGroupRef() {
     return this.firestore.collectionGroup(Subcollections.COMPETITIONS)
-  } 
+  }
 
   compRef = (gymID, compID) => {
     return this.compsRef(gymID).doc(compID)
+  }
+
+  compQuery = (compID) => {
+    return this.compsGroupRef.where("id", "==", compID)
+  }
+
+  compMessagesRef = (gymID, compID) => {
+    return this.compRef(gymID, compID).collection(Subcollections.MESSAGES)
   }
 
   matchesRef = (gymID, compID) => {
@@ -781,6 +846,10 @@ class Firebase {
   groupsRef = (gymID, compID) => this.compRef(gymID, compID).collection(Subcollections.GROUPS);
 
   groupRef = (gymID, compID, groupID) => this.groupsRef(gymID, compID).doc(groupID);
+
+  playerGroupQuery = (gymID, compID, uid) => {
+    return this.groupsRef(gymID, compID).where("playersIDs", "array-contains", uid )
+  }
 
   //Helper functions
   isMatchPlayedAlready = (matchPath) => matchPath.includes("/" + Subcollections.MATCHES + "/")
