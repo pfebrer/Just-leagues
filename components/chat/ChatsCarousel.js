@@ -24,6 +24,8 @@ class ChatsCarousel extends Component {
     constructor(props){
         super(props)
 
+        this.relevantComps = 
+
         this.state = {
             activeSlide: props.currentComp ? props.currentUser.activeCompetitions.indexOf(props.currentComp.id) : 0
         }

@@ -99,7 +99,9 @@
     },
     "actions": {
         "go back": "Torna enrere",
-        "type a message": "Escriu un missatge"
+        "type a message": "Escriu un missatge",
+        "reply": "Respon",
+        "write your reply": "Escriu la teva resposta"
     },
 
     "admin": {

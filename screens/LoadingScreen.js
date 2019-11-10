@@ -46,15 +46,13 @@ class LoadingScreen extends React.Component {
         const unsub = Firebase.auth.onAuthStateChanged(user => {
 
             //Set up the listeners to retrieve all the data about users and competitions that may be needed during the app experience
-            if (this.usersListeners){
-                //First we need to desubscribe from all previous listeners
-                Object.keys(this.usersListeners).forEach(compID => this.usersListeners[compID]())
-            }
-            if (this.compListeners){
-                //First we need to desubscribe from all previous listeners
-                Object.keys(this.compListeners).forEach(compID => this.compListeners[compID]())
-            }
-            this.compListeners = {} ; this.usersListeners = {} 
+            [this.usersListeners, this.compListeners, this.gymListeners].forEach(listenersObject => {
+                if (listenersObject){
+                    //First we need to desubscribe from all previous listeners
+                    Object.keys(listenersObject).forEach(key => listenersObject[key]())
+                }
+            })
+            this.compListeners = {} ; this.usersListeners = {} ; this.gymListeners = {}
 
             //On sign out remove the previous userListener, otherwise it will crash due to not having permission to read the database 
             if (this.userListener && !user) {this.userListener()}
@@ -76,8 +74,9 @@ class LoadingScreen extends React.Component {
                     //Update the settings fields if some new settings have been produced
                     let newSettings = updateSettingsFields(userData.settings || {}, USERSETTINGS)
 
+                    //Create a listener for each competition in active competitions to retrieve the users ids and names
                     if (userData.activeCompetitions){
-                        //Create a listener for each competition in active competitions to retrieve the users ids and names
+                        
                         userData.activeCompetitions.forEach( compID => {
 
                             if (!this.usersListeners[compID]){
@@ -95,6 +94,33 @@ class LoadingScreen extends React.Component {
                             }
 
                         });
+                    }
+
+                    //For gym admins, add also the competitions they manage
+                    if (userData.gymAdmin && userData.gymAdmin.length > 0) {
+                        userData.gymAdmin.forEach(gymID => {
+
+                            if ( ! this.gymListeners[gymID]){
+
+                                this.gymListeners[gymID] = Firebase.onCompetitionsSnapshot(gymID, competitions => {
+                                    
+                                    competitions.forEach( competition => {
+
+                                        this.props.updateCompetitions({ [competition.id]: {...competition}})
+
+                                        if (!this.usersListeners[competition.id]){
+
+                                            this.usersListeners[competition.id] = Firebase.onCompUsersSnapshot(competition.id, 
+                                                relevantUsers => this.props.updateRelevantUsers(relevantUsers)
+                                            )
+                                        }
+    
+                                    })
+                                })
+                            }
+
+                            
+                        })
                     }
                     
                     if (newSettings){

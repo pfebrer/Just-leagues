@@ -320,7 +320,6 @@ class Firebase {
 
   //Set default settings (pass the settings to )
   restoreDefaultUserSettings = (uid, settingsToKeep, callback) => {
-    console.warn(settingsToKeep)
     this.updateUserSettings(uid, settingsToKeep, callback, method = "update")
   }
 

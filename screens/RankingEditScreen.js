@@ -96,7 +96,7 @@ class RankingEditScreen extends Component {
 
   _renderRow = ({data: uid, active, index}) => {
     return <Row 
-            data={renderName(this.props.IDsAndNames[uid], COMPSETTINGS.general.nameDisplay)} 
+            data={renderName(this.props.relevantUsers[uid].names, COMPSETTINGS.general.nameDisplay)} 
             active={active} 
             index={index}
             deletable={this.state.deleteMode}
@@ -186,7 +186,7 @@ class Row extends Component {
 
 const mapStateToProps = state => ({
   competition: state.competition,
-  IDsAndNames: state.IDsAndNames,
+  relevantUsers: state.relevantUsers,
   currentUser: state.currentUser
 })
 

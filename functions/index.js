@@ -291,7 +291,8 @@ exports.newCompMessageNotification = firestoreFunction.document(Collections.GYMS
                         "to": user.expoToken,
                         "sound": "default",
                         "title": strings["new message"] + " ("+compName+")",
-                        "body": messageAuthorName + ": "+ messageText
+                        "body": messageAuthorName + ": "+ messageText,
+                        "categoryId": "chatNotification",
                     });
                 }
             })

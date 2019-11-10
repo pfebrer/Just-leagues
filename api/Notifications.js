@@ -2,6 +2,7 @@ import { Notifications} from 'expo';
 import * as Permissions from "expo-permissions";
 
 import Firebase from "./Firebase"
+import { translate } from '../assets/translations/translationManager';
 
 class NotificationManager {
 
@@ -42,29 +43,11 @@ class NotificationManager {
 
     createCategories(){
 
-        Notifications.createCategoryAsync('myCategoryName', [
+        Notifications.createCategoryAsync('chatNotification', [
             {
-              actionId: 'vanillaButton',
-              buttonTitle: 'Plain Option',
-              isDestructive: false,
-              isAuthenticationRequired: false,
-            },
-            {
-              actionId: 'highlightedButton',
-              buttonTitle: 'Destructive!!!',
-              isDestructive: true,
-              isAuthenticationRequired: false,
-            },
-            {
-              actionId: 'requiredAuthenticationButton',
-              buttonTitle: 'Click to Authenticate',
-              isDestructive: false,
-              isAuthenticationRequired: true,
-            },
-            {
-              actionId: 'textResponseButton',
-              buttonTitle: 'Click to Respond with Text',
-              textInput: { submitButtonTitle: 'Send', placeholder: 'Type Something' },
+              actionId: 'reply',
+              buttonTitle: translate("actions.reply"),
+              textInput: { submitButtonTitle: 'Send', placeholder: translate("actions.write your reply") + "..."},
               isDestructive: false,
               isAuthenticationRequired: false,
             },
@@ -75,20 +58,36 @@ class NotificationManager {
         Notifications.addListener( notif => {
 
             if (notif.origin == "selected"){
+
+                if (notif.categoryId == "chatNotification"){
+                    navigation.navigate("Chat")
+                }
                 //Go to the corresponding chat
                 //if notif.data = "Chat"
-                //navigation.navigate("Chat")
             }
             //If remote == false, the notification has been triggered on purpose from the device.
             //If remote == true, we are recieving the notification from the server, and we need to render it as we wish
             if ( notif.remote ){
                 //Notifications.dismissNotificationAsync(notif.notificationId)
-                //Notifications.presentLocalNotificationAsync({title: "Test", body: "This is a very long testThis is a very long testThis is a very long testThis is a very long testThis is a very long test", categoryId: 'myCategoryName' })
+                //Notifications.presentLocalNotificationAsync({title: "Missatge", body: "Aquest és el missatge", categoryId: 'chatNotification' })
             } 
 
         })
     }
 
+    _sendNotifications = (messages) => {
+
+        fetch('https://exp.host/--/api/v2/push/send', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(messages)
+
+        });
+
+    }
 
 }
 

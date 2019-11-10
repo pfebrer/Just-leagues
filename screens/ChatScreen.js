@@ -102,10 +102,6 @@ class ChatScreen extends React.Component {
         })
     }
 
-    renderHeaderContent(){
-
-    }
-
     renderBubble(props){
         return (
             <Bubble
