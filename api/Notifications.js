@@ -59,8 +59,21 @@ class NotificationManager {
 
             if (notif.origin == "selected"){
 
-                if (notif.categoryId == "chatNotification"){
-                    navigation.navigate("Chat")
+                //Handle chat notifications
+                if (notif.data && notif.data.categoryId == "chatNotification"){
+
+                    if (notif.actionId == "reply" && notif.userText){
+
+                        let newMessage = {user: {_id: states.currentUser.id }, text: notif.userText}
+
+                        Firebase.addNewMessage(notif.data.messagesPath, newMessage, () => {
+                            navigation.navigate("Chat")
+                        })
+
+                    } else {
+                        navigation.navigate("Chat")
+                    }
+                    
                 }
                 //Go to the corresponding chat
                 //if notif.data = "Chat"
@@ -68,8 +81,12 @@ class NotificationManager {
             //If remote == false, the notification has been triggered on purpose from the device.
             //If remote == true, we are recieving the notification from the server, and we need to render it as we wish
             if ( notif.remote ){
-                //Notifications.dismissNotificationAsync(notif.notificationId)
-                //Notifications.presentLocalNotificationAsync({title: "Missatge", body: "Aquest és el missatge", categoryId: 'chatNotification' })
+
+                if (notif.data && notif.data.categoryId){
+                    Notifications.dismissNotificationAsync(notif.notificationId)
+                    Notifications.presentLocalNotificationAsync({...notif, ...notif.data})
+                }
+                
             } 
 
         })

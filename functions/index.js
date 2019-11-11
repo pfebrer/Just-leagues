@@ -258,6 +258,7 @@ exports.newCompMessageNotification = firestoreFunction.document(Collections.GYMS
 .onCreate((docSnapshot, context) => {
 
     const {text: messageText, user: messageAuthor} = docSnapshot.data();
+    const messagesPath = docSnapshot.ref.parent.path
 
     const { gymID, compID } = context.params
 
@@ -284,15 +285,17 @@ exports.newCompMessageNotification = firestoreFunction.document(Collections.GYMS
             })
 
             let messages = []
+            let title = strings["new message"] + " ("+compName+")"
+            let body = messageAuthorName + ": "+ messageText
 
             users.forEach(user => {
                 if (user.expoToken) {
                     messages.push({
                         "to": user.expoToken,
                         "sound": "default",
-                        "title": strings["new message"] + " ("+compName+")",
-                        "body": messageAuthorName + ": "+ messageText,
-                        "categoryId": "chatNotification",
+                        title,
+                        body,
+                        data: {categoryId: "chatNotification", title, body, messagesPath}
                     });
                 }
             })

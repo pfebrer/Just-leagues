@@ -46,7 +46,9 @@
         "choose the competition that you would like to edit":"Tria la competició que vols editar",
         "you don't have any notifications at the moment": "De moment no tens notificacions",
         "if you expected to have any, please talk with your competition administrator": "Si esperaves tenir alguna, parla amb l'administrador de la teva competició, siusplau :)",
-        "no messages yet": "Encara no hi ha cap missatge"
+        "no messages yet": "Encara no hi ha cap missatge",
+        "new message": "Nou missatge",
+        "new group message": "Nou missatge de grup"
     },
     "vocabulary": {
         "group": "Grup",

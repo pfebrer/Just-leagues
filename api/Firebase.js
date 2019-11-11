@@ -326,9 +326,11 @@ class Firebase {
   //Function to add new messages to a messages collection. The path should be already known because
   //the onChatMessagesSnapshot method (see below) returns it when delivering messages.
   addNewMessage = (messagesPath, message, callback = () => {}) => {
+
+    if (!message.createdAt) message.createdAt = new Date()
     this.firestore.collection(messagesPath).add({
       ..._.omit(message, ["_id"])
-    }).then(() => callback()).catch(err => alert( translate("errors.could not send message"), err))
+    }).then(callback).catch(err => alert( translate("errors.could not send message"), err))
   }
 
   //FUNCTIONS TO GET DATA FROM DATABASE ONCE (don't keep listening)
@@ -593,7 +595,7 @@ class Firebase {
 
         let messagesRef = groupsSnapshot.docs[0].ref.collection(Subcollections.MESSAGES)
         
-        return listener(messagesRef, {groupID: groupsSnapshot.docs[0].id } )
+        return listener(messagesRef, {groupID: groupsSnapshot.docs[0].id, playersIDs: groupsSnapshot.docs[0].get("playersIDs")  } )
 
       })
     }

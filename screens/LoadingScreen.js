@@ -62,8 +62,6 @@ class LoadingScreen extends React.Component {
 
                 NotificationManager.registerForPushNotificationsAsync(user.uid)
 
-                NotificationManager.listenToNotifications(this.props.navigation)
-
                 this.userListener = Firebase.onUserSnapshot(user.uid,
 
                     userData => {
@@ -131,6 +129,13 @@ class LoadingScreen extends React.Component {
 
                         this.props.storeUserData({activeCompetitions: [], email: user.email, id: user.uid,...userData})
 
+                        //Listen to incoming push notifications to do cool stuff in the NotificationManager class
+                        if (this.notifListener) this.notifListener()
+                        this.notifListener = NotificationManager.listenToNotifications(
+                            this.props.navigation,
+                            {currentUser: this.props.currentUser}
+                        )
+
                         console.log("User signed in ---> Redirect to the home screen")
 
                         this.props.navigation.navigate('App');
@@ -163,13 +168,18 @@ class LoadingScreen extends React.Component {
     }
 }
 
+
+const mapStateToProps = state => ({
+    currentUser: state.currentUser
+})
+
 const mapDispatchToProps = dispatch => ({
     storeUserData: (uid, userData) => dispatch(storeUserData(uid, userData)),
     updateRelevantUsers: (newRelevantUsers) => dispatch(updateRelevantUsers(newRelevantUsers)),
     updateCompetitions: (newCompetitions) => dispatch(updateCompetitions(newCompetitions))
 })
 
-export default connect( null, mapDispatchToProps )(LoadingScreen);
+export default connect( mapStateToProps, mapDispatchToProps )(LoadingScreen);
 
 const styles = StyleSheet.create({
     container: {

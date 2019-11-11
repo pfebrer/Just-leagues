@@ -18,12 +18,13 @@ import { GiftedChat, Bubble, Send} from 'react-native-gifted-chat'
 import _ from "lodash"
 
 import Firebase from "../api/Firebase"
+import NotificationManager from "../api/Notifications"
 
 //Redux stuff
 import { connect } from 'react-redux'
 
 import { translate } from '../assets/translations/translationManager';
-import {renderName} from '../assets/utils/utilFuncs'
+import {renderName, getCompetitionName} from '../assets/utils/utilFuncs'
 import moment from 'moment';
 import { h, totalSize } from '../api/Dimensions';
 import ChatsCarousel from '../components/chat/ChatsCarousel';
@@ -98,7 +99,41 @@ class ChatScreen extends React.Component {
 
     sendMessages = (messages) => {
         messages.forEach( message => {
-            Firebase.addNewMessage(this.state.context.messagesPath, message)
+            Firebase.addNewMessage(this.state.context.messagesPath, message, () => {
+
+                //After the message has been added, send the corresponding notifications
+                let messages = []
+
+                if (this.state.target.particularChat){
+
+                    let authorName = renderName(this.props.relevantUsers[this.props.currentUser.id].names, COMPSETTINGS.general.nameDisplay)
+
+                    this.state.context.playersIDs.forEach(uid => {
+
+                        let user = this.props.relevantUsers[uid]
+                        let title = translate("info.new group message") + " ("+getCompetitionName(this.props.currentComp)+")"
+                        let body = authorName + ": "+ message.text
+
+                        if (user && user.expoToken) {
+
+                            
+                            messages.push({
+                                "to": user.expoToken,
+                                "sound": "default",
+                                title,
+                                body,
+                                "data": {"categoryId": "chatNotification", title, body, messagesPath: this.state.context.messagesPath},
+                            });
+                        }
+                    })
+                    
+                }
+
+                NotificationManager._sendNotifications(messages)
+                
+            })
+
+
         })
     }
 
