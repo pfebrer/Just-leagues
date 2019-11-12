@@ -32,8 +32,6 @@ class MatchScreen extends Component {
 
         this.defaultResult = [0,0]
 
-        this.ref=React.createRef()
-
     }
 
     static navigationOptions = ({navigation}) => {
@@ -172,9 +170,7 @@ class MatchScreen extends Component {
             }
             
         }
-
-        console.warn(this.matchRef.path, this.props.currentMatch, callback)
-
+        
         Firebase.updateDocInfo(this.matchRef, this.props.currentMatch, callback, {merge: true, params, omit: ["context", "playersNames"]})
     }
 
@@ -186,7 +182,6 @@ class MatchScreen extends Component {
                     <MatchImage/>
 
                     <MatchResult
-                        ref={this.ref}
                         editable={this.state.editable}
                         defaultResult={this.defaultResult}
                         updateDBMatchParams={this.updateDBMatchParams}/>

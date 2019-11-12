@@ -49,9 +49,16 @@ class TimeInfo extends Component {
         )
     }
 
+    updateAndCommitSchedule = (newDate) => {
+        this.updateScheduledTime(newDate);
+        this.commitScheduleToDB();
+    }
+
     updateScheduledTime = (newDate) => {
 
-        newDate = moment(newDate, this.datePickerFormat ).toDate()
+        if (newDate){
+            newDate = moment(newDate, this.datePickerFormat ).toDate()
+        }
 
         this.props.setCurrentMatch({ scheduled: {...this.props.currentMatch.scheduled, time: newDate} }, {merge: true})
 
@@ -65,6 +72,9 @@ class TimeInfo extends Component {
         let cardProps = {
             titleIcon: "calendar",
             title: !this.props.currentMatch.context.pending ? translate("cardTitles.match date") : translate("cardTitles.match schedule"),
+            actionIcon: this.props.currentMatch.scheduled && this.props.currentMatch.scheduled.time ? "refresh" : null,
+            actionIconStyles: {color: "darkred"},
+            onHeaderPress: this.props.currentMatch.scheduled && this.props.currentMatch.scheduled.time ? () => this.updateAndCommitSchedule(null) : null,
             contentContainerStyles: {justifyContent:"center", alignItems: "center"}
         }
 
@@ -92,15 +102,13 @@ class TimeInfo extends Component {
             )
 
             return (
-                <UpdatableCard
-                    {...cardProps}
-                    pendingUpdate={this.state.pendingUpdate}
-                    onCommitUpdate={this.commitScheduleToDB}>
+                <Card
+                    {...cardProps}>
                     <DatePicker
                         minDate={new Date()}
                         maxDate={this.props.currentMatch.due}
-                        date={this.props.currentMatch.scheduled ? this.props.currentMatch.scheduled.time : null}
-                        onDateChange={(date) => {this.updateScheduledTime(date)}}
+                        date={this.props.currentMatch.scheduled && this.props.currentMatch.scheduled.time ? this.props.currentMatch.scheduled.time : null}
+                        onDateChange={(date) => this.updateAndCommitSchedule(date)}
                         style={{paddingHorizontal: 20, width: "100%", justifyContent: "center", alignItems: "center"}}
                         mode="datetime"
                         placeholder={translate("vocabulary.fix a date")}
@@ -116,7 +124,7 @@ class TimeInfo extends Component {
                             }
                         }}/>
                     {timeLimit}
-                </UpdatableCard>
+                </Card>
             )
 
         }

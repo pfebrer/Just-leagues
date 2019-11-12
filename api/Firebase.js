@@ -315,7 +315,7 @@ class Firebase {
   
   //Update user settings
   updateUserSettings = (uid, newSettings, callback, method = "set") => {
-    this.updateDocInfo( this.userRef(uid), {settings: newSettings}, callback, method, merge = true)
+    this.updateDocInfo( this.userRef(uid), {settings: newSettings}, callback, {method, merge: true})
   }
 
   //Set default settings (pass the settings to )
