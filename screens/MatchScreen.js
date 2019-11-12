@@ -31,12 +31,15 @@ class MatchScreen extends Component {
         }
 
         this.defaultResult = [0,0]
+
+        this.ref=React.createRef()
+
     }
 
     static navigationOptions = ({navigation}) => {
         return {
             title: translate("tabs.match view"),
-            headerRight: <HeaderIcon name="checkmark" onPress={navigation.getParam("commitAllMatchChanges")}/>
+            //headerRight: <HeaderIcon name="checkmark" onPress={navigation.getParam("commitAllMatchChanges")}/>
         }
     };
 
@@ -116,8 +119,7 @@ class MatchScreen extends Component {
 
             this.grantEditRights()
 
-        } 
-
+        }
 
     }
 
@@ -127,6 +129,7 @@ class MatchScreen extends Component {
 
     commitAllMatchChanges = () => {
 
+        //Does not work fine (not in use right now)!!
         //Update all parameters
         this.updateDBMatchParams(false)
 
@@ -170,7 +173,9 @@ class MatchScreen extends Component {
             
         }
 
-        Firebase.updateDocInfo(this.matchRef, this.props.currentMatch, callback, merge = true, params = params, omit = ["context", "playersNames"])
+        console.warn(this.matchRef.path, this.props.currentMatch, callback)
+
+        Firebase.updateDocInfo(this.matchRef, this.props.currentMatch, callback, {merge: true, params, omit: ["context", "playersNames"]})
     }
 
     render() {
@@ -181,6 +186,7 @@ class MatchScreen extends Component {
                     <MatchImage/>
 
                     <MatchResult
+                        ref={this.ref}
                         editable={this.state.editable}
                         defaultResult={this.defaultResult}
                         updateDBMatchParams={this.updateDBMatchParams}/>
@@ -229,7 +235,7 @@ const mapStateToProps = state => ({
     currentUser: state.currentUser,
     currentMatch: state.match,
     competitions: state.competitions,
-    IDsAndNames: state.IDsAndNames
+    relevantUsers: state.relevantUsers
 })
 
 const mapDispatchToProps = dispatch => ({

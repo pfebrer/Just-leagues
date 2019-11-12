@@ -103,7 +103,7 @@ class Table extends Component {
                 competition: this.props.competition,
                 pending: data ? false : true
             },
-            playersIDs: [this.props.playersIDs[iRow], this.props.playersIDs[iCol]] })
+        })
 
         this.props.navigation.navigate("MatchScreen")
 
@@ -116,7 +116,7 @@ class Table extends Component {
 
         //To render, it is better that we pass the scores transposed
         //In this way, map (or forEach) will return the scores column by column
-        scores = _.zip.apply(_, _.cloneDeep(scores))
+        // scores = _.zip.apply(_, _.cloneDeep(scores))
 
         return [
 
@@ -136,7 +136,7 @@ class Table extends Component {
             <ScoresScroll
                 key="scores"
                 headers={ranks}
-                data={scores}
+                scores={scores}
                 nPlayers={nPlayers}
                 style={styles.scoresScroll}
                 iLeader={iLeader} iLoser={iLoser}
@@ -183,12 +183,15 @@ class Table extends Component {
 
 class ScoresScroll extends Component {
 
-    renderScoreCols = (headers, data, nVisibleRows) => {
+    renderScoreCols = (headers, scores, nVisibleRows) => {
         return headers.map( (header, iCol) => {
+
+            let colScores = scores.map( rowScores => rowScores[iCol])
+            
             return <Column
                     key={iCol}
                     header={header}
-                    data={data[iCol]} style={{...styles.column, width: 100/nVisibleRows + "%" }}
+                    data={colScores} style={{...styles.column, width: 100/nVisibleRows + "%" }}
                     iLeader={this.props.iLeader} iLoser={this.props.iLoser}
                     touchable iScoresCol={iCol}
                     onPress={this.props.onPress}/>
@@ -210,7 +213,7 @@ class ScoresScroll extends Component {
 
             <View style={{...this.props.style, flex: Math.min(8,nVisibleRows*2)}}>
                 <ScrollView style={{flex: 1}} horizontal={true} nestedScrollEnabled contentContainerStyle={contentContainerStyle}>
-                    {this.renderScoreCols(this.props.headers, this.props.data, this.props.nPlayers, nVisibleRows)}
+                    {this.renderScoreCols(this.props.headers, this.props.scores, this.props.nPlayers, nVisibleRows)}
                 </ScrollView>
             </View>
             

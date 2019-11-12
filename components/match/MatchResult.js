@@ -37,6 +37,8 @@ class MatchResult extends Component {
 
     render() {
 
+        if (!this.props.currentMatch.playersIDs) return <Card loading/>
+
         let result = this.props.currentMatch.result || this.props.defaultResult
             
         let scoreInputs = result.map( (value, index) => (
@@ -47,7 +49,7 @@ class MatchResult extends Component {
                 updateValue={(step)=>this.updateResult(index, step)}/>
         ))
 
-        let players = this.props.currentMatch.playersIDs.map( uid => renderName(this.props.IDsAndNames[uid], COMPSETTINGS.general.nameDisplay) )
+        let players = this.props.currentMatch.playersIDs.map( uid => renderName(this.props.relevantUsers[uid].names, COMPSETTINGS.general.nameDisplay) )
         let ranks = this.props.currentMatch.playersIDs.map( uid => {
             return this.props.competitions[this.props.currentMatch.context.competition.id].playersIDs.indexOf(uid) + 1
         })
@@ -121,7 +123,7 @@ const mapStateToProps = state => ({
     currentUser: state.currentUser,
     currentMatch: state.match,
     competitions: state.competitions,
-    IDsAndNames: state.IDsAndNames
+    relevantUsers: state.relevantUsers
 })
 
 const mapDispatchToProps = dispatch => ({

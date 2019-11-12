@@ -62,7 +62,7 @@ class NotificationManager {
                 //Handle chat notifications
                 if (notif.data && notif.data.categoryId == "chatNotification"){
 
-                    if (notif.actionId == "reply" && notif.userText){
+                    if (notif.actionId == "reply" && notif.userText && states.currentUser){
 
                         let newMessage = {user: {_id: states.currentUser.id }, text: notif.userText}
 

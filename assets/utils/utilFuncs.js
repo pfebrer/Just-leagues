@@ -207,6 +207,8 @@ exports.setsToPoints = (setsInp, pointsScheme) => {
 //Checks whether the result submitted is possible (checking against the pointsScheme settings for the competition)
 exports.resultIsCorrect = (testResult, pointsScheme) => {
 
+    testResult = _.cloneDeep(testResult)
+    pointsScheme = _.cloneDeep(pointsScheme)
     let isCorrect = false
 
     pointsScheme.forEach(({result}) => {

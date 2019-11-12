@@ -281,7 +281,7 @@ class Firebase {
 
   //FUNCTIONS TO OPERATE ON THE DATABASE
   //Generic document updater
-  updateDocInfo = (ref, updates, callback, method = "set", merge = true, params = false, omit = false) => {
+  updateDocInfo = (ref, updates, callback, {method = "set", merge = true, params = false, omit = false}) => {
 
     if (typeof ref == "string") {
       ref = this.firestore.doc(ref)
