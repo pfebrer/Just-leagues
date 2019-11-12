@@ -50,7 +50,12 @@
         "new message": "Nou missatge",
         "new group message": "Nou missatge de grup"
     },
+    "questions": {
+        "has this match been played now?": "S'ha jugat ara el partit?"
+    },
     "vocabulary": {
+        "no": "No",
+        "yes": "Sí",
         "group": "Grup",
         "total": "Total",
         "pending matches": "Partits pendents",
@@ -103,7 +108,8 @@
         "go back": "Torna enrere",
         "type a message": "Escriu un missatge",
         "reply": "Respon",
-        "write your reply": "Escriu la teva resposta"
+        "write your reply": "Escriu la teva resposta",
+        "add the date": "Afegeix la data"
     },
 
     "admin": {

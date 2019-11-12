@@ -84,7 +84,6 @@ class SettingsScreen extends React.Component {
             })
         }
 
-        // Works on both iOS and Android
         Alert.alert(
             translate("vocabulary.attention"),
             translate("settings.you are about to restore default settings"),

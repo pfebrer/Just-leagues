@@ -302,6 +302,8 @@ class Firebase {
       promise = ref.update(updates)
     }
 
+    console.warn(updates)
+
     promise.then(() => {
       if (callback) {callback()}
     })
@@ -389,7 +391,7 @@ class Firebase {
             ...data,
             id: doc.id,
             due: data.due ? data.due.toDate() : null,
-            scheduled: data.scheduled ? { ...data.scheduled, time: data.scheduled.time.toDate()} : null,
+            scheduled: data.scheduled ? { ...data.scheduled, time: data.scheduled.time ? data.scheduled.time.toDate() : data.scheduled.time} : null,
             gymID: doc.ref.parent.parent.parent.parent.id,
             compID: doc.ref.parent.parent.id
           }
@@ -416,7 +418,7 @@ class Firebase {
         callback({
           ...data,
           due: data.due ? data.due.toDate() : null,
-          scheduled: data.scheduled ? { ...data.scheduled, time: data.scheduled.time.toDate()} : null
+          scheduled: data.scheduled ? { ...data.scheduled, time: data.scheduled.time ? data.scheduled.time.toDate() : data.scheduled.time} : null
         }, docSnapshot)
 
       }

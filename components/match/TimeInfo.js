@@ -15,6 +15,8 @@ import { totalSize } from '../../api/Dimensions'
 import UpdatableCard from './UpdatableCard'
 import { Text } from 'native-base'
 
+import _ from "lodash"
+
 
 class TimeInfo extends Component {
 
@@ -51,7 +53,10 @@ class TimeInfo extends Component {
 
     updateAndCommitSchedule = (newDate) => {
         this.updateScheduledTime(newDate);
-        this.commitScheduleToDB();
+
+        //A promise would be better but I don't understand what is going on (redux state is not changed if you call the function immediately)
+        setTimeout(this.commitScheduleToDB, 500)
+
     }
 
     updateScheduledTime = (newDate) => {
@@ -72,7 +77,7 @@ class TimeInfo extends Component {
         let cardProps = {
             titleIcon: "calendar",
             title: !this.props.currentMatch.context.pending ? translate("cardTitles.match date") : translate("cardTitles.match schedule"),
-            actionIcon: this.props.currentMatch.scheduled && this.props.currentMatch.scheduled.time ? "refresh" : null,
+            actionIcon: this.props.currentMatch.scheduled && this.props.currentMatch.scheduled.time ? "backspace" : null,
             actionIconStyles: {color: "darkred"},
             onHeaderPress: this.props.currentMatch.scheduled && this.props.currentMatch.scheduled.time ? () => this.updateAndCommitSchedule(null) : null,
             contentContainerStyles: {justifyContent:"center", alignItems: "center"}
@@ -139,7 +144,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps = dispatch => ({
-    setCurrentMatch: (compInfo, config) => dispatch(setCurrentMatch(compInfo, config))
+    setCurrentMatch: (compInfo, config) => {dispatch(setCurrentMatch(compInfo, config))}
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(TimeInfo);

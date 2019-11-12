@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {ImageBackground, StyleSheet, Text, TouchableOpacity, View, ScrollView} from 'react-native';
+import {ImageBackground, StyleSheet, Text, TouchableOpacity, View, ScrollView, Alert} from 'react-native';
 import _ from "lodash"
 import Firebase from "../api/Firebase"
 
@@ -152,19 +152,22 @@ class MatchScreen extends Component {
             } else if ( this.props.currentMatch.context.pending) {
                 //If this is the first result for this match we have to submit a new match and delete this pending match
 
-                if (this.matchSub) this.matchSub(); //Stop listening to the match (we are going to change its location)
-
-                Firebase.submitNewPlayedMatch(this.props.currentMatch,
-                    
-                    () => {
-
-                        this.props.setCurrentMatch({context: {...this.props.currentMatch.context, pending: false}}, {merge: true})
-                        callback()
-
-                        //Listen to the match again
-                        this.listenToMatch()
-                    }
-                )
+                if ( !this.props.currentMatch.scheduled || ! this.props.currentMatch.scheduled.time){
+                    Alert.alert(
+                        translate("vocabulary.attention"),
+                        translate("questions.has this match been played now?"),
+                        [
+                        {
+                            text: [translate('vocabulary.no'), translate("actions.add the date")].join(". "),
+                            style: 'cancel',
+                        },
+                        {text: translate('vocabulary.yes'), onPress: () => this.submitNewMatch(callback)},
+                        ],
+                        {cancelable: true},
+                    );
+                } else {
+                    this.submitNewMatch(callback)
+                }
                 
                 return true
             }
@@ -172,6 +175,22 @@ class MatchScreen extends Component {
         }
         
         Firebase.updateDocInfo(this.matchRef, this.props.currentMatch, callback, {merge: true, params, omit: ["context", "playersNames"]})
+    }
+
+    submitNewMatch = (callback) => {
+        if (this.matchSub) this.matchSub(); //Stop listening to the match (we are going to change its location)
+
+        Firebase.submitNewPlayedMatch(this.props.currentMatch,
+        
+            () => {
+
+                this.props.setCurrentMatch({context: {...this.props.currentMatch.context, pending: false}}, {merge: true})
+                callback()
+
+                //Listen to the match again
+                this.listenToMatch()
+            }
+        )
     }
 
     render() {

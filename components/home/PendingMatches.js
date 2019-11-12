@@ -103,7 +103,7 @@ class PendingMatches extends Component {
         //Determine how the time information should be rendered
         var timeInfo;
 
-        if (match.scheduled) {
+        if (match.scheduled && match.scheduled.time) {
 
             let {time, location} = match.scheduled
             time = moment(time)
@@ -128,7 +128,7 @@ class PendingMatches extends Component {
                         </View>
         }
 
-        let additionalPadStyles = match.scheduled ? styles.scheduledPad : styles.notScheduledPad
+        let additionalPadStyles = match.scheduled && match.scheduled.time ? styles.scheduledPad : styles.notScheduledPad
 
         return (
             <TouchableOpacity 
