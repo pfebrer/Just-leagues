@@ -11,6 +11,8 @@ import { Icon, Text} from 'native-base';
 
 import Firebase from "../../api/Firebase"
 
+import _ from "lodash"
+
 //Redux stuff
 import { connect } from 'react-redux'
 
@@ -39,7 +41,13 @@ class Notifications extends Component {
 
                 Promise.all(promises).then( querysnapShots => {
                     this.setState({
-                        unasignedUsers: unasignedUsers.map( (user, i) => ({...user, competition: querysnapShots[i].docs[0].data() }) )
+                        unasignedUsers: unasignedUsers.map( (user, i) => ({
+                            ...user,
+                            competition: {
+                                ...querysnapShots[i].docs[0].data(),
+                                gymID: querysnapShots[i].docs[0].ref.parent.parent.id
+                            }
+                        }) )
                     })
                 }).catch(err => alert("Could not retrieve competition data from unasigned users:", err))
             }
@@ -48,8 +56,8 @@ class Notifications extends Component {
     }
 
     mergeUnasignedUser = (unasignedUser, requestingUser) => {
-
-        Firebase.mergeUsers(_.omit(unasignedUser, ["competition"]), requestingUser)
+        
+        Firebase.mergeUsers(_.omit(unasignedUser, ["competition"]), requestingUser, {[unasignedUser.competition.id]: unasignedUser.competition})
 
     }
 
@@ -114,7 +122,7 @@ class Notifications extends Component {
 
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
-    IDsAndNames: state.IDsAndNames
+    IDsAndNames: state.IDsAndNames,
 })
 
 export default connect(mapStateToProps)(Notifications);

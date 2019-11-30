@@ -153,14 +153,42 @@ exports.getTotals = (groupResults, groupSize) => {
 };
 
 //Returns the indexes of the player with most and with less points
-exports.iLeaderLoser = (totals) => {
+exports.sortPlayerIndices = (players, scores, totals, untyingCriteria) => {
 
-    const maxTotals = Math.max.apply(Math, totals);
-    const minTotals = Math.min.apply(Math, totals);
-    let leader = totals.indexOf(maxTotals);
-    let loser = totals.lastIndexOf(minTotals);
+    players = _.cloneDeep(players); scores = _.cloneDeep(scores); totals = _.cloneDeep(totals)
 
-    return [leader, loser];
+    let iPlayers = [ ...Array(players.length).keys() ];
+
+    return iPlayers.sort((iP1,iP2) => groupBestToWorst(iP1, iP2, players, scores, totals, untyingCriteria))
+
+}
+
+groupBestToWorst= (iP1, iP2, players, scores, totals, untyingCriteria) => {
+
+    const pointsDif = totals[iP2] - totals[iP1] ;
+
+    //One player has more points than the other
+    if (pointsDif !== 0) {
+        return pointsDif;
+    }
+
+    //They are tied in points
+    untyingCriteria.forEach( criterion => {
+
+        if (criterion == "position") {
+
+            return iP2 - iP1
+
+        } else if (criterion == "directMatch") {
+
+            //Match points of player 2 - match points of player 1
+            const matchDiff = scores[iP2][iP1] - scores[iP1][iP2]
+
+            if (matchDiff !== 0) {
+                return matchDiff;
+            }
+        }
+    })
 }
 
 //Function that recieves the points in a match and converts them to sets

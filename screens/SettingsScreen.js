@@ -176,7 +176,6 @@ class SettingsScreen extends React.Component {
                             <Item inlineLabel style={{marginTop: 0, marginBottom: 10}}>
                                 <Label >{translate(setting.name)}</Label>
                                 <Input
-                                    disabled
                                     onChangeText={ text => this.updateStateSettings(settingsType, key, text)}
                                     value={values[key]}/>
                             </Item>

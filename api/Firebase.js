@@ -633,7 +633,7 @@ class Firebase {
     batch.commit().then(callback).catch(err => alert(err))
   }
 
-  mergeUsers = (userToMerge, requestingUser, callback = () => {}) => {
+  mergeUsers = (userToMerge, requestingUser, relevantCompetitions, callback = () => {}) => {
 
     /*
     Function to merge two users (only tested to merge an unasigned user to a real user of the app,
@@ -669,9 +669,9 @@ class Firebase {
 
     //Define all the references where there is an array of playersIDs that needs to be modified
     let IDstoringRefs = [];
-    userToMerge.activeCompetitions.forEach( competition => {
+    userToMerge.activeCompetitions.forEach( compID => {
 
-      var {gymID, id: compID, type: typeOfComp} = competition
+      var {gymID, type: typeOfComp} = relevantCompetitions[compID]
 
       IDstoringRefs.push(
         //Doc refs

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
-import { iLeaderLoser, setsToPoints , deepClone, renderName } from "../../assets/utils/utilFuncs"
+import { sortPlayerIndices, setsToPoints , deepClone, renderName } from "../../assets/utils/utilFuncs"
 import { translate } from '../../assets/translations/translationManager';
 import { w, h, totalSize } from '../../api/Dimensions';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -111,12 +111,10 @@ class Table extends Component {
 
     renderTable = (ranks, players, scores, totals) => {
 
-        let [iLeader, iLoser] = iLeaderLoser(totals)
+        let sortedPlayerIndices = sortPlayerIndices(players, scores, totals, COMPSETTINGS.groups.untyingCriteria)
         let nPlayers = players.length
-
-        //To render, it is better that we pass the scores transposed
-        //In this way, map (or forEach) will return the scores column by column
-        // scores = _.zip.apply(_, _.cloneDeep(scores))
+        
+        const iLeader = sortedPlayerIndices[0], iLoser = _.last(sortedPlayerIndices)
 
         return [
 

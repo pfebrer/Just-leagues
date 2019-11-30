@@ -5,8 +5,13 @@ exports.COMPSETTINGS = {
     },
     groups: {
         nPromotingPlayers: 1, //Number of players that go up or down on period closing
-        untyingCriteria: ["directMatch","position"],//How to decide which player is higher in the ranking when there is a points tie 
+        untyingCriteria: ["directMatch","position"], //How to decide which player is higher in the ranking when there is a points tie 
         pointsScheme: [
+            {
+                result: [0,-1],
+                points: [7,0]
+            },
+
             {
                 result: [3,0],
                 points: [7,1],

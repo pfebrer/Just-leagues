@@ -118,7 +118,7 @@ exports.newDateForMatchNotification = firestoreFunction.document(Collections.GYM
     const {playersIDs, scheduled} = change.after.data();
     const {scheduled: prevScheduled} = change.before.data();
 
-    if (scheduled && scheduled.time && (!prevScheduled || prevScheduled.time.toDate() != scheduled.time.toDate())){
+    if (scheduled && scheduled.time && (!prevScheduled  || !prevScheduled.time || prevScheduled.time.toDate() != scheduled.time.toDate())){
         
         promises = []
 
