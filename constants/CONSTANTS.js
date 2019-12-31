@@ -17,7 +17,8 @@ const Subcollections = {
     GROUPS: "groups",
     MATCHES: "matches",
     PENDINGMATCHES: "pendingMatches",
-    MESSAGES: "messages"
+    MESSAGES: "messages",
+    RANKHISTORY: "rankHistory"
 }
 
 const Documents = {

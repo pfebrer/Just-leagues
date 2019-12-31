@@ -725,6 +725,13 @@ class Firebase {
 
     let batch = this.firestore.batch()
 
+
+    //Store the new ranking in history
+    batch.set( this.rankHistoryRef(compID).doc() , {
+      date: Date.now(),
+      playersIDs: ranking
+    })
+
     //Divide the ranking in groups of size determined by the competition settings
     let playersGroups = _.chunk(ranking, compsettings.groupSize)
 
@@ -839,6 +846,10 @@ class Firebase {
 
   compMessagesRef = (gymID, compID) => {
     return this.compRef(gymID, compID).collection(Subcollections.MESSAGES)
+  }
+
+  rankHistoryRef = (compID) => {
+    return this.compRef(compID).collection(Subcollections.RANKHISTORY)
   }
 
   matchesRef = (gymID, compID) => {
