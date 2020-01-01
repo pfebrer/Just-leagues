@@ -28,7 +28,8 @@
         "settings": "Configuració",
         "competitions handling": "Gestió de competicions",
         "match view": "Vista de partit",
-        "ranking editing": "Edició del rànquing"
+        "ranking editing": "Edició del rànquing",
+        "player management": "Administració de jugadors"
     },
     "cardTitles": {
         "match schedule": "Previsió de data",
@@ -78,7 +79,8 @@
         "unable to merge users": "No s'han pogut unir els jugadors",
         "unknown competition": "Competició desconeguda",
         "no name": "Sense nom",
-        "could not send message": "No s'ha pogut enviar el missatge"
+        "could not send message": "No s'ha pogut enviar el missatge",
+        "competition was not removed": "La competició no s'ha pogut eliminar",
     },
     "settings": {
         "you are about to restore default settings": "Estàs a punt de tornar a la configuració inicial.",
@@ -109,7 +111,8 @@
         "type a message": "Escriu un missatge",
         "reply": "Respon",
         "write your reply": "Escriu la teva resposta",
-        "add the date": "Afegeix la data"
+        "add the date": "Afegeix la data",
+        "add player": "Afegeix jugador"
     },
 
     "admin": {
@@ -119,6 +122,7 @@
         "modify matches": "Modifica partits",
         "go to competition screen": "Anar a la pantalla de la competició",
         "generate groups": "Genera grups",
-        "competition settings": "Configuració de la competició"
+        "competition settings": "Configuració de la competició",
+        "manage players": "Administra jugadors"
     }
 }

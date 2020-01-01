@@ -36,22 +36,8 @@ const Subcollections = {
 }
 
 const Documents = {
-    RANKINGS: {
-        squashRanking: "squashRanking",
-    },
-    MONTH_INFO: {
-        typeOfComp: "typeOfComp",
-        updateRanking: "updateRanking"
-    },
-    GROUPS: {
-        chatMessages: "chatMessages",
-        generalMessages: "generalMessages"
-    },
-    PLAYERS: {
-        props: {
-            currentGroup: "currentGroup",
-            playerName: "playerName"
-        }
+    COMPETITION: {
+        usersToCreate: "players"
     }
 };
 
@@ -76,16 +62,26 @@ const firestoreFunction = functions.region('europe-west1').runWith(runtimeOpts).
 const httpsFunction = functions.region('europe-west1').runWith(runtimeOpts).https
 
 
-exports.initCompetition = firestoreFunction.document(Collections.GYMS + "/{gymID}/"+ Subcollections.COMPETITIONS + "/{compID}"  )
-.onCreate((snap, context) => {
+exports.initCompetition = firestoreFunction.document(Collections.GYMS + "/{gymID}/"+ Subcollections.COMPETITIONS + "/{compID}")
+.onWrite((change, context) => {
+
+    /*This function was initially thought just to initialize a competition, 
+    but it can work as well to add new players to an already existing competition. 
+    Something needs to be changed to avoid triggering it unnecessarily (the function is triggered by itself when it updates the competition)
+    Maybe call it through https to add new players an change the trigger to onCreate for initializing competitions? */
 
     const {gymID, compID} = context.params
-    const {players, name: compName, type: compType} = snap.data()
+    var {[Documents.COMPETITION.usersToCreate]: players, name: compName, type: compType, playersIDs} = change.after.data()
 
+    //If there are no new players, we don't need to do anything
+    if (!players) return
+
+    //Initialize the batch
     let batch = firestore.batch()
-    let playersIDs = [];
+    //If there are no players registered yet (e.g. the competition is being initialized), then playersIDs is an empty list
+    playersIDs = playersIDs || [];
 
-    //Create all the unasigned users of this new competition
+    //Create all the new unasigned users for this competition
     players.forEach( player => {
 
         var newRef = firestore.collection(Collections.USERS).doc();
@@ -101,10 +97,10 @@ exports.initCompetition = firestoreFunction.document(Collections.GYMS + "/{gymID
     })
 
     //Update also the competition players (create a playersIDs list and remove the helper players list)
-    batch.update(snap.ref, {
+    batch.update(change.after.ref, {
         id: compID,
-        playersIDs,
-        players: admin.firestore.FieldValue.delete()
+        playersIDs: playersIDs,
+        [Documents.COMPETITION.usersToCreate]: admin.firestore.FieldValue.delete()
     })
 
     return batch.commit()

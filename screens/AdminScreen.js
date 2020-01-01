@@ -108,6 +108,16 @@ class AdminScreen extends React.Component {
                         <Button
                             style={styles.button}
                             onPress={() => {
+                                this.props.navigation.navigate("PlayersManagementScreen")
+                            }}
+                            >
+                            <Text style={styles.buttonText}>{translate("admin.manage players")}</Text>
+                        </Button>
+                    </View>
+                    <View style={styles.buttonRow}>
+                        <Button
+                            style={styles.button}
+                            onPress={() => {
                                 this.props.navigation.navigate("EditRankingScreen")
                             }}
                             >

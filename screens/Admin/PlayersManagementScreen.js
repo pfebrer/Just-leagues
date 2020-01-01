@@ -9,33 +9,33 @@ import {
   Dimensions,
   Platform,
 } from 'react-native';
-import SortableList from 'react-native-sortable-list';
-import { Button, Icon } from 'native-base';
+import { Button, Icon, Input, Form, Label, Item} from 'native-base';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { translate } from '../assets/translations/translationManager';
-import { w } from '../api/Dimensions';
-import {renderName} from "../assets/utils/utilFuncs";
-import { COMPSETTINGS } from '../constants/Settings';
+import { translate } from '../../assets/translations/translationManager';
+import { w } from '../../api/Dimensions';
+import {renderName} from "../../assets/utils/utilFuncs";
+import { COMPSETTINGS } from '../../constants/Settings';
 
 //Redux stuff
 import { connect } from 'react-redux'
-import {setCurrentCompetition} from "../redux/actions"
-import HeaderIcon from '../components/header/HeaderIcon';
+import {setCurrentCompetition} from "../../redux/actions"
+import HeaderIcon from '../../components/header/HeaderIcon';
 
-import Firebase from "../api/Firebase"
+import Firebase from "../../api/Firebase"
 
 const window = Dimensions.get('window');
 
 
-class RankingEditScreen extends Component {
+class PlayersManagementScreen extends Component {
 
     constructor(props){
         super(props)
 
         this.state = {
-          editable: true,
-          deleteMode: false,
-          ranking: props.competition.playersIDs || []
+            newPlayer: {
+                name: "Juan",
+                email: "jenesais"
+            }
         }
 
     }
@@ -46,19 +46,20 @@ class RankingEditScreen extends Component {
 
     static navigationOptions = ({navigation}) => {
       return {
-        headerTitle: translate("tabs.ranking editing"), 
-        headerRight: <HeaderIcon name="checkmark" onPress={navigation.getParam("submitNewRanking")} />
+        headerTitle: translate("tabs.player management"),
       }
   };
 
-  submitNewRanking = () => {
+  addPlayer = () => {
 
     let {gymID, id: compID} = this.props.competition 
 
-    Firebase.updateCompetitionDoc(gymID, compID, {playersIDs: this.state.ranking},
+    if ( !this.state.newPlayer.name || !this.state.newPlayer.email) return
+
+    Firebase.addNewPlayerToComp(gymID, compID, this.state.newPlayer,
       () => {
-        this.props.setCurrentCompetition({...this.props.competition, playersIDs: this.state.ranking});
-        this.props.navigation.goBack()
+        //this.props.setCurrentCompetition({...this.props.competition, playersIDs: this.state.ranking});
+        //this.props.navigation.goBack()
       }
     )
 
@@ -80,16 +81,29 @@ class RankingEditScreen extends Component {
 
     render() {
         return (
-        <View style={styles.container}>
-            <Text style={styles.title}>{translate("tabs.ranking")}</Text>
-            <SortableList
-            style={styles.list}
-            contentContainerStyle={styles.contentContainer}
-            onReleaseRow={(key, newOrder) => this.updateRankingOrder(newOrder)}
-            onPressRow={(key) => this.setState({deleteMode: this.state.editable && !this.state.deleteMode})}
-            data={this.state.ranking}
-            renderRow={this._renderRow}
-            sortingEnabled={this.state.editable}/>
+        <View >
+            <Form>
+                <Item stackedLabel>
+                    <Label>{translate("auth.name")}</Label>
+                    <Input 
+                        value={this.state.newPlayer.name}
+                        onChangeText={(value) => this.setState({newPlayer: {...this.state.newPlayer, name: value}}) }
+                    />
+                </Item>
+                <Item stackedLabel last>
+                    <Label>{translate("auth.email")}</Label>
+                    <Input 
+                        value={this.state.newPlayer.email} 
+                        onChangeText={(value) => this.setState({newPlayer: {...this.state.newPlayer, email: value}}) }
+                    />
+                </Item>
+                <Button
+                    style={styles.button}
+                    onPress={this.addPlayer}
+                    >
+                    <Text style={styles.buttonText}>{translate("actions.add player")}</Text>
+                </Button>
+            </Form>
         </View>
     );
   }
@@ -194,7 +208,7 @@ const mapDispatchToProps = dispatch => ({
   setCurrentCompetition: (compInfo) => dispatch(setCurrentCompetition(compInfo))
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(RankingEditScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(PlayersManagementScreen);
 
 const styles = StyleSheet.create({
   container: {

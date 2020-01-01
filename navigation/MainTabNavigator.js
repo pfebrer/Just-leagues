@@ -8,7 +8,8 @@ import AdminScreen from "../screens/AdminScreen";
 import GroupChat from "../screens/ChatScreen";
 import ProfileScreen from "../screens/ProfileScreen";
 import SettingsScreen from "../screens/SettingsScreen";
-import RankingEditScreen from "../screens/RankingEditScreen";
+import RankingEditScreen from "../screens/Admin/RankingEditScreen";
+import PlayersManagementScreen from "../screens/Admin/PlayersManagementScreen";
 import HomeScreen from "../screens/HomeScreen"
 import MatchScreen from "../screens/MatchScreen"
 
@@ -30,7 +31,8 @@ const HomeStack = createStackNavigator({
     MatchScreen: MatchScreen,
     //Screens for admins only
     AdminScreen: AdminScreen,
-    EditRankingScreen: RankingEditScreen
+    EditRankingScreen: RankingEditScreen,
+    PlayersManagementScreen: PlayersManagementScreen
 },{initialRouteName: "HomeScreen"});
 
 const AdminStack = createStackNavigator({

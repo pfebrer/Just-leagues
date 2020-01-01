@@ -22,22 +22,8 @@ const Subcollections = {
 }
 
 const Documents = {
-    RANKINGS: {
-        squashRanking: "squashRanking",
-    },
-    MONTH_INFO: {
-        typeOfComp: "typeOfComp",
-        updateRanking: "updateRanking"
-    },
-    GROUPS: {
-        chatMessages: "chatMessages",
-        generalMessages: "generalMessages"
-    },
-    PLAYERS: {
-        props: {
-            currentGroup: "currentGroup",
-            playerName: "playerName"
-        }
+    COMPETITIONS: {
+        usersToCreate: "players"
     }
 };
 

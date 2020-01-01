@@ -335,6 +335,10 @@ class Firebase {
     }).then(callback).catch(err => alert( translate("errors.could not send message"), err))
   }
 
+  addNewPlayerToComp = (gymID, compID, newPlayer, callback) => {
+    this.updateDocInfo(this.compRef(gymID, compID), {players: [newPlayer]}, callback, {merge: true})
+  }
+
   //FUNCTIONS TO GET DATA FROM DATABASE ONCE (don't keep listening)
   getCompetition = (compID) => this.compsGroupRef.where("id", "==", compID).get()
   
@@ -725,12 +729,14 @@ class Firebase {
 
     let batch = this.firestore.batch()
 
-
     //Store the new ranking in history
     batch.set( this.rankHistoryRef(compID).doc() , {
       date: Date.now(),
       playersIDs: ranking
     })
+
+    //Delete all groups
+    
 
     //Divide the ranking in groups of size determined by the competition settings
     let playersGroups = _.chunk(ranking, compsettings.groupSize)
@@ -788,6 +794,24 @@ class Firebase {
 
     return batch.commit().then(()=> callback()).catch(err => alert(err))
     
+  }
+
+  removeCompetition = (compID) => {
+
+    return this.getCompetition(compID).then((querySnapshot) => {
+      let batch = this.firestore.batch()
+
+      let {playersIDs} = querySnapshot.docs[0].data()
+      let gymID = querySnapshot.docs[0].ref.parent.parent.id
+
+      //If the competition was initialized by mistake
+      playersIDs.forEach(playerID => batch.delete(this.userRef(playerID)))
+
+      batch.delete(this.compRef(gymID, compID))
+
+      batch.commit()
+    }).catch(err => alert(translate("errors.competition was not removed") + "\nError: " + err))
+
   }
 
   callHttpsFunction = (functionName, argsObject, callback, errorFn) => {
