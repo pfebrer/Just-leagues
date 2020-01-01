@@ -49,7 +49,8 @@
         "if you expected to have any, please talk with your competition administrator": "Si esperaves tenir alguna, parla amb l'administrador de la teva competició, siusplau :)",
         "no messages yet": "Encara no hi ha cap missatge",
         "new message": "Nou missatge",
-        "new group message": "Nou missatge de grup"
+        "new group message": "Nou missatge de grup",
+        "player added": "Jugador afegit"
     },
     "questions": {
         "has this match been played now?": "S'ha jugat ara el partit?"

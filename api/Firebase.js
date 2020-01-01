@@ -302,8 +302,6 @@ class Firebase {
       promise = ref.update(updates)
     }
 
-    console.warn(updates)
-
     promise.then(() => {
       if (callback) {callback()}
     })
@@ -336,7 +334,7 @@ class Firebase {
   }
 
   addNewPlayerToComp = (gymID, compID, newPlayer, callback) => {
-    this.updateDocInfo(this.compRef(gymID, compID), {players: [newPlayer]}, callback, {merge: true})
+    this.updateDocInfo(this.compRef(gymID, compID), {players: [newPlayer]}, () => callback(newPlayer), {merge: true})
   }
 
   //FUNCTIONS TO GET DATA FROM DATABASE ONCE (don't keep listening)
