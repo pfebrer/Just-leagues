@@ -310,7 +310,7 @@ class Firebase {
 
   //Update competition
   updateCompetitionDoc = (gymID, compID, updates, callback) => {
-    this.updateDocInfo( this.compRef(gymID, compID), updates, callback)
+    this.updateDocInfo( this.compRef(gymID, compID), updates, callback, {})
   }
   
   //Update user settings

@@ -53,7 +53,9 @@ class RankingEditScreen extends Component {
 
   submitNewRanking = () => {
 
-    let {gymID, id: compID} = this.props.competition 
+    let {gymID, id: compID} = this.props.competition
+    
+    console.warn(this.state.ranking)
 
     Firebase.updateCompetitionDoc(gymID, compID, {playersIDs: this.state.ranking},
       () => {
