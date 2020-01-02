@@ -107,6 +107,34 @@
             "name":"Primer Cognom"
         }
     },
+    "compsettings": {
+        "general": "General",
+        "nameDisplay": {
+            "name": "Nom dels jugadors",
+            "description": "Format del nom dels jugadors en les pantalles de la competició."
+        },
+        "groups": "Grups",
+        "nPromotingPlayers": {
+            "name": "Jugadors que promocionen",
+            "description": "Número de jugadors que pujen/baixen quan es tanca un període de competició."
+        },
+        "untyingCriteria": {
+            "name": "Criteris de desempat",
+            "description": "Criteris que s'aplicaran per decidir el nou ordre del rànking quan es tanqui un període."
+        },
+        "pointScheme": {
+            "name": "Repartiment de punts",
+            "description": "Determina quants punts es reparteixen depenent del resultat del partit."
+        },
+        "groupSize": {
+            "name": "Mida dels grups",
+            "description": "Número de jugadors que té cada grup en condicions normals."
+        },
+        "minGroupSize": {
+            "name": "Mínima mida grups",
+            "description": "Si queda un grup més petit, es juntaran els dos últims grups."
+        }
+    },
     "actions": {
         "go back": "Torna enrere",
         "type a message": "Escriu un missatge",

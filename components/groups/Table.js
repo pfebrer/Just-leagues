@@ -13,7 +13,6 @@ import { connect } from 'react-redux'
 import {setCurrentMatch} from "../../redux/actions"
 
 import _ from "lodash"
-import { COMPSETTINGS } from '../../constants/Settings';
 
 class Table extends Component {
 
@@ -47,7 +46,7 @@ class Table extends Component {
 
                         let {result, playersIDs} = match.data()
 
-                        let points = setsToPoints(result, COMPSETTINGS.groups.pointsScheme)
+                        let points = setsToPoints(result, this.props.competition.settings.groups.pointsScheme)
 
                         let iPlayers = playersIDs.map( uid => this.props.playersIDs.indexOf(uid))
 
@@ -73,9 +72,9 @@ class Table extends Component {
         let uid = this.props.playersIDs[iRow]
 
         if (uid == this.props.currentUser.id){
-            console.warn("Go to profile: ", renderName(this.props.relevantUsers[uid].names, COMPSETTINGS.general.nameDisplay))
+            console.warn("Go to profile: ", renderName(this.props.relevantUsers[uid].names, this.props.competition.settings.general.nameDisplay))
         } else {
-            console.warn("Go to stats: ", renderName(this.props.relevantUsers[uid].names, COMPSETTINGS.general.nameDisplay))
+            console.warn("Go to stats: ", renderName(this.props.relevantUsers[uid].names, this.props.competition.settings.general.nameDisplay))
         }
         
     }
@@ -111,7 +110,7 @@ class Table extends Component {
 
     renderTable = (ranks, players, scores, totals) => {
 
-        let sortedPlayerIndices = sortPlayerIndices(players, scores, totals, COMPSETTINGS.groups.untyingCriteria)
+        let sortedPlayerIndices = sortPlayerIndices(players, scores, totals, this.props.competition.settings.groups.untyingCriteria)
         let nPlayers = players.length
         
         const iLeader = sortedPlayerIndices[0], iLoser = _.last(sortedPlayerIndices)
@@ -158,7 +157,7 @@ class Table extends Component {
 
         if( !playersIDs.length > 0 ) { return null }
 
-        let players = playersIDs.map( uid => renderName(this.props.relevantUsers[uid].names, COMPSETTINGS.general.nameDisplay))
+        let players = playersIDs.map( uid => renderName(this.props.relevantUsers[uid].names, this.props.competition.settings.general.nameDisplay))
 
         let ranks = playersIDs.map( uid => {
             return this.props.competitions[this.props.competition.id].playersIDs.indexOf(uid) + 1

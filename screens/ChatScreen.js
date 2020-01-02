@@ -28,7 +28,6 @@ import {renderName, getCompetitionName} from '../assets/utils/utilFuncs'
 import moment from 'moment';
 import { h, totalSize } from '../api/Dimensions';
 import ChatsCarousel from '../components/chat/ChatsCarousel';
-import { COMPSETTINGS } from '../constants/Settings';
 import { Icon } from 'native-base';
 
 class ChatScreen extends React.Component {
@@ -60,7 +59,7 @@ class ChatScreen extends React.Component {
                     createdAt: message.createdAt.toDate(),
                     user: {
                         ...message.user,
-                        name: renderName(this.props.relevantUsers[message.user._id].names, COMPSETTINGS.general.nameDisplay )
+                        name: renderName(this.props.relevantUsers[message.user._id].names, this.props.currentComp.settings["general"].nameDisplay )
                     }
                 }
             })
@@ -106,7 +105,7 @@ class ChatScreen extends React.Component {
 
                 if (this.state.target.particularChat){
 
-                    let authorName = renderName(this.props.relevantUsers[this.props.currentUser.id].names, COMPSETTINGS.general.nameDisplay)
+                    let authorName = renderName(this.props.relevantUsers[this.props.currentUser.id].names, this.props.currentComp.settings["general"].nameDisplay)
 
                     this.state.context.playersIDs.forEach(uid => {
 

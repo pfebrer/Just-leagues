@@ -15,7 +15,6 @@ import { connect } from 'react-redux'
 import {setCurrentCompetition} from "../redux/actions"
 
 import { translate } from '../assets/translations/translationManager';
-import { COMPSETTINGS } from '../constants/Settings';
 import { w, totalSize } from '../api/Dimensions';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
@@ -179,7 +178,7 @@ class AdminScreen extends React.Component {
 
         let {gymID, id: compID} = this.props.currentComp
 
-        Firebase.generateGroups(gymID, compID, this.props.currentComp.playersIDs, COMPSETTINGS.groups, {due: this.state.newPeriodDue},
+        Firebase.generateGroups(gymID, compID, this.props.currentComp.playersIDs, this.props.currentComp.settings["groups"], {due: this.state.newPeriodDue},
             () => {
                 this.setState({groupGeneratingModal: false})
                 this.props.navigation.navigate("CompetitionScreen")

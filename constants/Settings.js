@@ -1,36 +1,98 @@
-//Contains all the parameters that can be used to tune the app
+//Contains all the parameters that can be used to tune the behaviour of a competition
 exports.COMPSETTINGS = {
-    general: {
-        nameDisplay: "Name Lastname" //One of ["Name Lastname", "Lastname, Name", "Name", "free"]
+    "general": {
+        nameDisplay: {
+            control: {
+                type: "picker",
+            },
+            name: "compsettings.nameDisplay.name",
+            description: "compsettings.nameDisplay.description",
+            default: "Name Lastname", //One of ["Name Lastname", "Lastname, Name", "Name", "free"]
+        }
     },
-    groups: {
-        nPromotingPlayers: 1, //Number of players that go up or down on period closing
-        untyingCriteria: ["directMatch","position"], //How to decide which player is higher in the ranking when there is a points tie 
-        pointsScheme: [
-            {
-                result: [0,-1],
-                points: [7,0]
+    "groups": {
+        nPromotingPlayers: {
+            control: {
+                type: "integer",
+                controlType: "up-down"
             },
-
-            {
-                result: [3,0],
-                points: [7,1],
+            name: "compsettings.nPromotingPlayers.name",
+            description: "compsettings.nPromotingPlayers.description", //Number of players that go up or down on period closing
+            default: 1, 
+        },
+        untyingCriteria: {
+            control: {
+                type: "sortable",
+                items: ["directMatch","position"]
             },
-
-            {
-                result: [3,1],
-                points: [6,2],
+            name: "compsettings.untyingCriteria.name",
+            description: "compsettings.untyingCriteria.description", //How to decide which player is higher in the ranking when there is a points tie 
+            default: ["directMatch","position"], 
+        }, 
+        pointsScheme: {
+            control: {
+                type: "relations",
             },
-
-            {
-                result: [3,2],
-                points: [5,3],
-            }
-        ], //Describes how the point distribution works.
-        groupSize: 4, //Number of players each group should have under normal circumstances
-        minGroupSize: 3, //If last group has less players than this, they will be joined into the previous group
+            name: "compsettings.pointScheme.name",
+            description: "compsettings.pointScheme.description", //Describes how the point distribution works.
+            default: [
+                {
+                    result: [0,-1],
+                    points: [7,0]
+                },
+    
+                {
+                    result: [3,0],
+                    points: [7,1],
+                },
+    
+                {
+                    result: [3,1],
+                    points: [6,2],
+                },
+    
+                {
+                    result: [3,2],
+                    points: [5,3],
+                }
+            ]
+        }, 
+        groupSize: {
+            control: {
+                type: "integer",
+                controlType: "up-down"
+            },
+            name: "compsettings.groupSize.name",
+            description: "compsettings.groupSize.description", //Number of players each group should have under normal circumstances
+            default: 4, 
+        }, 
+        minGroupSize: {
+            control: {
+                type: "integer",
+                controlType: "up-down"
+            },
+            name: "compsettings.minGroupSize.name",
+            description: "compsettings.minGroupSize.description", //If last group has less players than this, they will be joined into the previous group
+            default: 3, 
+        },
     }
 }
+
+//This function should be fired when 
+updateCompSettings = () => {
+    console.warn("Updating competitions settings...")
+    fetch('https://europe-west1-squash-leagues-94b68.cloudfunctions.net/updateCompSettings', {
+        method: 'POST',
+        headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({compSettings: exports.COMPSETTING})
+    });
+}
+
+//Just uncomment this line when you change add some fields to the competition settings
+//updateCompSettings()
 
 //Remember to set a translation for each setting that you add!
 exports.USERSETTINGS = {

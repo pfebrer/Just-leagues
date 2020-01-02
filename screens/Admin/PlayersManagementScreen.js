@@ -14,7 +14,6 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { translate } from '../../assets/translations/translationManager';
 import { w, totalSize } from '../../api/Dimensions';
 import {renderName} from "../../assets/utils/utilFuncs";
-import { COMPSETTINGS } from '../../constants/Settings';
 
 //Redux stuff
 import { connect } from 'react-redux'

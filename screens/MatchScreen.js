@@ -19,8 +19,6 @@ import Head2Head from "../components/match/Head2Head"
 import MatchDiscussion from "../components/match/MatchDiscussion"
 import MatchImage from "../components/match/MatchImage"
 
-import {COMPSETTINGS} from "../constants/Settings";
-
 class MatchScreen extends Component {
 
     constructor(props) {
@@ -137,7 +135,7 @@ class MatchScreen extends Component {
 
         if ( params && params.indexOf("result") >= 0){
 
-            let isResultCorrect = resultIsCorrect(this.props.currentMatch.result, COMPSETTINGS.groups.pointsScheme)
+            let isResultCorrect = resultIsCorrect(this.props.currentMatch.result, this.props.currentComp.settings["groups"].pointsScheme)
 
             if (!isResultCorrect){
 

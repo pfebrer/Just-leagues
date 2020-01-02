@@ -15,7 +15,6 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { translate } from '../../assets/translations/translationManager';
 import { w } from '../../api/Dimensions';
 import {renderName} from "../../assets/utils/utilFuncs";
-import { COMPSETTINGS } from '../../constants/Settings';
 
 //Redux stuff
 import { connect } from 'react-redux'
@@ -97,12 +96,14 @@ class RankingEditScreen extends Component {
   }
 
   _renderRow = ({data: uid, active, index}) => {
+
     return <Row 
-            data={renderName(this.props.relevantUsers[uid].names, COMPSETTINGS.general.nameDisplay)} 
+            data={renderName(this.props.relevantUsers[uid].names, this.props.competition.settings["general"].nameDisplay)} 
             active={active} 
             index={index}
             deletable={this.state.deleteMode}
-            deleteItem={this.deleteItem}/>
+            deleteItem={this.deleteItem}
+            groupSize={this.props.competition.settings["groups"].groupSize}/>
   }
 }
 
@@ -171,7 +172,7 @@ class Row extends Component {
       <Animated.View style={{
         ...styles.row,
         ...this._style,
-        backgroundColor: Math.floor(index/COMPSETTINGS.groups.groupSize) % 2 == 0 ? "#ccc" : "white",
+        backgroundColor: Math.floor(index/this.props.groupSize) % 2 == 0 ? "#ccc" : "white",
         marginHorizontal: this._marginHorizontal
         }}>
         <View style={styles.rankView}>

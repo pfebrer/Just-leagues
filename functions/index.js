@@ -53,6 +53,7 @@ const fetch = require('node-fetch');
 const admin = require('firebase-admin');
 
 const moment = require('moment')
+const _ = require('lodash')
 
 admin.initializeApp();
 const firestore = admin.firestore();
@@ -364,6 +365,116 @@ exports.messageNotification = firestoreFunction.document('groups/{iGroup}/chatMe
         console.log(reason)
     });
 });
+
+//Update competition settings when new fields are added
+exports.updateCompSettings = httpsFunction.onRequest((req, res) => {
+
+    //These are the new competition settings
+    const compSettings = req.body.compSettings
+
+    //We get all the competitions
+    return firestore.collectionGroup(Subcollections.COMPETITIONS).get().then((querySnapshot) => {
+
+        let batch = firestore.batch()
+
+        //Then iterate over them
+        querySnapshot.forEach( docSnapshot => {
+
+            let {name, settings, type: compType} = docSnapshot.data()
+
+            //For each one, there are only certain settings that are relevant, and this depends on the type of competition
+            let relevantSettings = _.pick(compSettings, ["general", compType])
+
+            //We retrieve the new settings if some setting field was missing in the competition
+            let newSettings = _updateSettingsFields(settings, relevantSettings  )
+
+            //If there are new settings we update the competition so that it has them
+            if (newSettings) {
+                batch.update(docSnapshot.ref, {settings: newSettings})
+            }
+        })
+
+        batch.commit().then(() => {
+            res.send("done")
+        }).catch(err => res.send(err))
+        
+    })
+
+    
+})
+
+
+//-----------------------------------------------------
+//        TAKEN FROM UTILFUNCS (KEEP IN SYNC)
+//-----------------------------------------------------
+
+//Function that checks if some settings are not in the users profile and pushes them there.
+const _updateSettingsFields = (currentSettings, upToDateSettings) => {
+
+    let defaultSettings = _getDefaultSettings(upToDateSettings)
+    let newSettings = currentSettings
+
+    let changed = false
+
+    if ( !currentSettings ){
+
+        changed = true
+        newSettings = defaultSettings
+        
+    } else {
+
+        Object.keys(upToDateSettings).forEach( settingType => {
+
+            if ( !currentSettings[settingType] ){
+    
+                newSettings[settingType] = defaultSettings[settingType]
+    
+                changed = true
+    
+            } else {
+    
+                Object.keys(upToDateSettings[settingType]).forEach( setting => {
+    
+                    if ( currentSettings[settingType][setting] == undefined){
+    
+                        newSettings[settingType][setting] = defaultSettings[settingType][setting]
+    
+                        changed = true
+                        
+                    }
+    
+                })
+            }
+            
+        })
+
+    }
+
+    return  changed ? newSettings : false
+}
+
+const _getDefaultSettings = (settings) => {
+    let defaultSettings = {}
+    
+                    
+    Object.keys(settings).forEach( settingType => {
+
+        defaultSettings[settingType] = {}
+
+        Object.keys(settings[settingType]).forEach( setting => { 
+            defaultSettings[settingType][setting] = settings[settingType][setting].default
+        })
+        
+    })
+
+    return defaultSettings
+}
+
+
+
+//-----------------------------------------------------
+//            CURRENTLY UNUSED FUNCTIONS
+//-----------------------------------------------------
 
 //Enviar notificacions quan s'afegeixen partits
 exports.matchNotification = firestoreFunction.document(Collections.GYMS + "/{gymID}/"+ Subcollections.COMPETITIONS + "/{compID}"+ Subcollections.MATCHES + '/{matchid}').onCreate((event, context) => {
