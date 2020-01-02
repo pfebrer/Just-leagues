@@ -728,13 +728,10 @@ class Firebase {
     let batch = this.firestore.batch()
 
     //Store the new ranking in history
-    batch.set( this.rankHistoryRef(compID).doc() , {
-      date: Date.now(),
+    batch.set( this.rankHistoryRef(gymID, compID).doc() , {
+      date: new Date(),
       playersIDs: ranking
     })
-
-    //Delete all groups
-    
 
     //Divide the ranking in groups of size determined by the competition settings
     let playersGroups = _.chunk(ranking, compsettings.groupSize)
@@ -788,10 +785,27 @@ class Firebase {
         playersIDs: playersGroup
       })
 
+      //We need to delete a bunch of things
+      let promises = []
+      //Find all groups that were previously there to delete them
+      promises.push(this.groupsRef(gymID,compID).get())
+      //Find also all pendingMatches to delete them
+      promises.push(this.pendingMatchesRef(gymID,compID).get())
+      
+      //Delete everything and commit
+      Promise.all(promises).then(querySnapshots => {
+        
+        querySnapshots.forEach( querySnapshot => {
+          querySnapshot.forEach( docSnapshot => {
+            batch.delete(docSnapshot.ref)
+        })})
+
+        return batch.commit().then(()=> callback())
+
+      }).catch(err => {}) //For some reason it says that the batch is used after commit, but everything is done right, idk :)
+
     })
 
-    return batch.commit().then(()=> callback()).catch(err => alert(err))
-    
   }
 
   removeCompetition = (compID) => {
@@ -870,8 +884,8 @@ class Firebase {
     return this.compRef(gymID, compID).collection(Subcollections.MESSAGES)
   }
 
-  rankHistoryRef = (compID) => {
-    return this.compRef(compID).collection(Subcollections.RANKHISTORY)
+  rankHistoryRef = (gymID, compID) => {
+    return this.compRef(gymID, compID).collection(Subcollections.RANKHISTORY)
   }
 
   matchesRef = (gymID, compID) => {

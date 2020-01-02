@@ -110,7 +110,7 @@ exports.initCompetition = firestoreFunction.document(Collections.GYMS + "/{gymID
 
 //Send a push notification when date of a match changes
 exports.newDateForMatchNotification = firestoreFunction.document(Collections.GYMS + "/{gymID}/"+ Subcollections.COMPETITIONS + "/{compID}/" + Subcollections.PENDINGMATCHES +"/{matchID}")
-.onWrite((change, event) => {
+.onUpdate((change, event) => {
 
     const {playersIDs, scheduled} = change.after.data();
     const {scheduled: prevScheduled} = change.before.data();
