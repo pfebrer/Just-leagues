@@ -5,7 +5,7 @@ import Firebase from "../api/Firebase";
 import { translate } from '../assets/translations/translationManager';
 import { w, totalSize, h } from '../api/Dimensions';
 
-import { USERSETTINGS } from "../constants/Settings"
+import { USERSETTINGS, COMPSETTINGS } from "../constants/Settings"
 import { connect } from 'react-redux'
 import { List, ListItem, Body, Right, Icon, Text, Button, Form, Item, Label, Input} from 'native-base';
 import { ColorPicker , fromHsv} from 'react-native-color-picker'
@@ -37,7 +37,6 @@ class SettingsScreen extends React.Component {
 
         this.state ={
             modalComponent: undefined,
-            settings: deepClone(this.props.currentUser.settings)
         }
 
         //Auxiliary variable to store future changes in settings
@@ -46,11 +45,12 @@ class SettingsScreen extends React.Component {
     }
 
     static navigationOptions = ({navigation}) => {
+
         return {
-            title: translate("tabs.settings"),
+            title: navigation.getParam("title", translate("tabs.settings")),
             headerLeft: <HeaderIcon name="arrow-back" onPress={navigation.getParam("goBack")}/>,
             headerRight: <View style={{flexDirection: "row"}}>
-                            <HeaderIcon name="refresh" onPress={navigation.getParam("restoreDefaults")}/>
+                            {navigation.getParam("restoreButton", true) ? <HeaderIcon name="refresh" onPress={navigation.getParam("restoreDefaults")}/> : null }
                             <HeaderIcon name="checkmark" onPress={navigation.getParam("submitSettings")}/>
                         </View>
         }
@@ -60,14 +60,48 @@ class SettingsScreen extends React.Component {
 
         //When the screen is focused change the state
         if ( this.props.isFocused && !prevProps.isFocused ) {
-          this.setState({settings: deepClone(this.props.currentUser.settings)})
+
+            this.setUpComponent()
+            
         }
     }
 
     componentDidMount() {
+
+        this.setUpComponent()
+
         this.props.navigation.setParams({submitSettings: this.submitSettings, goBack: this.goBack, restoreDefaults: this.restoreDefaults})
 
         this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.goBack );
+    }
+
+    setUpComponent = () => {
+
+        //Decide which type of settings is going to be displayed
+
+        let configurableDoc = this.props.navigation.getParam("configurableDoc", "user")
+
+        if (configurableDoc == "user"){
+            this.setState({
+                settings: deepClone(this.props.currentUser.settings),
+                settingsTemplate: USERSETTINGS,
+                translateRoot: "settings",
+                submitFunction: (settings, callback) => Firebase.updateUserSettings(this.props.currentUser.id, settings, callback),
+                restoreFunction: (settingsToKeep, callback) => Firebase.restoreDefaultUserSettings(this.props.currentUser.id, settingsToKeep, callback)
+            })
+
+        } else if (configurableDoc == "competition") {
+
+            this.props.navigation.setParams({title: this.props.currentComp.name, restoreButton: false})
+
+            this.setState({
+                settings: deepClone(this.props.currentComp.settings),
+                settingsTemplate: COMPSETTINGS,
+                translateRoot: "compsettings",
+                submitFunction: (settings, callback) => Firebase.updateCompSettings(this.props.currentComp.gymID, this.props.currentComp.id, settings, callback)
+            })
+
+        }
     }
 
     componentWillUnmount() {
@@ -77,11 +111,7 @@ class SettingsScreen extends React.Component {
     restoreDefaults = () => {
 
         reallyRestore = () => {
-            Firebase.restoreDefaultUserSettings(this.props.currentUser.id, _.pick(this.props.currentUser.settings, ["Profile"]), () => {
-                this.setState({
-                    settings: deepClone(this.props.currentUser.settings)
-                })
-            })
+            this.state.restoreFunction(_.pick(this.props.currentUser.settings, ["Profile"]), this.setUpComponent)
         }
 
         Alert.alert(
@@ -108,14 +138,6 @@ class SettingsScreen extends React.Component {
             modalComponent: undefined,
             settings: newSettings
         })
-    }
-
-    updateUserSettings = (newSettings, uid, callback) => {
-
-        Firebase.userRef(uid).update({settings: newSettings}).then(() => {
-            if (callback) {callback()}
-        })
-        .catch((err) => alert(err))
     }
 
     goBack = () => {
@@ -152,7 +174,7 @@ class SettingsScreen extends React.Component {
             
         } else {
 
-            Firebase.updateUserSettings(this.props.currentUser.id, this.state.settings, this.props.navigation.goBack)
+            this.state.submitFunction(this.state.settings, this.props.navigation.goBack)
 
         }
 
@@ -213,7 +235,7 @@ class SettingsScreen extends React.Component {
                                     currentValue: _.cloneDeep(currentValue),
                                     onColorChange: (color) => {this.temp = {value: fromHsv(color), settingType, settingKey}}
                                 }),
-                                headerTitle: translate("settings."+ settingKey)
+                                headerTitle: translate([this.state.translateRoot, settingKey].join("."))
                             })}>
                     </TouchableOpacity>
 
@@ -237,7 +259,7 @@ class SettingsScreen extends React.Component {
 
             list.push(
                 <ListItem key={settingsType} itemDivider>
-                    <Text>{translate("settings." + settingsType)}</Text>
+                    <Text>{translate( [this.state.translateRoot, settingsType].join(".") )}</Text>
                 </ListItem>
             )
 
@@ -253,6 +275,8 @@ class SettingsScreen extends React.Component {
 
     render() {
 
+        if (!this.state.settingsTemplate || !this.state.settings) return null
+
         if (this.state.modalComponent){
             return this.state.modalComponent
         }
@@ -261,7 +285,7 @@ class SettingsScreen extends React.Component {
             <View style={styles.container}>
                 <ScrollView style={styles.scrollView} contentContainerStyle={{justifyContent: "center",alignItems: "center"}}>
                     <List style={styles.settingsList}>
-                        {this.renderSettings(USERSETTINGS, this.state.settings)}
+                        {this.renderSettings(this.state.settingsTemplate, this.state.settings)}
                     </List>
                     <TouchableOpacity 
                         onPress={Firebase.signOut} 
@@ -275,17 +299,11 @@ class SettingsScreen extends React.Component {
         );
     }
 
-    /*Option to change password if log in by mail:
-    <TouchableOpacity 
-        onPress={Firebase.signOut} 
-        transparent 
-        style={styles.signOutButton}>
-        <Text style={styles.signOutText}> {translate("auth.change password")}</Text>
-    </TouchableOpacity> */
 }
 
 const mapStateToProps = state => ({
-    currentUser: state.currentUser
+    currentUser: state.currentUser,
+    currentComp: state.competition,
 })
 
 export default connect(mapStateToProps)(withNavigationFocus(SettingsScreen));

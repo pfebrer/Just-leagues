@@ -312,15 +312,25 @@ class Firebase {
   updateCompetitionDoc = (gymID, compID, updates, callback) => {
     this.updateDocInfo( this.compRef(gymID, compID), updates, callback, {})
   }
+
+  //Update settings of any document that contains settings
+  updateSettings = (docRef, settings, callback, method = "set") => {
+    this.updateDocInfo( docRef, {settings}, callback, {method, merge: true})
+  }
   
   //Update user settings
   updateUserSettings = (uid, newSettings, callback, method = "set") => {
-    this.updateDocInfo( this.userRef(uid), {settings: newSettings}, callback, {method, merge: true})
+    this.updateSettings( this.userRef(uid), newSettings, callback, method)
   }
 
   //Set default settings (pass the settings to )
   restoreDefaultUserSettings = (uid, settingsToKeep, callback) => {
     this.updateUserSettings(uid, settingsToKeep, callback, method = "update")
+  }
+
+  //Update competition settings
+  updateCompSettings = (gymID, compID, newSettings, callback, method = "set") => {
+    this.updateSettings( this.compRef(gymID, compID), newSettings, callback, method)
   }
 
   //Function to add new messages to a messages collection. The path should be already known because

@@ -28,27 +28,33 @@ const window = Dimensions.get('window');
 
 class RankingEditScreen extends Component {
 
-    constructor(props){
-        super(props)
+  constructor(props){
+      super(props)
 
-        this.state = {
-          editable: true,
-          deleteMode: false,
-          ranking: props.competition.playersIDs || []
-        }
-
-    }
-
-    componentDidMount(){
-      this.props.navigation.setParams({submitNewRanking: this.submitNewRanking})
-    }
-
-    static navigationOptions = ({navigation}) => {
-      return {
-        headerTitle: translate("tabs.ranking editing"), 
-        headerRight: <HeaderIcon name="checkmark" onPress={navigation.getParam("submitNewRanking")} />
+      this.state = {
+        editable: true,
+        deleteMode: false,
+        ranking: props.competition.playersIDs || []
       }
+
+  }
+
+  componentDidMount(){
+    this.props.navigation.setParams({submitNewRanking: this.submitNewRanking})
+  }
+
+  static navigationOptions = ({navigation}) => {
+    return {
+      headerTitle: translate("tabs.ranking editing"), 
+      headerRight: <HeaderIcon name="checkmark" onPress={navigation.getParam("submitNewRanking")} />
+    }
   };
+
+  isOrphan = (index) => {
+    let nLastGroup = this.state.ranking.length % this.props.competition.settings["groups"].groupSize
+    return (index >= this.state.ranking.length - nLastGroup && //Is one of the last players
+      nLastGroup < this.props.competition.settings["groups"].minGroupSize) //There are orphans in this ranking 
+  }
 
   submitNewRanking = () => {
 
@@ -63,33 +69,33 @@ class RankingEditScreen extends Component {
 
   }
 
-    updateRankingOrder = (keys) => {
-      this.setState({ranking: keys.map( key => this.state.ranking[key])})
-    }
+  updateRankingOrder = (keys) => {
+    this.setState({ranking: keys.map( key => this.state.ranking[key])})
+  }
 
-    deleteItem = (key, marginHorizontal) => {
+  deleteItem = (key, marginHorizontal) => {
 
-        Animated.timing( marginHorizontal, {
-            toValue: w(100),
-        } ).start(() => {
-            this.setState({ranking: this.state.ranking.filter((_,i) => i !== key) })
-        })
-        
-    }
+    Animated.timing( marginHorizontal, {
+        toValue: w(100),
+    } ).start(() => {
+        this.setState({ranking: this.state.ranking.filter((_,i) => i !== key) })
+    })
+      
+  }
 
-    render() {
-        return (
-        <View style={styles.container}>
-            <Text style={styles.title}>{translate("tabs.ranking")}</Text>
-            <SortableList
-            style={styles.list}
-            contentContainerStyle={styles.contentContainer}
-            onReleaseRow={(key, newOrder) => this.updateRankingOrder(newOrder)}
-            onPressRow={(key) => this.setState({deleteMode: this.state.editable && !this.state.deleteMode})}
-            data={this.state.ranking}
-            renderRow={this._renderRow}
-            sortingEnabled={this.state.editable}/>
-        </View>
+  render() {
+    return (
+    <View style={styles.container}>
+        <Text style={styles.title}>{translate("tabs.ranking")}</Text>
+        <SortableList
+        style={styles.list}
+        contentContainerStyle={styles.contentContainer}
+        onReleaseRow={(key, newOrder) => this.updateRankingOrder(newOrder)}
+        onPressRow={(key) => this.setState({deleteMode: this.state.editable && !this.state.deleteMode})}
+        data={this.state.ranking}
+        renderRow={this._renderRow}
+        sortingEnabled={this.state.editable}/>
+    </View>
     );
   }
 
@@ -101,7 +107,8 @@ class RankingEditScreen extends Component {
             index={index}
             deletable={this.state.deleteMode}
             deleteItem={this.deleteItem}
-            groupSize={this.props.competition.settings["groups"].groupSize}/>
+            groupSize={this.props.competition.settings["groups"].groupSize}
+            isOrphan={this.isOrphan(index)}/>
   }
 }
 
@@ -170,7 +177,7 @@ class Row extends Component {
       <Animated.View style={{
         ...styles.row,
         ...this._style,
-        backgroundColor: Math.floor(index/this.props.groupSize) % 2 == 0 ? "#ccc" : "white",
+        backgroundColor: (Math.floor(index/this.props.groupSize) % 2 == 0) == this.props.isOrphan ? "#ccc" : "white" ,
         marginHorizontal: this._marginHorizontal
         }}>
         <View style={styles.rankView}>
