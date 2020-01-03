@@ -87,7 +87,10 @@ class LoadingScreen extends React.Component {
                             if (!this.compListeners[compID]){
 
                                 this.compListeners[compID] = Firebase.onCompetitionSnapshot( compID,
-                                    compData => this.props.updateCompetitions({ [compID]: {...compData}})
+                                    compData => {
+                                        this.props.updateCompetitions({ [compID]: {...compData}})
+        
+                                    }
                                 )
                             }
 
@@ -111,7 +114,7 @@ class LoadingScreen extends React.Component {
                                             this.usersListeners[competition.id] = Firebase.onCompUsersSnapshot(competition.id, 
                                                 relevantUsers => this.props.updateRelevantUsers(relevantUsers)
                                             )
-                                        }
+                                        }  
     
                                     })
                                 })
@@ -170,13 +173,15 @@ class LoadingScreen extends React.Component {
 
 
 const mapStateToProps = state => ({
-    currentUser: state.currentUser
+    currentUser: state.currentUser,
+    currentComp: state.competition,
 })
 
 const mapDispatchToProps = dispatch => ({
     storeUserData: (uid, userData) => dispatch(storeUserData(uid, userData)),
     updateRelevantUsers: (newRelevantUsers) => dispatch(updateRelevantUsers(newRelevantUsers)),
-    updateCompetitions: (newCompetitions) => dispatch(updateCompetitions(newCompetitions))
+    updateCompetitions: (newCompetitions) => dispatch(updateCompetitions(newCompetitions)),
+    setCurrentCompetition: (compInfo) => dispatch(setCurrentCompetition(compInfo))
 })
 
 export default connect( mapStateToProps, mapDispatchToProps )(LoadingScreen);

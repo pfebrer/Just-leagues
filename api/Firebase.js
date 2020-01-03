@@ -823,7 +823,7 @@ class Firebase {
       //Create all the new unasigned users for this competition
       newPlayers.forEach( newPlayer => {
 
-          var newRef = this.usersRef().doc();
+          var newRef = this.usersRef.doc();
           playersIDs.push(newRef.id)
 
           batch.set( newRef, {

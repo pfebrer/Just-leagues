@@ -50,7 +50,7 @@ class PlayersManagementScreen extends Component {
 
     if ( !this.state.newPlayer.name || !this.state.newPlayer.email) return
 
-    Firebase.addNewPlayerToComp(compID, [this.state.newPlayer],
+    Firebase.addNewPlayersToComp(compID, [this.state.newPlayer],
       (newPlayers) => {
         let newPlayer = newPlayers[0];
         alert( translate("info.player added") + "\n" + translate("auth.name") + ": " + newPlayer.name + "\n" + translate("auth.email") + ": " + newPlayer.email )
