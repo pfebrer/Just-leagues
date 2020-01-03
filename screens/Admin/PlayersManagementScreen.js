@@ -18,7 +18,6 @@ import {renderName} from "../../assets/utils/utilFuncs";
 //Redux stuff
 import { connect } from 'react-redux'
 import {setCurrentCompetition} from "../../redux/actions"
-import HeaderIcon from '../../components/header/HeaderIcon';
 
 import Firebase from "../../api/Firebase"
 
@@ -51,8 +50,9 @@ class PlayersManagementScreen extends Component {
 
     if ( !this.state.newPlayer.name || !this.state.newPlayer.email) return
 
-    Firebase.addNewPlayerToComp(gymID, compID, this.state.newPlayer,
-      (newPlayer) => {
+    Firebase.addNewPlayerToComp(compID, [this.state.newPlayer],
+      (newPlayers) => {
+        let newPlayer = newPlayers[0];
         alert( translate("info.player added") + "\n" + translate("auth.name") + ": " + newPlayer.name + "\n" + translate("auth.email") + ": " + newPlayer.email )
         this.setState({newPlayer: {name: "", email: ""}})
       }

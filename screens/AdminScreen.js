@@ -89,8 +89,7 @@ class AdminScreen extends React.Component {
                     <View style={styles.buttonRow}>
                         <Button
                             style={styles.button}
-                            onPress={()=>{}}
-                            disabled
+                            onPress={()=>this.props.navigation.navigate("SettingsScreen")}
                             >
                             <Text style={styles.buttonText}>{translate("admin.competition settings")}</Text>
                         </Button>

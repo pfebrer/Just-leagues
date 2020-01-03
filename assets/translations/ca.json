@@ -82,6 +82,7 @@
         "no name": "Sense nom",
         "could not send message": "No s'ha pogut enviar el missatge",
         "competition was not removed": "La competició no s'ha pogut eliminar",
+        "unable to add new players": "No s'ha pogut afegir nous jugadors"
     },
     "settings": {
         "you are about to restore default settings": "Estàs a punt de tornar a la configuració inicial.",

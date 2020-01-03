@@ -64,15 +64,12 @@ const httpsFunction = functions.region('europe-west1').runWith(runtimeOpts).http
 
 
 exports.initCompetition = firestoreFunction.document(Collections.GYMS + "/{gymID}/"+ Subcollections.COMPETITIONS + "/{compID}")
-.onWrite((change, context) => {
+.onCreate((docSnapshot, context) => {
 
-    /*This function was initially thought just to initialize a competition, 
-    but it can work as well to add new players to an already existing competition. 
-    Something needs to be changed to avoid triggering it unnecessarily (the function is triggered by itself when it updates the competition)
-    Maybe call it through https to add new players an change the trigger to onCreate for initializing competitions? */
+    /* It creates all the players that a new competition needs */
 
     const {gymID, compID} = context.params
-    var {[Documents.COMPETITION.usersToCreate]: players, name: compName, type: compType, playersIDs} = change.after.data()
+    var {[Documents.COMPETITION.usersToCreate]: players, name: compName, type: compType, playersIDs} = docSnapshot.data()
 
     //If there are no new players, we don't need to do anything
     if (!players) return
@@ -98,7 +95,7 @@ exports.initCompetition = firestoreFunction.document(Collections.GYMS + "/{gymID
     })
 
     //Update also the competition players (create a playersIDs list and remove the helper players list)
-    batch.update(change.after.ref, {
+    batch.update(docSnapshot.ref, {
         id: compID,
         playersIDs: playersIDs,
         [Documents.COMPETITION.usersToCreate]: admin.firestore.FieldValue.delete()

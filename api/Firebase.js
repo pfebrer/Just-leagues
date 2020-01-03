@@ -333,10 +333,6 @@ class Firebase {
     }).then(callback).catch(err => alert( translate("errors.could not send message"), err))
   }
 
-  addNewPlayerToComp = (gymID, compID, newPlayer, callback) => {
-    this.updateDocInfo(this.compRef(gymID, compID), {players: [newPlayer]}, () => callback(newPlayer), {merge: true})
-  }
-
   //FUNCTIONS TO GET DATA FROM DATABASE ONCE (don't keep listening)
   getCompetition = (compID) => this.compsGroupRef.where("id", "==", compID).get()
   
@@ -805,6 +801,48 @@ class Firebase {
       }).catch(err => {}) //For some reason it says that the batch is used after commit, but everything is done right, idk :)
 
     })
+
+  }
+
+  addNewPlayersToComp = (compID, newPlayers, callback = () => {}) => {
+
+    /*Function that adds a player to a given competition*/
+
+    //If there are no new players, we don't need to do anything
+    if (!newPlayers) return
+
+    //We need to get the actual competition ranking, and then add the new player
+    this.getCompetition(compID).then(({docs}) => {
+      let {playersIDs} = docs[0].data()
+
+      //Initialize the batch
+      let batch = this.firestore.batch()
+      //If there are no players registered yet (e.g. the competition is being initialized), then playersIDs is an empty list
+      playersIDs = playersIDs || [];
+
+      //Create all the new unasigned users for this competition
+      newPlayers.forEach( newPlayer => {
+
+          var newRef = this.usersRef().doc();
+          playersIDs.push(newRef.id)
+
+          batch.set( newRef, {
+            displayName: newPlayer.name,
+            email: newPlayer.email.toLowerCase(),
+            activeCompetitions: [compID],
+            asigned: false
+          })
+
+      })
+
+      //Update also the competition players (create a playersIDs list and remove the helper players list)
+      batch.update(docs[0].ref, {
+          playersIDs: playersIDs,
+      })
+
+      return batch.commit().then(() => callback(newPlayers))
+
+    }).catch(err => { alert( translate("errors.unable to add new players") + "\nError: " + err)})
 
   }
 
