@@ -1,11 +1,6 @@
 import React, {Component} from 'react';
 import {
     StyleSheet,
-    TouchableOpacity,
-    TouchableHighlight,
-    View, 
-    Animated,
-    Easing,
     ScrollView
 } from 'react-native';
 

@@ -46,11 +46,11 @@ class ChatsCarousel extends Component {
 
         if (!this.props.currentComp){
 
-            let defaultComp = this.props.competitions[this.props.currentUser.activeCompetitions[0]]
+            let defaultComp = this.props.competitions[Object.keys(this.props.competitions)[0]]
             if (defaultComp) this.props.setCurrentCompetition(defaultComp)
             
         } else if ( this.props.currentComp && ( !prevProps.currentComp || prevProps.currentComp.id != this.props.currentComp.id) ){
-            this._slider1Ref.snapToItem(this.props.currentUser.activeCompetitions.indexOf(this.props.currentComp.id))
+            this._slider1Ref.snapToItem(this.props.competitions[this.props.currentComp.id])
         }
     }
 
@@ -99,7 +99,9 @@ class ChatsCarousel extends Component {
 
     render() {
 
-        let availableComps = this.props.currentUser.activeCompetitions.map(compID => this.props.competitions[compID] || null).filter( comp => comp != null)
+        this.availableComps
+
+        let availableComps = Object.values(this.props.competitions)
 
         return (
             <View style={{flex:1, ...this.props.style}}>
@@ -118,7 +120,7 @@ class ChatsCarousel extends Component {
                   onSnapToItem={(index) => this.setState({ activeSlide: index }) }
                 />
                 <Pagination
-                  dotsLength={this.props.currentUser.activeCompetitions.length}
+                  dotsLength={availableComps.length}
                   activeDotIndex={this.state.activeSlide}
                   containerStyle={styles.paginationContainer}
                   dotColor={'rgba(0, 0, 0, 0.92)'}
