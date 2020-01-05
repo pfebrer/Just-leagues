@@ -313,6 +313,10 @@ class Firebase {
     this.updateDocInfo( this.compRef(gymID, compID), updates, callback, {})
   }
 
+  updateUserDoc = (uid, updates, callback) => {
+    this.updateDocInfo(this.userRef(uid), updates, callback, {})
+  }
+
   //Update settings of any document that contains settings
   updateSettings = (docRef, settings, callback, method = "set") => {
     this.updateDocInfo( docRef, {settings}, callback, {method, merge: true})
@@ -516,7 +520,7 @@ class Firebase {
     )
   }
 
-  onCompUsersSnapshot = (compID, callback) => {
+  onCompUsersSnapshot = (compID, currentUser, callback) => {
     /*Listen to users that are active in a given competition
     Returns and object like {id1: name1, id2:name2 ....}*/
 
@@ -525,15 +529,22 @@ class Firebase {
       querySnapshot => {
         callback( querySnapshot.docs.reduce((relevantUsers,user) => {
 
-            let {settings: userSettings, expoToken} = user.data()
+            let {settings: userSettings, expoToken, asigned, email} = user.data()
 
             let names = userSettings && userSettings["Profile"] ? 
               _.pick( userSettings["Profile"] , ["aka", "firstName", "lastName"])
               : {aka: user.get("displayName") , firstName: user.get("displayName"), lastName: ""} //This is just to account for users that may not have their settings updated (or unasigned users)
-              
+            
+            //Decide when to not store the email
+            if ( !( currentUser.admin || currentUser.gymAdmin ) | email === "" ){
+              email = undefined
+            }
+
             relevantUsers[user.id] = {
               names,
-              expoToken
+              expoToken,
+              asigned,
+              email
             }
 
             return relevantUsers;

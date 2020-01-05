@@ -79,7 +79,7 @@ class LoadingScreen extends React.Component {
 
                             if (!this.usersListeners[compID]){
 
-                                this.usersListeners[compID] = Firebase.onCompUsersSnapshot(compID, 
+                                this.usersListeners[compID] = Firebase.onCompUsersSnapshot(compID, userData,
                                     relevantUsers => this.props.updateRelevantUsers(relevantUsers)
                                 )
                             }
@@ -111,7 +111,7 @@ class LoadingScreen extends React.Component {
 
                                         if (!this.usersListeners[competition.id]){
 
-                                            this.usersListeners[competition.id] = Firebase.onCompUsersSnapshot(competition.id, 
+                                            this.usersListeners[competition.id] = Firebase.onCompUsersSnapshot(competition.id, userData,
                                                 relevantUsers => this.props.updateRelevantUsers(relevantUsers)
                                             )
                                         }  
