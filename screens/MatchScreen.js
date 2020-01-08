@@ -135,7 +135,7 @@ class MatchScreen extends Component {
 
         if ( params && params.indexOf("result") >= 0){
 
-            let isResultCorrect = resultIsCorrect(this.props.currentMatch.result, this.props.currentComp.settings["groups"].pointsScheme)
+            let isResultCorrect = resultIsCorrect(this.props.currentMatch.result, this.props.currentMatch.context.competition.settings["groups"].pointsScheme)
 
             if (!isResultCorrect){
 
