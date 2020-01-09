@@ -111,39 +111,20 @@ class CompetitionState extends Component {
         super(props)
 
         this.state = {
+            listenerResult: undefined
         }
     }
 
     componentDidMount(){
 
-        const {competition} = this.props
-        const {gymID, id: compID} = competition
-
-        if (competition.type == "groups"){
-
-            this.listener = Firebase.onPlayerGroupSnapshot(gymID, compID, this.props.uid,
-                group => this.setState({compStateInfo: group})
-            );
-
-        }
+        this.listener = this.props.competition.compStateListener(this.props.uid,
+            listenerResult => this.setState({listenerResult})
+        );
         
     }
 
     componentWillUnmount(){
         if (this.listener) this.listener()
-    }
-
-    renderCompetitionState = (typeOfComp, compStateInfo) => {
-
-        if (!compStateInfo) return null
-
-        if (typeOfComp == "groups"){
-            return <Table
-                        {...compStateInfo}
-                        competition={this.props.competition}
-                        navigation={this.props.navigation}
-                    />
-        }
     }
 
     goToCompetition = () => {
@@ -156,13 +137,15 @@ class CompetitionState extends Component {
 
     render(){
 
+        if (!this.state.listenerResult) return null
+
         return (
             <Card
                 titleIcon="trophy"
                 title={this.props.competition.name}
                 onHeaderPress={this.goToCompetition}
                 actionIcon="add">
-                {this.renderCompetitionState(this.props.competition.type, this.state.compStateInfo)}
+                {this.props.competition.renderCompState({ navigation: this.props.navigation, listenerResult: this.state.listenerResult})}
             </Card>
         )
     }

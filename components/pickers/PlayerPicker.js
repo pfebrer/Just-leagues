@@ -3,7 +3,6 @@ import { Picker } from 'native-base'
 import { connect } from 'react-redux'
 import _ from "lodash"
 
-import { renderName } from '../../assets/utils/utilFuncs'
 import { translate } from '../../assets/translations/translationManager';
 
 class PlayerPicker extends Component {
@@ -24,7 +23,7 @@ class PlayerPicker extends Component {
         let items = this.props.currentComp.playersIDs.reduce( (items, uid) => {
 
             if (this.props.relevantUsers[uid].asigned === false ) {
-                items.push( {label: renderName(this.props.relevantUsers[uid].names, this.props.currentComp.settings.general.nameDisplay) , value: uid} )
+                items.push( {label: this.props.currentComp.renderName(this.props.relevantUsers[uid].names) , value: uid} )
             }
 
             return items

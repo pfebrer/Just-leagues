@@ -3,7 +3,6 @@ import { Text, StyleSheet, View, TouchableOpacity} from 'react-native'
 
 import Card from '../home/Card'
 import { translate } from '../../assets/translations/translationManager'
-import {renderName} from "../../assets/utils/utilFuncs"
 
 //Redux stuff
 import { connect } from 'react-redux'
@@ -48,7 +47,7 @@ class MatchResult extends Component {
                 updateValue={(step)=>this.updateResult(index, step)}/>
         ))
 
-        let players = this.props.currentMatch.playersIDs.map( uid => renderName(this.props.relevantUsers[uid].names, this.props.currentMatch.context.competition.settings.general.nameDisplay) )
+        let players = this.props.currentMatch.playersIDs.map( uid => this.props.currentMatch.context.competition.renderName(this.props.relevantUsers[uid].names) )
         let ranks = this.props.currentMatch.playersIDs.map( uid => {
             return this.props.competitions[this.props.currentMatch.context.competition.id].playersIDs.indexOf(uid) + 1
         })

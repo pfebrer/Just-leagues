@@ -1,29 +1,20 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity, TouchableHighlight, View, Text} from 'react-native';
-import Groups from "../components/groups/Groups"
-import Challenges from "../components/Challenges"
-import AddMatchModal from "../components/AddMatchModal"
-import AdminAddMatchModal from "../components/AdminAddMatchModal"
-import Firebase from "../api/Firebase"
+import { StyleSheet, View, ActivityIndicator, Text} from 'react-native';
 
 import HeaderIcon from "../components/header/HeaderIcon"
-
-import {oppositePoints} from "../assets/utils/utilFuncs"
-import { Icon} from 'native-base';
+import { translate } from "../assets/translations/translationManager"
 
 import { USERSETTINGS} from "../constants/Settings"
 
 //Redux stuff
 import { connect } from 'react-redux'
 
-class Competition extends React.Component {
+class CompetitionScreen extends React.Component {
 
     constructor(props) {
         super(props);
 
-        this.state = {
-            addMatchModal: false,
-        };
+        this.state = {};
 
         props.navigation.setParams({competitionName: props.competition.name})
 
@@ -36,139 +27,48 @@ class Competition extends React.Component {
         }
     };
 
+    componentDidMount(){
+
+        this.setUpCompetition()
+
+    }
+
+    setUpCompetition = () => {
+
+        this.props.navigation.setParams({competitionName: this.props.competition.name})
+
+        if (this.listener) this.listener();
+
+        this.listener = this.props.competition.compScreenListener(
+            listenerResult => this.setState({listenerResult})
+        );
+    }
+
+    componentWillUnmount(){
+        if (this.listener) this.listener()
+    }
+
     componentDidUpdate(prevProps){
 
         if (!prevProps.competition || prevProps.competition.name != this.props.competition.name){
-            this.props.navigation.setParams({competitionName: this.props.competition.name})
+            this.setUpCompetition()
         }
-    }
-
-    toggleAddMatchModal = () => {
-        this.setState({
-            addMatchModal: !this.state.addMatchModal
-        });
-    };
-
-    toggleEditingScreen = () => {
-        this.props.navigation.navigate("EditingScreen");
-    };
-
-    goToUserProfile = (uid = Firebase.userData.id) => {
-        this.props.navigation.navigate("Stats", {uid: uid})
-    }
-
-    handlePress = ({content, typeOfCell, matchPlayers, iGroup, resultsPositions, fromAddMatchModal, fromChallenges, matchResult}) => {
         
-        if (typeOfCell == "pointsCell" || fromAddMatchModal) {
-            let oppPoints = oppositePoints(content)
-            let points = [content, oppPoints]
-            this.props.navigation.navigate("MatchModal", {
-                matchPlayers,
-                points,
-                addResult: this.addResult,
-                iGroup,
-                resultsPositions,
-                playerName: this.state.playerName
-            })
-        } else if (fromChallenges) {
-            let points = matchResult
-            let iGroup = "Reptes"
-            this.props.navigation.navigate("MatchModal", {
-                matchPlayers,
-                points,
-                addResult: this.addResult,
-                iGroup,
-                playerName: this.state.playerName,
-                fromChallenges
-            })
-        }
-    };
-
-    addResult = ({iGroup, resultsPositions, resultInPoints, resultInSets, matchPlayers}) => {
-        //Afegir el resultat al grup
-        let toUpdate = {};
-        let refToDoc;
-        let ref;
-
-        if (/^\d+$/.test(iGroup)) {
-            let groupResults = this.state.groupsResults[iGroup - 1];
-            for (let i = 0; i < 2; i++) {
-                groupResults[resultsPositions[i]] = resultInPoints[i];
-            }
-            toUpdate = {
-                results: groupResults,
-            };
-            ref = Firebase.groupsRef;
-            refToDoc = String(iGroup)
-        } else {
-            toUpdate = {
-                matchPlayers,
-                matchResult: resultInSets
-            };
-            ref = Firebase.firestore.collection(iGroup);
-            refToDoc = String(Date.now())
-        }
-        ref.doc(refToDoc).set(toUpdate).then(
-            //Registrar el partit a l'històric
-            Firebase.matchesRef.doc(String(Date.now())).set({
-                date: Date.now(),
-                iGroup,
-                matchPlayers,
-                matchResult: resultInSets,
-            })
-        ).then(
-            this.setState({addMatchModal: false})
-        ).catch((err) => {
-            alert("El partit no s'ha guardat correctament\nError: " + err.message)
-        })
-    };
-
-    returnGroups = (groupsResults) => {
-        this.setState({
-            groupsResults: groupsResults
-        });
-    };
-
-    renderAddMatchModal = (addMatchModal, isAdmin) => {
-
-        if (addMatchModal) {
-
-            return isAdmin ? (
-                <AdminAddMatchModal toggleAddMatchModal={this.toggleAddMatchModal} ranking={this.state.ranking}
-                                    playerName={this.state.playerName} groupsResults={this.state.groupsResults}
-                                    addResult={this.addResult}/>
-            ) : (
-                <AddMatchModal toggleAddMatchModal={this.toggleAddMatchModal} ranking={this.state.ranking}
-                               playerName={this.state.playerName} groupsResults={this.state.groupsResults}
-                               handlePlayerPress={this.handlePress}/>
-            )
-        } else {
-            return null;
-        }
-    }
-
-    renderCompView = (typeOfComp, ranking) => {
-
-        if (!typeOfComp) {
-            return null
-        } else if (typeOfComp == "groups") {
-            return <Groups
-                        goToUserProfile={this.goToUserProfile}
-                        returnGroups={this.returnGroups}
-                        navigation={this.props.navigation}/>;
-
-        } else if (typeOfComp == "chalenges") {
-            return <Challenges ranking={this.state.ranking} wentUp={this.state.wentUp} wentDown={this.state.wentDown}
-                            playerName={this.state.playerName} handlePress={this.handlePress}/>;
-        }
-
     }
 
     render() {
 
+        if (!this.state.listenerResult) {
+            return (
+                <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
+                    <Text>{translate("info.loading classifications")}</Text>
+                    <ActivityIndicator size="large" color="black"/>
+                </View>
+            );
+        }
+
         return <View style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
-                {this.renderCompView(this.props.competition.type)}
-                {this.renderAddMatchModal(this.state.addMatchModal, this.state.admin)}
+                    {this.props.competition.renderCompScreen({navigation: this.props.navigation, listenerResult: this.state.listenerResult})}
                 </View>
     }
 
@@ -179,7 +79,7 @@ const mapStateToProps = state => ({
     competition: state.competition
 })
 
-export default connect(mapStateToProps)(Competition);
+export default connect(mapStateToProps)(CompetitionScreen);
 
 const styles = StyleSheet.create({
 

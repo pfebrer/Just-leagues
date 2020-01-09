@@ -24,7 +24,7 @@ import NotificationManager from "../api/Notifications"
 import { connect } from 'react-redux'
 
 import { translate } from '../assets/translations/translationManager';
-import {renderName, getCompetitionName} from '../assets/utils/utilFuncs'
+import {getCompetitionName} from '../assets/utils/utilFuncs'
 import moment from 'moment';
 import { h, totalSize } from '../api/Dimensions';
 import ChatsCarousel from '../components/chat/ChatsCarousel';
@@ -59,7 +59,7 @@ class ChatScreen extends React.Component {
                     createdAt: message.createdAt.toDate(),
                     user: {
                         ...message.user,
-                        name: renderName(this.props.relevantUsers[message.user._id].names, this.props.currentComp.settings["general"].nameDisplay )
+                        name: this.props.currentComp.renderName(this.props.relevantUsers[message.user._id].names)
                     }
                 }
             })
@@ -105,7 +105,7 @@ class ChatScreen extends React.Component {
 
                 if (this.state.target.particularChat){
 
-                    let authorName = renderName(this.props.relevantUsers[this.props.currentUser.id].names, this.props.currentComp.settings["general"].nameDisplay)
+                    let authorName = this.props.currentComp.renderName(this.props.relevantUsers[this.props.currentUser.id].names)
 
                     this.state.context.playersIDs.forEach(uid => {
 

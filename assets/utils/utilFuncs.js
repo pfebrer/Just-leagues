@@ -101,22 +101,6 @@ exports.updateSettingsFields = (currentSettings, upToDateSettings) => {
     return  changed ? newSettings : false
 }
 
-//Function that returns how the name should be rendered given the competition settings
-exports.renderName = (nameObject, nameDisplaySettings) => {
-
-    if (!nameObject){
-        return translate("errors.no name")
-    } if (nameDisplaySettings == "Name Lastname"){
-        return [ nameObject.firstName, nameObject.lastName].join(" ")
-    } else if (nameDisplaySettings == "Lastname, Name" ) {
-        return [ nameObject.lastName, nameObject.firstName].join(", ")
-    } else if (nameDisplaySettings == "Name") {
-        return nameObject.firstName
-    } else if (nameDisplaySettings == "free"){
-        return nameObject.aka
-    }
-}
-
 //Function that gets the name of the competition or returns "unknown competition"
 exports.getCompetitionName = (competition) => competition ? competition.name : translate("errors.unknown competition")
 

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
-import { sortPlayerIndices, setsToPoints , deepClone, renderName } from "../../assets/utils/utilFuncs"
+import { sortPlayerIndices, setsToPoints , deepClone} from "../../assets/utils/utilFuncs"
 import { translate } from '../../assets/translations/translationManager';
 import { w, h, totalSize } from '../../api/Dimensions';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -72,9 +72,9 @@ class Table extends Component {
         let uid = this.props.playersIDs[iRow]
 
         if (uid == this.props.currentUser.id){
-            console.warn("Go to profile: ", renderName(this.props.relevantUsers[uid].names, this.props.competition.settings.general.nameDisplay))
+            console.warn("Go to profile: ", this.props.competition.renderName(this.props.relevantUsers[uid].names))
         } else {
-            console.warn("Go to stats: ", renderName(this.props.relevantUsers[uid].names, this.props.competition.settings.general.nameDisplay))
+            console.warn("Go to stats: ", this.props.competition.renderName(this.props.relevantUsers[uid].names))
         }
         
     }
@@ -111,7 +111,7 @@ class Table extends Component {
     renderTable = (ranks, players, scores, totals) => {
 
         let sorted = this.props.competition.getSortedIndices()
-        
+
         let sortedPlayerIndices = sortPlayerIndices(players, scores, totals, this.props.competition.settings.groups.untyingCriteria)
         let nPlayers = players.length
         
@@ -163,7 +163,7 @@ class Table extends Component {
 
         if( !playersIDs.length > 0 ) { return null }
 
-        let players = playersIDs.map( uid => renderName(this.props.relevantUsers[uid].names, this.props.competition.settings.general.nameDisplay))
+        let players = playersIDs.map( uid => this.props.competition.renderName(this.props.relevantUsers[uid].names) )
 
         let ranks = playersIDs.map( uid => {
             return this.props.competitions[this.props.competition.id].playersIDs.indexOf(uid) + 1

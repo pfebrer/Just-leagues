@@ -35,11 +35,7 @@ const HomeStack = createStackNavigator({
     PlayersManagementScreen: PlayersManagementScreen
 },{initialRouteName: "HomeScreen"});
 
-const AdminStack = createStackNavigator({
-    AdminScreen: AdminScreen,
-});
-
-export default createBottomTabNavigator({
+export default MainNavigator = createBottomTabNavigator({
         /* Stats: {
             screen: Stats,
             navigationOptions: {

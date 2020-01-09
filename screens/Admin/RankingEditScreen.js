@@ -14,7 +14,6 @@ import { Button, Icon } from 'native-base';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { translate } from '../../assets/translations/translationManager';
 import { w } from '../../api/Dimensions';
-import {renderName} from "../../assets/utils/utilFuncs";
 
 //Redux stuff
 import { connect } from 'react-redux'
@@ -102,7 +101,7 @@ class RankingEditScreen extends Component {
   _renderRow = ({data: uid, active, index}) => {
 
     return <Row 
-            data={renderName(this.props.relevantUsers[uid].names, this.props.competition.settings["general"].nameDisplay)} 
+            data={this.props.competition.renderName(this.props.relevantUsers[uid].names)} 
             active={active} 
             index={index}
             deletable={this.state.deleteMode}

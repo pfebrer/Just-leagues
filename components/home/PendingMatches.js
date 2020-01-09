@@ -21,7 +21,7 @@ import {setCurrentMatch} from "../../redux/actions"
 import { totalSize, w, h } from '../../api/Dimensions';
 
 import { translate } from '../../assets/translations/translationManager';
-import { convertDate, sortMatchesByDate, renderName, getCompetitionName } from "../../assets/utils/utilFuncs";
+import { convertDate, sortMatchesByDate, getCompetitionName } from "../../assets/utils/utilFuncs";
 import Card from './Card';
 
 class PendingMatches extends Component {
@@ -93,7 +93,7 @@ class PendingMatches extends Component {
         //Determine the match information that should be displayed
         if (match.playersIDs.length == 2){
             //then we need to display just the rival
-            let rival = match.playersIDs.map( uid => renderName(this.props.relevantUsers[uid].names, this.props.competitions[match.compID].settings.general.nameDisplay))
+            let rival = match.playersIDs.map( uid => this.props.competitions[match.compID].renderName(this.props.relevantUsers[uid].names))
                         .filter( (name, i) => match.playersIDs[i] != this.props.currentUser.id )[0]
 
             matchInfo = <Text>{rival}</Text>
