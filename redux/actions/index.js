@@ -6,6 +6,9 @@ import {
     UPDATE_RELEVANTUSERS
 } from './actionTypes'
 
+import Competition from "../../competitions/competition"
+import GroupCompetition from "../../competitions/groups"
+
 export const storeUserData = (userData) => ({
     type: STORE_CURRENTUSERDATA,
     data: userData
@@ -30,7 +33,7 @@ export const updateRelevantUsers = (newRelevantUsers) => ({
 
 export const updateCompetitions = (newCompetitions) => ({
     type: UPDATE_COMPETITIONS,
-    newCompetitions
+    newCompetitions: newCompetitions ? Object.keys(newCompetitions).reduce((comps, compID) => {comps[compID] = new GroupCompetition(newCompetitions[compID]); return comps}, {}) : null
 })
 
 

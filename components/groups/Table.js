@@ -110,6 +110,8 @@ class Table extends Component {
 
     renderTable = (ranks, players, scores, totals) => {
 
+        let sorted = this.props.competition.getSortedIndices()
+        
         let sortedPlayerIndices = sortPlayerIndices(players, scores, totals, this.props.competition.settings.groups.untyingCriteria)
         let nPlayers = players.length
         
@@ -119,7 +121,8 @@ class Table extends Component {
 
             <Column 
                 key="ranks" header="" data={ranks}
-                style={{...styles.column, ...styles.ranksCol}} 
+                style={{...styles.column, ...styles.ranksCol}}
+                sortedPlayerIndices={sortedPlayerIndices}
                 iLeader={iLeader} iLoser={iLoser}/>,
 
             <Column
@@ -127,6 +130,7 @@ class Table extends Component {
                 header={translate("auth.name")} data={players}
                 style={{...styles.column, ...styles.playersCol}}
                 iLeader={iLeader} iLoser={iLoser}
+                sortedPlayerIndices={sortedPlayerIndices}
                 touchable
                 onPress={this.goToUserProfile}/>,
 
@@ -136,6 +140,7 @@ class Table extends Component {
                 scores={scores}
                 nPlayers={nPlayers}
                 style={styles.scoresScroll}
+                sortedPlayerIndices={sortedPlayerIndices}
                 iLeader={iLeader} iLoser={iLoser}
                 maxVisibleRows={this.props.maxVisibleRows}
                 currentUser={this.props.currentUser}
@@ -146,6 +151,7 @@ class Table extends Component {
                 key="totals" 
                 header={translate("vocabulary.total")} data={totals} 
                 style={{...styles.column, ...styles.totalsCol}}
+                sortedPlayerIndices={sortedPlayerIndices}
                 iLeader={iLeader}
                 iLoser={iLoser}/>,
         ]
@@ -189,6 +195,7 @@ class ScoresScroll extends Component {
                     key={iCol}
                     header={header}
                     data={colScores} style={{...styles.column, width: 100/nVisibleRows + "%" }}
+                    sortedPlayerIndices={this.props.sortedPlayerIndices}
                     iLeader={this.props.iLeader} iLoser={this.props.iLoser}
                     touchable iScoresCol={iCol}
                     onPress={this.props.onPress}/>
@@ -228,9 +235,26 @@ class Column extends Component{
     }
 
     renderData = (data, iLeader, iLoser) => {
+
         return data.map( (data, iRow, arr) => {
 
-            let addCellStyles = iRow == iLeader ? styles.leaderCell : iRow == iLoser ? styles.loserCell : {}
+            //Decide the styles of the cell depending on the position of the player
+            let addCellStyles = {}; let addTextStyles = {}
+            if (iRow == this.props.sortedPlayerIndices[0]) {
+                //Is the leader
+                addCellStyles = styles.leaderCell
+                addTextStyles = styles.leaderText
+            } else if (false) {
+                //Is a player promoting up
+
+            } else if (false) {
+                //Is a player promoting down
+
+            } else if (iRow == _.last(this.props.sortedPlayerIndices)){
+                //Is the bottom player
+                addCellStyles = styles.loserCell
+                addTextStyles = styles.loserText
+            }
 
             let cellStyles = {
                 ...styles.tableCell,
@@ -238,8 +262,6 @@ class Column extends Component{
             }
 
             if (iRow == arr.length - 1){ cellStyles = {...cellStyles, ...styles.lastRowCell} };
-
-            let addTextStyles = iRow == iLeader ? styles.leaderText : iRow == iLoser ? styles.loserText : {}
 
             let textStyles = {
                 ...styles.tableText,

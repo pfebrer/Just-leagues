@@ -4,6 +4,7 @@ const competitions = (state = {}, action) => {
     switch (action.type) {
         case UPDATE_COMPETITIONS:
             console.log("REDUX: Updating the competitions database...")
+            console.log(action.newCompetitions)
             let newState = {
                 ...state,
                 ...action.newCompetitions,
