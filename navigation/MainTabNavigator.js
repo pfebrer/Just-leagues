@@ -1,9 +1,11 @@
 import React from 'react';
 import { createStackNavigator } from 'react-navigation-stack';
-import { createBottomTabNavigator, createMaterialTopTabNavigator } from 'react-navigation-tabs';
+import { createBottomTabNavigator } from 'react-navigation-tabs';
+import { createDrawerNavigator } from 'react-navigation-drawer';
 
 import Stats from "../screens/StatsScreen";
-import CompetitionScreen from "../screens/CompetitionScreen";
+import CompetitionScreen from "../screens/Competition/CompetitionScreen";
+import CompetitionMatches from "../screens/Competition/CompetitionMatches"
 import AdminScreen from "../screens/AdminScreen";
 import GroupChat from "../screens/ChatScreen";
 import ProfileScreen from "../screens/ProfileScreen";
@@ -15,8 +17,34 @@ import MatchScreen from "../screens/MatchScreen"
 
 import { Icon } from 'native-base';
 import ChatScreen from '../screens/ChatScreen';
+import { translate } from '../assets/translations/translationManager';
 
 
+const CompScreen = createStackNavigator({
+    CompetitionScreen: CompetitionScreen
+  })
+
+const CompMatches = createStackNavigator({
+    CompetitionMatches: CompetitionMatches
+})
+
+const CompetitionDrawer = createDrawerNavigator({
+    CompetitionScreenStack: {
+        screen: CompScreen,
+        navigationOptions: {
+            drawerLabel: translate("tabs.competition overview")
+        }
+    },
+    CompetitionMatchesStack: {
+        screen: CompMatches,
+        navigationOptions: {
+            drawerLabel: translate("tabs.matches")
+        }
+    },
+  }, {
+    drawerPosition: "right",
+    drawerType: "slide"
+  });
 
 const EditingStack = createStackNavigator({
     AdminScreen: AdminScreen,
@@ -27,7 +55,12 @@ const EditingStack = createStackNavigator({
 const HomeStack = createStackNavigator({
     HomeScreen: HomeScreen,
     SettingsScreen: SettingsScreen,
-    CompetitionScreen: CompetitionScreen,
+    CompetitionDrawer: {
+        screen: CompetitionDrawer,
+        navigationOptions: {
+            header: null
+        }
+    },
     MatchScreen: MatchScreen,
     //Screens for admins only
     AdminScreen: AdminScreen,

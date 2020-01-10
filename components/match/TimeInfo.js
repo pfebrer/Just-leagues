@@ -65,7 +65,7 @@ class TimeInfo extends Component {
             newDate = moment(newDate, this.datePickerFormat ).toDate()
         }
 
-        this.props.setCurrentMatch({ scheduled: {...this.props.currentMatch.scheduled, time: newDate} }, {merge: true})
+        this.props.setCurrentMatch({ scheduled: {...this.props.match.scheduled, time: newDate} }, {merge: true})
 
         this.setState({pendingUpdate: true})
     }
@@ -76,28 +76,28 @@ class TimeInfo extends Component {
 
         let cardProps = {
             titleIcon: "calendar",
-            title: !this.props.currentMatch.context.pending ? translate("cardTitles.match date") : translate("cardTitles.match schedule"),
-            actionIcon: this.props.currentMatch.scheduled && this.props.currentMatch.scheduled.time ? "backspace" : null,
+            title: !this.props.match.context.pending ? translate("cardTitles.match date") : translate("cardTitles.match schedule"),
+            actionIcon: this.props.match.scheduled && this.props.match.scheduled.time ? "backspace" : null,
             actionIconStyles: {color: "darkred"},
-            onHeaderPress: this.props.currentMatch.scheduled && this.props.currentMatch.scheduled.time ? () => this.updateAndCommitSchedule(null) : null,
+            onHeaderPress: this.props.match.scheduled && this.props.match.scheduled.time ? () => this.updateAndCommitSchedule(null) : null,
             contentContainerStyles: {justifyContent:"center", alignItems: "center"}
         }
 
-        if ( !this.props.currentMatch.context.pending) {
+        if ( !this.props.match.context.pending) {
 
             return (
                 <Card {...cardProps}>
-                    <Text style={{textAlign: "center", fontFamily: "bold", fontSize: totalSize(2) }}>{[translate("vocabulary.played"), moment(this.props.currentMatch.playedOn).fromNow()].join(" ")}</Text>
-                    <Text note style={{textAlign: "center"}}>{"(" + moment(this.props.currentMatch.playedOn).calendar() + ")"}</Text>
+                    <Text style={{textAlign: "center", fontFamily: "bold", fontSize: totalSize(2) }}>{[translate("vocabulary.played"), moment(this.props.match.playedOn).fromNow()].join(" ")}</Text>
+                    <Text note style={{textAlign: "center"}}>{"(" + moment(this.props.match.playedOn).calendar() + ")"}</Text>
                 </Card>
             )
 
         } else {
 
-            let timeLimit = this.props.currentMatch.due ? (
+            let timeLimit = this.props.match.due ? (
 
                 <this.DateLimit 
-                        limitDate={this.props.currentMatch.due}
+                        limitDate={this.props.match.due}
                         textStyles={{textAlign: "center", ...styles.dateLimit}}/>
                 
             ) : (
@@ -111,8 +111,8 @@ class TimeInfo extends Component {
                     {...cardProps}>
                     <DatePicker
                         minDate={new Date()}
-                        maxDate={this.props.currentMatch.due}
-                        date={this.props.currentMatch.scheduled && this.props.currentMatch.scheduled.time ? this.props.currentMatch.scheduled.time : null}
+                        maxDate={this.props.match.due}
+                        date={this.props.match.scheduled && this.props.match.scheduled.time ? this.props.match.scheduled.time : null}
                         onDateChange={(date) => this.updateAndCommitSchedule(date)}
                         style={{paddingHorizontal: 20, width: "100%", justifyContent: "center", alignItems: "center"}}
                         mode="datetime"
@@ -139,7 +139,6 @@ class TimeInfo extends Component {
 
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
-    currentMatch: state.match,
     IDsAndNames: state.IDsAndNames
 })
 

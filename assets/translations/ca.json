@@ -21,6 +21,7 @@
     "tabs":{
         "stats": "Estadístiques",
         "competition": "Competició",
+        "competition overview": "Vista general",
         "chat": "Xat",
         "matches": "Partits",
         "ranking": "Rànquing",
@@ -29,7 +30,9 @@
         "competitions handling": "Gestió de competicions",
         "match view": "Vista de partit",
         "ranking editing": "Edició del rànquing",
-        "player management": "Administració de jugadors"
+        "player management": "Administració de jugadors",
+        "your matches": "Els teus partits",
+        "other matches": "Altres partits"
     },
     "cardTitles": {
         "match schedule": "Previsió de data",

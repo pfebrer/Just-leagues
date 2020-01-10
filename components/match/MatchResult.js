@@ -20,11 +20,13 @@ class MatchResult extends Component {
         this.state = {
             pendingUpdate: false
         }
+
+        this.defaultResult = [0,0]
     }
 
     updateResult = (iTarget, step) => {
 
-        let newResult = this.props.currentMatch.result.map( (val, i) => i == iTarget ? val + step : val )
+        let newResult = this.props.match.result.map( (val, i) => i == iTarget ? val + step : val )
 
         this.props.setCurrentMatch({result: newResult}, {merge: true})
 
@@ -35,9 +37,9 @@ class MatchResult extends Component {
 
     render() {
 
-        if (!this.props.currentMatch.playersIDs) return <Card loading/>
+        if (!this.props.match.playersIDs) return <Card loading/>
 
-        let result = this.props.currentMatch.result || this.props.defaultResult
+        let result = this.props.match.result || this.props.defaultResult || this.defaultResult
             
         let scoreInputs = result.map( (value, index) => (
             <ScoreInput 
@@ -47,9 +49,9 @@ class MatchResult extends Component {
                 updateValue={(step)=>this.updateResult(index, step)}/>
         ))
 
-        let players = this.props.currentMatch.playersIDs.map( uid => this.props.currentMatch.context.competition.renderName(this.props.relevantUsers[uid].names) )
-        let ranks = this.props.currentMatch.playersIDs.map( uid => {
-            return this.props.competitions[this.props.currentMatch.context.competition.id].playersIDs.indexOf(uid) + 1
+        let players = this.props.match.playersIDs.map( uid => this.props.match.context.competition.renderName(this.props.relevantUsers[uid].names) )
+        let ranks = this.props.match.playersIDs.map( uid => {
+            return this.props.match.context.competition.playersIDs.indexOf(uid) + 1
         })
 
         return (
@@ -119,7 +121,6 @@ class ScoreInput extends Component {
 
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
-    currentMatch: state.match,
     competitions: state.competitions,
     relevantUsers: state.relevantUsers
 })

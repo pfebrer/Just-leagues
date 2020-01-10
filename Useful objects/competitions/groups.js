@@ -15,7 +15,7 @@ export default class GroupsCompetition extends Competition {
     compScreenListener = (callback) => Firebase.onGroupsSnapshot(this.gymID, this.id, callback);
 
     renderCompScreen = ({navigation, listenerResult: groups}) => {
-        return <Groups groups={groups} navigation={navigation}/>
+        return <Groups competition={this} groups={groups} navigation={navigation}/>
     }
 
     compStateListener = (uid, callback) => Firebase.onPlayerGroupSnapshot(this.gymID, this.id, uid, callback)

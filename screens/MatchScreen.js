@@ -196,50 +196,27 @@ class MatchScreen extends Component {
         return (
             <View style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
                 <ScrollView style={styles.mainView} contentContainerStyle={styles.scrollContainer}>
-                    <MatchImage/>
+                    <MatchImage match={this.props.currentMatch}/>
 
                     <MatchResult
+                        match={this.props.currentMatch}
                         editable={this.state.editable}
                         defaultResult={this.defaultResult}
                         updateDBMatchParams={this.updateDBMatchParams}/>
 
                     <TimeInfo
+                        match={this.props.currentMatch}
                         editable={this.state.editable}
                         updateDBMatchParams={this.updateDBMatchParams}/>
                     
-                    <MatchDiscussion/>
+                    <MatchDiscussion match={this.props.currentMatch}/>
 
-                    <Head2Head/>
+                    <Head2Head match={this.props.currentMatch}/>
                     
                 </ScrollView>
                 
             </View>
         );
-    }
-}
-
-class ScoreInput extends Component {
-    render() {
-
-        return (
-            <View style={styles.scoreInputView}>
-                <TouchableOpacity 
-                    style={styles.scoreInputControls}
-                    onPress={() => this.props.updateValue(-1)}>
-                    <Icon name="arrow-round-back" style={styles.scoreInputControlsIcon}/>
-                </TouchableOpacity>
-                <View style={styles.scoreValueView}>
-                    <Text style={styles.scoreValue}>{this.props.value}</Text>
-                </View>
-                <TouchableOpacity 
-                    style={styles.scoreInputControls}
-                    onPress={() => this.props.updateValue(+1)}
-                    >
-                    <Icon name="arrow-round-forward" style={styles.scoreInputControlsIcon}/>
-                </TouchableOpacity>
-            </View>
-        )
-        
     }
 }
 

@@ -1,4 +1,9 @@
 import Configurable from "../configurable"
+import Firebase from "../../api/Firebase"
+
+import React from 'react';
+import {ScrollView} from "react-native"
+import MatchesDisplay from "../../components/competition/MatchesDisplay";
 
 //This is the parent class of all competitions and contains general flows
 
@@ -30,5 +35,11 @@ export default class Competition extends Configurable {
         } else if (nameDisplaySettings == "free"){
             return nameObject.aka
         }
+    }
+
+    compMatchesListener = (callback) => Firebase.onCompPendingMatchesSnapshot(this.gymID, this.id, callback)
+
+    renderCompMatches = ({navigation, listenerResult: matches}) => {
+        return <MatchesDisplay navigation={navigation} matches={matches.map( match => ({...match, context: {...match.context, competition: this}}) )}/> 
     }
 }

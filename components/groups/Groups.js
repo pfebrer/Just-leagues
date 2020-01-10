@@ -1,15 +1,11 @@
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, FlatList} from 'react-native';
 import Table from "./Table"
-import Firebase from "../../api/Firebase"
 import { translate } from '../../assets/translations/translationManager';
 
-//Redux stuff
-import { connect } from 'react-redux'
 import { totalSize } from '../../api/Dimensions';
-import { FlatList } from 'react-native-gesture-handler';
 
-class Groups extends React.Component {
+export default class Groups extends React.Component {
 
     constructor(props) {
         super(props);
@@ -36,6 +32,8 @@ class Groups extends React.Component {
 
     render() {
 
+        if (!this.props.groups) return null
+
         return (
             <FlatList 
                 style={styles.scrollView} 
@@ -50,12 +48,6 @@ class Groups extends React.Component {
         );
     }
 }
-
-const mapStateToProps = state => ({
-    competition: state.competition
-})
-
-export default connect(mapStateToProps)(Groups);
 
 const styles = StyleSheet.create({
 

@@ -132,7 +132,7 @@ class CompetitionState extends Component {
         //Set the current competition so that the competition screen can know what to render
         this.props.setCurrentCompetition(this.props.competition)
 
-        this.props.navigation.navigate("CompetitionScreen")
+        this.props.navigation.navigate("CompetitionScreen", {competitionName: this.props.competition.name})
     }
 
     render(){

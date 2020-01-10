@@ -555,6 +555,15 @@ class Firebase {
     )
   }
 
+  onCompPendingMatchesSnapshot = (gymID, compID, callback) => {
+    /*Listen to changes in pending matches for a given competition*/
+
+    return this.pendingMatchesRef(gymID, compID).onSnapshot( querySnapshot => {
+      callback(querySnapshot.docs.map(doc => doc.data()))
+    })
+
+  }
+
   onGroupsSnapshot = (gymID, compID, callback, orderBy = "order", getData = true) => {
     /*Listen to changes in groups in a competition
     the callback recieves an array with each group complete info if getData = true, else it recieves the querySnapshot*/
