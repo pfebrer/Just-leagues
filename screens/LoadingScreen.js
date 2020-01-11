@@ -49,9 +49,16 @@ class LoadingScreen extends React.Component {
             [this.usersListeners, this.compListeners, this.gymListeners].forEach(listenersObject => {
                 if (listenersObject){
                     //First we need to desubscribe from all previous listeners
-                    Object.keys(listenersObject).forEach(key => listenersObject[key]())
+                    Object.values(listenersObject).forEach(val => {
+                        if (val instanceof Function) val()
+                        //There may be nested listeners
+                        else {
+                            Object.values(val).forEach(nestedVal => nestedVal() )
+                        }
+                    })
                 }
             })
+
             this.compListeners = {} ; this.usersListeners = {} ; this.gymListeners = {}
 
             //On sign out remove the previous userListener, otherwise it will crash due to not having permission to read the database 
@@ -88,8 +95,7 @@ class LoadingScreen extends React.Component {
 
                                 this.compListeners[compID] = Firebase.onCompetitionSnapshot( compID,
                                     compData => {
-                                        this.props.updateCompetitions({ [compID]: {...compData}})
-        
+                                        this.props.updateCompetitions({ [compID]: compData})
                                     }
                                 )
                             }
@@ -107,7 +113,7 @@ class LoadingScreen extends React.Component {
                                     
                                     competitions.forEach( competition => {
 
-                                        this.props.updateCompetitions({ [competition.id]: {...competition}})
+                                        this.props.updateCompetitions({ [competition.id]: competition})
 
                                         if (!this.usersListeners[competition.id]){
 

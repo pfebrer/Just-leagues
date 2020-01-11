@@ -4,10 +4,13 @@ import { StyleSheet, View, ActivityIndicator, Text} from 'react-native';
 import HeaderIcon from "../../components/header/HeaderIcon"
 import { translate } from "../../assets/translations/translationManager"
 
+import Configurable from "../../Useful objects/configurable"
 import { USERSETTINGS} from "../../constants/Settings"
 
 //Redux stuff
 import { connect } from 'react-redux'
+
+import GroupsCompetition from '../../Useful objects/competitions/groups';
 
 class CompetitionScreen extends React.Component {
 
@@ -26,7 +29,7 @@ class CompetitionScreen extends React.Component {
         }
     };
 
-    componentDidMount(){
+    /*componentDidMount(){
 
         this.setUpCompetition()
 
@@ -53,21 +56,21 @@ class CompetitionScreen extends React.Component {
             this.setUpCompetition()
         }
         
-    }
+    }*/
 
     render() {
 
-        if (!this.state.listenerResult) {
+        /*if (!this.state.listenerResult) {
             return (
                 <View style={{flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
                     <Text>{translate("info.loading classifications")}</Text>
                     <ActivityIndicator size="large" color="black"/>
                 </View>
             );
-        }
+        }*/
 
-        return <View style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
-                    {this.props.competition.renderCompScreen({navigation: this.props.navigation, listenerResult: this.state.listenerResult})}
+        return <View style={{...styles.container, backgroundColor: Configurable.getSetting(this.props.currentUser.settings, "backgroundColor")}}>
+                    <GroupsCompetition what="main" competition={this.props.competition}  navigation={this.props.navigation}/>
                 </View>
     }
 

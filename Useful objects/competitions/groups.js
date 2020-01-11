@@ -6,25 +6,44 @@ import Firebase from "../../api/Firebase"
 import Groups from "../../components/groups/Groups"
 import Table from "../../components/groups/Table"
 
-export default class GroupsCompetition extends Competition {
+import { connect } from 'react-redux'
 
-    constructor(compDict){
-        super(compDict);
+class GroupsCompetition extends Competition {
+
+    constructor(props){
+        super(props);
+
+
+        this.state = {
+            ...this.state, //Things coming from Competition initialization
+        }
+
+        this.superCharges = {
+            renderName: this.renderName,
+            getSortedIndices: this.getSortedIndices
+        }
+
     }
 
-    compScreenListener = (callback) => Firebase.onGroupsSnapshot(this.gymID, this.id, callback);
+    compScreenListener = () => Firebase.onGroupsSnapshot(this.gymID, this.id, (listenerResult) => this.setState({groups:listenerResult}));
 
-    renderCompScreen = ({navigation, listenerResult: groups}) => {
-        return <Groups competition={this} groups={groups} navigation={navigation}/>
+    renderCompScreen = () => {
+
+        if (!this.state.groups) return null
+
+        return <Groups competition={{...this.props.competition, ...this.superCharges}} groups={this.state.groups} navigation={this.props.navigation}/>
     }
 
-    compStateListener = (uid, callback) => Firebase.onPlayerGroupSnapshot(this.gymID, this.id, uid, callback)
+    compStateListener = () => Firebase.onPlayerGroupSnapshot(this.gymID, this.id, this.props.currentUser.id, (listenerResult) => this.setState({listenerResult}))
 
-    renderCompState = ({navigation, listenerResult}) => {
+    renderCompState = () => {
+
+        if (!this.state.listenerResult) return null
+
         return <Table
-            {...listenerResult}
-            competition={this}
-            navigation={navigation}
+            {...this.state.listenerResult}
+            competition={{...this.props.competition, ...this.superCharges}}
+            navigation={this.props.navigation}
         />
     }
 
@@ -33,3 +52,9 @@ export default class GroupsCompetition extends Competition {
     }
 
 }
+
+const mapStateToProps = state => ({
+    currentUser: state.currentUser,
+})
+
+export default connect(mapStateToProps)(GroupsCompetition);

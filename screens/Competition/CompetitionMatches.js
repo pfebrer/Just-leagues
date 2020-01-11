@@ -5,6 +5,7 @@ import HeaderIcon from "../../components/header/HeaderIcon"
 import { translate } from "../../assets/translations/translationManager"
 
 import { USERSETTINGS} from "../../constants/Settings"
+import GroupsCompetition from '../../Useful objects/competitions/groups';
 
 //Redux stuff
 import { connect } from 'react-redux'
@@ -28,7 +29,7 @@ class CompetitionMatches extends React.Component {
         }
     };
 
-    componentDidMount(){
+    /*componentDidMount(){
 
         this.setUpCompetition()
 
@@ -55,21 +56,21 @@ class CompetitionMatches extends React.Component {
             this.setUpCompetition()
         }
         
-    }
+    }*/
 
     render() {
 
-        if (!this.state.listenerResult) {
+        /*if (!this.state.listenerResult) {
             return (
                 <View style={{flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
                     <Text>{translate("info.loading classifications")}</Text>
                     <ActivityIndicator size="large" color="black"/>
                 </View>
             );
-        }
+        }*/
 
         return <View style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
-                    {this.props.competition.renderCompMatches({navigation: this.props.navigation, listenerResult: this.state.listenerResult})}
+                    <GroupsCompetition what="matches" competition={this.props.competition}  navigation={this.props.navigation}/>
                 </View>
     }
 

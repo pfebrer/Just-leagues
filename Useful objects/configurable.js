@@ -4,12 +4,12 @@ import _ from "lodash"
 
 export default class Configurable {
 
-    getSetting = (settingKey) => {
+    static getSetting = (settings, settingKey) => {
         /* Gets a given setting by key, without needing to specify the group */ 
 
         let settingValue = undefined 
 
-        Object.values(this.settings).forEach(settingsGroup => {
+        Object.values(settings).forEach(settingsGroup => {
             if (settingsGroup[settingKey] != undefined){
                 settingValue = settingsGroup[settingKey]
                 return

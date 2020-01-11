@@ -23,6 +23,7 @@ import HeaderIcon from "../components/header/HeaderIcon"
 import PendingMatches from "../components/home/PendingMatches"
 import Notifications from "../components/home/Notifications"
 import Card from "../components/home/Card"
+import GroupsCompetition from '../Useful objects/competitions/groups';
 
 import _ from "lodash"
 
@@ -95,7 +96,7 @@ class HomeScreen extends Component {
 
                 <Notifications/>
 
-                <PendingMatches navigation={this.props.navigation}/>
+                {false ? <PendingMatches navigation={this.props.navigation}/> : null }
 
                 {this.renderCompetitionStates(this.props.currentUser.activeCompetitions)}
 
@@ -110,12 +111,12 @@ class CompetitionState extends Component {
     constructor(props){
         super(props)
 
-        this.state = {
+        /*this.state = {
             listenerResult: undefined
-        }
+        }*/
     }
 
-    componentDidMount(){
+    /*componentDidMount(){
 
         this.listener = this.props.competition.compStateListener(this.props.uid,
             listenerResult => this.setState({listenerResult})
@@ -125,7 +126,7 @@ class CompetitionState extends Component {
 
     componentWillUnmount(){
         if (this.listener) this.listener()
-    }
+    }*/
 
     goToCompetition = () => {
 
@@ -137,7 +138,7 @@ class CompetitionState extends Component {
 
     render(){
 
-        if (!this.state.listenerResult) return null
+        if (!this.props.competition) return null
 
         return (
             <Card
@@ -145,6 +146,17 @@ class CompetitionState extends Component {
                 title={this.props.competition.name}
                 onHeaderPress={this.goToCompetition}
                 actionIcon="add">
+                    <GroupsCompetition what="compState" competition={this.props.competition} navigation={this.props.navigation}/>
+            </Card>
+        )
+
+        return (
+            <Card
+                titleIcon="trophy"
+                title={this.props.competition.name}
+                onHeaderPress={this.goToCompetition}
+                actionIcon="add">
+
                 {this.props.competition.renderCompState({ navigation: this.props.navigation, listenerResult: this.state.listenerResult})}
             </Card>
         )

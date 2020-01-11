@@ -507,6 +507,8 @@ class Firebase {
 
   onCompetitionSnapshot = (compID, callback, getData = true) => {
     /*Listens for changes in a given competition*/
+
+    //First, we listen for the competition document
     return this.compsGroupRef.where("id", "==", compID).onSnapshot(
       querySnapshot => {
 
@@ -514,10 +516,11 @@ class Firebase {
 
         if(!getData) callback(compSnapshot)
         else {
-          callback({ ...compSnapshot.data(), gymID: compSnapshot.ref.parent.parent.id})
+          callback({ ...compSnapshot.data(), gymID: compSnapshot.ref.parent.parent.id, id: compSnapshot.id})
         }
       }
     )
+
   }
 
   onCompUsersSnapshot = (compID, currentUser, callback) => {
