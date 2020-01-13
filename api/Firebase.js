@@ -652,7 +652,7 @@ class Firebase {
     batch.set(this.matchRef(gymID, compID, matchID),{
       context: {
         ..._.omit(context, ["pending", "matchID"]),
-        competition: _.omit(competition, ["playersIDs"])
+        competition: _.pick(competition, ["id", "gymID", "name", "type"])
       },
       result,
       playersIDs,
