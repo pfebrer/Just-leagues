@@ -121,8 +121,7 @@ class Notifications extends Component {
 }
 
 const mapStateToProps = state => ({
-    currentUser: state.currentUser,
-    IDsAndNames: state.IDsAndNames,
+    currentUser: state.currentUser
 })
 
 export default connect(mapStateToProps)(Notifications);

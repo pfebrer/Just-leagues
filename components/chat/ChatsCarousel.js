@@ -16,6 +16,7 @@ import {setCurrentCompetition} from "../../redux/actions"
 
 import Card from '../home/Card';
 import { translate } from '../../assets/translations/translationManager';
+import { selectCurrentCompetition } from '../../redux/reducers';
 
 
 
@@ -36,7 +37,7 @@ class ChatsCarousel extends Component {
         if (!this.props.currentComp){
 
             let defaultComp = this.props.competitions[this.props.currentUser.activeCompetitions[0]]
-            if (defaultComp) this.props.setCurrentCompetition(defaultComp)
+            if (defaultComp) this.props.setCurrentCompetition(defaultComp.id)
             
         }
 
@@ -47,7 +48,7 @@ class ChatsCarousel extends Component {
         if (!this.props.currentComp){
 
             let defaultComp = this.props.competitions[Object.keys(this.props.competitions)[0]]
-            if (defaultComp) this.props.setCurrentCompetition(defaultComp)
+            if (defaultComp) this.props.setCurrentCompetition(defaultComp.id)
             
         } else if ( this.props.currentComp && ( !prevProps.currentComp || prevProps.currentComp.id != this.props.currentComp.id) ){
             this._slider1Ref.snapToItem(this.props.competitions[this.props.currentComp.id])
@@ -185,11 +186,11 @@ const styles = StyleSheet.create({
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
     competitions: state.competitions,
-    currentComp: state.competition
+    currentComp: selectCurrentCompetition(state)
 })
 
-const mapDispatchToProps = dispatch => ({
-    setCurrentCompetition: (compInfo) => dispatch(setCurrentCompetition(compInfo))
-})
+const mapDispatchToProps = {
+    setCurrentCompetition
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(ChatsCarousel);

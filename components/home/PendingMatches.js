@@ -23,6 +23,7 @@ import { totalSize, w, h } from '../../api/Dimensions';
 import { translate } from '../../assets/translations/translationManager';
 import { convertDate, sortMatchesByDate, getCompetitionName } from "../../assets/utils/utilFuncs";
 import Card from './Card';
+import { selectSuperChargedCompetitions } from '../../redux/reducers';
 
 class PendingMatches extends Component {
 
@@ -191,12 +192,12 @@ class PendingMatches extends Component {
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
     relevantUsers: state.relevantUsers,
-    competitions: state.competitions,
+    competitions: selectSuperChargedCompetitions(state)
 })
 
-const mapDispatchToProps = dispatch => ({
-    setCurrentMatch: (compInfo) => dispatch(setCurrentMatch(compInfo))
-})
+const mapDispatchToProps = {
+    setCurrentMatch
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(PendingMatches);
 

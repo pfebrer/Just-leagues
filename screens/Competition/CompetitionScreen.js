@@ -4,13 +4,13 @@ import { StyleSheet, View, ActivityIndicator, Text} from 'react-native';
 import HeaderIcon from "../../components/header/HeaderIcon"
 import { translate } from "../../assets/translations/translationManager"
 
-import Configurable from "../../Useful objects/configurable"
 import { USERSETTINGS} from "../../constants/Settings"
 
 //Redux stuff
 import { connect } from 'react-redux'
+import { selectCurrentCompetition } from '../../redux/reducers'
 
-import GroupsCompetition from '../../Useful objects/competitions/groups';
+import CompetitionComponent from '../../components/competition/CompetitionComponent';
 
 class CompetitionScreen extends React.Component {
 
@@ -60,17 +60,8 @@ class CompetitionScreen extends React.Component {
 
     render() {
 
-        /*if (!this.state.listenerResult) {
-            return (
-                <View style={{flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
-                    <Text>{translate("info.loading classifications")}</Text>
-                    <ActivityIndicator size="large" color="black"/>
-                </View>
-            );
-        }*/
-
-        return <View style={{...styles.container, backgroundColor: Configurable.getSetting(this.props.currentUser.settings, "backgroundColor")}}>
-                    <GroupsCompetition what="main" competition={this.props.competition}  navigation={this.props.navigation}/>
+        return <View style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
+                    <CompetitionComponent what="main" competition={this.props.competition}  navigation={this.props.navigation}/>
                 </View>
     }
 
@@ -78,7 +69,7 @@ class CompetitionScreen extends React.Component {
 
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
-    competition: state.competition
+    competition: selectCurrentCompetition(state),
 })
 
 export default connect(mapStateToProps)(CompetitionScreen);

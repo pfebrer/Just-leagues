@@ -125,9 +125,9 @@ const mapStateToProps = state => ({
     relevantUsers: state.relevantUsers
 })
 
-const mapDispatchToProps = dispatch => ({
-    setCurrentMatch: (compInfo, config) => dispatch(setCurrentMatch(compInfo, config))
-})
+const mapDispatchToProps = {
+    setCurrentMatch
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(MatchResult);
 

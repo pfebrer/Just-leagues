@@ -166,7 +166,7 @@ class Table extends Component {
         let players = playersIDs.map( uid => this.props.competition.renderName(this.props.relevantUsers[uid].names) )
 
         let ranks = playersIDs.map( uid => {
-            return this.props.competitions[this.props.competition.id].playersIDs.indexOf(uid) + 1
+            return this.props.competition.playersIDs.indexOf(uid) + 1
         })
 
         let totals = this.props.totals || this.state.scores.map( playerScores => playerScores.reduce((a, b) => a + b, 0) )
@@ -317,12 +317,11 @@ class Column extends Component{
 const mapStateToProps = state => ({
     currentUser: state.currentUser || null,
     relevantUsers: state.relevantUsers,
-    competitions: state.competitions,
 })
 
-const mapDispatchToProps = dispatch => ({
-    setCurrentMatch: (compInfo) => dispatch(setCurrentMatch(compInfo))
-})
+const mapDispatchToProps = {
+    setCurrentMatch
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(Table);
 

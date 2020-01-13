@@ -19,6 +19,7 @@ import { w, totalSize } from '../api/Dimensions';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import _ from "lodash"
+import { selectCurrentCompetition, selectSuperChargedCompetitions } from '../redux/reducers';
 
 
 
@@ -46,7 +47,7 @@ class AdminScreen extends React.Component {
 
         let editableComps = _.filter(this.props.competitions, (obj) => this.props.currentUser.gymAdmin.indexOf(obj.gymID) >= 0)
 
-        this.props.setCurrentCompetition(editableComps[0])
+        this.props.setCurrentCompetition(editableComps[0].id)
 
         this.setState({
             competitions: editableComps
@@ -68,7 +69,7 @@ class AdminScreen extends React.Component {
                         selectedValue={selected}
                         style={styles.compPicker}
                         onValueChange={(itemValue, itemIndex) =>
-                            this.props.setCurrentCompetition(competitions[itemIndex])
+                            this.props.setCurrentCompetition(competitions[itemIndex].id)
 
                         }>
                             {pickerItems}
@@ -286,13 +287,13 @@ class AdminScreen extends React.Component {
 
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
-    currentComp: state.competition,
-    competitions: state.competitions
+    currentComp: selectCurrentCompetition(state),
+    competitions: selectSuperChargedCompetitions(state)
 })
 
-const mapDispatchToProps = dispatch => ({
-    setCurrentCompetition: (compInfo) => dispatch(setCurrentCompetition(compInfo))
-})
+const mapDispatchToProps = {
+    setCurrentCompetition
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(AdminScreen);
 

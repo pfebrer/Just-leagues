@@ -7,47 +7,17 @@ import MatchesDisplay from "../../components/competition/MatchesDisplay";
 
 //This is the parent class of all competitions and contains general flows
 
-export default class Competition extends Component {
+export default class Competition extends Configurable {
 
-    constructor(props){
-        super(props);
+    constructor(compDict){
+        super()
 
         //Set all the attributes of the competition as they were provided
-        Object.keys(props.competition).forEach( key => {
-            this[key] = props.competition[key]
+        Object.keys(compDict).forEach( key => {
+            this[key] = compDict[key]
         })
 
     }
-
-    defineProps = () => {
-        //this.props.what will determine which listener is triggered
-        this.listeners = {
-            main: this.compScreenListener,
-            compState: this.compStateListener,
-            matches: this.compMatchesListener
-        }
-
-        this.renderFuncs = {
-            main: this.renderCompScreen,
-            compState: this.renderCompState,
-            matches: this.renderCompMatches
-        }
-    }
-
-    componentDidMount(){
-
-        this.defineProps()
-
-        this.activeListener = this.listeners[this.props.what]()
-
-    }
-
-    componentWillUnmount(){
-        //Unsubscribe from listeners
-        if (this.activeListener) this.activeListener()
-    }
-
-    getSetting = (settingKey) => Configurable.getSetting(this.settings, settingKey)
 
     renderName = (nameObject) => {
         /* Renders the name of a given user according to the competition's settings */ 
@@ -67,22 +37,15 @@ export default class Competition extends Component {
         }
     }
 
-    compMatchesListener = () => Firebase.onCompPendingMatchesSnapshot(this.gymID, this.id, (matches) => this.setState({matches}))
+    compMatchesListener = (setState) => Firebase.onCompPendingMatchesSnapshot(this.gymID, this.id, (matches) => setState({matches}))
 
-    renderCompMatches = () => {
+    renderCompMatches = (state, props) => {
 
-        if (!this.state.matches) return null
+        if (!state.matches) return null
         
         return <MatchesDisplay 
-            navigation={this.props.navigation} 
-            matches={this.state.matches.map( match => ({...match, context: {...match.context, competition: {...this.props.competition, ...this.superCharges} }}) )}/> 
+            navigation={props.navigation} 
+            matches={state.matches.map( match => ({...match, context: {...match.context, competition: this }}) )}/> 
     }
 
-    render(){
-
-        if (!this.renderFuncs) return null
-
-        return this.renderFuncs[this.props.what]()
-
-    }
 }

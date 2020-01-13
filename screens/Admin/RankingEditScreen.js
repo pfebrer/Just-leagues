@@ -17,10 +17,11 @@ import { w } from '../../api/Dimensions';
 
 //Redux stuff
 import { connect } from 'react-redux'
-import {setCurrentCompetition} from "../../redux/actions"
+
 import HeaderIcon from '../../components/header/HeaderIcon';
 
 import Firebase from "../../api/Firebase"
+import { selectCurrentCompetition } from '../../redux/reducers';
 
 const window = Dimensions.get('window');
 
@@ -50,9 +51,9 @@ class RankingEditScreen extends Component {
   };
 
   isOrphan = (index) => {
-    let nLastGroup = this.state.ranking.length % this.props.competition.settings["groups"].groupSize
+    let nLastGroup = this.state.ranking.length % this.props.competition.getSetting("groupSize")
     return (index >= this.state.ranking.length - nLastGroup && //Is one of the last players
-      nLastGroup < this.props.competition.settings["groups"].minGroupSize) //There are orphans in this ranking 
+      nLastGroup < this.props.competition.getSetting("minGroupSize")) //There are orphans in this ranking 
   }
 
   submitNewRanking = () => {
@@ -61,7 +62,6 @@ class RankingEditScreen extends Component {
 
     Firebase.updateCompetitionDoc(gymID, compID, {playersIDs: this.state.ranking},
       () => {
-        this.props.setCurrentCompetition({...this.props.competition, playersIDs: this.state.ranking});
         this.props.navigation.goBack()
       }
     )
@@ -106,7 +106,7 @@ class RankingEditScreen extends Component {
             index={index}
             deletable={this.state.deleteMode}
             deleteItem={this.deleteItem}
-            groupSize={this.props.competition.settings["groups"].groupSize}
+            groupSize={this.props.competition.getSetting("groupSize")}
             isOrphan={this.isOrphan(index)}/>
   }
 }
@@ -192,14 +192,12 @@ class Row extends Component {
 }
 
 const mapStateToProps = state => ({
-  competition: state.competition,
+  competition: selectCurrentCompetition(state),
   relevantUsers: state.relevantUsers,
   currentUser: state.currentUser
 })
 
-const mapDispatchToProps = dispatch => ({
-  setCurrentCompetition: (compInfo) => dispatch(setCurrentCompetition(compInfo))
-})
+const mapDispatchToProps = null
 
 export default connect(mapStateToProps, mapDispatchToProps)(RankingEditScreen);
 

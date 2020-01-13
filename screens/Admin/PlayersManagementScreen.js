@@ -18,10 +18,10 @@ import { w, totalSize } from '../../api/Dimensions';
 
 //Redux stuff
 import { connect } from 'react-redux'
-import {setCurrentCompetition} from "../../redux/actions"
 
 import Firebase from "../../api/Firebase"
 import PlayerPicker from '../../components/pickers/PlayerPicker';
+import { selectCurrentCompetition } from '../../redux/reducers';
 
 const window = Dimensions.get('window');
 
@@ -128,14 +128,12 @@ class PlayersManagementScreen extends Component {
 }
 
 const mapStateToProps = state => ({
-  competition: state.competition,
+  competition: selectCurrentCompetition(state),
   relevantUsers: state.relevantUsers,
   currentUser: state.currentUser
 })
 
-const mapDispatchToProps = dispatch => ({
-  setCurrentCompetition: (compInfo) => dispatch(setCurrentCompetition(compInfo))
-})
+const mapDispatchToProps = null
 
 export default connect(mapStateToProps, mapDispatchToProps)(PlayersManagementScreen);
 

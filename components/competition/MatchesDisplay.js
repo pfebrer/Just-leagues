@@ -6,6 +6,7 @@ import _ from "lodash"
 import { translate } from "../../assets/translations/translationManager"
 import { connect } from 'react-redux'
 import { totalSize } from '../../api/Dimensions';
+import { selectCurrentCompetition } from '../../redux/reducers';
 
 class MatchesDisplay extends React.Component {
 
@@ -66,7 +67,7 @@ class MatchesDisplay extends React.Component {
 
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
-    competition: state.competition
+    competition: selectCurrentCompetition(state)
 })
 
 export default connect(mapStateToProps)(MatchesDisplay);

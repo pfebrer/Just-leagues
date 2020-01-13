@@ -11,9 +11,9 @@ export const storeUserData = (userData) => ({
     data: userData
 })
 
-export const setCurrentCompetition = (compInfo, config = {}) => ({
+export const setCurrentCompetition = (compID, config = {}) => ({
     type: SET_CURRENTCOMPETITION,
-    data: compInfo,
+    id: compID,
     config
 })
 

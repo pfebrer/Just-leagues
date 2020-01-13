@@ -5,10 +5,12 @@ import HeaderIcon from "../../components/header/HeaderIcon"
 import { translate } from "../../assets/translations/translationManager"
 
 import { USERSETTINGS} from "../../constants/Settings"
-import GroupsCompetition from '../../Useful objects/competitions/groups';
 
 //Redux stuff
 import { connect } from 'react-redux'
+import { selectCurrentCompetition } from '../../redux/reducers'
+
+import CompetitionComponent from '../../components/competition/CompetitionComponent';
 
 class CompetitionMatches extends React.Component {
 
@@ -70,7 +72,7 @@ class CompetitionMatches extends React.Component {
         }*/
 
         return <View style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
-                    <GroupsCompetition what="matches" competition={this.props.competition}  navigation={this.props.navigation}/>
+                    <CompetitionComponent what="matches" competition={this.props.competition}  navigation={this.props.navigation}/>
                 </View>
     }
 
@@ -78,7 +80,7 @@ class CompetitionMatches extends React.Component {
 
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
-    competition: state.competition
+    competition: selectCurrentCompetition(state)
 })
 
 export default connect(mapStateToProps)(CompetitionMatches);

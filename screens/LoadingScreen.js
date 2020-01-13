@@ -12,6 +12,7 @@ import { connect } from 'react-redux'
 import { storeUserData, updateRelevantUsers, updateCompetitions} from "../redux/actions"
 
 import NotificationManager from "../api/Notifications"
+import { selectCurrentCompetition } from '../redux/reducers';
 
 class LoadingScreen extends React.Component {
 
@@ -180,15 +181,14 @@ class LoadingScreen extends React.Component {
 
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
-    currentComp: state.competition,
+    currentComp: selectCurrentCompetition(state),
 })
 
-const mapDispatchToProps = dispatch => ({
-    storeUserData: (uid, userData) => dispatch(storeUserData(uid, userData)),
-    updateRelevantUsers: (newRelevantUsers) => dispatch(updateRelevantUsers(newRelevantUsers)),
-    updateCompetitions: (newCompetitions) => dispatch(updateCompetitions(newCompetitions)),
-    setCurrentCompetition: (compInfo) => dispatch(setCurrentCompetition(compInfo))
-})
+const mapDispatchToProps = {
+    storeUserData,
+    updateRelevantUsers,
+    updateCompetitions
+}
 
 export default connect( mapStateToProps, mapDispatchToProps )(LoadingScreen);
 

@@ -4,6 +4,7 @@ import { connect } from 'react-redux'
 import _ from "lodash"
 
 import { translate } from '../../assets/translations/translationManager';
+import { selectCurrentCompetition } from '../../redux/reducers';
 
 class PlayerPicker extends Component {
     
@@ -52,8 +53,7 @@ class PlayerPicker extends Component {
 }
 
 const mapStateToProps = (state) => ({
-    currentComp: state.competition,
-    competitions: state.competitions,
+    currentComp: selectCurrentCompetition(state),
     currentUser: state.currentUser,
     relevantUsers: state.relevantUsers
 })

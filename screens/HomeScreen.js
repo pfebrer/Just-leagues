@@ -23,9 +23,10 @@ import HeaderIcon from "../components/header/HeaderIcon"
 import PendingMatches from "../components/home/PendingMatches"
 import Notifications from "../components/home/Notifications"
 import Card from "../components/home/Card"
-import GroupsCompetition from '../Useful objects/competitions/groups';
 
 import _ from "lodash"
+import CompetitionComponent from '../components/competition/CompetitionComponent';
+import { selectSuperChargedCompetitions } from '../redux/reducers';
 
 class HomeScreen extends Component {
 
@@ -96,7 +97,7 @@ class HomeScreen extends Component {
 
                 <Notifications/>
 
-                {false ? <PendingMatches navigation={this.props.navigation}/> : null }
+                <PendingMatches navigation={this.props.navigation}/>
 
                 {this.renderCompetitionStates(this.props.currentUser.activeCompetitions)}
 
@@ -111,27 +112,12 @@ class CompetitionState extends Component {
     constructor(props){
         super(props)
 
-        /*this.state = {
-            listenerResult: undefined
-        }*/
     }
-
-    /*componentDidMount(){
-
-        this.listener = this.props.competition.compStateListener(this.props.uid,
-            listenerResult => this.setState({listenerResult})
-        );
-        
-    }
-
-    componentWillUnmount(){
-        if (this.listener) this.listener()
-    }*/
 
     goToCompetition = () => {
 
         //Set the current competition so that the competition screen can know what to render
-        this.props.setCurrentCompetition(this.props.competition)
+        this.props.setCurrentCompetition(this.props.competition.id)
 
         this.props.navigation.navigate("CompetitionScreen", {competitionName: this.props.competition.name})
     }
@@ -146,31 +132,21 @@ class CompetitionState extends Component {
                 title={this.props.competition.name}
                 onHeaderPress={this.goToCompetition}
                 actionIcon="add">
-                    <GroupsCompetition what="compState" competition={this.props.competition} navigation={this.props.navigation}/>
+                    <CompetitionComponent what="compState" competition={this.props.competition} navigation={this.props.navigation}/>
             </Card>
         )
 
-        return (
-            <Card
-                titleIcon="trophy"
-                title={this.props.competition.name}
-                onHeaderPress={this.goToCompetition}
-                actionIcon="add">
-
-                {this.props.competition.renderCompState({ navigation: this.props.navigation, listenerResult: this.state.listenerResult})}
-            </Card>
-        )
     }
 }
 
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
-    competitions: state.competitions
+    competitions: selectSuperChargedCompetitions(state)
 })
 
-const mapDispatchToProps = dispatch => ({
-    setCurrentCompetition: (compInfo) => dispatch(setCurrentCompetition(compInfo))
-})
+const mapDispatchToProps = {
+    setCurrentCompetition
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
 

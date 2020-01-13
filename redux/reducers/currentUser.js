@@ -3,12 +3,12 @@ import { STORE_CURRENTUSERDATA } from '../actions/actionTypes'
 const currentUser = (state = [], action) => {
     switch (action.type) {
         case STORE_CURRENTUSERDATA:
-            console.log("REDUX: Storing current user data...")
+
             let newState = {
                 ...state,
                 ...action.data,
             }
-            console.log(newState)
+
             return newState
                 
         default:

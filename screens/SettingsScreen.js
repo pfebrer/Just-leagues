@@ -18,6 +18,7 @@ import { withNavigationFocus } from 'react-navigation';
 import {deepClone} from "../assets/utils/utilFuncs"
 
 import _ from "lodash"
+import { selectCurrentCompetition } from '../redux/reducers';
  
 const Picker = (props) => (
     <View style={{height: h(60)}}>
@@ -303,7 +304,7 @@ class SettingsScreen extends React.Component {
 
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
-    currentComp: state.competition,
+    currentComp: selectCurrentCompetition(state),
 })
 
 export default connect(mapStateToProps)(withNavigationFocus(SettingsScreen));

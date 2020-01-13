@@ -29,6 +29,7 @@ import moment from 'moment';
 import { h, totalSize } from '../api/Dimensions';
 import ChatsCarousel from '../components/chat/ChatsCarousel';
 import { Icon } from 'native-base';
+import { selectCurrentCompetition } from '../redux/reducers';
 
 class ChatScreen extends React.Component {
 
@@ -210,7 +211,7 @@ class ChatScreen extends React.Component {
 
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
-    currentComp: state.competition,
+    currentComp: selectCurrentCompetition(state),
     relevantUsers: state.relevantUsers
 })
 

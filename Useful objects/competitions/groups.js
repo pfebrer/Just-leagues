@@ -6,44 +6,32 @@ import Firebase from "../../api/Firebase"
 import Groups from "../../components/groups/Groups"
 import Table from "../../components/groups/Table"
 
-import { connect } from 'react-redux'
+export default class GroupsCompetition extends Competition {
 
-class GroupsCompetition extends Competition {
-
-    constructor(props){
-        super(props);
-
-
-        this.state = {
-            ...this.state, //Things coming from Competition initialization
-        }
-
-        this.superCharges = {
-            renderName: this.renderName,
-            getSortedIndices: this.getSortedIndices
-        }
+    constructor(compDict){
+        super(compDict);
 
     }
 
-    compScreenListener = () => Firebase.onGroupsSnapshot(this.gymID, this.id, (listenerResult) => this.setState({groups:listenerResult}));
+    compScreenListener = (setState) => Firebase.onGroupsSnapshot(this.gymID, this.id, (groups) => setState({groups}));
 
-    renderCompScreen = () => {
+    renderCompScreen = (state, props) => {
 
-        if (!this.state.groups) return null
+        if (!state.groups) return null
 
-        return <Groups competition={{...this.props.competition, ...this.superCharges}} groups={this.state.groups} navigation={this.props.navigation}/>
+        return <Groups competition={this} groups={state.groups} navigation={props.navigation}/>
     }
 
-    compStateListener = () => Firebase.onPlayerGroupSnapshot(this.gymID, this.id, this.props.currentUser.id, (listenerResult) => this.setState({listenerResult}))
+    compStateListener = (setState, state, props) => Firebase.onPlayerGroupSnapshot(this.gymID, this.id, props.currentUser.id, (listenerResult) => setState({listenerResult}))
 
-    renderCompState = () => {
+    renderCompState = (state, props) => {
 
-        if (!this.state.listenerResult) return null
+        if (!state.listenerResult) return null
 
         return <Table
-            {...this.state.listenerResult}
-            competition={{...this.props.competition, ...this.superCharges}}
-            navigation={this.props.navigation}
+            {...state.listenerResult}
+            competition={this}
+            navigation={props.navigation}
         />
     }
 
@@ -52,9 +40,3 @@ class GroupsCompetition extends Competition {
     }
 
 }
-
-const mapStateToProps = state => ({
-    currentUser: state.currentUser,
-})
-
-export default connect(mapStateToProps)(GroupsCompetition);
