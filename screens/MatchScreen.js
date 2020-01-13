@@ -43,10 +43,9 @@ class MatchScreen extends Component {
 
         if (this.matchSub) this.matchSub();
 
-        let { matchID, compID } = this.props.currentMatch.context
         this.competition = this.props.currentMatch.context.competition
 
-        this.matchID = matchID
+        this.matchID = this.props.currentMatch.id
 
         if (this.props.currentMatch.context.pending){
             //Listen to the pendingMatch
@@ -73,7 +72,7 @@ class MatchScreen extends Component {
 
                     this.matchRef = docSnapshot.ref
 
-                    this.props.setCurrentMatch( {...match, context: {...match.context, matchID: this.matchID, competition: this.competition} }, {merge: true} )
+                    this.props.setCurrentMatch( {...match, context: {...match.context, competition: this.competition} }, {merge: true} )
 
                     this.grantEditRights()
     
@@ -107,7 +106,7 @@ class MatchScreen extends Component {
 
     componentDidUpdate(prevProps){
 
-        if ( (!prevProps.currentMatch && this.props.currentMatch) || (prevProps.currentMatch.context.matchID != this.props.currentMatch.context.matchID) ){
+        if ( (!prevProps.currentMatch && this.props.currentMatch) || (prevProps.currentMatch.id != this.props.currentMatch.id) ){
 
             this.listenToMatch()
 

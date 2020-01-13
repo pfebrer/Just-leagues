@@ -46,6 +46,7 @@ class PendingMatches extends Component {
 
                 matches = matches.map( match => ({
                     ...match,
+                    context: { ...match.context, competition: this.props.competitions[match.context.competition.id]}
                 }) )
 
                 matches = sortMatchesByDate(matches)
@@ -73,15 +74,7 @@ class PendingMatches extends Component {
 
     goToMatch = (match) => {
 
-        this.props.setCurrentMatch({
-            context: {
-                ...match.context, //This info depends on how the pending match has been generated (type of competition)
-                matchID: match.id,
-                competition: this.props.competitions[match.compID],
-                pending: true
-            },
-            ..._.omit(match, ["id", "compID","gymID", "context"])
-        })
+        this.props.setCurrentMatch(match)
 
         this.props.navigation.navigate("MatchScreen")
 
@@ -94,7 +87,7 @@ class PendingMatches extends Component {
         //Determine the match information that should be displayed
         if (match.playersIDs.length == 2){
             //then we need to display just the rival
-            let rival = match.playersIDs.map( uid => this.props.competitions[match.compID].renderName(this.props.relevantUsers[uid].names))
+            let rival = match.playersIDs.map( uid => match.context.competition.renderName(this.props.relevantUsers[uid].names))
                         .filter( (name, i) => match.playersIDs[i] != this.props.currentUser.id )[0]
 
             matchInfo = <Text>{rival}</Text>
@@ -138,7 +131,7 @@ class PendingMatches extends Component {
                 <View style={{...styles.pendingMatchPad, ...additionalPadStyles}}/>
                 <View style={{flex:1, justifyContent: "center"}}>
                     {matchInfo}
-                    <Text note>{ getCompetitionName(this.props.competitions[match.compID])}</Text>
+                    <Text note>{ getCompetitionName(match.context.competition)}</Text>
                 </View>
                 {timeInfo}
             </TouchableOpacity>

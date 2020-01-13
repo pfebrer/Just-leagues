@@ -396,20 +396,7 @@ class Firebase {
     .onSnapshot(querySnapshot => { 
 
       if (!getData) callback(querySnapshot)
-      else callback( querySnapshot.docs.map(doc => {
-          let data = doc.data()
-
-          return {
-            ...data,
-            id: doc.id,
-            due: data.due ? data.due.toDate() : null,
-            scheduled: data.scheduled ? { ...data.scheduled, time: data.scheduled.time ? data.scheduled.time.toDate() : data.scheduled.time} : null,
-            gymID: doc.ref.parent.parent.parent.parent.id,
-            compID: doc.ref.parent.parent.id
-          }
-          
-        }
-      ))
+      else callback( querySnapshot.docs.map(doc => this.standarizeMatchDocInfo(doc)) )
 
     })
 
@@ -425,13 +412,7 @@ class Firebase {
 
       } else {
 
-        let data = docSnapshot.data()
-
-        callback({
-          ...data,
-          due: data.due ? data.due.toDate() : null,
-          scheduled: data.scheduled ? { ...data.scheduled, time: data.scheduled.time ? data.scheduled.time.toDate() : data.scheduled.time} : null
-        }, docSnapshot)
+        callback(this.standarizeMatchDocInfo(docSnapshot), docSnapshot)
 
       }
 
@@ -447,17 +428,7 @@ class Firebase {
     .onSnapshot(querySnapshot => { 
 
       if (!getData) callback(querySnapshot)
-      else callback( querySnapshot.docs.map(doc => {
-          let data = doc.data()
-
-          return {
-            ...data,
-            id: doc.id,
-            playedOn: data.playedOn ? data.playedOn.toDate() : null,
-          }
-          
-        }
-      ))
+      else callback( querySnapshot.docs.map(doc => this.standarizeMatchDocInfo(doc)))
 
     })
 
@@ -473,15 +444,7 @@ class Firebase {
 
       } else {
 
-        let data = docSnapshot.data()
-
-        if (data){
-          callback({
-            ...data,
-            playedOn: data.playedOn ? data.playedOn.toDate() : null,
-          }, docSnapshot)
-        }
-        
+          callback(this.standarizeMatchDocInfo(docSnapshot), docSnapshot)  
 
       }
 
@@ -562,7 +525,7 @@ class Firebase {
     /*Listen to changes in pending matches for a given competition*/
 
     return this.pendingMatchesRef(gymID, compID).onSnapshot( querySnapshot => {
-      callback(querySnapshot.docs.map(doc => doc.data()))
+      callback(querySnapshot.docs.map(doc => this.standarizeMatchDocInfo(doc)))
     })
 
   }
@@ -918,7 +881,6 @@ class Firebase {
 };
 
   //DATABASE REFERENCES (Only place where they should be declared in the whole app)
-  //V3 database references
   get usersRef() {
     return this.firestore.collection(Collections.USERS)
   }
@@ -981,6 +943,29 @@ class Firebase {
 
   playerGroupQuery = (gymID, compID, uid) => {
     return this.groupsRef(gymID, compID).where("playersIDs", "array-contains", uid )
+  }
+
+  // DATA STANDARIZERS
+
+  standarizeMatchDocInfo = (matchDoc) => {
+
+    //Standarizes the returns of a match read from the database
+    let match = matchDoc.data()
+
+    return {
+      ...match,
+      id: matchDoc.id,
+      due: match.due ? match.due.toDate() : undefined,
+      scheduled: match.scheduled ? { ...match.scheduled, time: match.scheduled.time ? match.scheduled.time.toDate() : match.scheduled.time} : undefined,
+      playedOn: match.playedOn ? match.playedOn.toDate() : undefined,
+      context: {
+        ...match.context, 
+        competition: {...match.context.competition, id: matchDoc.ref.parent.parent.id, gymID: matchDoc.ref.parent.parent.parent.parent.id},
+        pending: matchDoc.ref.parent.id == Subcollections.PENDINGMATCHES
+      },
+      
+    }
+  
   }
 
   //Helper functions

@@ -26,9 +26,11 @@ exports.sortMatchesByDate = (matches) => {
 
     function matchDate(match){
 
-        if ( match.scheduled ){
+        if (match.playedOn){
+            return match.playedOn
+        } else if ( match.scheduled ){
             return match.scheduled.time
-        } else {
+        } else if (match.due){
             return match.due
         }
 

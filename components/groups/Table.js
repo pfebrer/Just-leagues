@@ -35,7 +35,6 @@ class Table extends Component {
 
         this.matchesListener = Firebase.matchesRef(gymID, compID).where("context.group.id", "==", this.props.id).onSnapshot(
 
-
             matches => {
 
                 let newScores = _.cloneDeep(this.state.scores)
@@ -93,8 +92,8 @@ class Table extends Component {
         let iMatch = this.cellPositionToMatchIndex(iRow, iCol, this.props.playersIDs.length)
 
         this.props.setCurrentMatch({
+            id: this.props.matchesIDs[iMatch],
             context: {
-                matchID: this.props.matchesIDs[iMatch],
                 group: {
                     id: this.props.id,
                     name: this.props.name
