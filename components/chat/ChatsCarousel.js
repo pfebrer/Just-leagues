@@ -58,7 +58,7 @@ class ChatsCarousel extends Component {
     changeChat = (compID, target, isActiveComp) => {
 
         if ( !isActiveComp ){
-            this.props.setCurrentCompetition(this.props.competitions[compID])
+            this.props.setCurrentCompetition(compID)
         }
 
         this.props.setNewMessagesTarget(target)
