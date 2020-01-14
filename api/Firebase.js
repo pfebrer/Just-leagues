@@ -521,6 +521,15 @@ class Firebase {
     )
   }
 
+  onCompMatchesSnapshot = (gymID, compID, callback) => {
+    /*Listen to changes in pending matches for a given competition*/
+
+    return this.matchesRef(gymID, compID).onSnapshot( querySnapshot => {
+      callback(querySnapshot.docs.map(doc => this.standarizeMatchDocInfo(doc)))
+    })
+
+  }
+
   onCompPendingMatchesSnapshot = (gymID, compID, callback) => {
     /*Listen to changes in pending matches for a given competition*/
 

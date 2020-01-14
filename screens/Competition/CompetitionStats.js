@@ -20,7 +20,7 @@ class CompetitionScreen extends React.Component {
         this.state = {};
 
         props.navigation.setParams({competitionName: props.competition.name})
-        
+
     }
 
     static navigationOptions = ({navigation}) => {
@@ -63,7 +63,7 @@ class CompetitionScreen extends React.Component {
     render() {
 
         return <View style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
-                    <CompetitionComponent what="main" competition={this.props.competition}  navigation={this.props.navigation}/>
+                    <CompetitionComponent what="stats" competition={this.props.competition}  navigation={this.props.navigation}/>
                 </View>
     }
 

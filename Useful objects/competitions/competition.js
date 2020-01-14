@@ -4,6 +4,7 @@ import Firebase from "../../api/Firebase"
 import React, {Component} from 'react';
 import {ScrollView} from "react-native"
 import MatchesDisplay from "../../components/competition/MatchesDisplay";
+import CompStats from "../../components/competition/CompStats";
 
 //This is the parent class of all competitions and contains general flows
 
@@ -44,6 +45,17 @@ export default class Competition extends Configurable {
         if (!state.matches) return null
         
         return <MatchesDisplay 
+            navigation={props.navigation} 
+            matches={state.matches.map( match => ({...match, context: {...match.context, competition: this }}) )}/> 
+    }
+
+    compStatsListener = (setState) => Firebase.onCompMatchesSnapshot(this.gymID, this.id, (matches) => setState({matches}))
+
+    renderCompStats = (state, props) => {
+
+        if (!state.matches) return null
+        
+        return <CompStats 
             navigation={props.navigation} 
             matches={state.matches.map( match => ({...match, context: {...match.context, competition: this }}) )}/> 
     }

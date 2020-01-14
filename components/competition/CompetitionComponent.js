@@ -12,7 +12,8 @@ class CompetitionComponent extends Component {
         const listeners = {
             main: comp.compScreenListener,
             compState: comp.compStateListener,
-            matches: comp.compMatchesListener
+            matches: comp.compMatchesListener,
+            stats: comp.compStatsListener
         }
 
         return listeners[this.props.what]
@@ -25,7 +26,8 @@ class CompetitionComponent extends Component {
         const renderFuncs = {
             main: comp.renderCompScreen,
             compState: comp.renderCompState,
-            matches: comp.renderCompMatches
+            matches: comp.renderCompMatches,
+            stats: comp.renderCompStats
         }
 
         return renderFuncs[this.props.what]

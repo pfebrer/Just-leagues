@@ -5,7 +5,8 @@ import { createDrawerNavigator } from 'react-navigation-drawer';
 
 import Stats from "../screens/StatsScreen";
 import CompetitionScreen from "../screens/Competition/CompetitionScreen";
-import CompetitionMatches from "../screens/Competition/CompetitionMatches"
+import CompetitionMatches from "../screens/Competition/CompetitionMatches";
+import CompetitionStats from "../screens/Competition/CompetitionStats";
 import AdminScreen from "../screens/AdminScreen";
 import GroupChat from "../screens/ChatScreen";
 import ProfileScreen from "../screens/ProfileScreen";
@@ -28,6 +29,10 @@ const CompMatches = createStackNavigator({
     CompetitionMatches: CompetitionMatches
 })
 
+const CompStats = createStackNavigator({
+    CompetitionStats: CompetitionStats
+})
+
 const CompetitionDrawer = createDrawerNavigator({
     CompetitionScreenStack: {
         screen: CompScreen,
@@ -41,6 +46,12 @@ const CompetitionDrawer = createDrawerNavigator({
             drawerLabel: translate("tabs.matches")
         }
     },
+    CompetitionStats: {
+        screen: CompStats,
+        navigationOptions: {
+            drawerLabel: translate("tabs.stats")
+        }
+    }
   }, {
     drawerPosition: "right",
     drawerType: "slide"
