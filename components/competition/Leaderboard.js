@@ -32,7 +32,7 @@ class Leaderboard extends React.Component {
 
             let customStyles = i == 0 ? styles.leaderCell : i < 3 ? styles.podiumCell : uid == this.props.currentUser.id ? styles.ownCell : null 
             let customTextStyles = i == 0 ? styles.leaderText : i < 3 ? styles.podiumText : uid == this.props.currentUser.id ? styles.ownText : null
-            let preText = i == this.state.nTop ? + sortedKeys.indexOf(this.props.currentUser.id) + ". " : ""
+            let preText = i == this.state.nTop ? + (sortedKeys.indexOf(this.props.currentUser.id) + 1) + ". " : ""
 
             return (
                 <ListItem style={{...styles.leaderboardCell, ...customStyles}} key={i} noIndent noBorder={i == arr.length - 1}>
