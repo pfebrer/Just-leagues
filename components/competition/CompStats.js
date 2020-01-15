@@ -107,7 +107,7 @@ class CompetitionStats extends React.Component {
 
                 <View style={{flexDirection: "row"}}>
                     <View style={{flex:1}}>
-                        <Leaderboard title={translate("stats.games per match") + " (%)"} items={advancedStats.gamesPerMatch}/>
+                        <Leaderboard title={translate("stats.games per match")} items={advancedStats.gamesPerMatch}/>
                     </View>
                 </View>
 

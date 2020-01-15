@@ -20,7 +20,9 @@ class Leaderboard extends React.Component {
 
     }
 
-    getLeaderboardBody = (topRankedKeys) => {
+    getLeaderboardBody = (sortedKeys) => {
+
+        let topRankedKeys = sortedKeys.slice(0,this.state.nTop)
 
         if (topRankedKeys.indexOf(this.props.currentUser.id) == -1){
             topRankedKeys.push(this.props.currentUser.id)
@@ -30,11 +32,14 @@ class Leaderboard extends React.Component {
 
             let customStyles = i == 0 ? styles.leaderCell : i < 3 ? styles.podiumCell : uid == this.props.currentUser.id ? styles.ownCell : null 
             let customTextStyles = i == 0 ? styles.leaderText : i < 3 ? styles.podiumText : uid == this.props.currentUser.id ? styles.ownText : null
+            let preText = i == this.state.nTop ? + sortedKeys.indexOf(this.props.currentUser.id) + ". " : ""
 
             return (
                 <ListItem style={{...styles.leaderboardCell, ...customStyles}} key={i} noIndent noBorder={i == arr.length - 1}>
                     <Left>
-                        <Text style={{...styles.userText, ...customTextStyles}}>{this.props.competition.renderName(this.props.relevantUsers[uid].names)}</Text>
+                        <Text style={{...styles.userText, ...customTextStyles}}>
+                            {preText + this.props.competition.renderName(this.props.relevantUsers[uid].names)}
+                        </Text>
                     </Left>
                     <Right>
                         <Text style={{...styles.valueText, ...customTextStyles}}>{this.props.items[uid]}</Text>
@@ -53,7 +58,7 @@ class Leaderboard extends React.Component {
     
     render() {
 
-        let topRanked = this.sortKeysByValue(this.props.items).slice(0,this.state.nTop)
+        let sortedKeys = this.sortKeysByValue(this.props.items)
 
         return (
 
@@ -62,7 +67,7 @@ class Leaderboard extends React.Component {
                 headerStyles={{paddingBottom: 0, height : 0}}>
                 <Text style={styles.titleText}>{this.props.title} </Text>
                 <List style={styles.leaderboardBody}>
-                    {this.getLeaderboardBody(topRanked)}
+                    {this.getLeaderboardBody(sortedKeys)}
                 </List>
             </Card>
     
