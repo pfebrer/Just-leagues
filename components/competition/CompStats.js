@@ -66,7 +66,7 @@ class CompetitionStats extends React.Component {
             advancedStats.gamesPerMatch[uid] = round(leaderboards.playedGames[uid] / leaderboards.playedMatches[uid], 2)
             advancedStats.percentMatchWins[uid] = round(leaderboards.wonMatches[uid] / leaderboards.playedMatches[uid] * 100, 1)
             advancedStats.percentGameWins[uid] = round(leaderboards.wonGames[uid] / leaderboards.playedGames[uid] * 100, 1)
-            advancedStats.percentCleanSheets[uid] = round(leaderboards.cleanSheets[uid] / leaderboards.playedGames[uid] * 100, 1)
+            advancedStats.percentCleanSheets[uid] = round(leaderboards.cleanSheets[uid] / leaderboards.playedMatches[uid] * 100, 1)
 
             return advancedStats
         },{gamesPerMatch: {}, percentMatchWins: {}, percentGameWins: {}, percentCleanSheets: {}})
