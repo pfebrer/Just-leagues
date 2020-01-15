@@ -7,6 +7,8 @@ exports.deepClone = (obj) => JSON.parse(JSON.stringify(obj));
 //Transposes a 2D array
 exports.transpose = m => m[0].map((x,i) => m.map(x => x[i]))
 
+//Round a given number to de desired precision
+exports.round = (number, prec) => Math.round(number*10**prec)/10**prec
 //Reshape a flat array to a 2d array by grouping in groups of n
 exports.reshape = (arr, shape) => {
     let newArr = [];

@@ -34,6 +34,14 @@
         "your matches": "Els teus partits",
         "other matches": "Altres partits"
     },
+    "stats": {
+        "played matches": "Partits jugats",
+        "played games": "Jocs jugats",
+        "won matches": "Partits guanyats",
+        "won games": "Jocs guanyats",
+        "games per match": "Jocs per partit",
+        "clean sheets": "Rival a 0"
+    },
     "cardTitles": {
         "match schedule": "Previsió de data",
         "match date": "Data del partit",
