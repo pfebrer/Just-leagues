@@ -30,7 +30,7 @@ class Leaderboard extends React.Component {
 
         return topRankedKeys.map( (uid, i, arr) =>{
 
-            let customStyles = i == 0 ? styles.leaderCell : i < 3 ? styles.podiumCell : uid == this.props.currentUser.id ? styles.ownCell : null 
+            let customStyles = i == 0 ? styles.leaderCell : i < 3 ? styles.podiumCell : uid == this.props.currentUser.id ? i == this.state.nTop ? styles.ownCell : null : null 
             let customTextStyles = i == 0 ? styles.leaderText : i < 3 ? styles.podiumText : uid == this.props.currentUser.id ? styles.ownText : null
             let preText = i == this.state.nTop ? + (sortedKeys.indexOf(this.props.currentUser.id) + 1) + ". " : ""
 

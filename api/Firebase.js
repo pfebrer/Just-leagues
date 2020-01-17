@@ -76,7 +76,7 @@ class Firebase {
       const result = await Google.logInAsync({
         androidStandaloneAppClientId: "524738063553-vn8rk9pmad9gil0gtsbhaf616ng6e0mj.apps.googleusercontent.com",
         androidClientId: "524738063553-1tr662gs9strhp1rvljj4qv588mbj254.apps.googleusercontent.com",
-        //iosClientId: YOUR_CLIENT_ID_HERE,
+        iosClientId: "524738063553-r84f2p2d63sp41pf72pe7bdmlk9boi52.apps.googleusercontent.com",
         behavior: "web",
         scopes: ['profile', 'email'],
       });
@@ -613,9 +613,9 @@ class Firebase {
     let batch = this.firestore.batch()
 
     //Pick only the relevant info
-    let {result, playersIDs, scheduled, context} = matchInfo
+    let {result, playersIDs, scheduled, context, id: matchID} = matchInfo
 
-    let {matchID, competition} = context
+    let {competition} = context
     let {id: compID, gymID, type: typeOfComp} = competition
 
     let playedOn = scheduled ? scheduled.time : null;
