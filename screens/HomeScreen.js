@@ -4,19 +4,10 @@ import {
     ScrollView
 } from 'react-native';
 
-import { Icon, Text} from 'native-base';
-
-import Firebase from "../api/Firebase"
-
 //Redux stuff
 import { connect } from 'react-redux'
 import {setCurrentCompetition} from "../redux/actions"
 
-import { totalSize, w, h } from '../api/Dimensions';
-
-import { translate } from '../assets/translations/translationManager';
-
-import Table from '../components/groups/Table';
 import { USERSETTINGS } from "../constants/Settings"
 import HeaderIcon from "../components/header/HeaderIcon"
 
@@ -89,6 +80,8 @@ class HomeScreen extends Component {
     }
 
     render() {
+
+        //return <CompetitionComponent what="main" competition={new KnockoutCompetition({})} navigation={this.props.navigation}/>
 
         return (
             <ScrollView 

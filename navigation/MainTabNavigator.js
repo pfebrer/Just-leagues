@@ -22,6 +22,19 @@ import HeaderIcon from "../components/header/HeaderIcon"
 import ChatScreen from '../screens/ChatScreen';
 import { translate } from '../assets/translations/translationManager';
 
+export const compTabBarOptions = {
+    pressColor: "#ccc",
+    style: {
+        backgroundColor: "white"
+    },
+    indicatorStyle: {
+        backgroundColor: "black",
+    },
+    labelStyle: {
+        color: "black"
+    },
+}
+
 const CompetitionTabs = createMaterialTopTabNavigator({
     CompetitionScreen: {
         screen: CompetitionScreen,
@@ -43,18 +56,7 @@ const CompetitionTabs = createMaterialTopTabNavigator({
     }
 }, {
     lazy: true,
-    tabBarOptions: {
-        pressColor: "#ccc",
-        style: {
-            backgroundColor: "white"
-        },
-        indicatorStyle: {
-            backgroundColor: "black",
-        },
-        labelStyle: {
-            color: "black"
-        },
-    }
+    tabBarOptions: compTabBarOptions,
 });
 
 const EditingStack = createStackNavigator({

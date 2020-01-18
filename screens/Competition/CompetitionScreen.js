@@ -1,9 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, ActivityIndicator, Text} from 'react-native';
 
-import HeaderIcon from "../../components/header/HeaderIcon"
-import { translate } from "../../assets/translations/translationManager"
-
 import { USERSETTINGS} from "../../constants/Settings"
 
 //Redux stuff
@@ -11,6 +8,8 @@ import { connect } from 'react-redux'
 import { selectCurrentCompetition } from '../../redux/reducers'
 
 import CompetitionComponent from '../../components/competition/CompetitionComponent';
+
+import KnockoutCompetition from '../../Useful objects/competitions/knockout'
 
 class CompetitionScreen extends React.Component {
 
@@ -44,6 +43,10 @@ class CompetitionScreen extends React.Component {
     }
 
     render() {
+
+        /*return <View style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
+                    <CompetitionComponent what="main" competition={new KnockoutCompetition({})}  navigation={this.props.navigation}/>
+                </View>*/
 
         return <View style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
                     <CompetitionComponent what="main" competition={this.props.competition}  navigation={this.props.navigation}/>
