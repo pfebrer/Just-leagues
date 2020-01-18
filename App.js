@@ -12,6 +12,18 @@ import { Root } from 'native-base';
 import store from './redux/store'
 import { Provider } from 'react-redux'
 
+//Crash notification
+import * as Sentry from 'sentry-expo';
+import Constants from 'expo-constants';
+
+Sentry.init({
+  dsn: 'https://859a3f17d2964dd6b8c9dd3e6bcd2624@sentry.io/1886709',
+  enableInExpoDevelopment: false,
+  debug: true
+});
+
+Sentry.setRelease(Constants.manifest.revisionId);
+
 export default function App(props) {
 
   const [isLoadingComplete, setLoadingComplete] = useState(false);

@@ -178,7 +178,7 @@ exports.newPlayedMatchNotification = firestoreFunction.document(Collections.GYMS
 
         return firestore.collection(Collections.GYMS).doc(context.params.gymID).collection(Subcollections.COMPETITIONS).doc(context.params.compID).collection(Subcollections.GROUPS).doc(groupID).get().then( groupSnapshot => {
 
-            let {playersIDs: groupPlayersIDs} = groupSnapshot.data()
+            let {playersIDs: groupPlayersIDs, totals} = groupSnapshot.data()
 
             promises = groupPlayersIDs.map( uid => firestore.collection(Collections.USERS).doc(uid).get())
 
@@ -214,8 +214,6 @@ exports.newPlayedMatchNotification = firestoreFunction.document(Collections.GYMS
                         });
                     }
                 })
-
-                console.log("Messages", messages)
     
                 fetch('https://exp.host/--/api/v2/push/send', {
                     method: 'POST',
