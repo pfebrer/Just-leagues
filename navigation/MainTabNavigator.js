@@ -1,6 +1,7 @@
 import React from 'react';
+import { getActiveChildNavigationOptions } from "react-navigation"
 import { createStackNavigator } from 'react-navigation-stack';
-import { createBottomTabNavigator } from 'react-navigation-tabs';
+import { createBottomTabNavigator, createMaterialTopTabNavigator } from 'react-navigation-tabs';
 import { createDrawerNavigator } from 'react-navigation-drawer';
 
 import Stats from "../screens/StatsScreen";
@@ -17,45 +18,44 @@ import HomeScreen from "../screens/HomeScreen"
 import MatchScreen from "../screens/MatchScreen"
 
 import { Icon } from 'native-base';
+import HeaderIcon from "../components/header/HeaderIcon"
 import ChatScreen from '../screens/ChatScreen';
 import { translate } from '../assets/translations/translationManager';
 
-
-const CompScreen = createStackNavigator({
-    CompetitionScreen: CompetitionScreen
-  })
-
-const CompMatches = createStackNavigator({
-    CompetitionMatches: CompetitionMatches
-})
-
-const CompStats = createStackNavigator({
-    CompetitionStats: CompetitionStats
-})
-
-const CompetitionDrawer = createDrawerNavigator({
-    CompetitionScreenStack: {
-        screen: CompScreen,
+const CompetitionTabs = createMaterialTopTabNavigator({
+    CompetitionScreen: {
+        screen: CompetitionScreen,
         navigationOptions: {
-            drawerLabel: translate("tabs.competition overview")
+            tabBarLabel: translate("tabs.competition overview")
         }
     },
-    CompetitionMatchesStack: {
-        screen: CompMatches,
+    CompetitionMatches: {
+        screen: CompetitionMatches,
         navigationOptions: {
-            drawerLabel: translate("tabs.matches")
+            tabBarLabel: translate("tabs.matches")
         }
     },
     CompetitionStats: {
-        screen: CompStats,
+        screen: CompetitionStats,
         navigationOptions: {
-            drawerLabel: translate("tabs.stats")
+            tabBarLabel: translate("tabs.stats")
         }
     }
-  }, {
-    drawerPosition: "right",
-    drawerType: "slide"
-  });
+}, {
+    lazy: true,
+    tabBarOptions: {
+        pressColor: "#ccc",
+        style: {
+            backgroundColor: "white"
+        },
+        indicatorStyle: {
+            backgroundColor: "black",
+        },
+        labelStyle: {
+            color: "black"
+        },
+    }
+});
 
 const EditingStack = createStackNavigator({
     AdminScreen: AdminScreen,
@@ -66,11 +66,12 @@ const EditingStack = createStackNavigator({
 const HomeStack = createStackNavigator({
     HomeScreen: HomeScreen,
     SettingsScreen: SettingsScreen,
-    CompetitionDrawer: {
-        screen: CompetitionDrawer,
-        navigationOptions: {
-            header: null
-        }
+    CompetitionTabs: {
+        screen: CompetitionTabs,
+        navigationOptions: ({navigation, screenProps}) => ({
+            headerRight: <HeaderIcon name="chatbubbles" onPress={() => navigation.navigate("Chat")}/>,
+            ...getActiveChildNavigationOptions(navigation, screenProps) //This gets the name of the competition to set it as a title
+        }),
     },
     MatchScreen: MatchScreen,
     //Screens for admins only

@@ -23,6 +23,12 @@ class MatchSummary extends Component {
         this.defaultResult = [0,0]
     }
 
+    goToMatch = () => {
+
+        this.props.setCurrentMatch(this.props.match)
+        this.props.navigation.navigate("MatchScreen")
+    }
+
     render() {
 
         if (!this.props.match.playersIDs) return <Card loading/>
@@ -38,17 +44,18 @@ class MatchSummary extends Component {
             <Card
                 cardContainerStyles={{paddingTop: 20}}
                 headerStyles={{paddingBottom: 0, height : 0}}
-                childrenContainerStyles={styles.cardContentContainer}
                 >
-                <Text style={{...styles.playerNameText, textAlign: "left"}}>
-                    {"(" + ranks[0] + ") " + players[0]}
-                </Text>
-                <Text style={{...styles.scoreText, textAlign: "center"}}>
-                    {result.join(" - ")}
-                </Text>
-                <Text style={{...styles.playerNameText, textAlign: "right"}}>
-                    {players[1] + " (" + ranks[1] + ")"}
-                </Text>
+                <TouchableOpacity style={styles.cardContentContainer} onPress={this.goToMatch}>
+                    <Text style={{...styles.playerNameText, textAlign: "left"}}>
+                        {"(" + ranks[0] + ") " + players[0]}
+                    </Text>
+                    <Text style={{...styles.scoreText, textAlign: "center"}}>
+                        {result.join(" - ")}
+                    </Text>
+                    <Text style={{...styles.playerNameText, textAlign: "right"}}>
+                        {players[1] + " (" + ranks[1] + ")"}
+                    </Text>
+                </TouchableOpacity>
             </Card>
         )
     }

@@ -19,37 +19,20 @@ class CompetitionMatches extends React.Component {
 
         this.state = {};
 
-        props.navigation.setParams({competitionName: props.competition.name})
+        this.setUpCompetition()
 
     }
 
     static navigationOptions = ({navigation}) => {
         return {
-            headerLeft: <HeaderIcon name="arrow-back" onPress={navigation.pop}/>,
             headerTitle: navigation.getParam("competitionName", ""),
-            headerRight: <HeaderIcon name="menu" onPress={navigation.openDrawer}/>
         }
     };
-
-    /*componentDidMount(){
-
-        this.setUpCompetition()
-
-    }
 
     setUpCompetition = () => {
 
         this.props.navigation.setParams({competitionName: this.props.competition.name})
 
-        if (this.listener) this.listener();
-
-        this.listener = this.props.competition.compMatchesListener(
-            listenerResult => this.setState({listenerResult})
-        );
-    }
-
-    componentWillUnmount(){
-        if (this.listener) this.listener()
     }
 
     componentDidUpdate(prevProps){
@@ -58,7 +41,7 @@ class CompetitionMatches extends React.Component {
             this.setUpCompetition()
         }
         
-    }*/
+    }
 
     render() {
 

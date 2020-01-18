@@ -25,7 +25,7 @@ class MatchesDisplay extends React.Component {
         return (
             <View>
                 <Text style={styles.sectionTitle}>{sectionTitle}</Text>
-                {matches.map(match => <MatchSummary match={match} editable={false}/>)}
+                {matches.map(match => <MatchSummary key={match.id} match={match} navigation={this.props.navigation}/>)}
             </View>
         )
     }
