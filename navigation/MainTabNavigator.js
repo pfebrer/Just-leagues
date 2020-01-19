@@ -4,6 +4,7 @@ import { createStackNavigator } from 'react-navigation-stack';
 import { createBottomTabNavigator, createMaterialTopTabNavigator } from 'react-navigation-tabs';
 import { createDrawerNavigator } from 'react-navigation-drawer';
 
+import Calendar from "../api/Calendar"
 import Stats from "../screens/StatsScreen";
 import CompetitionScreen from "../screens/Competition/CompetitionScreen";
 import AdminScreen from "../screens/AdminScreen";
@@ -64,6 +65,7 @@ const EditingStack = createStackNavigator({
 
 
 const HomeStack = createStackNavigator({
+    Calendar: Calendar,
     HomeScreen: HomeScreen,
     SettingsScreen: SettingsScreen,
     CompetitionScreen: CompetitionScreen,
