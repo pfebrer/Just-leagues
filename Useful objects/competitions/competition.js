@@ -1,4 +1,5 @@
 import Configurable from "../configurable"
+import GroupsCompetition from "./groups"
 import Firebase from "../../api/Firebase"
 
 import React, {Component} from 'react';
@@ -20,6 +21,48 @@ export default class Competition extends Configurable {
 
     }
 
+    static turnOnListeners = (currentUser, compID, updateCompetition, updateRelevantUsers) => {
+
+        let listeners = {}
+            
+        listeners["main"] = Firebase.onCompetitionSnapshot( compID, compData => {
+
+            //Trigger all the additional listeners that the specific competition might have now that we have all the competition's info
+            if (listeners["additional"]) listeners["additional"].forEach(listener => listener()) //First we cancel the existing ones
+
+            listeners["additional"] = GroupsCompetition.addListeners.map( listener => listener(compData, updateCompetition))
+
+            //THIS MIGHT BE TOO MUCH (Impose some limit)
+            if (listeners["matches"]) listeners["matches"]()
+            listeners["matches"] = Firebase.onCompMatchesSnapshot(compData.gymID, compID, (matches) => updateCompetition({matches}))
+
+            if (listeners["pendingMatches"]) listeners["pendingMatches"]()
+            listeners["pendingMatches"] = Firebase.onCompPendingMatchesSnapshot(compData.gymID, compID, (pendingMatches) => updateCompetition({pendingMatches}))
+            
+            //Then, update the competition with the main information (this is the doc information)
+            updateCompetition(compData)
+        
+        })
+
+        listeners["users"] = Firebase.onCompUsersSnapshot(compID, currentUser,relevantUsers => updateRelevantUsers(relevantUsers))
+
+        //Return a function that will turn off all listeners at the same time
+        return () => {
+
+            listeners["main"]();
+
+            listeners["matches"]();
+
+            listeners["pendingMatches"]();
+
+            listeners["users"]();
+            
+            if (listeners["additional"]) listeners["additional"].forEach(listener => listener())
+        
+        }
+
+    }
+    
     renderName = (nameObject) => {
         /* Renders the name of a given user according to the competition's settings */ 
 
@@ -42,22 +85,22 @@ export default class Competition extends Configurable {
 
     renderCompMatches = (state, props) => {
 
-        if (!state.matches) return null
+        if (!this.matches) return null
         
         return <MatchesDisplay 
             navigation={props.navigation} 
-            matches={state.matches.map( match => ({...match, context: {...match.context, competition: this }}) )}/> 
+            matches={[...this.matches, ...this.pendingMatches].map( match => ({...match, context: {...match.context, competition: this }}) )}/> 
     }
 
     compStatsListener = (setState) => Firebase.onCompMatchesSnapshot(this.gymID, this.id, (matches) => setState({matches}))
 
-    renderCompStats = (state, props) => {
+    renderCompStats = (props) => {
 
-        if (!state.matches) return null
+        if (!this.matches) return null
         
         return <CompStats 
             navigation={props.navigation} 
-            matches={state.matches.map( match => ({...match, context: {...match.context, competition: this }}) )}/> 
+            matches={this.matches.map( match => ({...match, context: {...match.context, competition: this }}) )}/> 
     }
 
 }

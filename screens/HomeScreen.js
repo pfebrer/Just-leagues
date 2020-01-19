@@ -16,13 +16,17 @@ import Notifications from "../components/home/Notifications"
 import Card from "../components/home/Card"
 
 import _ from "lodash"
-import CompetitionComponent from '../components/competition/CompetitionComponent';
+import CompetitionComponent from './Competition/CompetitionScreen';
 import { selectSuperChargedCompetitions } from '../redux/reducers';
 
 class HomeScreen extends Component {
 
     constructor(props) {
         super(props);
+
+        this.state = {
+            isLoading: false
+        }
     }
 
     componentDidMount() {
@@ -75,7 +79,10 @@ class HomeScreen extends Component {
                 uid={this.props.currentUser.id} 
                 competition={this.props.competitions[compID]}
                 navigation={this.props.navigation}
-                setCurrentCompetition={this.props.setCurrentCompetition}/>
+                setCurrentCompetition={this.props.setCurrentCompetition}
+                toggleLoading={() => {
+                    this.setState({isLoading: !this.state.isLoading})
+                }}/>
         })
     }
 
@@ -113,6 +120,7 @@ class CompetitionState extends Component {
         this.props.setCurrentCompetition(this.props.competition.id)
 
         this.props.navigation.navigate("CompetitionScreen", {competitionName: this.props.competition.name})
+
     }
 
     render(){
@@ -125,7 +133,7 @@ class CompetitionState extends Component {
                 title={this.props.competition.name}
                 onHeaderPress={this.goToCompetition}
                 actionIcon="add">
-                    <CompetitionComponent what="compState" competition={this.props.competition} navigation={this.props.navigation}/>
+                    {this.props.competition.renderCompState(this.props)}
             </Card>
         )
 

@@ -1,9 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, ActivityIndicator, Text} from 'react-native';
 
-import HeaderIcon from "../../components/header/HeaderIcon"
-import { translate } from "../../assets/translations/translationManager"
-
 import { USERSETTINGS} from "../../constants/Settings"
 
 //Redux stuff
@@ -12,7 +9,9 @@ import { selectCurrentCompetition } from '../../redux/reducers'
 
 import CompetitionComponent from './CompetitionScreen';
 
-class CompetitionMatches extends React.Component {
+import KnockoutCompetition from '../../Useful objects/competitions/knockout'
+
+class CompetitionScreen extends React.Component {
 
     constructor(props) {
         super(props);
@@ -20,7 +19,7 @@ class CompetitionMatches extends React.Component {
         this.state = {};
 
         this.setUpCompetition()
-
+        
     }
 
     static navigationOptions = ({navigation}) => {
@@ -45,17 +44,12 @@ class CompetitionMatches extends React.Component {
 
     render() {
 
-        /*if (!this.state.listenerResult) {
-            return (
-                <View style={{flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
-                    <Text>{translate("info.loading classifications")}</Text>
-                    <ActivityIndicator size="large" color="black"/>
-                </View>
-            );
-        }*/
+        /*return <View style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
+                    <CompetitionComponent what="main" competition={new KnockoutCompetition({})}  navigation={this.props.navigation}/>
+                </View>*/
 
         return <View style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
-                    <CompetitionComponent what="matches" competition={this.props.competition}  navigation={this.props.navigation}/>
+                    <CompetitionComponent what="main" competition={this.props.competition}  navigation={this.props.navigation}/>
                 </View>
     }
 
@@ -63,10 +57,10 @@ class CompetitionMatches extends React.Component {
 
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
-    competition: selectCurrentCompetition(state)
+    competition: selectCurrentCompetition(state),
 })
 
-export default connect(mapStateToProps)(CompetitionMatches);
+export default connect(mapStateToProps)(CompetitionScreen);
 
 const styles = StyleSheet.create({
 

@@ -1,24 +1,48 @@
-import React from 'react';
-import { StyleSheet, View, ActivityIndicator, Text} from 'react-native';
+import React, {Component} from 'react';
 
-import { USERSETTINGS} from "../../constants/Settings"
-
-//Redux stuff
 import { connect } from 'react-redux'
 import { selectCurrentCompetition } from '../../redux/reducers'
 
-import CompetitionComponent from '../../components/competition/CompetitionComponent';
 
-import KnockoutCompetition from '../../Useful objects/competitions/knockout'
+import { Dimensions, StyleSheet, View, Text, TouchableOpacity } from "react-native"
 
-class CompetitionScreen extends React.Component {
+import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 
-    constructor(props) {
-        super(props);
+import { translate } from "../../assets/translations/translationManager"
+import { compTabBarOptions } from "../../navigation/MainTabNavigator"
 
-        this.state = {};
+const initialLayout = { width: Dimensions.get('window').width };
 
-        this.setUpCompetition()
+class CompetitionScreen extends Component {
+
+    /* this.props.what determines the content of the component.
+    This two static properties determines the functions to be called in each case */
+    get listener(){
+
+        const comp = this.props.competition
+
+        const listeners = {
+            main: comp.compScreenListener,
+            compState: comp.compStateListener,
+            matches: comp.compMatchesListener,
+            stats: comp.compStatsListener
+        }
+
+        return listeners[this.props.what]
+    }
+
+    get renderer (){
+
+        const comp = this.props.competition
+
+        const renderFuncs = {
+            main: comp.renderCompScreen,
+            compState: comp.renderCompState,
+            matches: comp.renderCompMatches,
+            stats: comp.renderCompStats
+        }
+
+        return renderFuncs[this.props.what]
         
     }
 
@@ -28,31 +52,55 @@ class CompetitionScreen extends React.Component {
         }
     };
 
-    setUpCompetition = () => {
+    constructor(props){
+        super(props);
 
-        this.props.navigation.setParams({competitionName: this.props.competition.name})
+
+        this.state = {
+            index: 0,
+            routes: [
+                { key: 'main', title: translate("tabs.competition overview") },
+                { key: 'matches', title: translate("tabs.matches") },
+                { key: 'stats', title: translate("tabs.stats") },
+            ]
+        }
 
     }
 
-    componentDidUpdate(prevProps){
-
-        if (!prevProps.competition || prevProps.competition.name != this.props.competition.name){
-            this.setUpCompetition()
-        }
+    componentDidMount(){
         
     }
 
-    render() {
+    render(){
 
-        /*return <View style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
-                    <CompetitionComponent what="main" competition={new KnockoutCompetition({})}  navigation={this.props.navigation}/>
-                </View>*/
+        //if (!this.renderer) return null
+        if (!this.props.competition) return null
 
-        return <View style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
-                    <CompetitionComponent what="main" competition={this.props.competition}  navigation={this.props.navigation}/>
-                </View>
+        //return this.renderer(this.state, this.props)
+
+        const renderScene = SceneMap({
+            main: this.props.competition.renderCompScreen,
+            matches: this.props.competition.renderCompMatches,
+            stats: this.props.competition.renderCompStats,
+        });
+
+        return (
+            <View style={{backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor, flex: 1}}>
+                <TabView
+                    lazy
+                    navigationState={this.state}
+                    renderScene={renderScene}
+                    onIndexChange={(index) => this.setState({index})}
+                    initialLayout={initialLayout}
+                    swipeEnabled
+                    renderTabBar={(props) => <TabBar {...props} scrollEnabled {...compTabBarOptions} /> }
+                />
+            </View>
+            
+        )
+
     }
-
+    
 }
 
 const mapStateToProps = state => ({
@@ -61,12 +109,3 @@ const mapStateToProps = state => ({
 })
 
 export default connect(mapStateToProps)(CompetitionScreen);
-
-const styles = StyleSheet.create({
-
-    container: {
-        flex: 1,
-        backgroundColor: USERSETTINGS["General appearance"].backgroundColor.default
-    },
-
-});

@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, ScrollView, View, Text} from 'react-native';
+import {StyleSheet, SectionList, View, Text} from 'react-native';
 import MatchSummary from "../../components/match/MatchSummary";
 
 import _ from "lodash"
@@ -17,25 +17,27 @@ class MatchesDisplay extends React.Component {
 
     filterMatches = (matches) => {
 
-        return matches
+        let groupIDs = this.props.competition.groups.map(group => group.id)
+
+        return matches.filter(match => groupIDs.indexOf(match.context.group.id) != -1 )
     }
 
-    renderSection = (matches, sectionTitle) => {
+    /*renderSection = (matches, sectionTitle) => {
 
         return (
             <View>
                 <Text style={styles.sectionTitle}>{sectionTitle}</Text>
-                {matches.map(match => <MatchSummary key={match.id} match={match} navigation={this.props.navigation}/>)}
+                {matches.map(match => )}
             </View>
         )
-    }
+    }*/
     
     render() {
 
         //Group matches according to whether the user is in them or not
         
         let grouped = _.groupBy(
-            this.props.matches,
+            this.filterMatches(this.props.matches),
             (match) => {
                 if (match.playersIDs.indexOf(this.props.currentUser.id) != -1) {
                     return "own"
@@ -56,9 +58,11 @@ class MatchesDisplay extends React.Component {
 
         return (
 
-            <ScrollView>
-                {keyOrder.map(key => grouped[key] ? this.renderSection(grouped[key], sectionTitles[key]) : null)}
-            </ScrollView>
+            <SectionList
+                renderItem={({item: match}) => <MatchSummary key={match.id} match={match} navigation={this.props.navigation}/>}
+                renderSectionHeader={({section}) => <Text style={styles.sectionTitle}>{sectionTitles[section.key]}</Text>}
+                sections={keyOrder.reduce((sections, key) => { if (grouped[key]) sections.push({data: grouped[key], key}); return sections} , [])}
+            />
     
         )
     }

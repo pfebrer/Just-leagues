@@ -6,8 +6,6 @@ import { createDrawerNavigator } from 'react-navigation-drawer';
 
 import Stats from "../screens/StatsScreen";
 import CompetitionScreen from "../screens/Competition/CompetitionScreen";
-import CompetitionMatches from "../screens/Competition/CompetitionMatches";
-import CompetitionStats from "../screens/Competition/CompetitionStats";
 import AdminScreen from "../screens/AdminScreen";
 import GroupChat from "../screens/ChatScreen";
 import ProfileScreen from "../screens/ProfileScreen";
@@ -35,7 +33,7 @@ export const compTabBarOptions = {
     },
 }
 
-const CompetitionTabs = createMaterialTopTabNavigator({
+/*const CompetitionTabs = createMaterialTopTabNavigator({
     CompetitionScreen: {
         screen: CompetitionScreen,
         navigationOptions: {
@@ -57,7 +55,7 @@ const CompetitionTabs = createMaterialTopTabNavigator({
 }, {
     lazy: true,
     tabBarOptions: compTabBarOptions,
-});
+});*/
 
 const EditingStack = createStackNavigator({
     AdminScreen: AdminScreen,
@@ -68,13 +66,14 @@ const EditingStack = createStackNavigator({
 const HomeStack = createStackNavigator({
     HomeScreen: HomeScreen,
     SettingsScreen: SettingsScreen,
-    CompetitionTabs: {
+    CompetitionScreen: CompetitionScreen,
+    /*CompetitionTabs: {
         screen: CompetitionTabs,
         navigationOptions: ({navigation, screenProps}) => ({
             headerRight: <HeaderIcon name="chatbubbles" onPress={() => navigation.navigate("Chat")}/>,
             ...getActiveChildNavigationOptions(navigation, screenProps) //This gets the name of the competition to set it as a title
         }),
-    },
+    },*/
     MatchScreen: MatchScreen,
     //Screens for admins only
     AdminScreen: AdminScreen,

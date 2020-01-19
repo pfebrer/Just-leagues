@@ -9,10 +9,12 @@ import { USERSETTINGS } from "../constants/Settings"
 
 //Redux stuff
 import { connect } from 'react-redux'
-import { storeUserData, updateRelevantUsers, updateCompetitions} from "../redux/actions"
+import { storeUserData, updateRelevantUsers, updateCompetitions, updateCompetition} from "../redux/actions"
 
 import NotificationManager from "../api/Notifications"
 import { selectCurrentCompetition } from '../redux/reducers';
+
+import Competition from "../Useful objects/competitions/competition"
 
 class LoadingScreen extends React.Component {
 
@@ -80,25 +82,20 @@ class LoadingScreen extends React.Component {
                     //Update the settings fields if some new settings have been produced
                     let newSettings = updateSettingsFields(userData.settings || {}, USERSETTINGS)
 
-                    //Create a listener for each competition in active competitions to retrieve the users ids and names
+                    //Create the listeners needed for each competition in active competitions
                     if (userData.activeCompetitions){
                         
                         userData.activeCompetitions.forEach( compID => {
 
-                            if (!this.usersListeners[compID]){
-
-                                this.usersListeners[compID] = Firebase.onCompUsersSnapshot(compID, userData,
-                                    relevantUsers => this.props.updateRelevantUsers(relevantUsers)
-                                )
-                            }
-
                             if (!this.compListeners[compID]){
 
-                                this.compListeners[compID] = Firebase.onCompetitionSnapshot( compID,
-                                    compData => {
-                                        this.props.updateCompetitions({ [compID]: compData})
-                                    }
+                                this.compListeners[compID] = Competition.turnOnListeners(
+                                    userData,
+                                    compID, 
+                                    (updates) => this.props.updateCompetition(compID, updates),
+                                    this.props.updateRelevantUsers
                                 )
+
                             }
 
                         });
@@ -114,14 +111,18 @@ class LoadingScreen extends React.Component {
                                     
                                     competitions.forEach( competition => {
 
-                                        this.props.updateCompetitions({ [competition.id]: competition})
+                                        let compID = competition.id
 
-                                        if (!this.usersListeners[competition.id]){
+                                        if (!this.compListeners[compID]){
 
-                                            this.usersListeners[competition.id] = Firebase.onCompUsersSnapshot(competition.id, userData,
-                                                relevantUsers => this.props.updateRelevantUsers(relevantUsers)
+                                            this.compListeners[compID] = Competition.turnOnListeners(
+                                                userData,
+                                                compID, 
+                                                (updates) => this.props.updateCompetition(compID, updates),
+                                                this.props.updateRelevantUsers
                                             )
-                                        }  
+            
+                                        }
     
                                     })
                                 })
@@ -187,7 +188,8 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
     storeUserData,
     updateRelevantUsers,
-    updateCompetitions
+    updateCompetitions,
+    updateCompetition
 }
 
 export default connect( mapStateToProps, mapDispatchToProps )(LoadingScreen);

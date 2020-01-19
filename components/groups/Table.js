@@ -6,7 +6,7 @@ import { translate } from '../../assets/translations/translationManager';
 import { w, h, totalSize } from '../../api/Dimensions';
 import { ScrollView } from 'react-native-gesture-handler';
 
-import Firebase from "../../api/Firebase"
+import { withNavigation } from "react-navigation"
 
 //Redux stuff
 import { connect } from 'react-redux'
@@ -324,7 +324,7 @@ const mapDispatchToProps = {
     setCurrentMatch
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Table);
+export default connect(mapStateToProps, mapDispatchToProps)(withNavigation(Table));
 
 const styles = StyleSheet.create({
 

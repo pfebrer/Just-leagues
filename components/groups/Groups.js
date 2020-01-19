@@ -44,6 +44,7 @@ export default class Groups extends React.Component {
                 }}
                 data={this.props.groups}
                 renderItem={({ item }) => this.renderGroup(item)}
+                initialNumToRender={5}
                 keyExtractor={group => group.iGroup}
                 contentContainerStyle={styles.contentContainer}
                 bounces={true}/>

@@ -10,7 +10,7 @@ import { USERSETTINGS} from "../../constants/Settings"
 import { connect } from 'react-redux'
 import { selectCurrentCompetition } from '../../redux/reducers'
 
-import CompetitionComponent from '../../components/competition/CompetitionComponent';
+import CompetitionComponent from './CompetitionScreen';
 
 class CompetitionScreen extends React.Component {
 

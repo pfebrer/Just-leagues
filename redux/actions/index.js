@@ -3,6 +3,7 @@ import {
     SET_CURRENTCOMPETITION,
     SET_CURRENTMATCH,
     UPDATE_COMPETITIONS,
+    UPDATE_COMPETITION,
     UPDATE_RELEVANTUSERS
 } from './actionTypes'
 
@@ -31,6 +32,12 @@ export const updateRelevantUsers = (newRelevantUsers) => ({
 export const updateCompetitions = (newCompetitions) => ({
     type: UPDATE_COMPETITIONS,
     newCompetitions: newCompetitions
+})
+
+export const updateCompetition = (id, updates) => ({
+    type: UPDATE_COMPETITION,
+    id,
+    updates
 })
 
 

@@ -1,4 +1,4 @@
-import { UPDATE_COMPETITIONS, SET_CURRENTCOMPETITION} from '../actions/actionTypes'
+import { UPDATE_COMPETITIONS, UPDATE_COMPETITION, SET_CURRENTCOMPETITION} from '../actions/actionTypes'
 import GroupsCompetition from '../../Useful objects/competitions/groups'
 import _ from 'lodash'
 
@@ -17,6 +17,25 @@ const competitions = (state = {}, action) => {
             if (currentComp && newState[currentComp.id]) {newState[currentComp.id].isCurrent = true}
 
             return newState
+        case UPDATE_COMPETITION:
+
+            if (state[action.id]){
+                var newState = {
+                    ...state,
+                    [action.id]: {
+                        ...state[action.id],
+                        ...action.updates
+                    },
+                }
+            } else {
+                var newState = {
+                    ...state,
+                    [action.id]: action.updates
+                }
+            }
+
+            return newState
+
         case SET_CURRENTCOMPETITION:
 
             var newState = Object.keys(state).reduce((newState, compID) => {
