@@ -31,9 +31,9 @@
         {
           "file": "sentry-expo/upload-sourcemaps",
           "config": {
-            "organization": "Pol",
-            "project": "pol",
-            "authToken": "fd3f21116e3348b089a629492bf926434fa4e6ea396448299ba881bbb5949bfd"
+            "organization": "pol",
+            "project": "squashleagues",
+            "authToken": "1e70d0c0975f4dd4bf5155b8c583103e6fa17cdd9b9c4dd8bc8dde1d52bba729"
           }
         }
       ]

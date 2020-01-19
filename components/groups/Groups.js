@@ -5,6 +5,8 @@ import { translate } from '../../assets/translations/translationManager';
 
 import { totalSize } from '../../api/Dimensions';
 
+import Firebase from "../../api/Firebase"
+
 export default class Groups extends React.Component {
 
     constructor(props) {

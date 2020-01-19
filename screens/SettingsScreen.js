@@ -12,6 +12,8 @@ import { ColorPicker , fromHsv} from 'react-native-color-picker'
 
 import HeaderIcon from "../components/header/HeaderIcon"
 import NumericInput from "../components/settings/NumericInput"
+import RelationsInput from "../components/settings/RelationsInput"
+import SortableInput from "../components/settings/SortableInput"
 
 import { withNavigationFocus } from 'react-navigation';
 
@@ -129,15 +131,15 @@ class SettingsScreen extends React.Component {
         );
     }
 
-    updateStateSettings = (type, key, newValue) => {
+    updateStateSettings = (type, key, newValue, config) => {
 
         let newSettings = deepClone(this.state.settings)
 
         newSettings[type][key] = newValue
 
         this.setState({
-            modalComponent: undefined,
-            settings: newSettings
+            settings: newSettings,
+            modalComponent: undefined
         })
     }
 
@@ -246,6 +248,29 @@ class SettingsScreen extends React.Component {
                     control={settingControl} 
                     value={currentValue} 
                     onValueChange={(value) => this.updateStateSettings(settingType, settingKey, value)}/>
+
+        } else if (settingControl.type == "relations") {
+
+            return <TouchableOpacity 
+                        style={{width: 30, height: 30, justifyContent: "center", alignItems: "center"}} 
+                        onPress={() => this.setState( 
+                            {
+                                modalComponent: <RelationsInput defaultValue={currentValue} {...settingControl} reportValue={(value) => {this.temp = {value, settingType, settingKey}} }/>,
+                                headerTitle: translate([this.state.translateRoot, settingKey].join("."))
+                            })}>
+                        <Icon name="arrow-forward"/>
+                    </TouchableOpacity>
+        } else if (settingControl.type == "sortable") {
+
+            return <TouchableOpacity 
+                        style={{width: 30, height: 30, justifyContent: "center", alignItems: "center"}} 
+                        onPress={() => this.setState( 
+                            {
+                                modalComponent: <SortableInput defaultValue={currentValue} {...settingControl} reportValue={(value) => {this.temp = {value, settingType, settingKey}} }/>,
+                                headerTitle: translate([this.state.translateRoot, settingKey].join("."))
+                            })}>
+                        <Icon name="arrow-forward"/>
+                    </TouchableOpacity>
         } else if (settingControl.type == "text") {
 
             return null

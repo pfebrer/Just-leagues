@@ -20,11 +20,11 @@ class Table extends Component {
         super(props)
 
         this.state = {
-            scores: this.generateEmptyScores()
+            //scores: this.generateEmptyScores()
         }
     }
 
-    generateEmptyScores = () => {
+    /*generateEmptyScores = () => {
        
         return  _.chunk(Array(this.props.playersIDs.length**2).fill(false), this.props.playersIDs.length);
     }
@@ -64,7 +64,7 @@ class Table extends Component {
     componentWillUnmount() {
         //Unsubscribe from listeners
         this.matchesListener()
-    }
+    }*/
 
     goToUserProfile = ({iRow}) => {
 
@@ -158,7 +158,7 @@ class Table extends Component {
 
     render() {
 
-        let {playersIDs} = deepClone(this.props)
+        let {playersIDs, scores} = deepClone(this.props)
 
         if( !playersIDs.length > 0 ) { return null }
 
@@ -168,12 +168,14 @@ class Table extends Component {
             return this.props.competition.playersIDs.indexOf(uid) + 1
         })
 
-        let totals = this.props.totals || this.state.scores.map( playerScores => playerScores.reduce((a, b) => a + b, 0) )
+        scores = _.chunk(scores, this.props.playersIDs.length);
+
+        let totals = this.props.totals || scores.map( playerScores => playerScores.reduce((a, b) => a + b, 0) )
 
         return (
             <View style={this.props.containerStyles}>
                 <View style={{...styles.tableContainer, ...this.props.tableStyles}}>
-                    {this.renderTable(ranks, players, this.state.scores, totals)}
+                    {this.renderTable(ranks, players, scores, totals)}
                 </View>
             </View>
             

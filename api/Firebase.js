@@ -26,7 +26,7 @@ class Firebase {
 
     this.app = firebase.initializeApp(firebaseConfig);
     this.firestore = this.app.firestore();
-    this.functions = this.app.functions();
+    this.functions = this.app.functions('europe-west1');
     this.auth = this.app.auth();
 
   }
@@ -809,6 +809,15 @@ class Firebase {
 
   }
 
+  //This function should be fired when 
+  updateGroupScores = (gymID, compID, groupID) => {
+
+    this.callHttpsFunction("updateGroupScores", 
+      { groupPath:this.groupRef(gymID, compID, groupID).path }
+    )
+
+  }
+
   addNewPlayersToComp = (compID, newPlayers, callback = () => {}) => {
 
     /*Function that adds a player to a given competition*/
@@ -874,14 +883,14 @@ class Firebase {
 
     if (callback === undefined || callback === null) {
         callback = (data) => {
-            console.log("Firebase::callFunction::callback", data); // hello world
-            alert("SUCCESS: " + functionName + ", data:" + data.data);
+            console.warn("Firebase::callFunction::callback", data); // hello world
+            //alert("SUCCESS: " + functionName + ", data:" + data.data);
         };
     }
     if (errorFn === undefined || errorFn === null) {
         errorFn = (httpsError) => {
-            console.log("Firebase::callFunction::errorFn", httpsError); // bar
-            alert("ERROR: " + functionName + ", data:" + data.data);
+            console.warn("Firebase::callFunction::errorFn", httpsError); // bar
+            //alert("ERROR: " + functionName);
         };
     }
     console.log("Firebase::callFunction functionName[" + functionName + "]");

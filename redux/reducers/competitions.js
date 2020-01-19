@@ -6,7 +6,7 @@ const competitions = (state = {}, action) => {
     switch (action.type) {
         case UPDATE_COMPETITIONS:
 
-            let currentComp = _.find(competitions, 'isCurrent')
+            let currentComp = _.find(state, 'isCurrent')
 
             var newState = {
                 ...state,

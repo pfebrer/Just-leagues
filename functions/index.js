@@ -22,25 +22,6 @@ const Constants = {
     paddingTopHeader: 20,
 };
 
-const Collections = {
-    GYMS:  (Constants.dbPrefix && Constants.dbPrefix) + "gyms",
-    USERS: (Constants.dbPrefix && Constants.dbPrefix) + "users",
-};
-
-const Subcollections = {
-    COMPETITIONS: "competitions",
-    GROUPS: "groups",
-    MATCHES: "matches",
-    PENDINGMATCHES: "pendingMatches",
-    MESSAGES: "messages"
-}
-
-const Documents = {
-    COMPETITION: {
-        usersToCreate: "players"
-    }
-};
-
 const strings ={
     "new date for match" : "Nova data de partit",
     "new result": "Nou resultat!",
@@ -54,6 +35,11 @@ const admin = require('firebase-admin');
 
 const moment = require('moment')
 const _ = require('lodash')
+
+const { sendPushNotifications } = require('./helperFuncs')
+const { Collections, Subcollections, Documents} = require("./constants")
+
+const { updateGroupScores } = require("./groups")
 
 admin.initializeApp();
 const firestore = admin.firestore();
@@ -164,9 +150,14 @@ exports.newDateForMatchNotification = firestoreFunction.document(Collections.GYM
     
 });
 
-//Send a push notification when date of a match changes
+//Act when some match changes
 exports.newPlayedMatchNotification = firestoreFunction.document(Collections.GYMS + "/{gymID}/"+ Subcollections.COMPETITIONS + "/{compID}/" + Subcollections.MATCHES +"/{matchID}")
-.onCreate((docSnapshot, context) => {
+.onWrite((change, context) => {
+
+    //If the result has not changed then stop here
+    if (change.before && change.after && _.isEqual(change.before.get("result"), change.after.get("result")) ) return null
+
+    const docSnapshot = change.after
 
     const {context : matchContext, result: matchResult, playersIDs: matchPlayersIDs} = docSnapshot.data();
 
@@ -178,11 +169,13 @@ exports.newPlayedMatchNotification = firestoreFunction.document(Collections.GYMS
 
         return firestore.collection(Collections.GYMS).doc(context.params.gymID).collection(Subcollections.COMPETITIONS).doc(context.params.compID).collection(Subcollections.GROUPS).doc(groupID).get().then( groupSnapshot => {
 
-            let {playersIDs: groupPlayersIDs, totals} = groupSnapshot.data()
+            let {playersIDs: groupPlayersIDs, matchesIDs: groupMatchesIDs, totals} = groupSnapshot.data()
 
-            promises = groupPlayersIDs.map( uid => firestore.collection(Collections.USERS).doc(uid).get())
+            updateGroupScores(firestore, firestore.doc(groupSnapshot.ref.path), {id: groupID, ...groupSnapshot.data()})
 
-            Promise.all(promises).then( playersSnapshots => {
+            const playersPromises = groupPlayersIDs.map( uid => firestore.collection(Collections.USERS).doc(uid).get())
+
+            Promise.all(playersPromises).then( playersSnapshots => {
 
                 let matchPlayersNames = []
 
@@ -215,16 +208,7 @@ exports.newPlayedMatchNotification = firestoreFunction.document(Collections.GYMS
                     }
                 })
     
-                fetch('https://exp.host/--/api/v2/push/send', {
-                    method: 'POST',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(messages)
-    
-                });
-                
+                sendPushNotifications(messages)
             })
             .catch(err => {
                 console.log("ERROR-- Could not retrieve all players information: ", groupPlayersIDs)
@@ -292,15 +276,7 @@ exports.newCompMessageNotification = firestoreFunction.document(Collections.GYMS
                 }
             })
 
-            fetch('https://exp.host/--/api/v2/push/send', {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(messages)
-
-            });
+            sendPushNotifications(messages)
             
         })
         .catch(err => {
@@ -362,7 +338,7 @@ exports.messageNotification = firestoreFunction.document('groups/{iGroup}/chatMe
 });
 
 //Update competition settings when new fields are added
-exports.updateCompSettings = httpsFunction.onRequest((req, res) => {
+exports.updateCompSettings = httpsFunction.onCall((data, context) => {
 
     //These are the new competition settings
     const compSettings = req.body.compSettings
@@ -393,6 +369,47 @@ exports.updateCompSettings = httpsFunction.onRequest((req, res) => {
             res.send("done")
         }).catch(err => res.send(err))
         
+    })
+
+    
+})
+
+exports.onCompetitionUpdate = firestoreFunction.document(Collections.GYMS + "/{gymID}/"+ Subcollections.COMPETITIONS + "/{compID}")
+.onUpdate((change, context) => {
+
+    /* It creates all the players that a new competition needs */
+
+    const {gymID, compID} = context.params
+    const { settings: prevSettings } = change.before.data()
+    const { type: typeOfComp, settings } = change.after.data()
+    
+    if (typeOfComp == "groups"){
+
+        if ( !_.isEqual(prevSettings.groups.pointsScheme, settings.groups.pointsScheme) ){
+
+            return firestore.collection(change.after.ref.collection(Subcollections.GROUPS).path).get().then( groupsSnap => {
+
+                groupsSnap.forEach( groupSnap => {
+                    updateGroupScores(firestore, firestore.doc(groupSnap.ref.path), {id: groupSnap.ref.id, ...groupSnap.data()})
+                })
+            })
+            
+        }
+    }
+    
+})
+//Update competition settings when new fields are added
+exports.updateGroupScores = httpsFunction.onCall((data, context) => {
+
+    //These are the new competition settings
+    const {groupPath} = data
+
+    //We get all the competitions
+    return firestore.doc(groupPath).get().then((groupSnapshot) => {
+
+        updateGroupScores(firestore, groupSnapshot.ref, {id: groupSnapshot.ref.id, ...groupSnapshot.data()})
+            
+
     })
 
     

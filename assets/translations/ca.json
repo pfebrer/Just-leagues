@@ -87,7 +87,9 @@
         "hours": "Hores",
         "played": "Jugat",
         "general": "General",
-        "player": "Jugador"
+        "player": "Jugador",
+        "direct match": "Enfrontament directe",
+        "position": "Posició"
     },
     "errors": {
         "you entered an ivalid result":"No ens enganyis, aquest resultat és impossible :(",
