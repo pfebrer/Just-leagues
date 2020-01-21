@@ -143,7 +143,7 @@ class AdminScreen extends React.Component {
                     <View style={styles.buttonRow}>
                         <Button
                             style={styles.button}   
-                            onPress={()=>{this.props.navigation.navigate("CompetitionScreen")}}
+                            onPress={()=>{this.props.navigation.navigate("CompetitionScreen", {competitionName: this.props.competition.name})}}
                             >
                             <Text style={styles.buttonText}>{translate("admin.go to competition screen")}</Text>
                         </Button>
@@ -176,9 +176,9 @@ class AdminScreen extends React.Component {
 
     generateGroups = () => {
 
-        let {gymID, id: compID} = this.props.currentComp
+        let {gymID, id: compID} = this.props.competition
 
-        Firebase.generateGroups(gymID, compID, this.props.currentComp.playersIDs, this.props.currentComp.settings["groups"], {due: this.state.newPeriodDue},
+        Firebase.generateGroups(gymID, compID, this.props.competition.playersIDs, this.props.competition.settings["groups"], {due: this.state.newPeriodDue},
             () => {
                 this.setState({groupGeneratingModal: false})
                 this.props.navigation.navigate("CompetitionScreen")
@@ -233,8 +233,8 @@ class AdminScreen extends React.Component {
                     textContent={this.state.spinnerText}
                     textStyle={styles.spinnerTextStyle}
                 />
-                {this.renderCompPicker(this.state.competitions, this.props.currentComp)}
-                {this.renderEditingOptions(this.props.currentComp)}
+                {this.renderCompPicker(this.state.competitions, this.props.competition)}
+                {this.renderEditingOptions(this.props.competition)}
                 {endingPeriodModal}
                 <Modal
                     isVisible={this.state.groupGeneratingModal}
@@ -287,7 +287,7 @@ class AdminScreen extends React.Component {
 
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
-    currentComp: selectCurrentCompetition(state),
+    competition: selectCurrentCompetition(state),
     competitions: selectSuperChargedCompetitions(state)
 })
 

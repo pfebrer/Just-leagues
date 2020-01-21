@@ -10,6 +10,14 @@ exports.COMPSETTINGS = {
             name: "compsettings.nameDisplay.name",
             description: "compsettings.nameDisplay.description",
             default: "Name Lastname", //One of ["Name Lastname", "Lastname, Name", "Name", "free"]
+        },
+        location: {
+            control: {
+                type: "text",
+            },
+            name: "compsettings.location.name",
+            description: "compsettings.location.description",
+            default: "",
         }
     },
     "groups": {
@@ -90,7 +98,7 @@ exports.COMPSETTINGS = {
 }
 
 //Just uncomment this line when you change add some fields to the competition settings
-//Firebase.callHttpsFunction("updateCompSettings", { compSettings: this.groupRef(gymID, compID, groupID).path })
+Firebase.callHttpsFunction("updateCompSettings", { compSettings: exports.COMPSETTINGS })
 
 //Remember to set a translation for each setting that you add!
 exports.USERSETTINGS = {

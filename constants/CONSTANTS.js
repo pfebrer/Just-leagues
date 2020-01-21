@@ -27,10 +27,10 @@ const Documents = {
     }
 };
 
-const ChatWorkMode = {
-    group: 'Group',
-    general: 'General'
-};
+const CalendarConstants = {
+    name: "Just leagues",
+    color: "blue",
+}
 
 //USED IN FIREBASE FUNCTIONS, REMEMBER TO KEEP IN SYNC
-export {Constants, Collections, Subcollections, Documents, ChatWorkMode};
+export {Constants, Collections, Subcollections, Documents, CalendarConstants};

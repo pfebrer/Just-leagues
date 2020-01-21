@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "524738063553",
+    "firebase_url": "https://squash-leagues-94b68.firebaseio.com",
+    "project_id": "squash-leagues-94b68",
+    "storage_bucket": "squash-leagues-94b68.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:524738063553:android:8294315f2691461cbdb840",
+        "android_client_info": {
+          "package_name": "com.pol.esquaixlligues"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "524738063553-inqd7vg0cgfjrmlqpi777uocvjvoegnl.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pol.esquaixlligues",
+            "certificate_hash": "add69a9f9d672e9765b8a493706bdfebb6cfccc6"
+          }
+        },
+        {
+          "client_id": "524738063553-o9ij9j358m9odfs30kivd3bmecso1kvi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkyn2YeRGSLDNnQJ6DhojBEyMN00_wNdI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "524738063553-o9ij9j358m9odfs30kivd3bmecso1kvi.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "524738063553-7a5ri1erg2jgc74u50oju3i1ksffdft4.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.pol.esquaixlligues"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

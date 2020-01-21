@@ -11,9 +11,13 @@ import {convertDate} from "../../assets/utils/utilFuncs"
 //Redux stuff
 import { connect } from 'react-redux'
 import {setCurrentMatch} from "../../redux/actions"
+
 import { totalSize } from '../../api/Dimensions'
+import { addEventToCalendar } from '../../api/Calendar'
+import * as Localization from 'expo-localization'
+
 import UpdatableCard from './UpdatableCard'
-import { Text } from 'native-base'
+import { Text, Button, Icon, Toast} from 'native-base'
 
 import _ from "lodash"
 
@@ -68,6 +72,40 @@ class TimeInfo extends Component {
         this.props.setCurrentMatch({ scheduled: {...this.props.match.scheduled, time: newDate} }, {merge: true})
 
         this.setState({pendingUpdate: true})
+    }
+
+    addToCalendar = () => {
+
+        let match = this.props.match
+        let scheduled = match.scheduled && match.scheduled.time
+
+        let notes = scheduled ? match.playersIDs.map( uid => match.context.competition.renderName(this.props.relevantUsers[uid].names)).join(" - ") : ""
+        let title =  scheduled ? match.context.competition.name : match.context.competition.name + " ("+ translate("vocabulary.limit") + ")"
+        let startDate = scheduled ? match.scheduled.time : match.due
+        let endDate = scheduled ? moment(startDate).add(30, "m").toDate() : moment(startDate).add(1, "s").toDate()
+        let alarms = scheduled ? [{relativeOffset: -60}] : [{relativeOffset: -60*24*3}]
+
+        addEventToCalendar({
+            title,
+            notes: notes,
+            location: match.context.competition.getSetting("location"),
+            startDate,
+            endDate,
+            timeZone: Localization.timezone,
+        },{
+            alarms
+        }).then(() => {
+            Toast.show({
+                text: translate("info.added to calendar") ,
+                type: "success",
+                duration: 2000
+            })
+        }).catch((err) => {
+            Toast.show({
+            text: translate("errors.failed to add to calendar") + "\nError: " + err ,
+            type: "danger",
+            duration: 4000})
+        })
     }
 
     commitScheduleToDB = () => this.props.updateDBMatchParams(["scheduled"], () => this.setState({pendingUpdate: false}) )
@@ -129,6 +167,9 @@ class TimeInfo extends Component {
                             }
                         }}/>
                     {timeLimit}
+                    <Button onPress={this.addToCalendar} iconRight style={styles.addCalendarButton}>
+                        <Text style={{textAlign: "center", flex: 1}}>{translate("actions.add to your calendar")}</Text><Icon name="add"/>
+                    </Button>
                 </Card>
             )
 
@@ -139,12 +180,12 @@ class TimeInfo extends Component {
 
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
-    IDsAndNames: state.IDsAndNames
+    relevantUsers: state.relevantUsers
 })
 
-const mapDispatchToProps = dispatch => ({
-    setCurrentMatch: (compInfo, config) => {dispatch(setCurrentMatch(compInfo, config))}
-})
+const mapDispatchToProps = { 
+    setCurrentMatch
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(TimeInfo);
 
@@ -155,4 +196,8 @@ const styles = StyleSheet.create({
         paddingLeft: 10,
         fontSize: totalSize(2)
     },
+
+    addCalendarButton: {
+        marginTop: 20
+    }
 })

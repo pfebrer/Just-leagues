@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Text, StyleSheet, View, TouchableOpacity} from 'react-native'
+import { withNavigation } from 'react-navigation'
 
 import Card from '../home/Card'
 import { translate } from '../../assets/translations/translationManager'
@@ -70,7 +71,7 @@ const mapDispatchToProps = {
     setCurrentMatch
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MatchSummary);
+export default connect(mapStateToProps, mapDispatchToProps)(withNavigation(MatchSummary));
 
 const styles = StyleSheet.create({
     //Players

@@ -1,32 +1,8 @@
-import React, { useEffect } from 'react';
-import { View, Text, Button, Platform } from 'react-native';
+import { Platform } from 'react-native';
 import * as Calendar from 'expo-calendar';
+import { CalendarConstants } from '../constants/CONSTANTS'
 
-export default function App() {
-  useEffect(() => {
-    (async () => {
-      const { status } = await Calendar.requestCalendarPermissionsAsync();
-      if (status === 'granted') {
-        const calendars = await Calendar.getCalendarsAsync();
-        console.log('Here are all your calendars:');
-        console.log({ calendars });
-      }
-    })();
-  }, []);
-
-  return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'space-around',
-      }}>
-      <Text>Calendar Module Example</Text>
-      <Button title="Create a new calendar" onPress={createCalendar} />
-    </View>
-  );
-}
+import _ from "lodash"
 
 async function getDefaultCalendarSource() {
   const calendars = await Calendar.getCalendarsAsync();
@@ -40,16 +16,77 @@ async function createCalendar() {
   const defaultCalendarSource =
     Platform.OS === 'ios'
       ? await getDefaultCalendarSource()
-      : { isLocalAccount: true, name: 'Expo Calendar' };
+      : { isLocalAccount: true, name: CalendarConstants.name}; 
   const newCalendarID = await Calendar.createCalendarAsync({
-    title: 'Expo Calendar',
-    color: 'blue',
+    title: CalendarConstants.name,
+    color: CalendarConstants.color,
     entityType: Calendar.EntityTypes.EVENT,
     sourceId: defaultCalendarSource.id,
     source: defaultCalendarSource,
-    name: 'internalCalendarName',
+    name: CalendarConstants.name,
     ownerAccount: 'personal',
     accessLevel: Calendar.CalendarAccessLevel.OWNER,
   });
-  console.log(`Your new calendar ID is: ${newCalendarID}`);
+  
+  return newCalendarID
+}
+
+async function removeJustLeaguesCalendars() {
+    
+    const { status } = await Calendar.requestCalendarPermissionsAsync();
+    if (status != 'granted') {
+        return false
+    }
+
+    const calendars = await Calendar.getCalendarsAsync();
+
+    calendars.forEach(calendar => {
+
+        if (calendar.name == CalendarConstants.name){
+
+            Calendar.deleteCalendarAsync(calendar.id)
+        } 
+    })
+}
+
+export async function addEventToCalendar(eventInfo, {alarms}, callback){
+
+
+    const { status } = await Calendar.requestCalendarPermissionsAsync();
+    if (status != 'granted') {
+        return false
+    }
+
+    const calendars = await Calendar.getCalendarsAsync();
+
+    let justLeaguesCalendar = _.find(calendars, {name: CalendarConstants.name})
+
+    let calendarID;
+
+    if (!justLeaguesCalendar){
+        calendarID = await createCalendar()
+    } else {
+        calendarID = justLeaguesCalendar.id
+    }
+
+    await Calendar.createEventAsync(calendarID, {
+        alarms: alarms ? alarms.map(alarm => ({ method: Calendar.AlarmMethod.ALERT , ...alarm}) ) : [],
+        ...eventInfo,
+        /* startDate: Date.now(),
+        endDate: Date.now(),
+        allDay: false,
+        location: "Nick sports",
+        notes: "jajajaj perdràs",
+        //alarms (Array<Alarm>)
+        //recurrenceRule (RecurrenceRule)
+        //availability (string)
+        timeZone: Localization.timezone,
+        //endTimeZone (string) -- (Android only)
+        //url (string) -- (iOS only)
+        //organizerEmail (string) -- (Android only)
+        //accessLevel (string) -- (Android only)
+        //guestsCanModify (boolean) -- (Android only)
+        //guestsCanInviteOthers (boolean) -- (Android only)
+        //guestsCanSeeGuests (boolean) -- (Android only) */
+    })
 }

@@ -341,7 +341,7 @@ exports.messageNotification = firestoreFunction.document('groups/{iGroup}/chatMe
 exports.updateCompSettings = httpsFunction.onCall((data, context) => {
 
     //These are the new competition settings
-    const compSettings = req.body.compSettings
+    const compSettings = data.compSettings
 
     //We get all the competitions
     return firestore.collectionGroup(Subcollections.COMPETITIONS).get().then((querySnapshot) => {
@@ -366,7 +366,7 @@ exports.updateCompSettings = httpsFunction.onCall((data, context) => {
         })
 
         batch.commit().then(() => {
-            res.send("done")
+            
         }).catch(err => res.send(err))
         
     })

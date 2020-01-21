@@ -63,7 +63,8 @@
         "new group message": "Nou missatge de grup",
         "player added": "Jugador afegit",
         "player data modified": "Dades del jugador modificades",
-        "no email address available": "Sense correu"
+        "no email address available": "Sense correu",
+        "added to calendar": "Afegit al calendari"
     },
     "questions": {
         "has this match been played now?": "S'ha jugat ara el partit?"
@@ -81,6 +82,7 @@
         "limit":"Límit",
         "scheduled match": "Horari acordat",
         "not scheduled match": "Horari no acordat",
+        "match": "Partit",
         "match score": "Resultat del partit",
         "fix a date":"Fixa una data...",
         "days": "Dies",
@@ -98,7 +100,8 @@
         "no name": "Sense nom",
         "could not send message": "No s'ha pogut enviar el missatge",
         "competition was not removed": "La competició no s'ha pogut eliminar",
-        "unable to add new players": "No s'ha pogut afegir nous jugadors"
+        "unable to add new players": "No s'ha pogut afegir nous jugadors",
+        "failed to add to calendar": "No s'ha pogut afegir al calendari"
     },
     "settings": {
         "you are about to restore default settings": "Estàs a punt de tornar a la configuració inicial.",
@@ -130,6 +133,10 @@
             "name": "Nom dels jugadors",
             "description": "Format del nom dels jugadors en les pantalles de la competició."
         },
+        "location": {
+            "name": "Ubicació",
+            "description": "Lloc on es juga la competició. Es farà servir com a lloc de joc dels partits en que no s'especifiqui ubicació."
+        },
         "groups": "Grups",
         "nPromotingPlayers": {
             "name": "Jugadors que promocionen",
@@ -160,7 +167,8 @@
         "add the date": "Afegeix la data",
         "add player": "Afegeix jugador",
         "modify player data": "Modificar dades jugador",
-        "pick a player": "Tria un jugador"
+        "pick a player": "Tria un jugador",
+        "add to your calendar": "Affegeix al teu calendari"
     },
 
     "admin": {

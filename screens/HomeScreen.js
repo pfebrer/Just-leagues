@@ -53,6 +53,7 @@ class HomeScreen extends Component {
             this.props.navigation.setParams({
                 isAdmin: (this.props.currentUser.gymAdmin && this.props.currentUser.gymAdmin.length > 0) || this.props.currentUser.admin
             })
+
         }
     }
 
@@ -62,7 +63,7 @@ class HomeScreen extends Component {
                 elevation: 2,
                 backgroundColor: navigation.getParam("backgroundColor")
               },
-            headerLeft: navigation.getParam("isAdmin") ? <HeaderIcon name="clipboard" onPress={() => {navigation.navigate("AdminScreen")}} /> : null,
+            headerLeft: navigation.getParam("isAdmin", false) ? <HeaderIcon name="clipboard" onPress={() => {navigation.navigate("AdminScreen")}} /> : null,
             headerRight: <HeaderIcon name="settings" onPress={() => {navigation.navigate("SettingsScreen")}} />
         }
     };
