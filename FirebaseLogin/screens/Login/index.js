@@ -26,7 +26,9 @@ export default class Login extends Component {
     if (mode == "google") {
       this.setState({ isLogin: true });
 
-      var googleUser =  Firebase.signInWithGoogleAsync().then((result) => {
+      const googleLoginFunc = __DEV__ ? Firebase.signInWithGoogleAsyncExpo : Firebase.signInWithGoogleAsync;
+
+      var googleUser = googleLoginFunc().then((result) => {
         if (result.cancelled || result.error) this.setState({ isLogin: false })
       })
       

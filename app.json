@@ -40,17 +40,23 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.pol.esquaixlligues"
+      "bundleIdentifier": "com.pol.esquaixlligues",
+      "config": {
+        "googleSignIn": {
+          "reservedClientId": "com.googleusercontent.apps.524738063553-7a5ri1erg2jgc74u50oju3i1ksffdft4"
+        }
+      }
     },
     "android": {
-      "versionCode": 2,
+      "versionCode": 3,
       "config": {
         "googleSignIn": {
           "apiKey": "AIzaSyBo87T9t5sl8jX6YaJqsYylHsN2ZcZ95Xs",
           "certificateHash": "E3CB786C725BFB98DD12AECB3B31BDF59B330A91"
         }
       },
-      "package": "com.pol.esquaixlligues"
+      "package": "com.pol.esquaixlligues",
+      "googleServicesFile":"./google-services.json"
     },
     "description": "",
     "githubUrl": "https://github.com/pfebrer96/SquashLeaguesV2"

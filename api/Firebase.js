@@ -6,6 +6,7 @@ import { Toast } from 'native-base'
 import {Collections, Subcollections, Constants, Documents} from "../constants/CONSTANTS";
 
 import * as Google from 'expo-google-app-auth';
+import * as GoogleSignIn from 'expo-google-sign-in';
 import { translate } from "../assets/translations/translationManager";
 
 import 'lodash.combinations';
@@ -71,7 +72,26 @@ class Firebase {
   
   //AUTHENTICATION STUFF
   /***Google***/
+
+  //New way
   signInWithGoogleAsync = async () => {
+    await GoogleSignIn.initAsync({
+      clientId: '524738063553-7a5ri1erg2jgc74u50oju3i1ksffdft4.apps.googleusercontent.com',
+    });
+    try {
+      await GoogleSignIn.askForPlayServicesAsync();
+      const { type, user } = await GoogleSignIn.signInAsync();
+      alert(type)
+      if (type === 'success') {
+        this.onGoogleSignIn(user)
+      }
+    } catch ({ message }) {
+      return { error: true }
+    }
+  };
+
+  //Should continue to do it like this inside expo
+  signInWithGoogleAsyncExpo = async () => {
     try {
       const result = await Google.logInAsync({
         androidStandaloneAppClientId: "524738063553-vn8rk9pmad9gil0gtsbhaf616ng6e0mj.apps.googleusercontent.com",
@@ -84,7 +104,7 @@ class Firebase {
       if (result.type === 'success') {
 
         //Log in to our firebase app
-        this.onGoogleSignIn(result)
+        this.onGoogleSignIn(result, true)
         return result.accessToken;
 
       } else {
@@ -95,7 +115,7 @@ class Firebase {
     }
   }
 
-  onGoogleSignIn = (googleUser) => {
+  onGoogleSignIn = (googleUser, inExpo) => {
 
     function isUserEqual(googleUser, firebaseUser) {
       if (firebaseUser) {
@@ -111,6 +131,9 @@ class Firebase {
       return false;
     }
 
+    //Sign out from expo google, as we are going to sign in with firebase again now that we have the credentials
+    if (!inExpo) GoogleSignIn.signOutAsync()
+
     console.log('Google Auth Response', googleUser);
     // We need to register an Observer on Firebase Auth to make sure auth is initialized.
     var unsubscribe = this.auth.onAuthStateChanged(function(firebaseUser) {
@@ -119,8 +142,8 @@ class Firebase {
       if (!isUserEqual(googleUser, firebaseUser)) {
         // Build Firebase credential with the Google ID token.
         var credential = firebase.auth.GoogleAuthProvider.credential(
-          googleUser.idToken,
-          googleUser.accessToken
+          inExpo ? googleUser.idToken : googleUser.auth.idToken,
+          inExpo ? googleUser.accessToken : googleUser.auth.accessToken
         );
         // Sign in with credential from the Google user.
         this.auth.signInWithCredential(credential)
