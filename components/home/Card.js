@@ -14,6 +14,7 @@ import ContentLoader, { Code } from 'react-content-loader/native'
 import { Icon, Text} from 'native-base';
 
 import { totalSize, w, h } from '../../api/Dimensions';
+import { elevation } from '../../assets/utils/utilFuncs'
 
 export default class Card extends Component{
 
@@ -53,7 +54,6 @@ export default class Card extends Component{
 const styles = StyleSheet.create({
 
     gridItem : {
-        elevation: 5,
         marginHorizontal: 10,
         marginVertical: 10,
         borderRadius: 5,
@@ -61,7 +61,8 @@ const styles = StyleSheet.create({
         paddingTop: 10,
         paddingBottom: 20,
         backgroundColor: "white",
-        overflow: "hidden"
+        //overflow: "hidden",
+        ...elevation(5)
     },
 
     itemTitleView : {

@@ -5,7 +5,7 @@ import { translate } from '../../assets/translations/translationManager';
 
 import { totalSize } from '../../api/Dimensions';
 
-import Firebase from "../../api/Firebase"
+import { elevation } from '../../assets/utils/utilFuncs'
 
 export default class Groups extends React.Component {
 
@@ -55,7 +55,7 @@ export default class Groups extends React.Component {
 const styles = StyleSheet.create({
 
     groupContainer : {
-        elevation: 5,
+        ...elevation(5),
         marginVertical: 10,
         marginHorizontal: 10,
         borderRadius: 5,

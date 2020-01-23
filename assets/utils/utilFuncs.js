@@ -281,3 +281,14 @@ exports.retrieveDataAsync = async (key) => {
         // Error retrieving data
     }
 }
+
+//Gives the styles to emulate android elevation on iOs
+exports.elevation = (elevation) => {
+    return {
+      elevation,
+      shadowColor: 'black',
+      shadowOffset: { width: 0, height: 0.5 * elevation },
+      shadowOpacity: 0.3,
+      shadowRadius: 0.8 * elevation
+    };
+}

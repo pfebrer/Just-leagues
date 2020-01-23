@@ -22,8 +22,6 @@ class Leaderboard extends React.Component {
 
     getLeaderboardBody = (sortedKeys) => {
 
-        console.warn(this.props.relevantUsers)
-
         let topRankedKeys = sortedKeys.slice(0,this.state.nTop)
 
         if (topRankedKeys.indexOf(this.props.currentUser.id) == -1 && this.props.competition.playersIDs.indexOf(this.props.currentUser.id) != -1){

@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
-import { sortPlayerIndices, setsToPoints , deepClone} from "../../assets/utils/utilFuncs"
+import { sortPlayerIndices, elevation , deepClone} from "../../assets/utils/utilFuncs"
 import { translate } from '../../assets/translations/translationManager';
 import { w, h, totalSize } from '../../api/Dimensions';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -333,10 +333,10 @@ const styles = StyleSheet.create({
         borderRadius: 3,
         borderColor: "black",
         borderWidth: 1,
-        overflow: "hidden",
+        //overflow: "hidden",
         flex:1,
         width: "100%",
-        elevation: 5,
+        ...elevation(5),
         backgroundColor: "white"
     },
 

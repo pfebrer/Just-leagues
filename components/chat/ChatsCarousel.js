@@ -8,7 +8,7 @@ import {
 import Carousel, {Pagination} from 'react-native-snap-carousel';
 import { w, h } from '../../api/Dimensions';
 
-import {getCompetitionName} from "../../assets/utils/utilFuncs"
+import {getCompetitionName, elevation} from "../../assets/utils/utilFuncs"
 
 //Redux stuff
 import { connect } from 'react-redux'
@@ -153,8 +153,8 @@ const styles = StyleSheet.create({
         height: 400,
         backgroundColor: "white",
         borderRadius: 10,
-        overflow: "hidden",
-        elevation:5,
+        //overflow: "hidden",
+        ...elevation(5),
         alignItems: "center",
         padding: h(2),
         marginHorizontal: 5,

@@ -1,13 +1,8 @@
 import React from 'react';
 import {
-    BackHandler,
-    ImageBackground,
     KeyboardAvoidingView,
-    ScrollView,
+    SafeAreaView,
     StyleSheet,
-    Text,
-    TextInput,
-    TouchableOpacity,
     View,
     Platform,
     StatusBar
@@ -178,33 +173,37 @@ class ChatScreen extends React.Component {
     render() {
 
         return (
-            <View style={ {...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
-                <View style={{...styles.chatCarousel}}>
-                    <ChatsCarousel
-                        setNewMessagesTarget={this.setNewMessagesTarget}
-                        messagesTarget={this.state.target}
-                        titleTextStyle={styles.carouselItemTitleText}
-                        chatSelectorTextStyle={styles.chatSelectorText}/>
-                </View>
-                <GiftedChat
-                    //Functionality
-                    messages={this.state.messages}
-                    user={{
-                        _id: this.props.currentUser.id,
-                    }}
-                    onSend={(messages) => {this.sendMessages(messages)}}
-                    loadEarlier={false}
-                    renderBubble={this.renderBubble}
-                    renderSend={this.renderSend}
-                    //Aestethics
-                    locale={moment.locale()}
-                    placeholder={translate("actions.type a message") + "..."}
-                    renderUsernameOnMessage
-                    />
-                {
-                    Platform.OS === 'android' && <KeyboardAvoidingView behavior="padding" />
-                }
+            <View style={{flex: 1}}>
+                <SafeAreaView style={{ flex:0, backgroundColor: 'white' }} />
+                <SafeAreaView style={ {...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
+                    <View style={{...styles.chatCarousel}}>
+                        <ChatsCarousel
+                            setNewMessagesTarget={this.setNewMessagesTarget}
+                            messagesTarget={this.state.target}
+                            titleTextStyle={styles.carouselItemTitleText}
+                            chatSelectorTextStyle={styles.chatSelectorText}/>
+                    </View>
+                    <GiftedChat
+                        //Functionality
+                        messages={this.state.messages}
+                        user={{
+                            _id: this.props.currentUser.id,
+                        }}
+                        onSend={(messages) => {this.sendMessages(messages)}}
+                        loadEarlier={false}
+                        renderBubble={this.renderBubble}
+                        renderSend={this.renderSend}
+                        //Aestethics
+                        locale={moment.locale()}
+                        placeholder={translate("actions.type a message") + "..."}
+                        renderUsernameOnMessage
+                        />
+                    {
+                        Platform.OS === 'android' && <KeyboardAvoidingView behavior="padding" />
+                    }
+                </SafeAreaView>
             </View>
+            
         )
     }
 }

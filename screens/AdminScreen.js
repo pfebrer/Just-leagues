@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, Text, View, Picker} from 'react-native';
+import {StyleSheet, Text, View, Picker, ScrollView} from 'react-native';
 import {Button} from "native-base"
 import DatePicker from 'react-native-datepicker'
 import Modal from "react-native-modal";
@@ -16,7 +16,7 @@ import {setCurrentCompetition} from "../redux/actions"
 
 import { translate } from '../assets/translations/translationManager';
 import { w, totalSize } from '../api/Dimensions';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+
 
 import _ from "lodash"
 import { selectCurrentCompetition, selectSuperChargedCompetitions } from '../redux/reducers';
@@ -227,7 +227,7 @@ class AdminScreen extends React.Component {
         ) : null;
 
         return (
-            <View style={styles.container}>
+            <ScrollView style={styles.container} contentContainerStyle={styles.scrollViewContent}>
                 <Spinner
                     visible={this.state.spinner}
                     textContent={this.state.spinnerText}
@@ -279,7 +279,7 @@ class AdminScreen extends React.Component {
                     </View>
                     
                 </Modal>
-            </View>
+            </ScrollView>
         );
     }
     
@@ -303,8 +303,12 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingHorizontal: 20,
         backgroundColor: "white",
-        alignItems: "center",
         paddingTop: 30,
+    },
+
+    scrollViewContent: {
+        paddingBottom: 50,
+        alignItems: "center",
     },
 
     compSelectionView: {

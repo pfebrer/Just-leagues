@@ -15,8 +15,9 @@ import PendingMatches from "../components/home/PendingMatches"
 import Notifications from "../components/home/Notifications"
 import Card from "../components/home/Card"
 
+import { elevation } from '../assets/utils/utilFuncs'
+
 import _ from "lodash"
-import CompetitionComponent from './Competition/CompetitionScreen';
 import { selectSuperChargedCompetitions } from '../redux/reducers';
 
 class HomeScreen extends Component {
@@ -60,7 +61,7 @@ class HomeScreen extends Component {
     static navigationOptions = ({navigation}) => {
         return {
             headerStyle: {
-                elevation: 2,
+                ...elevation(2),
                 backgroundColor: navigation.getParam("backgroundColor")
               },
             headerLeft: navigation.getParam("isAdmin", false) ? <HeaderIcon name="clipboard" onPress={() => {navigation.navigate("AdminScreen")}} /> : null,
