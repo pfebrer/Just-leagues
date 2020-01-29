@@ -15,4 +15,6 @@ export default combineReducers({
 
 export const selectCurrentCompetition = (state) => fromCompetitions.selectCurrentCompetition(state.competitions)
 
+export const selectAdminCompetitions = (state) => fromCompetitions.selectAdminCompetitions(state.competitions)
+
 export const selectSuperChargedCompetitions = (state) => fromCompetitions.selectSuperChargedCompetitions(state.competitions)

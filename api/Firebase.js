@@ -81,7 +81,6 @@ class Firebase {
     try {
       await GoogleSignIn.askForPlayServicesAsync();
       const { type, user } = await GoogleSignIn.signInAsync();
-      alert(type)
       if (type === 'success') {
         this.onGoogleSignIn(user)
       }
@@ -265,8 +264,16 @@ class Firebase {
             displayName: name
           });
           this.userRef(this.auth.currentUser.uid).set({
-            displayName: name,
-          })
+              settings: {
+                ["Profile"]: {
+                  aka: name,
+                  firstName: name,
+                  lastName: "",
+                }
+              },
+              
+            }, {merge: true}
+          )
           resolve(true);
         }
       }).catch(err => alert(err));

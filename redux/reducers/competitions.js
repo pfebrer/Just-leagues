@@ -63,7 +63,16 @@ export const selectCurrentCompetition = (competitions) => {
 
     if(currentComp) return superChargeComp(currentComp)
     else return null
-} 
+}
+
+export const selectAdminCompetitions = (competitions) => {
+    return Object.keys(competitions).reduce((superCharged, compID) => {
+        if (competitions[compID].isAdmin){
+            superCharged[compID] = superChargeComp(competitions[compID])
+        }
+        return superCharged
+    }, {})
+}
 
 export const selectSuperChargedCompetitions = (competitions) => {
     return Object.keys(competitions).reduce((superCharged, compID) => {

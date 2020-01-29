@@ -3,7 +3,9 @@ import GroupsCompetition from "./groups"
 import Firebase from "../../api/Firebase"
 
 import React, {Component} from 'react';
-import {ScrollView} from "react-native"
+import _ from "lodash"
+import { translate } from "../../assets/translations/translationManager"
+//import {} from "react-native"
 import MatchesDisplay from "../../components/competition/MatchesDisplay";
 import CompStats from "../../components/competition/CompStats";
 
@@ -40,7 +42,7 @@ export default class Competition extends Configurable {
             listeners["pendingMatches"] = Firebase.onCompPendingMatchesSnapshot(compData.gymID, compID, (pendingMatches) => updateCompetition({pendingMatches}))
             
             //Then, update the competition with the main information (this is the doc information)
-            updateCompetition(compData)
+            updateCompetition({...compData, isAdmin: currentUser.gymAdmin && currentUser.gymAdmin.indexOf(compData.gymID) != -1})
         
         })
 
@@ -81,7 +83,7 @@ export default class Competition extends Configurable {
         }
     }
 
-    compMatchesListener = (setState) => Firebase.onCompPendingMatchesSnapshot(this.gymID, this.id, (matches) => setState({matches}))
+    compMatchesListener = (setState) => Firebase.onCompPendingMatchesSnapshot(this.gymID, this.id, (matches) => setState({pendingMatches: matches}))
 
     renderCompMatches = (state, props) => {
 
@@ -101,6 +103,30 @@ export default class Competition extends Configurable {
         return <CompStats 
             navigation={props.navigation} 
             matches={this.matches.map( match => ({...match, context: {...match.context, competition: this }}) )}/> 
+    }
+
+    adminCompSummary = () => {
+
+        let groupedPending = _.groupBy(this.pendingMatches, "scheduled")
+
+        return [
+
+            {
+                name: undefined ,
+                attributes: [
+                    {icon: "people", name: translate("vocabulary.players"), "value": this.playersIDs.length},
+                    ...(this.additionalCompSummary ? this.additionalCompSummary() : [])
+                ]
+            },
+
+            {
+                name: translate("tabs.matches"),
+                attributes: [
+                    {icon: "alert", "name": translate("vocabulary.pending matches"), value: this.pendingMatches ? this.pendingMatches.length : "..."}
+                ]
+            }
+            
+        ]
     }
 
 }

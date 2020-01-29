@@ -21,6 +21,7 @@
     "tabs":{
         "stats": "Estadístiques",
         "competition": "Competició",
+        "competitions you administrate": "Competicions que administres",
         "competition overview": "Vista general",
         "chat": "Xat",
         "matches": "Partits",
@@ -90,8 +91,10 @@
         "played": "Jugat",
         "general": "General",
         "player": "Jugador",
+        "players": "Jugadors",
         "direct match": "Enfrontament directe",
-        "position": "Posició"
+        "position": "Posició",
+        "groups": "Grups"
     },
     "errors": {
         "you entered an ivalid result":"No ens enganyis, aquest resultat és impossible :(",

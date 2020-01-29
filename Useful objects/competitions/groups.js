@@ -5,6 +5,7 @@ import Competition from "./competition"
 import Firebase from "../../api/Firebase"
 import Groups from "../../components/groups/Groups"
 import Table from "../../components/groups/Table"
+import { translate } from "../../assets/translations/translationManager"
 
 import _ from "lodash"
 
@@ -42,6 +43,13 @@ export default class GroupsCompetition extends Competition {
             competition={this}
             navigation={props.navigation}
         />
+    }
+
+    additionalCompSummary = () => {
+
+        return [
+            {icon: "trophy", name: translate("vocabulary.groups"), value: this.groups ? this.groups.length : "..."}
+        ]
     }
 
     //----------------------------------------------

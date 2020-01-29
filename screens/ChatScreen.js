@@ -175,7 +175,7 @@ class ChatScreen extends React.Component {
         return (
             <View style={{flex: 1}}>
                 <SafeAreaView style={{ flex:0, backgroundColor: 'white' }} />
-                <SafeAreaView style={ {...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
+                <View style={ {...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
                     <View style={{...styles.chatCarousel}}>
                         <ChatsCarousel
                             setNewMessagesTarget={this.setNewMessagesTarget}
@@ -201,7 +201,7 @@ class ChatScreen extends React.Component {
                     {
                         Platform.OS === 'android' && <KeyboardAvoidingView behavior="padding" />
                     }
-                </SafeAreaView>
+                </View>
             </View>
             
         )

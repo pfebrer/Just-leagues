@@ -14,6 +14,7 @@ import HeaderIcon from "../components/header/HeaderIcon"
 import PendingMatches from "../components/home/PendingMatches"
 import Notifications from "../components/home/Notifications"
 import Card from "../components/home/Card"
+import AdminSummary from "../components/home/AdminSummary"
 
 import { elevation } from '../assets/utils/utilFuncs'
 
@@ -100,6 +101,8 @@ class HomeScreen extends Component {
                 <Notifications/>
 
                 <PendingMatches navigation={this.props.navigation}/>
+
+                <AdminSummary navigation={this.props.navigation}/>
 
                 {this.renderCompetitionStates(this.props.currentUser.activeCompetitions)}
 

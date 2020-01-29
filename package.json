@@ -13,6 +13,7 @@
     "expo": "^36.0.0",
     "expo-calendar": "~8.0.0",
     "expo-google-app-auth": "^7.0.0",
+    "expo-google-sign-in": "~8.0.0",
     "expo-localization": "~8.0.0",
     "firebase": "^7.2.0",
     "firebase-admin": "^8.6.0",
@@ -41,6 +42,7 @@
     "react-native-svg": "9.13.3",
     "react-native-swipeout": "^2.3.6",
     "react-native-tab-view": "^2.11.0",
+    "react-native-tooltips": "^1.0.2",
     "react-native-web": "^0.11.7",
     "react-navigation": "^4.0.10",
     "react-navigation-drawer": "^2.3.3",
@@ -48,8 +50,7 @@
     "redux": "^4.0.4",
     "redux-logger": "^3.0.6",
     "redux-orm": "^0.16.0",
-    "sentry-expo": "^2.0.1",
-    "expo-google-sign-in": "~8.0.0"
+    "sentry-expo": "^2.0.1"
   },
   "devDependencies": {
     "@expo/vector-icons": "^10.0.0",
