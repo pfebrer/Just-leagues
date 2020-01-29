@@ -82,11 +82,12 @@ export class AdminSummary extends Component {
     render() {
 
         if (!this.props.adminComps) return null
-
+        //actionHelperText={"(" + Object.keys(this.props.adminComps).length + ")"}
         return (
             <Card
                 titleIcon="clipboard"
-                title={translate("tabs.competitions you administrate")}>
+                title={translate("tabs.competitions you administrate")}
+                >
                     <Accordion
                         dataArray={Object.values(this.props.adminComps).map(comp => ({title: comp.name, content: comp}) )}
                         animation={true}

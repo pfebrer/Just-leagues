@@ -30,6 +30,13 @@ class MatchSummary extends Component {
         this.props.navigation.navigate("MatchScreen")
     }
 
+    addWinnerLStyles = (result, ownIndex, otherIndex) => {
+
+        return result[ownIndex] > result[otherIndex] ? {
+            fontFamily: "bold"
+        } : {}
+    }
+
     render() {
 
         if (!this.props.match.playersIDs) return <Card loading/>
@@ -41,19 +48,28 @@ class MatchSummary extends Component {
             return this.props.match.context.competition.playersIDs.indexOf(uid) + 1
         })
 
+        let backgroundColor = this.props.match.playedOn ? "#c6e17b" : this.props.match.scheduled ? "#fdd48a" : "#e1947b"
+
         return (
             <Card
-                cardContainerStyles={{paddingTop: 20}}
+                cardContainerStyles={{paddingTop: 20, backgroundColor}}
                 headerStyles={{paddingBottom: 0, height : 0}}
                 >
                 <TouchableOpacity style={styles.cardContentContainer} onPress={this.goToMatch}>
-                    <Text style={{...styles.playerNameText, textAlign: "left"}}>
+                    <Text style={{...styles.playerNameText, ...this.addWinnerLStyles(result, 0 , 1), textAlign: "left"}}>
                         {"(" + ranks[0] + ") " + players[0]}
                     </Text>
-                    <Text style={{...styles.scoreText, textAlign: "center"}}>
-                        {result.join(" - ")}
-                    </Text>
-                    <Text style={{...styles.playerNameText, textAlign: "right"}}>
+                    <View style={{...styles.scoreText}}>
+                        <Text style={this.addWinnerLStyles(result, 0 , 1)}>
+                            {result[0]}
+                        </Text>
+                        <Text> - </Text>
+                        <Text style={this.addWinnerLStyles(result, 1 , 0)}>
+                            {result[1]}
+                        </Text>
+
+                    </View>
+                    <Text style={{...styles.playerNameText, ...this.addWinnerLStyles(result, 1, 0), textAlign: "right"}}>
                         {players[1] + " (" + ranks[1] + ")"}
                     </Text>
                 </TouchableOpacity>
@@ -90,6 +106,8 @@ const styles = StyleSheet.create({
 
     scoreText: {
         fontSize: totalSize(1.5),
+        flexDirection: "row",
+        justifyContent: "center",
         flex: 1
     },
 
