@@ -49,6 +49,7 @@ export default class Groups extends React.Component {
                 contentContainerStyle={styles.contentContainer}
                 bounces={true}/>
         );
+
     }
 }
 

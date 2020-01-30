@@ -109,7 +109,7 @@ class Table extends Component {
 
     renderTable = (ranks, players, scores, totals) => {
 
-        let sorted = this.props.competition.getSortedIndices()
+        //let sorted = this.props.competition.getSortedIndices()
 
         let sortedPlayerIndices = sortPlayerIndices(players, scores, totals, this.props.competition.settings.groups.untyingCriteria)
         let nPlayers = players.length

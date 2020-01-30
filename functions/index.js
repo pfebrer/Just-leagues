@@ -398,6 +398,7 @@ exports.onCompetitionUpdate = firestoreFunction.document(Collections.GYMS + "/{g
     }
     
 })
+
 //Update competition settings when new fields are added
 exports.updateGroupScores = httpsFunction.onCall((data, context) => {
 
@@ -411,10 +412,8 @@ exports.updateGroupScores = httpsFunction.onCall((data, context) => {
             
 
     })
-
-    
+  
 })
-
 
 //-----------------------------------------------------
 //        TAKEN FROM UTILFUNCS (KEEP IN SYNC)
@@ -831,6 +830,7 @@ const __untie = (iPlayers, results, criteria) => {
 }
 
 const __updateRanking = (data, context, user) => {
+    
     let things = {};
     let isAdmin = Boolean(user.admin);
     //return the main promise
