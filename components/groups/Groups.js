@@ -108,7 +108,7 @@ export default class Groups extends React.Component {
 
     render() {
 
-        if (!this.props.groups) return null
+        if (!this.props.groups) return <View style={{flex:1}}/>
 
         return (
             <FlatList 

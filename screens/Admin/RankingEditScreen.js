@@ -12,6 +12,8 @@ import {
 import SortableList from 'react-native-sortable-list';
 import { Button, Icon } from 'native-base';
 import { TouchableOpacity } from 'react-native-gesture-handler';
+import _ from "lodash"
+
 import { translate } from '../../assets/translations/translationManager';
 import { w } from '../../api/Dimensions';
 
@@ -29,13 +31,15 @@ const window = Dimensions.get('window');
 class RankingEditScreen extends Component {
 
   constructor(props){
-      super(props)
+    super(props)
 
-      this.state = {
-        editable: true,
-        deleteMode: false,
-        ranking: props.ranking || props.competition.playersIDs || []
-      }
+    this.state = {
+      editable: true,
+      deleteMode: false,
+      ranking: props.ranking || props.competition.playersIDs || []
+    }
+
+    this.onChange = props.onChange || this.setState
 
   }
 
@@ -51,8 +55,11 @@ class RankingEditScreen extends Component {
   };
 
   isOrphan = (index) => {
-    let nLastGroup = this.state.ranking.length % this.props.competition.getSetting("groupSize")
-    return (index >= this.state.ranking.length - nLastGroup && //Is one of the last players
+
+    const ranking = this.props.ranking || this.state.ranking
+
+    let nLastGroup = ranking.length % this.props.competition.getSetting("groupSize")
+    return (index >= ranking.length - nLastGroup && //Is one of the last players
       nLastGroup < this.props.competition.getSetting("minGroupSize")) //There are orphans in this ranking 
   }
 
@@ -69,31 +76,38 @@ class RankingEditScreen extends Component {
   }
 
   updateRankingOrder = (keys) => {
-    this.setState({ranking: keys.map( key => this.state.ranking[key])})
+    const ranking = this.props.ranking || this.state.ranking
+
+    this.onChange({ranking: keys.map( key => ranking[key])})
   }
 
   deleteItem = (key, marginHorizontal) => {
 
+    const ranking = this.props.ranking || this.state.ranking
+
     Animated.timing( marginHorizontal, {
         toValue: w(100),
     } ).start(() => {
-        this.setState({ranking: this.state.ranking.filter((_,i) => i !== key) })
+        this.onChange({ranking: ranking.filter((_,i) => i !== key) })
     })
       
   }
 
   render() {
+
+    const ranking = this.props.ranking || this.state.ranking
+
     return (
     <View style={styles.container}>
         <Text style={styles.title}>{translate("tabs.ranking")}</Text>
-        <SortableList
+        { !_.isEmpty(ranking) ? <SortableList
         style={styles.list}
         contentContainerStyle={styles.contentContainer}
         onReleaseRow={(key, newOrder) => this.updateRankingOrder(newOrder)}
         onPressRow={(key) => this.setState({deleteMode: this.state.editable && !this.state.deleteMode})}
-        data={this.state.ranking}
+        data={ranking}
         renderRow={this._renderRow}
-        sortingEnabled={this.state.editable}/>
+        sortingEnabled={this.state.editable}/> : null}
     </View>
     );
   }

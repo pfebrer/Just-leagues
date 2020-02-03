@@ -7,15 +7,20 @@ import Groups from '../groups/Groups'
 import RankingEditScreen from '../../screens/Admin/RankingEditScreen'
 import { Dimensions, StyleSheet, View, Text, TouchableOpacity } from "react-native"
 
+import Firebase from '../../api/Firebase'
+
 import HeaderIcon from '../../components/header/HeaderIcon';
 
 import { translate } from '../../assets/translations/translationManager'
 
-export class EndingPeriodModal extends React.Component {
+export class NewRankingScreen extends React.Component {
 
     constructor(props){
         super(props);
 
+        this.state = {
+            ranking: props.competition.getNewRanking(),
+        }
     }
 
     static navigationOptions = ({navigation}) => {
@@ -25,17 +30,34 @@ export class EndingPeriodModal extends React.Component {
         }
     };
 
+    componentDidMount(){
+
+        this.props.navigation.setParams({submitNewRanking: this.submitNewRanking})
+    }
+
+    submitNewRanking = () => {
+
+        let {gymID, id: compID} = this.props.competition
+
+        Firebase.updateCompetitionDoc(gymID, compID, {playersIDs: this.state.ranking},
+            () => {
+                this.props.navigation.goBack()
+            }
+        )
+    }
+
     render(){
 
         //if (!this.renderer) return null
         if (!this.props.competition) return null
 
-        //return this.renderer(this.state, this.props)
-
         return (
             <View style={{backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor, flex: 1}}>
                 <Groups competition={this.props.competition} groups={this.props.competition.groups} navigation={this.props.navigation}/>
-                <RankingEditScreen ranking={this.props.competition.getNewRanking()} navigation={this.props.navigation}/>
+                <RankingEditScreen 
+                    ranking={this.state.ranking}
+                    onChange={({ranking}) => this.setState({ranking})}
+                    navigation={this.props.navigation}/>
             </View>
 
         )
@@ -48,7 +70,7 @@ const mapStateToProps = state => ({
     competition: selectCurrentCompetition(state),
 })
 
-export default connect(mapStateToProps)(EndingPeriodModal);
+export default connect(mapStateToProps)(NewRankingScreen);
 
 const styles = StyleSheet.create({
     matchModalContainer: {
