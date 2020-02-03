@@ -9,7 +9,7 @@ import { USERSETTINGS } from "../constants/Settings"
 
 //Redux stuff
 import { connect } from 'react-redux'
-import { storeUserData, updateRelevantUsers, updateCompetitions, updateCompetition} from "../redux/actions"
+import { storeUserData, updateRelevantUsers, updateCompetitions, updateCompetition, updateBets} from "../redux/actions"
 
 import NotificationManager from "../api/Notifications"
 import { selectCurrentCompetition } from '../redux/reducers';
@@ -61,6 +61,7 @@ class LoadingScreen extends React.Component {
                     })
                 }
             })
+            if (this.betsListener) {this.betsListener()}
 
             this.compListeners = {} ; this.usersListeners = {} ; this.gymListeners = {}
 
@@ -131,6 +132,15 @@ class LoadingScreen extends React.Component {
                             
                         })
                     }
+
+                    //Set the listener for this user's bets
+                    if (!this.betsListener){
+
+                        this.betsListener = Firebase.onUserBets(user.uid, (bets) => {
+                            this.props.updateBets(bets.reduce((obj, bet) => {obj[bet.id] = bet; return obj}, {}))
+                        })
+                        
+                    }
                     
                     if (newSettings){
 
@@ -157,6 +167,7 @@ class LoadingScreen extends React.Component {
                         })*/
 
                     }
+
 
                 })
 
@@ -189,7 +200,8 @@ const mapDispatchToProps = {
     storeUserData,
     updateRelevantUsers,
     updateCompetitions,
-    updateCompetition
+    updateCompetition,
+    updateBets
 }
 
 export default connect( mapStateToProps, mapDispatchToProps )(LoadingScreen);

@@ -18,6 +18,7 @@ import MatchResult from '../components/match/MatchResult';
 import Head2Head from "../components/match/Head2Head"
 import MatchDiscussion from "../components/match/MatchDiscussion"
 import MatchImage from "../components/match/MatchImage"
+import MatchBet from '../components/match/MatchBet';
 
 class MatchScreen extends Component {
 
@@ -40,6 +41,7 @@ class MatchScreen extends Component {
     };
 
     listenToMatch = () => {
+        //NO NEED TO LISTEN FOR THE MATCH HERE, AS THE COMPETITION IS ALREADY LISTENING, FIX THIS
 
         if (this.matchSub) this.matchSub();
 
@@ -192,6 +194,8 @@ class MatchScreen extends Component {
 
     render() {
 
+        if (!this.props.currentMatch) return null
+
         return (
             <View style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
                 <ScrollView style={styles.mainView} contentContainerStyle={styles.scrollContainer}>
@@ -207,6 +211,8 @@ class MatchScreen extends Component {
                         match={this.props.currentMatch}
                         editable={this.state.editable}
                         updateDBMatchParams={this.updateDBMatchParams}/>
+
+                    <MatchBet match={this.props.currentMatch}/>
                     
                     <MatchDiscussion match={this.props.currentMatch}/>
 

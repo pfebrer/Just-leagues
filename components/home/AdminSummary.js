@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { View, StyleSheet, TouchableOpacity } from 'react-native'
 import { Icon, Text, Toast, Accordion} from "native-base"
 import { connect } from 'react-redux'
+import _ from "lodash"
 import Card from "./Card"
 
 import { translate } from "../../assets/translations/translationManager"
@@ -81,7 +82,7 @@ export class AdminSummary extends Component {
 
     render() {
 
-        if (!this.props.adminComps) return null
+        if (_.isEmpty(this.props.adminComps)) return null
         //actionHelperText={"(" + Object.keys(this.props.adminComps).length + ")"}
         return (
             <Card

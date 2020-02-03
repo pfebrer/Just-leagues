@@ -636,6 +636,12 @@ class Firebase {
     }
   }
 
+  onUserBets = (uid, callback) => {
+    this.userBetsRef(uid).onSnapshot( querySnap => {
+      callback(querySnap.docs.map(doc => ({ id: doc.id, ...doc.data()}) ))
+    })
+  }
+
   //FUNCTIONS TO DO COMPLEX OPERATIONS
   submitNewPlayedMatch = (matchInfo, callback) => {
     /*Takes a match from pendingMatches and puts it into matches.
@@ -839,6 +845,21 @@ class Firebase {
 
   }
 
+  submitBets = ({gymID, id: compID}, bets, callback = () => {}) => {
+    
+    let batch = this.firestore.batch()
+
+    bets.forEach(bet => {
+
+        batch.set(
+        bet.removePreviousBet ? this.betsRef(gymID, compID).doc(bet.removePreviousBet) : this.betsRef(gymID, compID).doc(),
+        _.omit(bet, ["removePreviousBet"]) )
+
+      })
+
+    batch.commit().then(callback).catch((reason) => alert(reason))
+  }
+
   //This function should be fired when 
   updateGroupScores = (gymID, compID, groupID) => {
 
@@ -992,6 +1013,16 @@ class Firebase {
   playerGroupQuery = (gymID, compID, uid) => {
     return this.groupsRef(gymID, compID).where("playersIDs", "array-contains", uid )
   }
+
+  betsRef = (gymID, compID) => {
+    return this.compRef(gymID, compID).collection(Subcollections.BETS)
+  }
+
+  get betsGroupRef() {
+    return this.firestore.collectionGroup(Subcollections.BETS)
+  }
+
+  userBetsRef = (uid) => this.betsGroupRef.where("uid", "==", uid)
 
   // DATA STANDARIZERS
 

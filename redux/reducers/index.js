@@ -3,12 +3,14 @@ import currentUser from './currentUser'
 import match from "./match"
 import relevantUsers from "./relevantUsers"
 import competitions, * as fromCompetitions from "./competitions"
+import bets from "./bets"
 
 export default combineReducers({
     currentUser,
     match,
     relevantUsers,
-    competitions
+    competitions,
+    bets
 })
 
 //SELECTORS

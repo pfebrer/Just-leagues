@@ -4,7 +4,8 @@ import {
     SET_CURRENTMATCH,
     UPDATE_COMPETITIONS,
     UPDATE_COMPETITION,
-    UPDATE_RELEVANTUSERS
+    UPDATE_RELEVANTUSERS,
+    UPDATE_BETS
 } from './actionTypes'
 
 export const storeUserData = (userData) => ({
@@ -38,6 +39,11 @@ export const updateCompetition = (id, updates) => ({
     type: UPDATE_COMPETITION,
     id,
     updates
+})
+
+export const updateBets = (newBets) => ({
+    type: UPDATE_BETS,
+    newBets: newBets
 })
 
 

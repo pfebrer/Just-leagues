@@ -19,6 +19,7 @@ import { Icon } from 'native-base';
 import HeaderIcon from "../components/header/HeaderIcon"
 import ChatScreen from '../screens/ChatScreen';
 import { translate } from '../assets/translations/translationManager';
+import EndingPeriodModal from '../components/groups/EndingPeriodModal';
 
 export const compTabBarOptions = {
     pressColor: "#ccc",
@@ -78,7 +79,8 @@ const HomeStack = createStackNavigator({
     //Screens for admins only
     AdminScreen: AdminScreen,
     EditRankingScreen: RankingEditScreen,
-    PlayersManagementScreen: PlayersManagementScreen
+    PlayersManagementScreen: PlayersManagementScreen,
+    EndPeriodScreen: EndingPeriodModal,
 },{initialRouteName: "HomeScreen"});
 
 export default MainNavigator = createBottomTabNavigator({

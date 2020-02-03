@@ -85,13 +85,13 @@ export default class Competition extends Configurable {
 
     compMatchesListener = (setState) => Firebase.onCompPendingMatchesSnapshot(this.gymID, this.id, (matches) => setState({pendingMatches: matches}))
 
-    renderCompMatches = (state, props) => {
+    renderCompMatches = (props) => {
 
         if (!this.matches) return null
         
         return <MatchesDisplay 
             navigation={props.navigation} 
-            matches={[...this.matches, ...this.pendingMatches].map( match => ({...match, context: {...match.context, competition: this }}) )}/> 
+            matches={this.matchesWithContext([...this.matches, ...this.pendingMatches])}/> 
     }
 
     compStatsListener = (setState) => Firebase.onCompMatchesSnapshot(this.gymID, this.id, (matches) => setState({matches}))
@@ -102,7 +102,7 @@ export default class Competition extends Configurable {
         
         return <CompStats 
             navigation={props.navigation} 
-            matches={this.matches.map( match => ({...match, context: {...match.context, competition: this }}) )}/> 
+            matches={ this.matchesWithContext(this.matches) }/> 
     }
 
     adminCompSummary = () => {
@@ -127,6 +127,11 @@ export default class Competition extends Configurable {
             }
             
         ]
+    }
+
+    /* HELPERS */
+    matchesWithContext = (matches) => {
+        return matches.map( match => ({...match, context: {...match.context, competition: this }}) )
     }
 
 }

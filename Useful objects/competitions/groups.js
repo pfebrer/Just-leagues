@@ -3,6 +3,7 @@ import {View} from "react-native"
 
 import Competition from "./competition"
 import Firebase from "../../api/Firebase"
+import GroupsBetting from "../../components/groups/GroupsBetting"
 import Groups from "../../components/groups/Groups"
 import Table from "../../components/groups/Table"
 import { translate } from "../../assets/translations/translationManager"
@@ -55,19 +56,33 @@ export default class GroupsCompetition extends Competition {
         ]
     }
 
+    renderCompBetting = () => {
+
+        return {props: {competition: this, groups: this.groups}, Component: GroupsBetting }
+    }
+
     //----------------------------------------------
     //                  HELPERS
     //----------------------------------------------
     
     getNewRanking = () => {
 
+        const nPromoting = this.getSetting("nPromotingPlayers")
+
         if (!this.groups) return null
         //Returns how the ranking of the competition will look in the next period given the actual results
-        let newRanking = _.sortBy(this.groups, "order").reduce((newRanking, group) => {
+        let newRanking = _.sortBy(this.groups, "order").reduce((newRanking, group, i) => {
 
-            let sortedIs = this.getSortedIndices(group)
+            let sortedPlayerIDs = this.getSortedIndices(group).map(i => group.playersIDs[i])
 
-            return [...newRanking, ...sortedIs.map(i => group.playersIDs[i])]
+            //If it is the first group there is still no ranking to manipulate, just add the sorted players
+            if (i == 0) return sortedPlayerIDs
+
+            //Add the ascending players in front of the players from previous group that will descend
+            newRanking.splice(-nPromoting, 0, ...sortedPlayerIDs.slice(0, nPromoting) )
+
+            //Add now the players that are not ascending
+            return [...newRanking, ...sortedPlayerIDs.slice(nPromoting)]
         }, [])
 
         return newRanking
@@ -80,12 +95,15 @@ export default class GroupsCompetition extends Competition {
 
     getSortedIndices = ({playersIDs, scores}) => {
         
-
-        scores = _.chunk(scores, this.playersIDs.length);
+        scores = _.chunk(scores, playersIDs.length);
         let totals = scores.map( playerScores => playerScores.reduce((a, b) => a + b, 0) )
     
         return sortPlayerIndices(playersIDs, scores, totals, this.getSetting("untyingCriteria"))
 
+    }
+
+    getGroupMatches = (groupID) => {
+        return this.matchesWithContext([...this.matches, ...this.pendingMatches].filter( match => match.context.group.id == groupID))
     }
 
 }

@@ -6,7 +6,7 @@ import Modal from "react-native-modal";
 import moment from "moment"
 
 import Firebase from "../api/Firebase";
-import EndingPeriodModal from "../components/editing/EndingPeriodModal";
+import EndingPeriodModal from "../components/groups/EndingPeriodModal";
 import Spinner from 'react-native-loading-spinner-overlay';
 import {Constants} from "../constants/CONSTANTS";
 
@@ -28,7 +28,6 @@ class AdminScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            endingPeriodModal: false,
             groupGeneratingModal: false,
             newPeriodDue: undefined,
             spinner: false,
@@ -126,7 +125,19 @@ class AdminScreen extends React.Component {
                     <View style={styles.buttonRow}>
                         <Button
                             style={styles.button}
-                            onPress={this.tancarMes}
+                            onPress={() => {
+                                this.props.navigation.navigate("EndPeriodScreen")
+                            }}
+                            >
+                            <Text style={styles.buttonText}>{translate("admin.generate new ranking")}</Text>
+                        </Button>
+                    </View>
+                    <View style={styles.buttonRow}>
+                        <Button
+                            style={styles.button}
+                            onPress={() => {
+                                this.props.navigation.navigate("EndPeriodScreen")
+                            }}
                             disabled
                             >
                             <Text style={styles.buttonText}>{translate("admin.end competition period")}</Text>
@@ -155,12 +166,6 @@ class AdminScreen extends React.Component {
             return null
         }
     }
-
-    toggleEndingPeriodModal() {
-        this.setState({
-            endingPeriodModal: !this.state.endingPeriodModal
-        });
-    };
 
     updateRanking = () => {
         this.callFunction('updateRankingHttp');

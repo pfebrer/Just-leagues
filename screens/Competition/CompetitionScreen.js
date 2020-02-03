@@ -62,6 +62,7 @@ class CompetitionScreen extends Component {
                 { key: 'main', title: translate("tabs.competition overview") },
                 { key: 'matches', title: translate("tabs.matches") },
                 { key: 'stats', title: translate("tabs.stats") },
+                { key: 'betting', title: translate("tabs.betting")},
             ]
         }
 
@@ -78,11 +79,21 @@ class CompetitionScreen extends Component {
 
         //return this.renderer(this.state, this.props)
 
-        const renderScene = SceneMap({
-            main: this.props.competition.renderCompScreen,
-            matches: this.props.competition.renderCompMatches,
-            stats: this.props.competition.renderCompStats,
-        });
+        const renderScene = ({ route }) => {
+            switch (route.key) {
+                case 'main':
+                    return this.props.competition.renderCompScreen({navigation: this.props.navigation});
+                case 'matches':
+                    return this.props.competition.renderCompMatches({navigation: this.props.navigation});
+                case 'stats':
+                    return this.props.competition.renderCompStats({navigation: this.props.navigation});
+                case 'betting':
+                    let {Component, props} = this.props.competition.renderCompBetting()
+                    return <Component {...props}/>;
+                default:
+                    return null;
+            }
+          };
 
         return (
             <View style={{backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor, flex: 1}}>
@@ -92,7 +103,7 @@ class CompetitionScreen extends Component {
                     renderScene={renderScene}
                     onIndexChange={(index) => this.setState({index})}
                     initialLayout={initialLayout}
-                    swipeEnabled
+                    swipeEnabled={true}
                     renderTabBar={(props) => <TabBar {...props} scrollEnabled {...compTabBarOptions} /> }
                 />
             </View>

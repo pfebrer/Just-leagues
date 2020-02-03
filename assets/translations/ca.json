@@ -33,7 +33,10 @@
         "ranking editing": "Edició del rànquing",
         "player management": "Administració de jugadors",
         "your matches": "Els teus partits",
-        "other matches": "Altres partits"
+        "other matches": "Altres partits",
+        "betting": "Apostes",
+        "old groups": "Grups antics",
+        "new ranking": "Nou rànquing",
     },
     "stats": {
         "played matches": "Partits jugats",
@@ -46,9 +49,10 @@
     "cardTitles": {
         "match schedule": "Previsió de data",
         "match date": "Data del partit",
-        "general stats": "Estadístiques generals"
+        "general stats": "Estadístiques generals",
+        "groups betting": "Apostes de grup",
+        "match bets": "Apostes del partit"
     },
-
     "info": {
         "checking user": "Comprovant usuari",
         "loading classifications": "Carregant classificacions",
@@ -171,7 +175,8 @@
         "add player": "Afegeix jugador",
         "modify player data": "Modificar dades jugador",
         "pick a player": "Tria un jugador",
-        "add to your calendar": "Affegeix al teu calendari"
+        "add to your calendar": "Affegeix al teu calendari",
+        "submit": "Envia"
     },
 
     "admin": {
@@ -181,6 +186,7 @@
         "modify matches": "Modifica partits",
         "go to competition screen": "Anar a la pantalla de la competició",
         "generate groups": "Genera grups",
+        "generate new ranking": "Genera nou rànquing",
         "competition settings": "Configuració de la competició",
         "manage players": "Administra jugadors"
     }

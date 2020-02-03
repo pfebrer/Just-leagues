@@ -34,7 +34,7 @@ class RankingEditScreen extends Component {
       this.state = {
         editable: true,
         deleteMode: false,
-        ranking: props.competition.playersIDs || []
+        ranking: props.ranking || props.competition.playersIDs || []
       }
 
   }
