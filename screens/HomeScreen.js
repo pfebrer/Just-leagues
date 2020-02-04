@@ -18,6 +18,8 @@ import AdminSummary from "../components/home/AdminSummary"
 
 import { elevation } from '../assets/utils/utilFuncs'
 
+import Firebase from "../api/Firebase"
+
 import _ from "lodash"
 import { selectSuperChargedCompetitions } from '../redux/reducers';
 

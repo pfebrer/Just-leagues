@@ -11,6 +11,7 @@ import { translate } from "../assets/translations/translationManager";
 
 import 'lodash.combinations';
 import _ from "lodash"
+import { alertError, alertProgress} from '../assets/utils/utilFuncs'
 
 class Firebase {
 
@@ -721,7 +722,7 @@ class Firebase {
         //Collection refs
         this.matchesRef(gymID, compID).where("playersIDs", "array-contains", userToMerge.id), //The competition's matches ref
         this.pendingMatchesRef(gymID, compID).where("playersIDs", "array-contains", userToMerge.id), //The competition's pending matches ref
-        this.rankHistoryRef(gymID, compID).where("playersIDs", "array-contains", userToMerge.id) //The ranking history
+        this.rankHistoryRef(gymID, compID).where("playersIDs", "array-contains", userToMerge.id) //The ranking history ref
       )
 
       if (typeOfComp == "groups"){
@@ -823,29 +824,27 @@ class Firebase {
         name, order,
         matchesIDs,
         playersIDs: playersGroup,
-        scores: [false] * playersGroup.length**2 
+        scores: Array(playersGroup.length**2).fill(false)
       })
 
-      //We need to delete a bunch of things
-      let promises = []
-      //Find all groups that were previously there to delete them
-      promises.push(this.groupsRef(gymID,compID).get())
-      //Find also all pendingMatches to delete them
-      promises.push(this.pendingMatchesRef(gymID,compID).get())
-      
-      //Delete everything and commit
-      Promise.all(promises).then(querySnapshots => {
-        
-        querySnapshots.forEach( querySnapshot => {
-          querySnapshot.forEach( docSnapshot => {
-            batch.delete(docSnapshot.ref)
-        })})
-
-        return batch.commit().then(()=> callback())
-
-      }).catch(err => {}) //For some reason it says that the batch is used after commit, but everything is done right, idk :)
-
     })
+
+    //We need to delete a bunch of things
+    alertProgress(translate("progress.cleaning previous groups"))
+    let deletes = []
+    //Delete all the groups that were there and their subcollections
+    deletes.push(this.callHttpsFunction('recursiveDelete', { path: this.groupsRef(gymID,compID).path }) )
+    //Delete all pendingMatches and their subcollections
+    deletes.push(this.callHttpsFunction('recursiveDelete', { path: this.pendingMatchesRef(gymID,compID).path }))
+    
+    //When everything is deleted, commit the batch
+    return Promise.all(deletes).then(deletes => {
+
+      alertProgress(translate("progress.generating new groups"))
+
+      return batch.commit().then(callback).catch(err => alertError(err,translate("errors.could not generate new groups")))
+
+    }).catch( err => alertError(err,translate("errors.could not clean previous groups") ))
 
   }
 
@@ -950,7 +949,7 @@ class Firebase {
     }
     console.log("Firebase::callFunction functionName[" + functionName + "]");
 
-    this.functions.httpsCallable(functionName)({dbPrefix: Constants.dbPrefix, ...argsObject}).then(callback).catch(errorFn);
+    return this.functions.httpsCallable(functionName)({dbPrefix: Constants.dbPrefix, ...argsObject}).then(callback).catch(errorFn);
 };
 
   //DATABASE REFERENCES (Only place where they should be declared in the whole app)

@@ -85,6 +85,7 @@ class Group extends React.Component{
                     renderItem={this.renderPlugIns}
                     renderSectionHeader={(args) =>  this.renderHeaders(args, sectionTitles)}
                     sections={sections}
+                    keyExtractor={item => item.id}
                 />         
             </View> : null}
             
@@ -109,6 +110,8 @@ export default class Groups extends React.Component {
     render() {
 
         if (!this.props.groups) return <View style={{flex:1}}/>
+
+        console.warn(this.props.groups.length)
 
         return (
             <FlatList 

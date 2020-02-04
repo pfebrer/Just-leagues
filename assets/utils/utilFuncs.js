@@ -1,5 +1,6 @@
 import _ from "lodash"
 import { translate } from "../translations/translationManager";
+import {Toast} from 'native-base'
 
 //Get a deep copy of an object
 exports.deepClone = (obj) => JSON.parse(JSON.stringify(obj));
@@ -291,4 +292,18 @@ exports.elevation = (elevation) => {
       shadowOpacity: 0.3,
       shadowRadius: 0.8 * elevation
     };
+}
+
+exports.alertProgress = (message) => {
+    return Toast.show({
+        text: message,
+        type: 'success'
+    })
+}
+
+exports.alertError = (error, message) => {
+    return Toast.show({
+        text: message + "\n Error: " + error,
+        type: 'danger'
+    })
 }

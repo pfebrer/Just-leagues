@@ -100,6 +100,10 @@
         "position": "Posició",
         "groups": "Grups"
     },
+    "progress": {
+        "cleaning previous groups": "Netejant els grups anteriors...",
+        "generating new groups": "Generant els nous grups..."
+    },
     "errors": {
         "you entered an ivalid result":"No ens enganyis, aquest resultat és impossible :(",
         "unable to merge users": "No s'han pogut unir els jugadors",
@@ -109,7 +113,9 @@
         "competition was not removed": "La competició no s'ha pogut eliminar",
         "unable to add new players": "No s'ha pogut afegir nous jugadors",
         "failed to add to calendar": "No s'ha pogut afegir al calendari",
-        "could not get previous ranking": "No s'ha pogut obtenir el rànquing anterior"
+        "could not get previous ranking": "No s'ha pogut obtenir el rànquing anterior",
+        "could not clean previous groups": "No s'ha pogut netejar els grups anteriors",
+        "could not generate new groups": "No s'han pogut generar els nous grups"
     },
     "settings": {
         "you are about to restore default settings": "Estàs a punt de tornar a la configuració inicial.",

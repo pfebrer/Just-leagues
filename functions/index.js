@@ -32,6 +32,7 @@ const strings ={
 const functions = require('firebase-functions');
 const fetch = require('node-fetch');
 const admin = require('firebase-admin');
+const firebase_tools = require('firebase-tools');
 
 const moment = require('moment')
 const _ = require('lodash')
@@ -414,6 +415,29 @@ exports.updateGroupScores = httpsFunction.onCall((data, context) => {
     })
   
 })
+
+exports.recursiveDelete = httpsFunction.onCall((data, context) => {
+
+    const path = data.path;
+    console.log(
+      `User ${context.auth.uid} has requested to delete path ${path}`
+    );
+
+    // Run a recursive delete on the given document or collection path.
+    // The 'token' must be set in the functions config, and can be generated
+    // at the command line by running 'firebase login:ci'.
+    return firebase_tools.firestore
+      .delete(path, {
+        project: process.env.GCLOUD_PROJECT,
+        recursive: true,
+        yes: true,
+      })
+      .then(() => {
+        return {
+          path: path
+        };
+      });
+  });
 
 //-----------------------------------------------------
 //        TAKEN FROM UTILFUNCS (KEEP IN SYNC)
