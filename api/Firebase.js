@@ -721,6 +721,7 @@ class Firebase {
         //Collection refs
         this.matchesRef(gymID, compID).where("playersIDs", "array-contains", userToMerge.id), //The competition's matches ref
         this.pendingMatchesRef(gymID, compID).where("playersIDs", "array-contains", userToMerge.id), //The competition's pending matches ref
+        this.rankHistoryRef(gymID, compID).where("playersIDs", "array-contains", userToMerge.id) //The ranking history
       )
 
       if (typeOfComp == "groups"){
