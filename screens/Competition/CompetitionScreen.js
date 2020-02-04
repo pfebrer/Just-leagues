@@ -55,13 +55,15 @@ class CompetitionScreen extends Component {
     constructor(props){
         super(props);
 
+        this.tabKeys = ['main', 'matches', 'stats']
+
 
         this.state = {
-            index: 0,
+            index: this.tabKeys.indexOf(props.navigation.getParam("tab", "main")) ,
             routes: [
-                { key: 'main', title: translate("tabs.competition overview") },
-                { key: 'matches', title: translate("tabs.matches") },
-                { key: 'stats', title: translate("tabs.stats") },
+                { key: this.tabKeys[0], title: translate("tabs.competition overview") },
+                { key: this.tabKeys[1], title: translate("tabs.matches") },
+                { key: this.tabKeys[2], title: translate("tabs.stats") },
                 //{ key: 'betting', title: translate("tabs.betting")},
             ]
         }
@@ -69,7 +71,6 @@ class CompetitionScreen extends Component {
     }
 
     componentDidMount(){
-        
     }
 
     render(){

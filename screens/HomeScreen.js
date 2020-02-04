@@ -1,8 +1,10 @@
 import React, {Component} from 'react';
 import {
     StyleSheet,
-    ScrollView
+    ScrollView,
+    View
 } from 'react-native';
+import { Icon } from 'native-base'
 
 //Redux stuff
 import { connect } from 'react-redux'
@@ -121,13 +123,19 @@ class CompetitionState extends Component {
 
     }
 
-    goToCompetition = () => {
+    goToCompetition = (tab) => {
 
         //Set the current competition so that the competition screen can know what to render
         this.props.setCurrentCompetition(this.props.competition.id)
 
-        this.props.navigation.navigate("CompetitionScreen", {competitionName: this.props.competition.name})
+        this.props.navigation.navigate("CompetitionScreen", {competitionName: this.props.competition.name, tab})
 
+    }
+
+    goToCompChat = () => {
+
+        this.props.setCurrentCompetition(this.props.competition.id)
+        this.props.navigation.navigate("Chat")
     }
 
     render(){
@@ -141,6 +149,10 @@ class CompetitionState extends Component {
                 onHeaderPress={this.goToCompetition}
                 actionIcon="add">
                     {this.props.competition.renderCompState(this.props)}
+                    <View style={styles.competitionStateActions}>
+                        <Icon name="chatbubbles" onPress={this.goToCompChat}/>
+                        <Icon name="stats" onPress={() => this.goToCompetition("stats")}/>
+                    </View>
             </Card>
         )
 
@@ -165,5 +177,12 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         backgroundColor: USERSETTINGS["General appearance"].backgroundColor.default
     },
+
+    competitionStateActions: {
+        flexDirection: "row",
+        paddingTop: 20,
+        justifyContent: "space-around",
+        alignContent: "center"
+    }
 
 });

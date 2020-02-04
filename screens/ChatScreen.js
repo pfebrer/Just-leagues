@@ -5,8 +5,9 @@ import {
     StyleSheet,
     View,
     Platform,
-    StatusBar
+    StatusBar,
 } from 'react-native';
+import {Text} from 'native-base'
 
 import { GiftedChat, Bubble, Send} from 'react-native-gifted-chat'
 
@@ -31,7 +32,7 @@ class ChatScreen extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            target: {particularChat: false},
+            target: {particularChat: true},
             messages: [],
         };
 
@@ -83,6 +84,7 @@ class ChatScreen extends React.Component {
         //Target must be an object as following {particularChat: bool}
 
         if (  ! _.isEqual(newTarget, this.state.target) ){
+
             this.setState({target: newTarget})
         }
 
@@ -172,6 +174,21 @@ class ChatScreen extends React.Component {
 
     render() {
 
+        let particularInfo = this.state.target.particularChat ? this.props.currentComp.getPlayerGroup(this.props.currentUser.id) : null;
+        let users;
+
+        if (particularInfo){
+            
+            //Get the names of the users, except own name
+            users = particularInfo.playersIDs.reduce((users,uid) => {
+                if (uid != this.props.currentUser.id) users.push(this.props.currentComp.renderName(this.props.relevantUsers[uid].names))
+                return users
+            }, [])
+
+        }
+
+        
+
         return (
             <View style={{flex: 1}}>
                 <SafeAreaView style={{ flex:0, backgroundColor: 'white' }} />
@@ -183,6 +200,9 @@ class ChatScreen extends React.Component {
                             titleTextStyle={styles.carouselItemTitleText}
                             chatSelectorTextStyle={styles.chatSelectorText}/>
                     </View>
+                    {particularInfo ? <View style={styles.usersView}>
+                        <Text note style={styles.usersText}>{users.join(", ")}</Text>
+                    </View> : null}
                     <GiftedChat
                         //Functionality
                         messages={this.state.messages}
@@ -237,6 +257,16 @@ const styles = StyleSheet.create({
         fontSize: totalSize(1.6),
         textTransform: "uppercase"
     },
+
+    usersView: {
+        justifyContent: "center",
+        paddingVertical: 5,
+        alignItems: "center"
+    },
+
+    usersText: {
+
+    }
 
 
 });
