@@ -379,6 +379,8 @@ class Firebase {
 
   //FUNCTIONS TO GET DATA FROM DATABASE ONCE (don't keep listening)
   getCompetition = (compID) => this.compsGroupRef.where("id", "==", compID).get()
+
+  getPreviousRanking = (gymID, compID) => this.rankHistoryRef(gymID, compID).orderBy("date", "desc").limit(1).get()
   
   //LISTENERS TO THE DATABASE
 
@@ -819,7 +821,8 @@ class Firebase {
       batch.set( groupRef, {
         name, order,
         matchesIDs,
-        playersIDs: playersGroup
+        playersIDs: playersGroup,
+        scores: [false] * playersGroup.length**2 
       })
 
       //We need to delete a bunch of things

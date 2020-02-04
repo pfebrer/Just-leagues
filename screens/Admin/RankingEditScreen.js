@@ -10,7 +10,7 @@ import {
   Platform,
 } from 'react-native';
 import SortableList from 'react-native-sortable-list';
-import { Button, Icon } from 'native-base';
+import { Button, Icon, Toast } from 'native-base';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import _ from "lodash"
 
@@ -75,6 +75,28 @@ class RankingEditScreen extends Component {
 
   }
 
+  setPreviousRanking = async () => {
+
+    let {gymID, id: compID} = this.props.competition
+
+    try {
+      let querySnapshot = await Firebase.getPreviousRanking(gymID, compID)
+
+      let {playersIDs: ranking, date} = querySnapshot.docs[0].data()
+
+      console.warn(ranking)
+
+      this.setState({ranking})
+    } catch (error) {
+      Toast.show({
+        text: translate("errors.could not get previous ranking") + "\n Error: " + error,
+        type: "danger"
+      })
+    }
+
+    
+  }
+
   updateRankingOrder = (keys) => {
     const ranking = this.props.ranking || this.state.ranking
 
@@ -108,14 +130,19 @@ class RankingEditScreen extends Component {
         data={ranking}
         renderRow={this._renderRow}
         sortingEnabled={this.state.editable}/> : null}
+        <TouchableOpacity onPress={this.setPreviousRanking} style={{paddingVertical: 10}}>
+          <Text style={{textTransform: "uppercase"}}>{translate("admin.go back to previous ranking")}</Text>
+        </TouchableOpacity>
     </View>
     );
   }
 
   _renderRow = ({data: uid, active, index}) => {
 
+    let name = this.props.relevantUsers[uid] ? this.props.competition.renderName(this.props.relevantUsers[uid].names) : "NO"
+
     return <Row 
-            data={this.props.competition.renderName(this.props.relevantUsers[uid].names)} 
+            data={name} 
             active={active} 
             index={index}
             deletable={this.state.deleteMode}

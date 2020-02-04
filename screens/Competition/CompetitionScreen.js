@@ -62,7 +62,7 @@ class CompetitionScreen extends Component {
                 { key: 'main', title: translate("tabs.competition overview") },
                 { key: 'matches', title: translate("tabs.matches") },
                 { key: 'stats', title: translate("tabs.stats") },
-                { key: 'betting', title: translate("tabs.betting")},
+                //{ key: 'betting', title: translate("tabs.betting")},
             ]
         }
 

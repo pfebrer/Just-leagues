@@ -108,7 +108,8 @@
         "could not send message": "No s'ha pogut enviar el missatge",
         "competition was not removed": "La competició no s'ha pogut eliminar",
         "unable to add new players": "No s'ha pogut afegir nous jugadors",
-        "failed to add to calendar": "No s'ha pogut afegir al calendari"
+        "failed to add to calendar": "No s'ha pogut afegir al calendari",
+        "could not get previous ranking": "No s'ha pogut obtenir el rànquing anterior"
     },
     "settings": {
         "you are about to restore default settings": "Estàs a punt de tornar a la configuració inicial.",
@@ -188,6 +189,7 @@
         "generate groups": "Genera grups",
         "generate new ranking": "Genera nou rànquing",
         "competition settings": "Configuració de la competició",
-        "manage players": "Administra jugadors"
+        "manage players": "Administra jugadors",
+        "go back to previous ranking": "Torna al rànquing anterior"
     }
 }
