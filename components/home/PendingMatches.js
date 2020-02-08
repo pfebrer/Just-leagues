@@ -23,7 +23,7 @@ import { totalSize, w, h } from '../../api/Dimensions';
 import { translate } from '../../assets/translations/translationManager';
 import { convertDate, sortMatchesByDate, getCompetitionName } from "../../assets/utils/utilFuncs";
 import Card from './Card';
-import { selectSuperChargedCompetitions } from '../../redux/reducers';
+import { selectSuperChargedCompetitions, selectUserPendingMatches} from '../../redux/reducers';
 
 class PendingMatches extends Component {
 
@@ -40,26 +40,29 @@ class PendingMatches extends Component {
 
     }
 
-    componentDidMount(){
-        this.listener = Firebase.onPendingMatchesSnapshot(this.props.currentUser.id, 
-            matches => {
+    setMatches = () => {
 
-                matches = matches.map( match => ({
-                    ...match,
-                    context: { ...match.context, competition: this.props.competitions[match.context.competition.id]}
-                }) )
+        const pendingMatches = Object.values(this.props.competitions).reduce((userPendingMatches, competition) => {
 
-                matches = sortMatchesByDate(matches)
+            return [...userPendingMatches, ...competition.getUserMatches(this.props.currentUser.id, true)]
+        }, [])
 
-                this.MAX_HEIGHT =Math.max(0, h(10)*(matches.length - 1))
+        this.MAX_HEIGHT = Math.max(0, h(10)*(pendingMatches.length - 1))
 
-                this.setState({matches})
-            }
-        )
+        this.setState( {matches: sortMatchesByDate(pendingMatches)})
     }
 
-    componentWillUnmount(){
-        this.listener()
+    componentDidMount(){
+        this.setMatches()
+    }
+
+    componentDidUpdate(prevProps){
+
+        if ( !_.isEqual(_.map(this.props.competitions, "pendingMatches"), _.map(prevProps.competitions, "pendingMatches")) ){
+
+            this.setMatches()
+
+        }
     }
 
     toggleContent = () => {
@@ -185,7 +188,7 @@ class PendingMatches extends Component {
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
     relevantUsers: state.relevantUsers,
-    competitions: selectSuperChargedCompetitions(state)
+    competitions: selectSuperChargedCompetitions(state),
 })
 
 const mapDispatchToProps = {

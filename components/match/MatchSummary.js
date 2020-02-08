@@ -87,7 +87,9 @@ const mapDispatchToProps = {
     setCurrentMatch
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withNavigation(MatchSummary));
+export default connect(mapStateToProps, mapDispatchToProps)(MatchSummary);
+
+exports.Table = connect(mapStateToProps, mapDispatchToProps)(withNavigation(MatchSummary));
 
 const styles = StyleSheet.create({
     //Players

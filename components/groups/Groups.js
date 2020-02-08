@@ -26,7 +26,7 @@ class Group extends React.Component{
 
     componentDidMount(){
         //This is so that first render is fast and after that we start to render the hidden parts
-        this.setState({expandable: true})
+        //this.setState({expandable: true})
     }
 
     renderPlugIns = ({item, section}) => {
@@ -37,7 +37,7 @@ class Group extends React.Component{
 
         if (item == "groupBet") { content = <GroupBet noHeader group={this.props.group} competition={this.props.competition}/>}
 
-        else if (section.key == "matches") { content = <MatchSummary match={item} /> } 
+        else if (section.key == "matches") { content = <MatchSummary navigation={this.props.navigation} match={item} /> } 
 
         return <View style={{ ...styles.plugInItemContainer, ...heightStyle}}>{content}</View>
     }
@@ -71,7 +71,7 @@ class Group extends React.Component{
         }
 
         return <View style={{...styles.groupContainer}}>
-            <TouchableOpacity onPress={() => this.setState({expanded: !this.state.expanded})} style={{...styles.groupTitleView}}>
+            <TouchableOpacity onPress={() => this.setState({expandable: true, expanded: !this.state.expanded})} style={{...styles.groupTitleView}}>
                 <Text style={styles.groupTitleText}>{translate("vocabulary.group") + " " + (group.name)}</Text>
             </TouchableOpacity>
             <Table
@@ -85,7 +85,7 @@ class Group extends React.Component{
                     renderItem={this.renderPlugIns}
                     renderSectionHeader={(args) =>  this.renderHeaders(args, sectionTitles)}
                     sections={sections}
-                    keyExtractor={item => item.id}
+                    keyExtractor={item => {return item != "groupBet" ? item.id : "groupBet"}}
                 />         
             </View> : null}
             
@@ -120,7 +120,7 @@ export default class Groups extends React.Component {
                 data={this.props.groups}
                 renderItem={({ item }) => this.renderGroup(item)}
                 initialNumToRender={5}
-                keyExtractor={group => group.iGroup}
+                keyExtractor={group => group.iGroup.toString()}
                 contentContainerStyle={styles.contentContainer}
                 bounces={true}/>
         );

@@ -84,7 +84,7 @@ class GroupBet extends Component {
         let addPlayerViewStyles = { [-1]: styles.loser, [1]: styles.winner}[bettingState]
         let addPlayerTextStyles = { [-1]: styles.loserText, [1]: styles.winnerText}[bettingState]
 
-        return <View style={{...styles.playerBettingView, ...(isLast ? {borderBottomWidth: 0} : {}), ...addPlayerViewStyles}}>
+        return <View key={uid} style={{...styles.playerBettingView, ...(isLast ? {borderBottomWidth: 0} : {}), ...addPlayerViewStyles}}>
             <TouchableOpacity 
                 style={{...styles.indicatorView, ...styles.winner}}
                 onPress={() => updateState(1, bettingState)}>

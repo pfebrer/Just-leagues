@@ -16,8 +16,6 @@ export default class GroupsCompetition extends Competition {
     constructor(compDict){
         super(compDict);
 
-        setTimeout( this.getNewRanking , 3000 )
-
     }
 
     //Define the specific listeners that we need for this type of competition
@@ -31,7 +29,12 @@ export default class GroupsCompetition extends Competition {
 
         if (!this.groups) return null
 
-        return <Groups competition={this} groups={this.groups} navigation={props.navigation}/>
+        return <Groups
+            competition={this}
+            //competition={_.pick(this, ["renderName", "name", "playersIDs", "settings", "getMatch", "getSortedIndices", "getGroupMatches", "id", "gymID"])}
+            groups={this.groups} 
+            navigation={props.navigation}
+        />
     }
 
     compStateListener = (setState, state, props) => Firebase.onPlayerGroupSnapshot(this.gymID, this.id, props.currentUser.id, (listenerResult) => setState({listenerResult}))
@@ -45,6 +48,7 @@ export default class GroupsCompetition extends Competition {
         return <Table
             {...playerGroup}
             competition={this}
+            //competition={_.pick(this, ["renderName", "name", "playersIDs", "settings", "getMatch", "getSortedIndices"])}
             navigation={props.navigation}
         />
     }

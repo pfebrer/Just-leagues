@@ -20,3 +20,15 @@ export const selectCurrentCompetition = (state) => fromCompetitions.selectCurren
 export const selectAdminCompetitions = (state) => fromCompetitions.selectAdminCompetitions(state.competitions)
 
 export const selectSuperChargedCompetitions = (state) => fromCompetitions.selectSuperChargedCompetitions(state.competitions)
+
+export const selectUserPendingMatches = (state) => {
+
+    if (!state.competitions) return []
+
+    return Object.values(state.competitions).reduce((userPendingMatches, competition) => {
+
+        if (!competition.pendingMatches) return userPendingMatches
+
+        return [...userPendingMatches, ...competition.pendingMatches.filter(match => match.playersIDs.indexOf(state.currentUser.id) > -1)]
+    }, [])
+}

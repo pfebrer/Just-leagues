@@ -151,7 +151,7 @@ class CompetitionState extends Component {
                     {this.props.competition.renderCompState(this.props)}
                     <View style={styles.competitionStateActions}>
                         <Icon name="chatbubbles" onPress={this.goToCompChat}/>
-                        <Icon name="stats" onPress={() => this.goToCompetition("stats")}/>
+                        {/*<Icon name="stats" onPress={() => this.goToCompetition("stats")}/>*/}
                     </View>
             </Card>
         )

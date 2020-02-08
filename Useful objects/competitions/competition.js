@@ -16,9 +16,16 @@ export default class Competition extends Configurable {
     constructor(compDict){
         super()
 
+        defaults = {
+            matches: [],
+            pendingMatches: []
+        }
+
+        allAttrs = {...defaults, ...compDict}
+
         //Set all the attributes of the competition as they were provided
-        Object.keys(compDict).forEach( key => {
-            this[key] = compDict[key]
+        Object.keys(allAttrs).forEach( key => {
+            this[key] = allAttrs[key]
         })
 
     }
@@ -131,7 +138,24 @@ export default class Competition extends Configurable {
 
     /* HELPERS */
     matchesWithContext = (matches) => {
-        return matches.map( match => ({...match, context: {...match.context, competition: this }}) )
+        return matches.map( match => ({...match, context: {...match.context, competition: _.pick(this, ["renderName", "name", "playersIDs", "gymID", "id"]) }}) )
+    }
+
+    getMatch = (matchID) => {
+        return this.matchesWithContext( [ _.find([...this.matches, ...this.pendingMatches], ["id", matchID]) ] )[0]
+    }
+
+    getMatches = (matchesIDs) => {
+        //Does not return in the same order as IDs where provided!!
+        return this.matchesWithContext( [...this.matches, ...this.pendingMatches].filter(match => matchesIDs.indexOf(match.id) > -1) )
+    }
+
+    getUserMatches = (uid, pending) => {
+
+        let matches = pending ? this.pendingMatches : pending == false ? this.matches : [...this.matches, ...this.pendingMatches]
+
+        return this.matchesWithContext( matches.filter(match => match.playersIDs.indexOf(uid) > -1) )
+        
     }
 
 }

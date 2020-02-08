@@ -3,7 +3,10 @@ import { translate } from "../translations/translationManager";
 import {Toast} from 'native-base'
 
 //Get a deep copy of an object
-exports.deepClone = (obj) => JSON.parse(JSON.stringify(obj));
+exports.deepClone = (obj) => {
+    return _.cloneDeep(obj)
+    //return JSON.parse(JSON.stringify(obj));
+}
 
 //Transposes a 2D array
 exports.transpose = m => m[0].map((x,i) => m.map(x => x[i]))

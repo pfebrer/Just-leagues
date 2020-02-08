@@ -57,20 +57,18 @@ class CompetitionScreen extends Component {
 
         this.tabKeys = ['main', 'matches', 'stats']
 
+        //const startIndex = this.tabKeys.indexOf(props.navigation.getParam("tab", "main"))
 
         this.state = {
-            index: this.tabKeys.indexOf(props.navigation.getParam("tab", "main")) ,
+            index: 0,
             routes: [
                 { key: this.tabKeys[0], title: translate("tabs.competition overview") },
                 { key: this.tabKeys[1], title: translate("tabs.matches") },
-                { key: this.tabKeys[2], title: translate("tabs.stats") },
+                { key: this.tabKeys[2], title: translate("tabs.stats") }
                 //{ key: 'betting', title: translate("tabs.betting")},
             ]
         }
 
-    }
-
-    componentDidMount(){
     }
 
     render(){
@@ -88,13 +86,10 @@ class CompetitionScreen extends Component {
                     return this.props.competition.renderCompMatches({navigation: this.props.navigation});
                 case 'stats':
                     return this.props.competition.renderCompStats({navigation: this.props.navigation});
-                case 'betting':
-                    let {Component, props} = this.props.competition.renderCompBetting()
-                    return <Component {...props}/>;
                 default:
                     return null;
             }
-          };
+        };
 
         return (
             <View style={{backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor, flex: 1}}>
@@ -117,7 +112,7 @@ class CompetitionScreen extends Component {
 
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
-    competition: selectCurrentCompetition(state),
+    competition: selectCurrentCompetition(state)
 })
 
 export default connect(mapStateToProps)(CompetitionScreen);

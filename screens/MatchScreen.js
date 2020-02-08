@@ -40,66 +40,23 @@ class MatchScreen extends Component {
         }
     };
 
-    listenToMatch = () => {
-        //NO NEED TO LISTEN FOR THE MATCH HERE, AS THE COMPETITION IS ALREADY LISTENING, FIX THIS
-
-        if (this.matchSub) this.matchSub();
-
-        this.competition = this.props.currentMatch.context.competition
-
-        this.matchID = this.props.currentMatch.id
-
-        if (this.props.currentMatch.context.pending){
-            //Listen to the pendingMatch
-
-            this.matchSub = Firebase.onPendingMatchSnapshot(this.competition.gymID, this.competition.id, this.matchID,
-            
-                (match, docSnapshot) => {
-
-                    this.matchRef = docSnapshot.ref
-
-                    this.props.setCurrentMatch( { ...match, result: match.result || this.defaultResult, context:{...match.context, ...this.props.currentMatch.context}}, {merge: true} )
-
-                    this.grantEditRights()
-    
-                }
-    
-            );
-
-        } else {
-
-            this.matchSub = Firebase.onMatchSnapshot(this.competition.gymID, this.competition.id, this.matchID,
-            
-                (match, docSnapshot) => {
-
-                    this.matchRef = docSnapshot.ref
-
-                    this.props.setCurrentMatch( {...match, context: {...match.context, competition: this.competition} }, {merge: true} )
-
-                    this.grantEditRights()
-    
-                }
-    
-            );
-        }
-
-    }
-
     componentDidMount() {
 
-       this.listenToMatch()
-
        this.props.navigation.setParams({commitAllMatchChanges: this.commitAllMatchChanges})
+
+       this.grantEditRights()
 
     }
 
     grantEditRights = () => {
 
+        console.warn(this.props.currentMatch.context.competition.gymID)
+
         let editable = 
             //Don't let people edit other people's matches or edit already played matches
             (this.props.currentMatch.playersIDs.indexOf(this.props.currentUser.id) >= 0 && this.props.currentMatch.context.pending)
             //Unless it is an admin of this gym
-            || (this.props.currentUser.gymAdmin && this.props.currentUser.gymAdmin.indexOf(this.competition.gymID) >= 0)
+            || (this.props.currentUser.gymAdmin && this.props.currentUser.gymAdmin.indexOf(this.props.currentMatch.context.competition.gymID) >= 0)
             //Or an app admin
             || this.props.currentUser.admin
 
@@ -110,7 +67,7 @@ class MatchScreen extends Component {
 
         if ( (!prevProps.currentMatch && this.props.currentMatch) || (prevProps.currentMatch.id != this.props.currentMatch.id) ){
 
-            this.listenToMatch()
+            //this.listenToMatch()
 
         } else if ( ! _.isEqual(prevProps.currentUser, this.props.currentUser)) {
 
@@ -118,10 +75,6 @@ class MatchScreen extends Component {
 
         }
 
-    }
-
-    componentWillUnmount(){
-        if (this.matchSub) this.matchSub();
     }
 
     commitAllMatchChanges = () => {
@@ -141,7 +94,7 @@ class MatchScreen extends Component {
             if (!isResultCorrect){
 
                 Toast.show({
-                    text: translate("errors.you entered an ivalid result"),
+                    text: translate("errors.you entered an invalid result"),
                     type: "danger",
                     duration: 3000
                 });

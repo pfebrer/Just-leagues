@@ -105,7 +105,7 @@
         "generating new groups": "Generant els nous grups..."
     },
     "errors": {
-        "you entered an ivalid result":"No ens enganyis, aquest resultat és impossible :(",
+        "you entered an invalid result":"No ens enganyis, aquest resultat és impossible :(",
         "unable to merge users": "No s'han pogut unir els jugadors",
         "unknown competition": "Competició desconeguda",
         "no name": "Sense nom",

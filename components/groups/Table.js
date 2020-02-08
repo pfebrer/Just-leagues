@@ -24,48 +24,6 @@ class Table extends Component {
         }
     }
 
-    /*generateEmptyScores = () => {
-       
-        return  _.chunk(Array(this.props.playersIDs.length**2).fill(false), this.props.playersIDs.length);
-    }
-
-    componentDidMount() {
-
-        let {gymID, id: compID} = this.props.competition
-
-        this.matchesListener = Firebase.matchesRef(gymID, compID).where("context.group.id", "==", this.props.id).onSnapshot(
-
-            matches => {
-
-                let newScores = _.cloneDeep(this.state.scores)
-                
-                matches.forEach(
-
-                    match => {
-
-                        let {result, playersIDs} = match.data()
-
-                        let points = setsToPoints(result, this.props.competition.settings.groups.pointsScheme)
-
-                        let iPlayers = playersIDs.map( uid => this.props.playersIDs.indexOf(uid))
-
-                        newScores[iPlayers[0]][iPlayers[1]] = points[0]
-                        newScores[iPlayers[1]][iPlayers[0]] = points[1]
-
-                    }
-                )
-
-                this.setState({scores: newScores})
-            }
-        )
-
-    }
-
-    componentWillUnmount() {
-        //Unsubscribe from listeners
-        this.matchesListener()
-    }*/
-
     goToUserProfile = ({iRow}) => {
 
         let uid = this.props.playersIDs[iRow]
@@ -91,17 +49,7 @@ class Table extends Component {
 
         let iMatch = this.cellPositionToMatchIndex(iRow, iCol, this.props.playersIDs.length)
 
-        this.props.setCurrentMatch({
-            id: this.props.matchesIDs[iMatch],
-            context: {
-                group: {
-                    id: this.props.id,
-                    name: this.props.name
-                },
-                competition: this.props.competition,
-                pending: data ? false : true
-            },
-        })
+        this.props.setCurrentMatch(this.props.competition.getMatch(this.props.matchesIDs[iMatch]))
 
         this.props.navigation.navigate("MatchScreen")
 
@@ -109,9 +57,9 @@ class Table extends Component {
 
     renderTable = (ranks, players, scores, totals) => {
 
-        //let sorted = this.props.competition.getSortedIndices()
+        let sortedPlayerIndices = this.props.competition.getSortedIndices({playersIDs: players, scores})
 
-        let sortedPlayerIndices = sortPlayerIndices(players, scores, totals, this.props.competition.settings.groups.untyingCriteria)
+        //let sortedPlayerIndices = sortPlayerIndices(players, scores, totals, this.props.competition.settings.groups.untyingCriteria)
         let nPlayers = players.length
         
         const iLeader = sortedPlayerIndices[0], iLoser = _.last(sortedPlayerIndices)
@@ -158,7 +106,9 @@ class Table extends Component {
 
     render() {
 
-        let {playersIDs, scores} = deepClone(this.props)
+        let {playersIDs, scores} = this.props
+
+        scores = deepClone(scores)
 
         if( !playersIDs.length > 0 ) { return null }
 
@@ -324,7 +274,9 @@ const mapDispatchToProps = {
     setCurrentMatch
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(withNavigation(Table));
+export default connect(mapStateToProps, mapDispatchToProps)(Table)
+
+exports.Table = connect(mapStateToProps, mapDispatchToProps)(withNavigation(Table));
 
 const styles = StyleSheet.create({
 

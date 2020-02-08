@@ -937,7 +937,7 @@ class Firebase {
 
     if (callback === undefined || callback === null) {
         callback = (data) => {
-            console.warn("Firebase::callFunction::callback", data); // hello world
+            console.warn("Firebase::callFunction::callback", functionName, data); // hello world
             //alert("SUCCESS: " + functionName + ", data:" + data.data);
         };
     }
