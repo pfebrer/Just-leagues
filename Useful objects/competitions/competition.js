@@ -138,7 +138,7 @@ export default class Competition extends Configurable {
 
     /* HELPERS */
     matchesWithContext = (matches) => {
-        return matches.map( match => ({...match, context: {...match.context, competition: _.pick(this, ["renderName", "name", "playersIDs", "gymID", "id"]) }}) )
+        return matches.map( match => ({...match, context: {...match.context, competition: this  }}) ) //_.pick(this, ["renderName", "name", "playersIDs", "gymID", "id", "getSetting"])
     }
 
     getMatch = (matchID) => {

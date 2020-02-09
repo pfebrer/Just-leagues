@@ -3,7 +3,7 @@ import { SET_CURRENTMATCH} from '../actions/actionTypes'
 const match = (state = {}, action) => {
     switch (action.type) {
         case SET_CURRENTMATCH:
-
+            
             if (action.config.merge){
                 var newState = { ...state, ...action.data }
             } else {

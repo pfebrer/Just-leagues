@@ -399,6 +399,7 @@ class Firebase {
     /*Listen to changes on the current user's data
     The callback recieves the user's complete data if getData = true, else the documentSnapshot*/
 
+    console.warn("USER")
     return this.userRef(uid).onSnapshot(
       docSnapshot => {
         callback( getData ? {...docSnapshot.data(), id: docSnapshot.id} : docSnapshot)
@@ -407,6 +408,7 @@ class Firebase {
   }
 
   onUnasignedUsersSnapshot = (userEmail, callback, getData = true) => {
+    console.warn("UNASIGNED")
     return this.unasignedUsersRef.where("email", "==", userEmail.toLowerCase()).onSnapshot(
       query => {
 
@@ -421,6 +423,7 @@ class Firebase {
   }
 
   onPendingMatchesSnapshot = (uid, callback, getData = true) => {
+    console.warn("PENDING MATCHES")
     /*Listen to changes in the pendingMatches of a given user
     Callback recieves an array with all the pendings matches complete info if getData = true,
     else it recieves the querySnapshot*/
@@ -436,7 +439,7 @@ class Firebase {
   }
 
   onPendingMatchSnapshot = (gymID, compID, matchID, callback, getData = true) => {
-
+    console.warn("PENDING MATCH")
     return this.pendingMatchRef(gymID,compID, matchID).onSnapshot( docSnapshot => {
 
       if (!getData){
@@ -453,6 +456,7 @@ class Firebase {
   }
 
   onUserMatchesSnapshot = (uid, callback, getData = true) => {
+    console.warn("USER MATCHES")
     /*Listen to changes in the matches of a given user
     Callback recieves an array with all the matches complete info if getData = true,
     else it recieves the querySnapshot*/
@@ -468,6 +472,7 @@ class Firebase {
   }
 
   onMatchSnapshot = (gymID, compID, matchID, callback, getData = true) => {
+    console.warn("MATCH SNAPSHOT")
 
     return this.matchRef(gymID, compID, matchID).onSnapshot( docSnapshot => {
 
@@ -485,6 +490,7 @@ class Firebase {
   }
 
   onCompetitionsSnapshot = (gymID, callback, getData = true) => {
+    console.warn("COMPETITIONS")
     /*Listen to competitions for a certain gym (thought in principle for gym admins)*/
 
     return this.compsRef(gymID)
@@ -502,6 +508,7 @@ class Firebase {
   }
 
   onCompetitionSnapshot = (compID, callback, getData = true) => {
+    console.warn("COMPETITION")
     /*Listens for changes in a given competition*/
 
     //First, we listen for the competition document
@@ -520,6 +527,7 @@ class Firebase {
   }
 
   onCompUsersSnapshot = (compID, currentUser, callback) => {
+    console.warn("COMP USERS")
     /*Listen to users that are active in a given competition
     Returns and object like {id1: name1, id2:name2 ....}*/
 
@@ -555,6 +563,7 @@ class Firebase {
   }
 
   onCompMatchesSnapshot = (gymID, compID, callback) => {
+    console.warn("COMP MATCHES")
     /*Listen to changes in matches for a given competition*/
 
     return this.matchesRef(gymID, compID).onSnapshot( querySnapshot => {
@@ -564,6 +573,7 @@ class Firebase {
   }
 
   onCompPendingMatchesSnapshot = (gymID, compID, callback) => {
+    console.warn("COMP PENDING MATCHES")
     /*Listen to changes in pending matches for a given competition*/
 
     return this.pendingMatchesRef(gymID, compID).onSnapshot( querySnapshot => {
@@ -573,6 +583,7 @@ class Firebase {
   }
 
   onGroupsSnapshot = (gymID, compID, callback, orderBy = "order", getData = true) => {
+    console.warn("GROUPS")
     /*Listen to changes in groups in a competition
     the callback recieves an array with each group complete info if getData = true, else it recieves the querySnapshot*/
 
@@ -596,6 +607,7 @@ class Firebase {
   }
 
   onPlayerGroupSnapshot = (gymID, compID, uid, callback, getData = true) => {
+    console.warn("PLAYER GROUP")
     /*Listener to changes on the group where the player is in a competition
     /The callback recieves the group data if getData = true, otherwise it recieves the document snapshot*/
 
@@ -606,6 +618,7 @@ class Firebase {
   }
 
   onChatMessagesSnapshot = (gymID, compID, {particularChat, compType, uid}, callback) => {
+    console.warn("CHAT MESSAGES")
     /*Listener to messages of the chat for a certain competition */
 
     let listener = (messagesRef, extraContext = {}) => {
@@ -640,6 +653,7 @@ class Firebase {
   }
 
   onUserBets = (uid, callback) => {
+    console.warn("USER BETS")
     this.userBetsRef(uid).onSnapshot( querySnap => {
       callback(querySnap.docs.map(doc => ({ id: doc.id, ...doc.data()}) ))
     })

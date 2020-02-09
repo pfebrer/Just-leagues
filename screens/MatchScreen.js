@@ -50,8 +50,6 @@ class MatchScreen extends Component {
 
     grantEditRights = () => {
 
-        console.warn(this.props.currentMatch.context.competition.gymID)
-
         let editable = 
             //Don't let people edit other people's matches or edit already played matches
             (this.props.currentMatch.playersIDs.indexOf(this.props.currentUser.id) >= 0 && this.props.currentMatch.context.pending)
@@ -67,7 +65,6 @@ class MatchScreen extends Component {
 
         if ( (!prevProps.currentMatch && this.props.currentMatch) || (prevProps.currentMatch.id != this.props.currentMatch.id) ){
 
-            //this.listenToMatch()
 
         } else if ( ! _.isEqual(prevProps.currentUser, this.props.currentUser)) {
 
@@ -89,7 +86,7 @@ class MatchScreen extends Component {
 
         if ( params && params.indexOf("result") >= 0){
 
-            let isResultCorrect = resultIsCorrect(this.props.currentMatch.result, this.props.currentMatch.context.competition.settings["groups"].pointsScheme)
+            let isResultCorrect = resultIsCorrect(this.props.currentMatch.result, this.props.currentMatch.context.competition.getSetting("pointsScheme"))
 
             if (!isResultCorrect){
 
@@ -130,7 +127,6 @@ class MatchScreen extends Component {
     }
 
     submitNewMatch = (callback) => {
-        if (this.matchSub) this.matchSub(); //Stop listening to the match (we are going to change its location)
 
         Firebase.submitNewPlayedMatch(this.props.currentMatch,
         
@@ -139,8 +135,6 @@ class MatchScreen extends Component {
                 this.props.setCurrentMatch({context: {...this.props.currentMatch.context, pending: false}}, {merge: true})
                 callback()
 
-                //Listen to the match again
-                this.listenToMatch()
             }
         )
     }
@@ -181,7 +175,6 @@ class MatchScreen extends Component {
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
     currentMatch: state.match,
-    competitions: state.competitions,
     relevantUsers: state.relevantUsers
 })
 

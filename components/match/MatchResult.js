@@ -26,7 +26,9 @@ class MatchResult extends Component {
 
     updateResult = (iTarget, step) => {
 
-        let newResult = this.props.match.result.map( (val, i) => i == iTarget ? val + step : val )
+        let oldResult = this.props.match.result || this.defaultResult
+
+        let newResult = oldResult.map( (val, i) => i == iTarget ? val + step : val )
 
         this.props.setCurrentMatch({result: newResult}, {merge: true})
 
@@ -121,7 +123,6 @@ class ScoreInput extends Component {
 
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
-    competitions: state.competitions,
     relevantUsers: state.relevantUsers
 })
 
