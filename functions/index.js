@@ -85,6 +85,7 @@ exports.initCompetition = firestoreFunction.document(Collections.GYMS + "/{gymID
     batch.update(docSnapshot.ref, {
         id: compID,
         playersIDs: playersIDs,
+        bettingPoints: {},
         [Documents.COMPETITION.usersToCreate]: admin.firestore.FieldValue.delete()
     })
 

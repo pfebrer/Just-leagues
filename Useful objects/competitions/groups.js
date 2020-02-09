@@ -3,7 +3,7 @@ import {View} from "react-native"
 
 import Competition from "./competition"
 import Firebase from "../../api/Firebase"
-import GroupsBetting from "../../components/groups/GroupsBetting"
+import GroupsBetting from "../../components/betting/GroupsBetting"
 import Groups from "../../components/groups/Groups"
 import Table from "../../components/groups/Table"
 import { translate } from "../../assets/translations/translationManager"
@@ -95,6 +95,11 @@ export default class GroupsCompetition extends Competition {
     getPlayerGroup = (uid) => {
 
         return _.find( this.groups, (group) => group.playersIDs.indexOf(uid) != -1)
+    }
+
+    getGroupTotals = ({playersIDs, scores}) => {
+
+        return _.chunk(scores, playersIDs.length).map( playerScores => playerScores.reduce((a, b) => a + b, 0) )
     }
 
     getSortedIndices = ({playersIDs, scores}) => {

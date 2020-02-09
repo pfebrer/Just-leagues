@@ -4,6 +4,7 @@ import 'firebase/functions';
 
 import { Toast } from 'native-base'
 import {Collections, Subcollections, Constants, Documents} from "../constants/CONSTANTS";
+import { settleBet } from '../api/BetManager'
 
 import * as Google from 'expo-google-app-auth';
 import * as GoogleSignIn from 'expo-google-sign-in';
@@ -562,6 +563,41 @@ class Firebase {
     )
   }
 
+  onCompAdminsSnapshot = (gymID, compID, currentUser, callback) => {
+    console.warn("COMP ADMINS")
+    /*Listen to the admins of a given competition */
+
+    return this.usersRef.where("gymAdmin", "array-contains", gymID).onSnapshot(
+
+      querySnapshot => {
+        callback( querySnapshot.docs.reduce((relevantUsers,user) => {
+
+            let {settings: userSettings, expoToken, asigned, email} = user.data()
+
+            let names = userSettings && userSettings["Profile"] ? 
+              _.pick( userSettings["Profile"] , ["aka", "firstName", "lastName"])
+              : {aka: user.get("displayName") , firstName: user.get("displayName"), lastName: ""} //This is just to account for users that may not have their settings updated (or unasigned users)
+            
+            //Decide when to not store the email
+            if ( !( currentUser.admin || currentUser.gymAdmin ) | email === "" ){
+              email = undefined
+            }
+
+            relevantUsers[user.id] = {
+              names,
+              expoToken,
+              asigned,
+              email
+            }
+
+            return relevantUsers;
+          }, {})
+        )
+      }
+
+    )
+  }
+
   onCompMatchesSnapshot = (gymID, compID, callback) => {
     console.warn("COMP MATCHES")
     /*Listen to changes in matches for a given competition*/
@@ -776,9 +812,10 @@ class Firebase {
 
   }
 
-  generateGroups = (gymID, compID, ranking, compsettings, {due}, callback = () => {}) => {
+  generateGroups = (competition, {due}, callback = () => {}) => {
 
     /*Function that, given a ranking, generates groups according to some settings*/
+    const {gymID, id: compID, playersIDs: ranking} = competition
 
     let batch = this.firestore.batch()
 
@@ -789,10 +826,10 @@ class Firebase {
     })
 
     //Divide the ranking in groups of size determined by the competition settings
-    let playersGroups = _.chunk(ranking, compsettings.groupSize)
+    let playersGroups = _.chunk(ranking, competition.getSetting("groupSize"))
 
     //If last group is too small, join the last two groups (maybe it would be good to let the admin choose here)
-    if (_.last(playersGroups).length < compsettings.minGroupSize){
+    if (_.last(playersGroups).length < competition.getSetting("minGroupSize")){
 
       orphans = playersGroups.pop()
       lastGroup = _.concat(playersGroups.pop(), orphans)
@@ -843,6 +880,16 @@ class Firebase {
 
     })
 
+    let betsSettled;
+
+    try{
+      betsSettled = this.settleGroupBets(competition, batch)
+    } catch (error) {
+      alertError(error)
+      return false
+    }
+    if (!betsSettled) return false
+    
     //We need to delete a bunch of things
     alertProgress(translate("progress.cleaning previous groups"))
     let deletes = []
@@ -860,6 +907,69 @@ class Firebase {
 
     }).catch( err => alertError(err,translate("errors.could not clean previous groups") ))
 
+  }
+
+  settleGroupBets = async (competition, batch) => {
+
+    try {
+
+      let shouldCommit = false
+      if (!batch){
+        shouldCommit = true
+        batch = this.firestore.batch()
+      }
+
+      const {gymID, id: compID} = competition
+      let {bettingPoints} = competition
+
+      let [groups, compBets] = await Promise.all([this.groupsRef(gymID, compID).get(), this.betsRef(gymID, compID).get() ])
+      compBets = compBets.docs.map(bet => ({...bet.data(), ref: bet.ref }) )
+
+      groups.forEach( group => {
+
+        let groupBets = _.filter( compBets, ["refTo", group.ref.path])
+
+        if(groupBets && groupBets.length > 0){
+        
+          groupBets.forEach(bet => {
+
+            //If it is already settled go to the next bet
+            if (bet.settled) return false
+
+            const settledBet = settleBet(_.omit(bet, ["ref"]) , {group: group.data(), competition})
+
+            //Update the competition's betting points
+            bettingPoints = this._updateBettingPoints(bettingPoints, settledBet)
+            
+            batch.set( bet.ref, settledBet )
+          })
+
+        }
+
+      })
+
+      batch.update(this.compRef(gymID, compID), {bettingPoints})
+
+      if (shouldCommit) return batch.commit()
+      else return true
+
+    } catch (error) {
+
+      console.warn(error)
+      return false
+    }
+    
+  }
+
+  _updateBettingPoints = (bettingPoints, settledBet) => {
+    
+    if (bettingPoints[settledBet.uid]){
+      bettingPoints[settledBet.uid] += settledBet.points
+    } else {
+      bettingPoints[settledBet.uid] = settledBet.points
+    }
+
+    return bettingPoints
   }
 
   submitBets = ({gymID, id: compID}, bets, callback = () => {}) => {

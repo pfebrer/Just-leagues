@@ -69,7 +69,8 @@
         "player added": "Jugador afegit",
         "player data modified": "Dades del jugador modificades",
         "no email address available": "Sense correu",
-        "added to calendar": "Afegit al calendari"
+        "added to calendar": "Afegit al calendari",
+        "bets closed": "Apostes tancades"
     },
     "questions": {
         "has this match been played now?": "S'ha jugat ara el partit?"
@@ -183,7 +184,8 @@
         "modify player data": "Modificar dades jugador",
         "pick a player": "Tria un jugador",
         "add to your calendar": "Affegeix al teu calendari",
-        "submit": "Envia"
+        "submit": "Envia",
+        "modify": "Modifica"
     },
 
     "admin": {

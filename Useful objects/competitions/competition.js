@@ -36,20 +36,30 @@ export default class Competition extends Configurable {
             
         listeners["main"] = Firebase.onCompetitionSnapshot( compID, compData => {
 
-            //Trigger all the additional listeners that the specific competition might have now that we have all the competition's info
-            if (listeners["additional"]) listeners["additional"].forEach(listener => listener()) //First we cancel the existing ones
-
-            listeners["additional"] = GroupsCompetition.addListeners.map( listener => listener(compData, updateCompetition))
-
-            //THIS MIGHT BE TOO MUCH (Impose some limit)
-            if (listeners["matches"]) listeners["matches"]()
-            listeners["matches"] = Firebase.onCompMatchesSnapshot(compData.gymID, compID, (matches) => updateCompetition({matches}))
-
-            if (listeners["pendingMatches"]) listeners["pendingMatches"]()
-            listeners["pendingMatches"] = Firebase.onCompPendingMatchesSnapshot(compData.gymID, compID, (pendingMatches) => updateCompetition({pendingMatches}))
-            
-            //Then, update the competition with the main information (this is the doc information)
+            //Update the competition with the main information (this is the doc information)
             updateCompetition({...compData, isAdmin: currentUser.gymAdmin && currentUser.gymAdmin.indexOf(compData.gymID) != -1})
+            
+            //Trigger all the additional listeners that the specific competition might have now that we have all the competition's info
+            //if (listeners["additional"]) listeners["additional"].forEach(listener => listener()) //First we cancel the existing ones
+
+            if(!listeners["additional"]){
+                listeners["additional"] = GroupsCompetition.addListeners.map( listener => listener(compData, updateCompetition))
+            }
+            
+            //THIS MIGHT BE TOO MUCH (Impose some limit)
+            //if (listeners["matches"]) listeners["matches"]()
+            if (!listeners["matches"]) {
+                listeners["matches"] = Firebase.onCompMatchesSnapshot(compData.gymID, compID, (matches) => updateCompetition({matches}))
+            }
+
+            if (!listeners["pendingMatches"]){
+                listeners["pendingMatches"] = Firebase.onCompPendingMatchesSnapshot(compData.gymID, compID, (pendingMatches) => updateCompetition({pendingMatches}))
+            }
+            
+            if (!listeners["admins"]) {
+                listeners["admins"] = Firebase.onCompAdminsSnapshot(compData.gymID, compID, currentUser,relevantUsers => updateRelevantUsers(relevantUsers))
+            }
+            
         
         })
 
@@ -65,6 +75,8 @@ export default class Competition extends Configurable {
             listeners["pendingMatches"]();
 
             listeners["users"]();
+
+            listeners["admins"]();
             
             if (listeners["additional"]) listeners["additional"].forEach(listener => listener())
         

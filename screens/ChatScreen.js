@@ -26,6 +26,7 @@ import { h, totalSize } from '../api/Dimensions';
 import ChatsCarousel from '../components/chat/ChatsCarousel';
 import { Icon } from 'native-base';
 import { selectCurrentCompetition } from '../redux/reducers';
+import {setCurrentCompetition} from '../redux/actions'
 
 class ChatScreen extends React.Component {
 
@@ -71,6 +72,10 @@ class ChatScreen extends React.Component {
 
     componentDidMount() {
         if (this.props.currentComp) this.listenToMessages()
+
+        else {
+            this.props.setCurrentCompetition(this.props.currentUser.activeCompetitions[0])
+        }
     }
 
     componentDidUpdate(prevProps, prevState) {
@@ -174,6 +179,8 @@ class ChatScreen extends React.Component {
 
     render() {
 
+        if (!this.props.currentComp) return null
+
         let particularInfo = this.state.target.particularChat ? this.props.currentComp.getPlayerGroup(this.props.currentUser.id) : null;
         let users;
 
@@ -234,7 +241,11 @@ const mapStateToProps = state => ({
     relevantUsers: state.relevantUsers
 })
 
-export default connect(mapStateToProps)(ChatScreen);
+const mapDispatchToProps = {
+    setCurrentCompetition
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ChatScreen);
 
 const styles = StyleSheet.create({
     container: {

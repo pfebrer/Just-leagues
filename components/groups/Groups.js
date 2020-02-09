@@ -4,7 +4,7 @@ import { Icon } from "native-base";
 import Table from "./Table"
 import { translate } from '../../assets/translations/translationManager';
 
-import { GroupBet } from "../../components/groups/GroupsBetting"
+import { GroupBet, PlayerPointsBet } from "../betting/GroupsBetting"
 import MatchSummary from "../match/MatchSummary"
 
 import { totalSize } from '../../api/Dimensions';
@@ -31,11 +31,16 @@ class Group extends React.Component{
 
     renderPlugIns = ({item, section}) => {
 
-        const heightStyle = this.state.expandedSection[section.key] ? {} : {height:0, margin: 0, padding: 0, overflow: "hidden"}
+        const heightStyle = this.state.expandedSection[section.key] ? {} : {height:0, margin: 0, padding: 0, paddingVertical: 0, paddingTop: 0, paddingBottom: 0, overflow: "hidden"}
 
         let content = null
 
-        if (item == "groupBet") { content = <GroupBet noHeader group={this.props.group} competition={this.props.competition}/>}
+        if (section.key == "betting") {
+            if (item == "groupBet") { content = <GroupBet noHeader group={this.props.group} competition={this.props.competition}/>}
+            else {
+                content = <PlayerPointsBet playerID={item} group={this.props.group} competition={this.props.competition}/>
+            }
+        }
 
         else if (section.key == "matches") { content = <MatchSummary navigation={this.props.navigation} match={item} /> } 
 
@@ -61,7 +66,7 @@ class Group extends React.Component{
         let group = this.props.group
 
         const sections = [
-            {key: "betting", data: ["groupBet"]},
+            {key: "betting", data: ["groupBet", ...group.playersIDs]},
             {key: "matches", data: this.props.competition.getGroupMatches(group.id)}
         ]
 
@@ -85,7 +90,7 @@ class Group extends React.Component{
                     renderItem={this.renderPlugIns}
                     renderSectionHeader={(args) =>  this.renderHeaders(args, sectionTitles)}
                     sections={sections}
-                    keyExtractor={item => {return item != "groupBet" ? item.id : "groupBet"}}
+                    keyExtractor={item => {return typeof item != "string" ? item.id : item}}
                 />         
             </View> : null}
             
@@ -195,6 +200,7 @@ const styles = StyleSheet.create({
         marginLeft: 5,
         paddingLeft: 10,
         borderLeftColor: "black",
-        borderLeftWidth: 1
+        borderLeftWidth: 1,
+        paddingVertical: 10,
     }
 });

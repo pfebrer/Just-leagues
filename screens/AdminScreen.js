@@ -46,8 +46,10 @@ class AdminScreen extends React.Component {
 
         let editableComps = _.filter(this.props.competitions, (obj) => this.props.currentUser.gymAdmin.indexOf(obj.gymID) >= 0)
 
-        this.props.setCurrentCompetition(editableComps[0].id)
-
+        if (!this.props.competition){
+            this.props.setCurrentCompetition(editableComps[0].id)
+        }
+        
         this.setState({
             competitions: editableComps
         })
@@ -181,9 +183,7 @@ class AdminScreen extends React.Component {
 
     generateGroups = () => {
 
-        let {gymID, id: compID} = this.props.competition
-
-        Firebase.generateGroups(gymID, compID, this.props.competition.playersIDs, this.props.competition.settings["groups"], {due: this.state.newPeriodDue},
+        Firebase.generateGroups(this.props.competition, {due: this.state.newPeriodDue},
             () => {
                 this.setState({groupGeneratingModal: false})
                 this.props.navigation.navigate("CompetitionScreen")

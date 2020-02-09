@@ -10,6 +10,9 @@ import {setCurrentMatch} from "../../redux/actions"
 import { totalSize, h} from '../../api/Dimensions'
 import { Icon } from 'native-base'
 import UpdatableCard from './UpdatableCard'
+import NumericInput from '../inputs/NumericInput'
+
+import _ from 'lodash'
 
 
 class MatchResult extends Component {
@@ -24,11 +27,11 @@ class MatchResult extends Component {
         this.defaultResult = [0,0]
     }
 
-    updateResult = (iTarget, step) => {
+    updateResult = (iTarget, value) => {
 
-        let oldResult = this.props.match.result || this.defaultResult
+        let newResult = _.cloneDeep(this.props.match.result || this.defaultResult)
 
-        let newResult = oldResult.map( (val, i) => i == iTarget ? val + step : val )
+        newResult[iTarget] = value
 
         this.props.setCurrentMatch({result: newResult}, {merge: true})
 
@@ -44,11 +47,11 @@ class MatchResult extends Component {
         let result = this.props.match.result || this.props.defaultResult || this.defaultResult
             
         let scoreInputs = result.map( (value, index) => (
-            <ScoreInput 
+            <NumericInput
                 key={index} 
                 value={value}
                 disabled={!this.props.editable} 
-                updateValue={(step)=>this.updateResult(index, step)}/>
+                onValueChange={(value)=>this.updateResult(index, value)}/>
         ))
 
         let players = this.props.match.playersIDs.map( uid => this.props.match.context.competition.renderName(this.props.relevantUsers[uid].names) )
@@ -76,48 +79,6 @@ class MatchResult extends Component {
 
             </UpdatableCard>
         )
-    }
-}
-
-class ScoreInput extends Component {
-
-    render() {
-
-        if (this.props.disabled){
-
-            return (
-                <View style={styles.scoreInputView}>
-                    <View style={styles.scoreValueView}>
-                        <Text style={styles.scoreValue}>{this.props.value}</Text>
-                    </View>
-                </View>
-            )
-
-        } else {
-
-            return (
-                <View style={styles.scoreInputView}>
-                    <TouchableOpacity 
-                        style={styles.scoreInputControls}
-                        onPress={() => this.props.updateValue(-1)}>
-                        <Icon name="arrow-round-back" style={styles.scoreInputControlsIcon}/>
-                    </TouchableOpacity>
-                    <View style={styles.scoreValueView}>
-                        <Text style={styles.scoreValue}>{this.props.value}</Text>
-                    </View>
-                    <TouchableOpacity 
-                        style={styles.scoreInputControls}
-                        onPress={() => this.props.updateValue(+1)}
-                        >
-                        <Icon name="arrow-round-forward" style={styles.scoreInputControlsIcon}/>
-                    </TouchableOpacity>
-                </View>
-            )
-
-        }
-
-        
-        
     }
 }
 

@@ -4,7 +4,7 @@ import {
     ScrollView,
     View
 } from 'react-native';
-import { Icon } from 'native-base'
+import { Icon, Button } from 'native-base'
 
 //Redux stuff
 import { connect } from 'react-redux'
