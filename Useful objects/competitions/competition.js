@@ -121,7 +121,8 @@ export default class Competition extends Configurable {
         
         return <CompStats 
             navigation={props.navigation} 
-            matches={ this.matchesWithContext(this.matches) }/> 
+            matches={ this.matchesWithContext(this.matches) }
+            competition={this}/> 
     }
 
     adminCompSummary = () => {

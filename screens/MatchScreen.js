@@ -165,7 +165,7 @@ class MatchScreen extends Component {
                         editable={this.state.editable}
                         updateDBMatchParams={this.updateDBMatchParams}/>
 
-                    {/*<MatchBet match={this.props.currentMatch}/>*/}
+                    <MatchBet match={this.props.currentMatch}/>
                     
                     <MatchDiscussion match={this.props.currentMatch}/>
 

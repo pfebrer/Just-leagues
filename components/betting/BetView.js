@@ -2,10 +2,12 @@ import React, { Component } from 'react'
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-native'
 
 import { w, h, totalSize} from '../../api/Dimensions';
+import { elevation } from '../../assets/utils/utilFuncs'
 import Firebase from '../../api/Firebase';
 import {translate } from "../../assets/translations/translationManager"
-import { elevation} from "../../assets/utils/utilFuncs"
-import { BetTypes } from '../../api/BetManager'
+import NumericInput from '../inputs/NumericInput'
+import Colors from '../../constants/Colors'
+import { betHelpers } from '../../api/BetManager'
 
 import _ from "lodash"
 
@@ -30,7 +32,8 @@ export default function toBetView(BetControlsComponent, type, refTo, checkIfBetC
             super(props);
     
             this.state = {
-                bet:{}
+                bet:{},
+                quantity: 1
             }
 
             this.customFilter = () => true
@@ -74,6 +77,7 @@ export default function toBetView(BetControlsComponent, type, refTo, checkIfBetC
     
             return {
                 ...this.state,
+                odds: betHelpers[type].odds(),
                 type,
                 removePreviousBet: this.state.id, //This indicates that the bet was already placed and we need to update it
                 refTo: refTo(this.props),
@@ -88,6 +92,14 @@ export default function toBetView(BetControlsComponent, type, refTo, checkIfBetC
     
             Firebase.submitBets(this.props.competition, [bet], () => console.warn("YEEEEY"))
         }
+
+        renderHeader = () =>{
+
+        }
+
+        renderContent = () =>{
+            
+        }
     
         render(){
 
@@ -98,13 +110,37 @@ export default function toBetView(BetControlsComponent, type, refTo, checkIfBetC
     
             const footer = this.props.bet ?  
                 null : betClosed ? (
-                    <TouchableOpacity style={styles.groupBetSubmitBut} disabled>
-                        <Text style={styles.betsClosedText}>{translate("info.bets closed")}</Text>
-                    </TouchableOpacity>
+                    <View style={{...styles.disabledBetView, flexDirection: "row" }} disabled>
+                        {this.state.outcome ? 
+                            <Text style={this.state.outcome > 0? styles.positiveOutcomeText : styles.negativeOutcomeText}>
+                                {(this.state.outcome > 0 ? "+" : "") + this.state.outcome}
+                            </Text> 
+                            : <Text style={styles.betsClosedText}>{translate("info.bets closed")}</Text> }     
+                    </View>
                 ) : (
-                    <TouchableOpacity style={styles.groupBetSubmitBut} onPress={this.submitBettingState}>
-                        <Text style={styles.groupBetSubmitText}>{betObject.placedOn ? translate("actions.modify") : translate("actions.submit")}</Text>
-                    </TouchableOpacity>
+                    <View style={styles.betSubmiterView}>
+                        <View style={styles.betQuantityView}>
+                            <NumericInput
+                                key="quantity"
+                                value={this.state.quantity}
+                                disableTextInput
+                                onValueChange={(value)=> value <= 10 ? this.setState({quantity: value}) : null}
+                                valueContainerStyle={{...elevation(0)}}
+                                leftControlIcon="remove"
+                                rightControlIcon="add"/>
+                            <NumericInput
+                                key="winOutcome"
+                                style={{paddingRight: 0}}
+                                valueContainerStyle={{...elevation(0)}}
+                                disabledValueTextStyle={{color: Colors.WINNER_GREEN_BG, fontFamily: "bold"}}
+                                value={betHelpers[type].odds().win * this.state.quantity}
+                                disabled />
+                        </View>
+                        <TouchableOpacity style={styles.groupBetSubmitBut} onPress={this.submitBettingState}>
+                            <Text style={styles.groupBetSubmitText}>{betObject.placedOn ? translate("actions.modify") : translate("actions.submit")}</Text>
+                        </TouchableOpacity>
+                    </View>
+                    
                 )
                 
                 
@@ -118,6 +154,7 @@ export default function toBetView(BetControlsComponent, type, refTo, checkIfBetC
                         setCustomBetFilter={this.setCustomFilter}
                         {...this.props} />
                     {footer}
+
                 </View>
             )
 
@@ -133,11 +170,20 @@ export default function toBetView(BetControlsComponent, type, refTo, checkIfBetC
 const styles = StyleSheet.create({
 
     groupBetSubmitBut: {
-        marginHorizontal: 30,
-        paddingHorizontal: 20,
+        paddingLeft: 20,
+        paddingRight: 10,
         justifyContent: "center",
         alignItems: "center",
         borderRadius: 5,
+/*         borderWidth: 1,
+        backgroundColor: "white",
+        ...elevation(2), */
+    },
+
+    disabledBetView: {
+        paddingHorizontal: 20,
+        justifyContent: "center",
+        alignItems: "center",
     },
 
     groupBetSubmitText: {
@@ -150,5 +196,29 @@ const styles = StyleSheet.create({
         fontFamily: "bold",
         textTransform: "uppercase",
         color: "#ccc"
+    },
+
+    betSubmiterView: {
+        flexDirection: "row",
+    },
+
+    betQuantityView: {
+        flexDirection: "row",
+        justifyContent: "flex-start",
+        flex:1
+    },
+
+    negativeOutcomeText: {
+        color: Colors.LOSER_RED_BG,
+        fontSize: totalSize(2),
+        fontFamily: "bold",
+        paddingRight: 10
+    },
+
+    positiveOutcomeText: {
+        color: Colors.WINNER_GREEN_BG,
+        fontSize: totalSize(2),
+        fontFamily: "bold",
+        paddingRight: 10
     }
 })

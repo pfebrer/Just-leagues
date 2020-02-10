@@ -67,8 +67,8 @@ class Group extends React.Component{
         let group = this.props.group
 
         const sections = [
-            //{key: "betting", data: ["groupBet", ...group.playersIDs]},
-            {key: "matches", data: sortMatchesByDate(this.props.competition.getGroupMatches(group.id))}
+            {key: "matches", data: sortMatchesByDate(this.props.competition.getGroupMatches(group.id))},
+            {key: "betting", data: ["groupBet", ...group.playersIDs]}
         ]
 
         const sectionTitles = {

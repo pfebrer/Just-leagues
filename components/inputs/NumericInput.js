@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
+import PropTypes from 'prop-types';
 import { Text, TextInput, View, TouchableOpacity, StyleSheet} from 'react-native'
 
 import {totalSize, w, h} from '../../api/Dimensions'
 
 import { Icon } from 'native-base'
 
-export default class NumericInput extends Component {ç
+class NumericInput extends Component {
 
     constructor(props){
         super(props);
@@ -14,6 +15,7 @@ export default class NumericInput extends Component {ç
             value: props.value || props.defaultValue || 0
         }
     }
+
 
     textChange = (text, onValueChange) => {
         if (text){
@@ -33,8 +35,8 @@ export default class NumericInput extends Component {ç
 
             return (
                 <View style={{...styles.scoreInputView, ...this.props.style}}>
-                    <View style={styles.scoreValueView}>
-                        <Text style={styles.scoreValue}>{this.props.value}</Text>
+                    <View style={{...styles.scoreValueView, ...this.props.valueContainerStyle, ...this.props.disabledValueContainerStyle}}>
+                        <Text style={{...styles.scoreValue, ...this.props.inputContainerStyle, ...this.props.disabledValueTextStyle}}>{this.props.value}</Text>
                     </View>
                 </View>
             )
@@ -44,22 +46,31 @@ export default class NumericInput extends Component {ç
             return (
                 <View style={{...styles.scoreInputView, ...this.props.style}}>
                     <TouchableOpacity 
-                        style={styles.scoreInputControls}
+                        style={{...styles.scoreInputControls, ...this.props.inputControlsStyle, ...this.props.leftInputControlStyle}}
                         onPress={() => onValueChange(value - stepSize)}>
-                        <Icon name="arrow-round-back" style={styles.scoreInputControlsIcon}/>
+                            {this.props.renderLeftInputControl ? 
+                                this.props.renderLeftInputControl() 
+                                :
+                                <Icon name={this.props.leftControlIcon || "arrow-round-back"} style={{...styles.scoreInputControlsIcon, ...this.props.inputControlIconStyle}}/>
+                            }
                     </TouchableOpacity>
-                    <View style={styles.scoreValueView}>
-                        <TextInput 
+                    <View style={{...styles.scoreValueView, ...this.props.valueContainerStyle}}>
+                        <TextInput
+                            editable={!this.props.disableTextInput}
                             keyboardType="numeric"
                             value={String(value)}
-                            style={styles.scoreValue}
+                            style={{...styles.scoreValue, ...this.props.inputContainerStyle}}
                             onChangeText={(text) => this.textChange(text, onValueChange)}/>
                     </View>
                     <TouchableOpacity 
-                        style={styles.scoreInputControls}
+                        style={{...styles.scoreInputControls, ...this.props.inputControlsStyle, ...this.props.rightInputControlStyle}}
                         onPress={() => onValueChange(value + stepSize)}
                         >
-                        <Icon name="arrow-round-forward" style={styles.scoreInputControlsIcon}/>
+                            {this.props.renderRightInputControl ? 
+                                this.props.renderRightInputControl() 
+                                :
+                                <Icon name={this.props.rightControlIcon || "arrow-round-forward"} style={{...styles.scoreInputControlsIcon, ...this.props.inputControlIconStyle}}/>
+                            }
                     </TouchableOpacity>
                 </View>
             )
@@ -70,6 +81,12 @@ export default class NumericInput extends Component {ç
         
     }
 }
+
+NumericInput.propTypes = {
+    style: PropTypes.object,
+};
+
+export default NumericInput
 
 const styles = StyleSheet.create({
     //Players
@@ -91,7 +108,6 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "center",
         alignItems: "center",
-        flex:1
     },
 
     scoreValueView: {

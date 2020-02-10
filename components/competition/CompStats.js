@@ -81,13 +81,19 @@ class CompetitionStats extends React.Component {
                     </View>
 
                     <View style={{flex:1}}>
-                        <Leaderboard title={translate("stats.played games")} items={leaderboards.playedGames}/>
+                        <Leaderboard title={translate("stats.won matches")} items={leaderboards.wonMatches}/>
                     </View>
                 </View>
 
                 <View style={{flexDirection: "row"}}>
                     <View style={{flex:1}}>
-                        <Leaderboard title={translate("stats.won matches")} items={leaderboards.wonMatches}/>
+                        <Leaderboard title={translate("tabs.betting")} items={this.props.competition.bettingPoints}/>
+                    </View>
+                </View>
+
+                <View style={{flexDirection: "row"}}>
+                    <View style={{flex:1}}>
+                        <Leaderboard title={translate("stats.played games")} items={leaderboards.playedGames}/>
                     </View>
 
                     <View style={{flex:1}}>

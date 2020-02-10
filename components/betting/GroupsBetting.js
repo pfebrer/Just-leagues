@@ -15,7 +15,6 @@ const refToGroup = ({competition, group}) => Firebase.groupRef(competition.gymID
 const anyResult = ({group}) => group.scores.filter(score => score != false).length != 0
 
 class GroupBet extends Component {
-    /* Can act as an independent or managed component*/
 
     updateBettingState = (uid, winnerOrLoser, currState) => {
 
@@ -100,10 +99,11 @@ class PlayerPointsBet extends Component {
             
         return (
             <View style={styles.playerPointsView}>
-                <Text style={{flex: 1}}>{playerName}</Text>
+                <Text style={{flex: 1, fontFamily: "bold", paddingLeft: 10}}>{playerName}</Text>
                 <NumericInput
                     style={{paddingRight: 0}}
                     value={this.props.bet[uid]}
+                    disabledValueContainerStyle={{marginHorizontal: 20}}
                     disabled={this.props.betClosed} 
                     onValueChange={(value)=>this.props.onBetChange({bet: {[uid]: value}})}/>
             </View>
@@ -219,7 +219,14 @@ const styles = StyleSheet.create({
     //PLAYER POINTS
     playerPointsView: {
         flexDirection: "row",
-        justifyContent: "space-around",
+        marginVertical: 10,
+        justifyContent: "space-between",
+        borderRadius: 2,
+        borderWidth: 1,
+        backgroundColor: "#ccc",
+        ...elevation(2),
+        overflow: "hidden",
+        paddingVertical: 10,
         alignItems: "center"
     }
 })

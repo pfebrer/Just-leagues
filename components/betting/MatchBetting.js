@@ -99,7 +99,8 @@ class MatchResultBet extends Component {
                             <NumericInput
                             style={{paddingRight: 0}}
                             value={this.props.bet[i]}
-                            disabled={this.props.betClosed} 
+                            disabled={this.props.betClosed}
+                            disabledValueContainerStyle={{marginHorizontal: 20}}
                             onValueChange={(value)=>this.updateBet(i, value)}/>
                             <Text style={addStyles[i].text} >{playerName}</Text>
                         </View>
@@ -126,7 +127,8 @@ class MatchGamesTotalBet extends Component {
                 <NumericInput
                     style={{paddingRight: 0}}
                     value={_.isEqual(this.props.bet, {}) ? 0 : this.props.bet}
-                    disabled={this.props.betClosed} 
+                    disabled={this.props.betClosed}
+                    disabledValueContainerStyle={{marginHorizontal: 20}}
                     onValueChange={(value)=>this.props.onBetChange({bet: value})}/>   
             </View>
         )

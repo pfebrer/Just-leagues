@@ -44,7 +44,6 @@ class MatchBets extends Component {
     }
 }
 
-
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
 })

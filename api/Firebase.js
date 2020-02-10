@@ -994,9 +994,9 @@ class Firebase {
   _updateBettingPoints = (bettingPoints, settledBet) => {
     
     if (bettingPoints[settledBet.uid]){
-      bettingPoints[settledBet.uid] += settledBet.points
+      bettingPoints[settledBet.uid] += settledBet.outcome
     } else {
-      bettingPoints[settledBet.uid] = settledBet.points
+      bettingPoints[settledBet.uid] = settledBet.outcome
     }
 
     return bettingPoints
