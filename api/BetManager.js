@@ -1,7 +1,15 @@
+const _ = require("lodash")
+
 const BetTypes = {
 
+    //GROUPS
     GROUP_BET: "groupbet",
-    PLAYERPOINTS_BET: "playerpoints"
+    PLAYERPOINTS_BET: "playerpoints",
+
+    //MATCHES
+    MATCHWINNER_BET:"matchwinner",
+    MATCHRESULT_BET:"matchresult",
+    MATCHGAMESTOTAL_BET: "matchgamestotal"
 
 }
 
@@ -35,6 +43,36 @@ const settleBet = (bet, extraInfo) => {
         const guessed = bet.bet[uid] == result
         
         points = guessed ? 5 : -1
+
+    } else if (bet.type == BetTypes.MATCHWINNER_BET){
+        
+        const {match} = extraInfo
+        
+        result = match.result[0] > match.result[1] ? 1 : match.result[0] > match.result[1] ? "X" : 2
+
+        const guessed = bet.bet == result
+        
+        points = guessed ? 1 : result == "X" ? 0 : -1
+
+    } else if (bet.type == BetTypes.MATCHRESULT_BET){
+        
+        const {match} = extraInfo
+        
+        result = match.result
+
+        const guessed = _.isEqual(result, bet.bet)
+        
+        points = guessed ? 3 : -1
+
+    } else if (bet.type == BetTypes.MATCHGAMESTOTAL_BET){
+        
+        const {match} = extraInfo
+        
+        result = match.result.reduce((total,val) => total+val, 0)
+
+        const guessed = result == bet.bet
+        
+        points = guessed ? 1 : -1
 
     } else {
         return false

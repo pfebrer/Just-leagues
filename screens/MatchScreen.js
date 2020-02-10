@@ -122,8 +122,14 @@ class MatchScreen extends Component {
             }
             
         }
+
+        const {gymID, id: compID} = this.props.currentMatch.context.competition
+
+        const matchRef = this.props.currentMatch.context.pending ? 
+            Firebase.pendingMatchRef(gymID, compID, this.props.currentMatch.id)
+            : Firebase.matchRef(gymID, compID, this.props.currentMatch.id)
         
-        Firebase.updateDocInfo(this.matchRef, this.props.currentMatch, callback, {merge: true, params, omit: ["context", "playersNames"]})
+        Firebase.updateDocInfo(matchRef, this.props.currentMatch, callback, {merge: true, params, omit: ["context", "playersNames"]})
     }
 
     submitNewMatch = (callback) => {
@@ -159,7 +165,7 @@ class MatchScreen extends Component {
                         editable={this.state.editable}
                         updateDBMatchParams={this.updateDBMatchParams}/>
 
-                    <MatchBet match={this.props.currentMatch}/>
+                    {/*<MatchBet match={this.props.currentMatch}/>*/}
                     
                     <MatchDiscussion match={this.props.currentMatch}/>
 

@@ -17,7 +17,6 @@ export default class NumericInput extends Component {ç
 
     textChange = (text, onValueChange) => {
         if (text){
-            console.warn(text)
             onValueChange(Number(text))
         } else {
             onValueChange("")

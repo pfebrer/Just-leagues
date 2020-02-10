@@ -84,7 +84,7 @@ class LoadingScreen extends React.Component {
                     let newSettings = updateSettingsFields(userData.settings || {}, USERSETTINGS)
 
                     //Create the listeners needed for each competition in active competitions
-                    if (userData.activeCompetitions){
+                    if (userData.activeCompetitions && ! __DEV__){
                         
                         userData.activeCompetitions.forEach( compID => {
 
@@ -106,7 +106,7 @@ class LoadingScreen extends React.Component {
                     if (userData.gymAdmin && userData.gymAdmin.length > 0) {
                         userData.gymAdmin.forEach(gymID => {
 
-                            if ( ! this.gymListeners[gymID]){
+                            if ( ! this.gymListeners[gymID] && (!__DEV__ || gymID == "testgym")){
 
                                 this.gymListeners[gymID] = Firebase.onCompetitionsSnapshot(gymID, competitions => {
                                     

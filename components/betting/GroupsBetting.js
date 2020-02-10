@@ -36,7 +36,8 @@ class GroupBet extends Component {
         let addPlayerTextStyles = { [-1]: styles.loserText, [1]: styles.winnerText}[bettingState]
 
         return <View key={uid} style={{...styles.playerBettingView, ...(isLast ? {borderBottomWidth: 0} : {}), ...addPlayerViewStyles}}>
-            <TouchableOpacity 
+            <TouchableOpacity
+                disabled={this.props.betClosed}
                 style={{...styles.indicatorView, ...styles.winner}}
                 onPress={() => updateState(1, bettingState)}>
                 
@@ -44,7 +45,8 @@ class GroupBet extends Component {
             <View style={styles.playerNameView}>
                 <Text style={{...styles.playerNameText, ...addPlayerTextStyles}}>{this.props.competition.renderName(this.props.relevantUsers[uid].names)}</Text>
             </View>
-            <TouchableOpacity 
+            <TouchableOpacity
+                disabled={this.props.betClosed}
                 style={{...styles.indicatorView, ...styles.loser}}
                 onPress={() => updateState(-1, bettingState)}>
             </TouchableOpacity>
@@ -83,15 +85,18 @@ class PlayerPointsBet extends Component {
         this.props.setCustomBetFilter((bet) => Object.keys(bet.bet).indexOf(this.props.playerID) == 0) 
     }
 
+    componentDidUpdate(){
+
+        const uid = this.props.playerID
+        if ( this.props.bet[uid] == undefined ){
+            this.props.onBetChange({bet: {[uid]: 0}})
+        }
+    }
+
     render(){
 
         const uid = this.props.playerID
         const playerName = this.props.competition.renderName(this.props.relevantUsers[uid].names)
-
-        if ( this.props.bet[uid] == undefined ){
-            this.props.onBetChange({bet: {[uid]: 0}})
-            return null
-        }
             
         return (
             <View style={styles.playerPointsView}>

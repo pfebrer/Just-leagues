@@ -696,7 +696,7 @@ class Firebase {
   }
 
   //FUNCTIONS TO DO COMPLEX OPERATIONS
-  submitNewPlayedMatch = (matchInfo, callback) => {
+  submitNewPlayedMatch = async (matchInfo, callback) => {
     /*Takes a match from pendingMatches and puts it into matches.
     It also deletes the already played pendingMatch. ID of the match is preserved.*/
     let batch = this.firestore.batch()
@@ -720,9 +720,44 @@ class Firebase {
       playedOn
     })
 
+    await this.settleMatchBets(matchInfo, batch)
+
     batch.delete(this.pendingMatchRef(gymID, compID, matchID))
 
     batch.commit().then(callback).catch(err => alert(err))
+  }
+
+  settleMatchBets = async (match, batch) => {
+
+    let shouldCommit = false
+    if (!batch){
+      shouldCommit = true
+      batch = this.firestore.batch()
+    }
+
+    const {gymID, id: compID} = match.context.competition
+    let {bettingPoints} = match.context.competition
+
+    const matchBets = await this.matchBetsRef(gymID, compID, match.id).get()
+
+    matchBets.forEach(matchBet => {
+
+      //If it is already settled go to the next bet
+      if (matchBet.settled) return false
+
+      const settledBet = settleBet(matchBet.data() , {match, competition: match.context.competition})
+
+      //Update the competition's betting points
+      bettingPoints = this._updateBettingPoints(bettingPoints, settledBet)
+      
+      batch.set( matchBet.ref, settledBet )
+    })
+
+    batch.update(this.compRef(gymID, compID), {bettingPoints})
+
+    if (shouldCommit) return batch.commit()
+    else return true
+
   }
 
   mergeUsers = (userToMerge, requestingUser, relevantCompetitions, callback = () => {}) => {
@@ -812,7 +847,7 @@ class Firebase {
 
   }
 
-  generateGroups = (competition, {due}, callback = () => {}) => {
+  generateGroups = async (competition, {due}, callback = () => {}) => {
 
     /*Function that, given a ranking, generates groups according to some settings*/
     const {gymID, id: compID, playersIDs: ranking} = competition
@@ -882,12 +917,7 @@ class Firebase {
 
     let betsSettled;
 
-    try{
-      betsSettled = this.settleGroupBets(competition, batch)
-    } catch (error) {
-      alertError(error)
-      return false
-    }
+    betsSettled = await this.settleGroupBets(competition, batch)
     if (!betsSettled) return false
     
     //We need to delete a bunch of things
@@ -1123,6 +1153,10 @@ class Firebase {
 
   matchRef = (gymID, compID, matchID) => {
     return this.matchesRef(gymID, compID).doc(matchID)
+  }
+
+  matchBetsRef = (gymID, compID, matchID) => {
+    return this.betsRef(gymID, compID).where("refTo", "==", this.pendingMatchRef(gymID, compID, matchID).path)
   }
 
   pendingMatchesRef = (gymID, compID) => {

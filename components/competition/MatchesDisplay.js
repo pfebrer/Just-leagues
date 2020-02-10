@@ -5,7 +5,7 @@ import MatchSummary from "../../components/match/MatchSummary";
 import _ from "lodash"
 import { translate } from "../../assets/translations/translationManager"
 import { connect } from 'react-redux'
-import { totalSize } from '../../api/Dimensions';
+import { sortMatchesByDate } from '../../assets/utils/utilFuncs'
 import { selectCurrentCompetition } from '../../redux/reducers';
 
 class MatchesDisplay extends React.Component {
@@ -37,7 +37,7 @@ class MatchesDisplay extends React.Component {
         //Group matches according to whether the user is in them or not
         
         let grouped = _.groupBy(
-            this.filterMatches(this.props.matches),
+            sortMatchesByDate(this.filterMatches(this.props.matches)),
             (match) => {
                 if (match.playersIDs.indexOf(this.props.currentUser.id) != -1) {
                     return "own"

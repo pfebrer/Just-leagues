@@ -8,6 +8,7 @@ import { GroupBet, PlayerPointsBet } from "../betting/GroupsBetting"
 import MatchSummary from "../match/MatchSummary"
 
 import { totalSize } from '../../api/Dimensions';
+import { sortMatchesByDate } from '../../assets/utils/utilFuncs'
 
 import _ from "lodash"
 import { elevation } from '../../assets/utils/utilFuncs'
@@ -66,8 +67,8 @@ class Group extends React.Component{
         let group = this.props.group
 
         const sections = [
-            {key: "betting", data: ["groupBet", ...group.playersIDs]},
-            {key: "matches", data: this.props.competition.getGroupMatches(group.id)}
+            //{key: "betting", data: ["groupBet", ...group.playersIDs]},
+            {key: "matches", data: sortMatchesByDate(this.props.competition.getGroupMatches(group.id))}
         ]
 
         const sectionTitles = {
@@ -78,6 +79,7 @@ class Group extends React.Component{
         return <View style={{...styles.groupContainer}}>
             <TouchableOpacity onPress={() => this.setState({expandable: true, expanded: !this.state.expanded})} style={{...styles.groupTitleView}}>
                 <Text style={styles.groupTitleText}>{translate("vocabulary.group") + " " + (group.name)}</Text>
+                <Icon style={styles.groupExpandingIcon} name={this.state.expanded ? "arrow-dropup" : "arrow-dropdown"}/>
             </TouchableOpacity>
             <Table
                 {...group}
@@ -159,7 +161,13 @@ const styles = StyleSheet.create({
     groupTitleText: {
         fontSize: totalSize(1.9),
         color: "black",
-        fontWeight: "bold"
+        fontWeight: "bold",
+        flex:1
+    },
+
+    groupExpandingIcon: {
+        paddingRight: 5,
+        color: "#555"
     },
 
     loadingMessageView: {

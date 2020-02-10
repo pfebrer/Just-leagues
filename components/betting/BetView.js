@@ -99,7 +99,7 @@ export default function toBetView(BetControlsComponent, type, refTo, checkIfBetC
             const footer = this.props.bet ?  
                 null : betClosed ? (
                     <TouchableOpacity style={styles.groupBetSubmitBut} disabled>
-                        <Text style={styles.groupBetSubmitText}>{translate("info.bets closed")}</Text>
+                        <Text style={styles.betsClosedText}>{translate("info.bets closed")}</Text>
                     </TouchableOpacity>
                 ) : (
                     <TouchableOpacity style={styles.groupBetSubmitBut} onPress={this.submitBettingState}>
@@ -144,5 +144,11 @@ const styles = StyleSheet.create({
         fontFamily: "bold",
         textTransform: "uppercase",
         color: "black"
+    },
+
+    betsClosedText: {
+        fontFamily: "bold",
+        textTransform: "uppercase",
+        color: "#ccc"
     }
 })

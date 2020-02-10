@@ -6,10 +6,11 @@ import { translate } from '../../assets/translations/translationManager'
 //Redux stuff
 import { connect } from 'react-redux'
 import {setCurrentMatch} from "../../redux/actions"
-import UpdatableCard from './UpdatableCard'
+import Card from '../home/Card'
+import { MatchWinnerBet, MatchResultBet, MatchGamesTotalBet } from '../betting/MatchBetting'
 
 
-class MatchResult extends Component {
+class MatchBets extends Component {
 
     constructor(props){
         super(props)
@@ -22,26 +23,23 @@ class MatchResult extends Component {
 
     render() {
 
-        if ( !this.props.match.isBetable || !this.props.match.playersIDs) return null
+        //if ( !this.props.match.isBetable || !this.props.match.playersIDs) return null
 
-        let players = this.props.match.playersIDs.map( uid => this.props.match.context.competition.renderName(this.props.relevantUsers[uid].names) )
+        //YOU CAN NOT BET ON AN OWN MATCH! At least for now...
+        if (this.props.match.playersIDs.indexOf(this.props.currentUser.id) != -1) return null
 
         return (
-            <UpdatableCard
+            <Card
                 titleIcon="logo-game-controller-a"
                 title={translate("cardTitles.match bets")}
                 pendingUpdate={this.state.pendingUpdate}
                 onCommitUpdate={this.commitResultToDB}
                 >
-                <TouchableOpacity style={styles.playerNameView}>
-                    <Text style={{...styles.playerNameText, textAlign: "left"}}>{players[0]}</Text>
-                </TouchableOpacity>
-                
-                <TouchableOpacity style={styles.playerNameView}>
-                    <Text style={{...styles.playerNameText,textAlign:"right"}}>{players[1]}</Text>
-                </TouchableOpacity>
+                <MatchWinnerBet match={this.props.match} competition={this.props.match.context.competition}/>
+                <MatchResultBet match={this.props.match} competition={this.props.match.context.competition}/>
+                <MatchGamesTotalBet match={this.props.match} competition={this.props.match.context.competition}/>
 
-            </UpdatableCard>
+            </Card>
         )
     }
 }
@@ -49,15 +47,13 @@ class MatchResult extends Component {
 
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
-    competitions: state.competitions,
-    relevantUsers: state.relevantUsers
 })
 
 const mapDispatchToProps = {
     setCurrentMatch
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MatchResult);
+export default connect(mapStateToProps, mapDispatchToProps)(MatchBets);
 
 const styles = StyleSheet.create({
 

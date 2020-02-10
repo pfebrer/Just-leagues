@@ -99,7 +99,8 @@
         "players": "Jugadors",
         "direct match": "Enfrontament directe",
         "position": "Posició",
-        "groups": "Grups"
+        "groups": "Grups",
+        "games": "Jocs"
     },
     "progress": {
         "cleaning previous groups": "Netejant els grups anteriors...",
