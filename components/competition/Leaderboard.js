@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, ScrollView, View} from 'react-native';
+import {StyleSheet, ScrollView, View, TouchableOpacity} from 'react-native';
 import { List, ListItem, Right, Left, Text} from "native-base"
 
 import _ from "lodash"
@@ -15,14 +15,15 @@ class Leaderboard extends React.Component {
         super(props);
 
         this.state = {
-            nTop: 5
+            nTop: 5,
+            showAll: false
         }
 
     }
 
     getLeaderboardBody = (sortedKeys) => {
 
-        let topRankedKeys = sortedKeys.slice(0,this.state.nTop)
+        let topRankedKeys = this.state.showAll ? sortedKeys : sortedKeys.slice(0,this.state.nTop)
 
         if (topRankedKeys.indexOf(this.props.currentUser.id) == -1 && this.props.competition.playersIDs.indexOf(this.props.currentUser.id) != -1){
             topRankedKeys.push(this.props.currentUser.id)
@@ -30,9 +31,9 @@ class Leaderboard extends React.Component {
 
         return topRankedKeys.map( (uid, i, arr) =>{
 
-            let customStyles = i == 0 ? styles.leaderCell : i < 3 ? styles.podiumCell : uid == this.props.currentUser.id ? i == this.state.nTop ? styles.ownCell : null : null 
+            let customStyles = i == 0 ? styles.leaderCell : i < 3 ? styles.podiumCell : uid == this.props.currentUser.id ? i == this.state.nTop && ! this.state.showAll ? styles.ownCellOutside : styles.ownCell : null 
             let customTextStyles = i == 0 ? styles.leaderText : i < 3 ? styles.podiumText : uid == this.props.currentUser.id ? styles.ownText : null
-            let preText = i == this.state.nTop ? + (sortedKeys.indexOf(this.props.currentUser.id) + 1) + ". " : ""
+            let preText = !this.state.showAll && i == this.state.nTop ? (sortedKeys.indexOf(this.props.currentUser.id) + 1) + ". " : (i+1) + ". "
 
             return (
                 <ListItem style={{...styles.leaderboardCell, ...customStyles}} key={i} noIndent noBorder={i == arr.length - 1}>
@@ -63,9 +64,11 @@ class Leaderboard extends React.Component {
         return (
 
             <Card
-                cardContainerStyles={{paddingTop: 20, paddingBottom: 0, paddingHorizontal: 0}}
+                cardContainerStyles={{paddingTop: 20, paddingBottom: 0, paddingHorizontal: 0, overflow: "hidden", borderRadius: 5, ...this.props.style}}
                 headerStyles={{paddingBottom: 0, height : 0}}>
-                <Text style={styles.titleText}>{this.props.title} </Text>
+                <TouchableOpacity onPress={() => this.setState({showAll: !this.state.showAll})}>
+                    <Text style={styles.titleText}>{this.props.title} </Text>
+                </TouchableOpacity>
                 <List style={styles.leaderboardBody}>
                     {this.getLeaderboardBody(sortedKeys)}
                 </List>
@@ -102,6 +105,10 @@ const styles = StyleSheet.create({
 
     leaderCell: {
         backgroundColor: "#c6e17b",
+        marginHorizontal:5,
+        borderRadius: 20,
+        marginVertical: 5,
+        borderBottomWidth: 0
     },
 
     leaderText: {
@@ -110,7 +117,11 @@ const styles = StyleSheet.create({
     },
 
     podiumCell: {
-        backgroundColor: "#E6F1C7"
+        backgroundColor: "#E6F1C7",
+        marginHorizontal:5,
+        borderRadius: 20,
+        marginVertical: 5,
+        borderBottomWidth: 0
     },
 
     podiumText: {
@@ -119,6 +130,10 @@ const styles = StyleSheet.create({
     },
 
     ownCell: {
+        backgroundColor: "#e8e8e8"
+    },
+
+    ownCellOutside: {
         borderTopWidth: 1,
         backgroundColor: "#e8e8e8"
     },

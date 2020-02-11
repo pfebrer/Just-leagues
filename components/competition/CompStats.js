@@ -77,53 +77,53 @@ class CompetitionStats extends React.Component {
                 
                 <View style={{flexDirection: "row"}}>
                     <View style={{flex:1}}>
-                        <Leaderboard title={translate("stats.played matches")} items={leaderboards.playedMatches}/>
+                        <Leaderboard style={styles.leaderboardCard} title={translate("stats.played matches")} items={leaderboards.playedMatches}/>
                     </View>
 
                     <View style={{flex:1}}>
-                        <Leaderboard title={translate("stats.won matches")} items={leaderboards.wonMatches}/>
-                    </View>
-                </View>
-
-                <View style={{flexDirection: "row"}}>
-                    <View style={{flex:1}}>
-                        <Leaderboard title={translate("tabs.betting")} items={this.props.competition.bettingPoints}/>
+                        <Leaderboard style={styles.leaderboardCard} title={translate("stats.won matches")} items={leaderboards.wonMatches}/>
                     </View>
                 </View>
 
                 <View style={{flexDirection: "row"}}>
                     <View style={{flex:1}}>
-                        <Leaderboard title={translate("stats.played games")} items={leaderboards.playedGames}/>
-                    </View>
-
-                    <View style={{flex:1}}>
-                        <Leaderboard title={translate("stats.won games")} items={leaderboards.wonGames}/>
+                        <Leaderboard style={styles.leaderboardCard} title={translate("tabs.betting")} items={this.props.competition.bettingPoints}/>
                     </View>
                 </View>
 
                 <View style={{flexDirection: "row"}}>
                     <View style={{flex:1}}>
-                        <Leaderboard title={translate("stats.won matches") + " (%)"} items={advancedStats.percentMatchWins}/>
+                        <Leaderboard style={styles.leaderboardCard} title={translate("stats.played games")} items={leaderboards.playedGames}/>
                     </View>
 
                     <View style={{flex:1}}>
-                        <Leaderboard title={translate("stats.won games") + " (%)"} items={advancedStats.percentGameWins}/>
-                    </View>
-                </View>
-
-                <View style={{flexDirection: "row"}}>
-                    <View style={{flex:1}}>
-                        <Leaderboard title={translate("stats.games per match")} items={advancedStats.gamesPerMatch}/>
+                        <Leaderboard style={styles.leaderboardCard} title={translate("stats.won games")} items={leaderboards.wonGames}/>
                     </View>
                 </View>
 
                 <View style={{flexDirection: "row"}}>
                     <View style={{flex:1}}>
-                        <Leaderboard title={translate("stats.clean sheets")} items={leaderboards.cleanSheets}/>
+                        <Leaderboard style={styles.leaderboardCard} title={translate("stats.won matches") + " (%)"} items={advancedStats.percentMatchWins}/>
                     </View>
 
                     <View style={{flex:1}}>
-                        <Leaderboard title={translate("stats.clean sheets") + " (%)"} items={advancedStats.percentCleanSheets}/>
+                        <Leaderboard style={styles.leaderboardCard} title={translate("stats.won games") + " (%)"} items={advancedStats.percentGameWins}/>
+                    </View>
+                </View>
+
+                <View style={{flexDirection: "row"}}>
+                    <View style={{flex:1}}>
+                        <Leaderboard style={styles.leaderboardCard} title={translate("stats.games per match")} items={advancedStats.gamesPerMatch}/>
+                    </View>
+                </View>
+
+                <View style={{flexDirection: "row"}}>
+                    <View style={{flex:1}}>
+                        <Leaderboard style={styles.leaderboardCard} title={translate("stats.clean sheets")} items={leaderboards.cleanSheets}/>
+                    </View>
+
+                    <View style={{flex:1}}>
+                        <Leaderboard style={styles.leaderboardCard} title={translate("stats.clean sheets") + " (%)"} items={advancedStats.percentCleanSheets}/>
                     </View>
                 </View>
                 
@@ -145,8 +145,8 @@ export default connect(mapStateToProps)(CompetitionStats);
 const styles = StyleSheet.create({
 
     leaderboardCard: {
-        textAlign: "center",
-        fontFamily: "bold"
+        marginHorizontal: 5,
+        marginVertical: 5
     }
 
 });

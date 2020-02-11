@@ -315,7 +315,8 @@ alertSuccess = (message) => {
     return Toast.show({
         text: message,
         type: 'success',
-        duration: 2000
+        duration: 5000,
+        buttonText: translate("vocabulary.OK")
     })
 }
 
