@@ -9,7 +9,7 @@
       "android",
       "web"
     ],
-    "version": "1.4.1",
+    "version": "1.5.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "splash": {
@@ -41,6 +41,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.pol.esquaixlligues",
+      "buildNumber": "3",
       "config": {
         "googleSignIn": {
           "reservedClientId": "com.googleusercontent.apps.524738063553-7a5ri1erg2jgc74u50oju3i1ksffdft4"
@@ -48,7 +49,7 @@
       }
     },
     "android": {
-      "versionCode": 3,
+      "versionCode": 4,
       "config": {
         "googleSignIn": {
           "apiKey": "AIzaSyBo87T9t5sl8jX6YaJqsYylHsN2ZcZ95Xs",

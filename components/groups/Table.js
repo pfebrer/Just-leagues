@@ -55,14 +55,18 @@ class Table extends Component {
 
     }
 
-    renderTable = (ranks, players, scores, totals) => {
+    renderTable = (ranks, players, scores) => {
 
         let sortedPlayerIndices = this.props.competition.getSortedIndices({playersIDs: players, scores})
 
-        //let sortedPlayerIndices = sortPlayerIndices(players, scores, totals, this.props.competition.settings.groups.untyingCriteria)
+        //sortedPlayerIndices = sortPlayerIndices(players, scores, totals, this.props.competition.settings.groups.untyingCriteria)
         let nPlayers = players.length
         
         const iLeader = sortedPlayerIndices[0], iLoser = _.last(sortedPlayerIndices)
+
+        scores = _.chunk(scores, this.props.playersIDs.length);
+
+        totals = this.props.totals || scores.map( playerScores => playerScores.reduce((a, b) => a + b, 0) )
 
         return [
 
@@ -118,19 +122,14 @@ class Table extends Component {
             return this.props.competition.playersIDs.indexOf(uid) + 1
         })
 
-        scores = _.chunk(scores, this.props.playersIDs.length);
-
-        let totals = this.props.totals || scores.map( playerScores => playerScores.reduce((a, b) => a + b, 0) )
-
         return (
             <View style={this.props.containerStyles}>
                 <View style={{...styles.tableContainer, ...this.props.tableStyles}}>
-                    {this.renderTable(ranks, players, scores, totals)}
+                    {this.renderTable(ranks, players, scores)}
                 </View>
             </View>
             
         )
-        
             
     }
 }
