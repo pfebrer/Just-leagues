@@ -59,7 +59,7 @@
       "package": "com.pol.esquaixlligues",
       "googleServicesFile":"./google-services.json"
     },
-    "description": "",
+    "description": "This app is meant to make your life easier with your sport competitions. If you have any doubt, please contact justleaguesapp@gmail.com.",
     "githubUrl": "https://github.com/pfebrer96/SquashLeaguesV2"
   }
 }
