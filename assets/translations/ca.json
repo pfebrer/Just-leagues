@@ -104,9 +104,17 @@
     },
     "progress": {
         "cleaning previous groups": "Netejant els grups anteriors...",
-        "generating new groups": "Generant els nous grups..."
+        "generating new groups": "Generant els nous grups...",
+        "settling bets": "Comprovant apostes...",
+        "submitting match": "Registrant el partit...",
+        "submitting all changes": "Escrivint tots els canvis..."
+    },
+    "success": {
+        "done": "Fet",
+        "bets settled": "Apostes comprovades"
     },
     "errors": {
+        "there was an error": "Hi ha hagut un error :(",
         "you entered an invalid result":"No ens enganyis, aquest resultat és impossible :(",
         "unable to merge users": "No s'han pogut unir els jugadors",
         "unknown competition": "Competició desconeguda",
@@ -117,7 +125,8 @@
         "failed to add to calendar": "No s'ha pogut afegir al calendari",
         "could not get previous ranking": "No s'ha pogut obtenir el rànquing anterior",
         "could not clean previous groups": "No s'ha pogut netejar els grups anteriors",
-        "could not generate new groups": "No s'han pogut generar els nous grups"
+        "could not generate new groups": "No s'han pogut generar els nous grups",
+        "could not submit changes": "No s'han pogut registrar els canvis"
     },
     "settings": {
         "you are about to restore default settings": "Estàs a punt de tornar a la configuració inicial.",

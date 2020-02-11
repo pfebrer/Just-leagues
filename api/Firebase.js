@@ -12,7 +12,7 @@ import { translate } from "../assets/translations/translationManager";
 
 import 'lodash.combinations';
 import _ from "lodash"
-import { alertError, alertProgress} from '../assets/utils/utilFuncs'
+import { withProgressAsync, throwClarifiedError } from '../assets/utils/utilFuncs'
 
 class Firebase {
 
@@ -696,7 +696,7 @@ class Firebase {
   }
 
   //FUNCTIONS TO DO COMPLEX OPERATIONS
-  submitNewPlayedMatch = async (matchInfo, callback) => {
+  _submitNewPlayedMatch = async (matchInfo, callback) => {
     /*Takes a match from pendingMatches and puts it into matches.
     It also deletes the already played pendingMatch. ID of the match is preserved.*/
     let batch = this.firestore.batch()
@@ -720,12 +720,21 @@ class Firebase {
       playedOn
     })
 
-    await this.settleMatchBets(matchInfo, batch)
+    await withProgressAsync(
+      {progress: translate("progress.settling bets"), success: translate("progress.bets settled"), throwErr: true},
+      this.settleMatchBets
+    ) (matchInfo, batch)
 
     batch.delete(this.pendingMatchRef(gymID, compID, matchID))
 
-    batch.commit().then(callback).catch(err => alert(err))
+    await withProgressAsync(
+      {progress: translate("progress.submitting all changes"), error: translate("errors.could not submit changes"), throwErr: true}, 
+      batch.commit.bind(batch)
+    ) ()
+
   }
+
+  submitNewPlayedMatch = withProgressAsync({progress: translate("progress.submitting match")}, this._submitNewPlayedMatch)
 
   settleMatchBets = async (match, batch) => {
 
@@ -847,7 +856,7 @@ class Firebase {
 
   }
 
-  generateGroups = async (competition, {due}, callback = () => {}) => {
+  _generateGroups = async (competition, {due}) => {
 
     /*Function that, given a ranking, generates groups according to some settings*/
     const {gymID, id: compID, playersIDs: ranking} = competition
@@ -921,23 +930,26 @@ class Firebase {
     if (!betsSettled) return false
     
     //We need to delete a bunch of things
-    alertProgress(translate("progress.cleaning previous groups"))
     let deletes = []
     //Delete all the groups that were there and their subcollections
     deletes.push(this.callHttpsFunction('recursiveDelete', { path: this.groupsRef(gymID,compID).path }) )
     //Delete all pendingMatches and their subcollections
     deletes.push(this.callHttpsFunction('recursiveDelete', { path: this.pendingMatchesRef(gymID,compID).path }))
     
-    //When everything is deleted, commit the batch
-    return Promise.all(deletes).then(deletes => {
+    await withProgressAsync(
+      {progress: translate("progress.cleaning previous groups"), error: translate("errors.could not clean previous groups"), throwErr: true}, 
+      Promise.all
+    ) (deletes)
 
-      alertProgress(translate("progress.generating new groups"))
-
-      return batch.commit().then(callback).catch(err => alertError(err,translate("errors.could not generate new groups")))
-
-    }).catch( err => alertError(err,translate("errors.could not clean previous groups") ))
+    //When everything is deleted, commit the batch 
+    await withProgressAsync(
+      {progress: translate("progress.submitting all changes"), error: translate("errors.could not generate new groups"), throwErr: true}, 
+      batch.commit.bind(batch)
+    ) ()
 
   }
+
+  generateGroups = withProgressAsync({progress: translate("progress.generating new groups")}, this._generateGroups)
 
   settleGroupBets = async (competition, batch) => {
 

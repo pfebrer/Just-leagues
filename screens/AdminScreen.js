@@ -8,6 +8,7 @@ import moment from "moment"
 import Firebase from "../api/Firebase";
 import EndingPeriodModal from "../components/groups/EndingPeriodModal";
 import Spinner from 'react-native-loading-spinner-overlay';
+import { isError } from '../assets/utils/utilFuncs'
 import {Constants} from "../constants/CONSTANTS";
 
 //Redux stuff
@@ -181,15 +182,16 @@ class AdminScreen extends React.Component {
         this.setState({groupGeneratingModal: !this.state.groupGeneratingModal})
     }
 
-    generateGroups = () => {
+    generateGroups = async () => {
 
-        Firebase.generateGroups(this.props.competition, {due: this.state.newPeriodDue},
-            () => {
-                this.setState({groupGeneratingModal: false})
-                this.props.navigation.navigate("CompetitionScreen")
-            }
-        )
+        this.setState({groupGeneratingModal: false})
 
+        const groupsGenerated = await Firebase.generateGroups(this.props.competition, {due: this.state.newPeriodDue})
+        
+        if ( !isError(groupsGenerated)) {
+            this.props.navigation.navigate("CompetitionScreen", {competitionName: this.props.competition.name})
+        }
+        
     }
 
     tancarMes = () => {

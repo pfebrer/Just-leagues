@@ -33,5 +33,9 @@ const CalendarConstants = {
     color: "blue",
 }
 
+const Errors = {
+    GENERIC: "__error__"
+}
+
 //USED IN FIREBASE FUNCTIONS, REMEMBER TO KEEP IN SYNC
-export {Constants, Collections, Subcollections, Documents, CalendarConstants};
+export {Constants, Collections, Subcollections, Documents, CalendarConstants, Errors};

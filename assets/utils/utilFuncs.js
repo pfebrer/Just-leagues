@@ -1,5 +1,6 @@
 import _ from "lodash"
 import { translate } from "../translations/translationManager";
+import { Errors } from '../../constants/CONSTANTS'
 import {Toast} from 'native-base'
 
 //Get a deep copy of an object
@@ -297,16 +298,80 @@ exports.elevation = (elevation) => {
     };
 }
 
-exports.alertProgress = (message) => {
+alertProgress = (message) => {
     return Toast.show({
         text: message,
-        type: 'success'
+        type: 'warning',
+        duration: 0
     })
 }
 
-exports.alertError = (error, message) => {
+exports.alertProgress = alertProgress
+
+alertSuccess = (message) => {
+
+    message = message || translate("success.done")
+
     return Toast.show({
-        text: message + "\n Error: " + error,
-        type: 'danger'
+        text: message,
+        type: 'success',
+        duration: 2000
     })
 }
+
+exports.alertSuccess = alertSuccess
+
+alertError = (error, message) => {
+
+    message = message || translate("errors.there was an error")
+
+    return Toast.show({
+        text: message + "\n Error: " + error,
+        type: 'danger',
+        duration: 7000,
+        buttonText: translate("vocabulary.OK")
+    })
+}
+
+exports.alertError = alertError
+
+exports.throwClarifiedError = (err, message) =>{
+    if (message){
+        throw message + "\n Error: " + err
+    } else {
+        throw err
+    }
+    
+}
+
+exports.withProgress = ({progress: progressMessage, success: successMessage, error: errorMessage, throwErr}, func) => function (){
+    alertProgress(progressMessage);
+    try {
+        const returns = func(...arguments);
+        alertSuccess(successMessage)
+        return returns
+    } catch (error){
+        if (throwErr){
+            exports.throwClarifiedError(error,errorMessage)
+        }
+        alertError(error, errorMessage)
+        return Errors.GENERIC
+    } 
+}
+
+exports.withProgressAsync = ({progress: progressMessage, success: successMessage, error: errorMessage, throwErr}, func) => async function() {
+    alertProgress(progressMessage);
+    try {
+        const returns = await func(...arguments);
+        alertSuccess(successMessage)
+        return returns
+    } catch (error){
+        if (throwErr){
+            exports.throwClarifiedError(error,errorMessage)
+        }
+        alertError(error, errorMessage)
+        return Errors.GENERIC
+    } 
+}
+
+exports.isError = (result) => typeof result == "string" && Object.keys(Errors).indexOf(result) != -1

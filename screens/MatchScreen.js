@@ -3,7 +3,7 @@ import {ImageBackground, StyleSheet, Text, TouchableOpacity, View, ScrollView, A
 import _ from "lodash"
 import Firebase from "../api/Firebase"
 
-import {resultIsCorrect} from "../assets/utils/utilFuncs"
+import {resultIsCorrect, isError} from "../assets/utils/utilFuncs";
 import { translate } from '../assets/translations/translationManager';
 
 //Redux stuff
@@ -11,7 +11,6 @@ import { connect } from 'react-redux'
 import {setCurrentMatch} from "../redux/actions"
 
 import { Icon, Toast } from 'native-base';
-import HeaderIcon from "../components/header/HeaderIcon"
 
 import TimeInfo from "../components/match/TimeInfo"
 import MatchResult from '../components/match/MatchResult';
@@ -132,17 +131,15 @@ class MatchScreen extends Component {
         Firebase.updateDocInfo(matchRef, this.props.currentMatch, callback, {merge: true, params, omit: ["context", "playersNames"]})
     }
 
-    submitNewMatch = (callback) => {
+    submitNewMatch = async (callback) => {
 
-        Firebase.submitNewPlayedMatch(this.props.currentMatch,
-        
-            () => {
+        const submittedMatch = await Firebase.submitNewPlayedMatch(this.props.currentMatch)
 
-                this.props.setCurrentMatch({context: {...this.props.currentMatch.context, pending: false}}, {merge: true})
-                callback()
+        if ( !isError(submittedMatch) ){
+            this.props.setCurrentMatch({context: {...this.props.currentMatch.context, pending: false}}, {merge: true})
+            callback()
+        }
 
-            }
-        )
     }
 
     render() {
