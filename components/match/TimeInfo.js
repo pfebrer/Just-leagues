@@ -20,6 +20,7 @@ import UpdatableCard from '../UX/UpdatableCard'
 import { Text, Button, Icon, Toast} from 'native-base'
 
 import _ from "lodash"
+import { TouchableOpacity } from 'react-native-gesture-handler'
 
 
 class TimeInfo extends Component {
@@ -167,9 +168,9 @@ class TimeInfo extends Component {
                             }
                         }}/>
                     {timeLimit}
-                    <Button onPress={this.addToCalendar} iconRight style={styles.addCalendarButton}>
-                        <Text style={{textAlign: "center", flex: 1}}>{translate("actions.add to your calendar")}</Text><Icon name="add"/>
-                    </Button>
+                    <TouchableOpacity onPress={this.addToCalendar} style={styles.addCalendarButton}>
+                        <Text style={{paddingRight: 20, color: "indigo",textDecorationLine: 'underline'}}>{translate("actions.add to your calendar")}</Text>
+                    </TouchableOpacity>
                 </Card>
             )
 
@@ -198,6 +199,9 @@ const styles = StyleSheet.create({
     },
 
     addCalendarButton: {
-        marginTop: 20
+        marginTop: 20,
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center"
     }
 })

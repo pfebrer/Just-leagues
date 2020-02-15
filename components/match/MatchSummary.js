@@ -13,7 +13,7 @@ import {setCurrentMatch} from "../../redux/actions"
 import { totalSize, h} from '../../api/Dimensions'
 import { Icon } from 'native-base'
 
-import { isMatchScheduled, isPlayed } from '../betting/MatchBetting'
+import { isMatchScheduled, isPlayed, getMatchColors } from '../betting/MatchBetting'
 
 
 class MatchSummary extends Component {
@@ -54,11 +54,9 @@ class MatchSummary extends Component {
             return match.context.competition.playersIDs.indexOf(uid) + 1
         })
 
-        let backgroundColor = isPlayed({match}) ? Colors.WINNER_GREEN_BG : isMatchScheduled({match}) ? "#fdd48a" : Colors.LOSER_RED_BG
+        let {bg: backgroundColor, text: textColor} = getMatchColors({match})
 
         let timeInfo = isPlayed({match}) ? match.playedOn : isMatchScheduled({match}) ? match.scheduled.time : match.due
-
-        let timeInfoColor = isPlayed({match}) ? Colors.WINNER_GREEN_TEXT : isMatchScheduled({match}) ? "orange" : Colors.LOSER_RED_TEXT
 
         return (
             <Card
@@ -85,8 +83,8 @@ class MatchSummary extends Component {
                         </Text>
                     </View>
                     <View style={styles.timeInfoView}>
-                        <Icon name="time" style={{paddingRight: 20, color: timeInfoColor}}/>
-                        <Text style={{color: timeInfoColor}}>{moment(timeInfo).calendar()}</Text>
+                        <Icon name="time" style={{paddingRight: 20, color: textColor}}/>
+                        <Text style={{color: textColor}}>{moment(timeInfo).calendar()}</Text>
                     </View>
                     
                 </TouchableOpacity>

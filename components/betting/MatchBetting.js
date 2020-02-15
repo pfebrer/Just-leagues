@@ -12,6 +12,8 @@ import NumericInput from '../inputs/NumericInput'
 
 import _ from "lodash"
 
+/* ALL THIS ARE MATCH UTILS THAT AT SOME POINT SHOULD GO TO ANOTHER PLACE */
+
 const refToMatch = ({match}) => {
 
     const {gymID, id: compID} = match.context.competition
@@ -25,6 +27,9 @@ const isPlayed = ({match}) => !match.context.pending
 const isMatchScheduled = ({match}) => match.scheduled && match.scheduled.time
 const isBeingPlayed = ({match}) => isMatchScheduled({match}) && match.scheduled.time < new Date()
 const isPlayedOrOngoing = ({match}) => isPlayed({match}) || isBeingPlayed({match})
+
+const getMatchColors = ({match}) => isPlayed({match}) ? {bg: Colors.MATCH_PLAYED_BG, text: Colors.MATCH_PLAYED_TEXT} :
+    isMatchScheduled({match}) ? {bg: Colors.MATCH_SCHEDULED_BG, text: Colors.MATCH_SCHEDULED_TEXT} : {bg: Colors.MATCH_NOTSCHEDULED_BG, text: Colors.MATCH_NOTSCHEDULED_TEXT}
 
 class MatchWinnerBet extends Component {
 
@@ -142,7 +147,7 @@ class MatchGamesTotalBet extends Component {
 
 MatchGamesTotalBet = toBetView(MatchGamesTotalBet, BetTypes.MATCHGAMESTOTAL_BET, refToMatch, isPlayedOrOngoing )
 
-export {MatchWinnerBet, MatchResultBet, MatchGamesTotalBet, isMatchScheduled, isBeingPlayed, isPlayed, isPlayedOrOngoing}
+export {MatchWinnerBet, MatchResultBet, MatchGamesTotalBet, isMatchScheduled, isBeingPlayed, isPlayed, isPlayedOrOngoing, getMatchColors}
 
 const styles = StyleSheet.create({
     

@@ -29,7 +29,7 @@ exports.groupBy= (key, arr) => arr.reduce(function (r, a) {
 }, Object.create(null));
 
 //Sort matches according to date
-exports.sortMatchesByDate = (matches) => {
+exports.sortMatchesByDate = (matches, latestFirst = false) => {
 
     function matchDate(match){
 
@@ -43,7 +43,10 @@ exports.sortMatchesByDate = (matches) => {
 
     }
 
-    return matches.sort((a, b) => {
+    //I define two different functions so that latestFirst is not checked at each iteration
+    return latestFirst ? matches.sort((a, b) => {
+        return matchDate(b) - matchDate(a)
+    }) : matches.sort((a, b) => {
         return matchDate(a) - matchDate(b)
     })
 }

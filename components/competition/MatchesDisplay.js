@@ -42,7 +42,7 @@ class MatchesDisplay extends React.Component {
         //Group matches according to whether the user is in them or not
         
         let grouped = _.groupBy(
-            sortMatchesByDate(this.filterMatches(this.props.matches)),
+            sortMatchesByDate( this.filterMatches(this.props.matches)),
             (match) => {
                 if (match.playersIDs.indexOf(this.props.currentUser.id) != -1) {
                     return "own"
@@ -53,6 +53,8 @@ class MatchesDisplay extends React.Component {
                 }
             }
         )
+
+        grouped.played = grouped.played ? sortMatchesByDate(grouped.played, latestFirst = true) : undefined
 
         //let groupKeys = Object.keys(grouped).filter( key => key != "own")
 

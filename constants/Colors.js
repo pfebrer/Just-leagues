@@ -1,8 +1,14 @@
-const tintColor = '#2f95dc';
-
 export default {
   WINNER_GREEN_BG: "#c6e17b",
   WINNER_GREEN_TEXT: "#2d652b",
   LOSER_RED_BG: "#e1947b",
-  LOSER_RED_TEXT: "darkred"
+  LOSER_RED_TEXT: "darkred",
+
+  MATCH_PLAYED_BG: "#c6e17b",
+  MATCH_PLAYED_TEXT: "#2d652b",
+  MATCH_SCHEDULED_BG: "#fdd48a",
+  MATCH_SCHEDULED_TEXT: "orange",
+  MATCH_NOTSCHEDULED_BG: "#e1947b",
+  MATCH_NOTSCHEDULED_TEXT: "darkred",
+
 };

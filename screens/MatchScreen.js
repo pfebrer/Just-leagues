@@ -5,6 +5,7 @@ import Firebase from "../api/Firebase"
 
 import {resultIsCorrect, isError} from "../assets/utils/utilFuncs";
 import { translate } from '../assets/translations/translationManager';
+import Colors from '../constants/Colors'
 
 //Redux stuff
 import { connect } from 'react-redux'
@@ -18,6 +19,7 @@ import Head2Head from "../components/match/Head2Head"
 import MatchDiscussion from "../components/match/MatchDiscussion"
 import MatchImage from "../components/match/MatchImage"
 import MatchBet from '../components/match/MatchBet';
+import { getMatchColors } from '../components/betting/MatchBetting'
 
 class MatchScreen extends Component {
 
@@ -144,29 +146,34 @@ class MatchScreen extends Component {
 
     render() {
 
-        if (!this.props.currentMatch) return null
+        const match = this.props.currentMatch
+
+        if (!match) return null
+
+        let {bg: backgroundColor} = getMatchColors({match})
 
         return (
-            <View style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
+            <View style={{...styles.container, backgroundColor}}>
                 <ScrollView style={styles.mainView} contentContainerStyle={styles.scrollContainer}>
-                    <MatchImage match={this.props.currentMatch}/>
+                    <MatchImage match={match}/>
 
                     <MatchResult
-                        match={this.props.currentMatch}
+                        style={{borderColor: "red", borderWidth: 1}}
+                        match={match}
                         editable={this.state.editable}
                         defaultResult={this.defaultResult}
                         updateDBMatchParams={this.updateDBMatchParams}/>
 
                     <TimeInfo
-                        match={this.props.currentMatch}
+                        match={match}
                         editable={this.state.editable}
                         updateDBMatchParams={this.updateDBMatchParams}/>
 
-                    <MatchBet match={this.props.currentMatch}/>
+                    <MatchBet match={match}/>
                     
-                    <MatchDiscussion match={this.props.currentMatch}/>
+                    <MatchDiscussion match={match}/>
 
-                    <Head2Head match={this.props.currentMatch}/>
+                    <Head2Head match={match}/>
                     
                 </ScrollView>
                 
