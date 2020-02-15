@@ -33,10 +33,12 @@
         "ranking editing": "Edició del rànquing",
         "player management": "Administració de jugadors",
         "your matches": "Els teus partits",
+        "played matches": "Partits jugats",
+        "matches to play": "Partits per jugar",
         "other matches": "Altres partits",
         "betting": "Apostes",
         "old groups": "Grups antics",
-        "new ranking": "Nou rànquing",
+        "new ranking": "Nou rànquing"
     },
     "stats": {
         "played matches": "Partits jugats",
@@ -70,7 +72,8 @@
         "player data modified": "Dades del jugador modificades",
         "no email address available": "Sense correu",
         "added to calendar": "Afegit al calendari",
-        "bets closed": "Apostes tancades"
+        "bets closed": "Apostes tancades",
+        "you can not place bets until the match is scheduled": "No pots apostar fins que el partit tingui una data fixada."
     },
     "questions": {
         "has this match been played now?": "S'ha jugat ara el partit?"

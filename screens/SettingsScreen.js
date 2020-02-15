@@ -10,7 +10,7 @@ import { connect } from 'react-redux'
 import { List, ListItem, Body, Right, Icon, Text, Button, Form, Item, Label, Input} from 'native-base';
 import { ColorPicker , fromHsv} from 'react-native-color-picker'
 
-import HeaderIcon from "../components/header/HeaderIcon"
+import HeaderIcon from "../components/UX/HeaderIcon"
 import NumericInput from "../components/settings/NumericInput"
 import RelationsInput from "../components/settings/RelationsInput"
 import SortableInput from "../components/settings/SortableInput"

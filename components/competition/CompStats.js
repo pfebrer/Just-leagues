@@ -9,7 +9,7 @@ import { connect } from 'react-redux'
 import { totalSize } from '../../api/Dimensions';
 import { selectCurrentCompetition } from '../../redux/reducers';
 
-import Leaderboard from "./Leaderboard"
+import Leaderboard from "../UX/Leaderboard"
 
 class CompetitionStats extends React.Component {
 

@@ -7,7 +7,7 @@ import { connect } from 'react-redux'
 import { totalSize } from '../../api/Dimensions';
 import { selectCurrentCompetition } from '../../redux/reducers';
 
-import Card from "../home/Card"
+import Card from "./Card"
 
 class Leaderboard extends React.Component {
 

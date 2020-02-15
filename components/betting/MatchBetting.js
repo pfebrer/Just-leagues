@@ -22,6 +22,9 @@ const refToMatch = ({match}) => {
 }
 
 const isPlayed = ({match}) => !match.context.pending
+const isMatchScheduled = ({match}) => match.scheduled && match.scheduled.time
+const isBeingPlayed = ({match}) => isMatchScheduled({match}) && match.scheduled.time < new Date()
+const isPlayedOrOngoing = ({match}) => isPlayed({match}) || isBeingPlayed({match})
 
 class MatchWinnerBet extends Component {
 
@@ -58,7 +61,7 @@ class MatchWinnerBet extends Component {
     }
 }
 
-MatchWinnerBet = toBetView(MatchWinnerBet, BetTypes.MATCHWINNER_BET, refToMatch, isPlayed )
+MatchWinnerBet = toBetView(MatchWinnerBet, BetTypes.MATCHWINNER_BET, refToMatch, isPlayedOrOngoing )
 
 class MatchResultBet extends Component {
 
@@ -113,7 +116,7 @@ class MatchResultBet extends Component {
     }
 }
 
-MatchResultBet = toBetView(MatchResultBet, BetTypes.MATCHRESULT_BET, refToMatch, isPlayed )
+MatchResultBet = toBetView(MatchResultBet, BetTypes.MATCHRESULT_BET, refToMatch, isPlayedOrOngoing )
 
 class MatchGamesTotalBet extends Component {
 
@@ -137,9 +140,9 @@ class MatchGamesTotalBet extends Component {
     }
 }
 
-MatchGamesTotalBet = toBetView(MatchGamesTotalBet, BetTypes.MATCHGAMESTOTAL_BET, refToMatch, isPlayed )
+MatchGamesTotalBet = toBetView(MatchGamesTotalBet, BetTypes.MATCHGAMESTOTAL_BET, refToMatch, isPlayedOrOngoing )
 
-export {MatchWinnerBet, MatchResultBet, MatchGamesTotalBet}
+export {MatchWinnerBet, MatchResultBet, MatchGamesTotalBet, isMatchScheduled, isBeingPlayed, isPlayed, isPlayedOrOngoing}
 
 const styles = StyleSheet.create({
     

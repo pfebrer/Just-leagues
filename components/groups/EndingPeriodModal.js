@@ -9,7 +9,7 @@ import { Dimensions, StyleSheet, View, Text, TouchableOpacity } from "react-nati
 
 import Firebase from '../../api/Firebase'
 
-import HeaderIcon from '../../components/header/HeaderIcon';
+import HeaderIcon from '../UX/HeaderIcon';
 
 import { translate } from '../../assets/translations/translationManager'
 

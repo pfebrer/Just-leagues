@@ -19,7 +19,7 @@ import { connect } from 'react-redux'
 import { totalSize, w, h } from '../../api/Dimensions';
 
 import { translate } from '../../assets/translations/translationManager';
-import Card from './Card';
+import Card from '../UX/Card';
 
 class Notifications extends Component {
 

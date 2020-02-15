@@ -22,7 +22,7 @@ import { totalSize, w, h } from '../../api/Dimensions';
 
 import { translate } from '../../assets/translations/translationManager';
 import { convertDate, sortMatchesByDate, getCompetitionName } from "../../assets/utils/utilFuncs";
-import Card from './Card';
+import Card from '../UX/Card';
 import { selectSuperChargedCompetitions, selectUserPendingMatches} from '../../redux/reducers';
 
 class PendingMatches extends Component {

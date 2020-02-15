@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native'
 import DatePicker from 'react-native-datepicker'
 import moment from "moment"
 
-import Card from '../home/Card'
+import Card from '../UX/Card'
 
 import { translate } from '../../assets/translations/translationManager'
 import {convertDate} from "../../assets/utils/utilFuncs"
@@ -16,7 +16,7 @@ import { totalSize } from '../../api/Dimensions'
 import { addEventToCalendar } from '../../api/Calendar'
 import * as Localization from 'expo-localization'
 
-import UpdatableCard from './UpdatableCard'
+import UpdatableCard from '../UX/UpdatableCard'
 import { Text, Button, Icon, Toast} from 'native-base'
 
 import _ from "lodash"

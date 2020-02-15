@@ -3,7 +3,7 @@ import { StyleSheet} from 'react-native'
 
 import _ from "lodash"
 
-import Card from '../home/Card'
+import Card from './Card'
 
 export default class UpdatableCard extends Component {
 

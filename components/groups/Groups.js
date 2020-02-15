@@ -1,11 +1,12 @@
 import React from 'react';
-import {StyleSheet, Text, View, FlatList, TouchableOpacity, SectionList} from 'react-native';
+import {StyleSheet, Text, View, FlatList, TouchableOpacity, SectionList, Platform} from 'react-native';
 import { Icon } from "native-base";
 import Table from "./Table"
 import { translate } from '../../assets/translations/translationManager';
 
 import { GroupBet, PlayerPointsBet } from "../betting/GroupsBetting"
 import MatchSummary from "../match/MatchSummary"
+import ExpandableSectionList from '../UX/ExpandableSectionList'
 
 import { totalSize } from '../../api/Dimensions';
 import { sortMatchesByDate } from '../../assets/utils/utilFuncs'
@@ -20,8 +21,7 @@ class Group extends React.Component{
 
         this.state = {
             expandable: false,
-            expanded: false,
-            expandedSection: {}
+            expanded: false
         }
     }
 
@@ -32,34 +32,13 @@ class Group extends React.Component{
 
     renderPlugIns = ({item, section}) => {
 
-        const heightStyle = this.state.expandedSection[section.key] ? {} : {height:0, margin: 0, padding: 0, paddingVertical: 0, paddingTop: 0, paddingBottom: 0, overflow: "hidden"}
-
-        let content = null
-
         if (section.key == "betting") {
-            if (item == "groupBet") { content = <GroupBet noHeader group={this.props.group} competition={this.props.competition}/>}
-            else {
-                content = <PlayerPointsBet playerID={item} group={this.props.group} competition={this.props.competition}/>
-            }
+            if (item == "groupBet") return <GroupBet noHeader group={this.props.group} competition={this.props.competition}/>
+            else return <PlayerPointsBet playerID={item} group={this.props.group} competition={this.props.competition}/>
         }
 
-        else if (section.key == "matches") { content = <MatchSummary navigation={this.props.navigation} match={item} /> } 
+        else if (section.key == "matches") return <MatchSummary navigation={this.props.navigation} match={item} />
 
-        return <View style={{ ...styles.plugInItemContainer, ...heightStyle}}>{content}</View>
-    }
-
-    renderHeaders = ({section}, sectionTitles) => {
-
-        return(
-        <TouchableOpacity
-            style={styles.plugInSectionHeader}
-            onPress={() => this.setState({expandedSection: {...this.state.expandedSection, [section.key]: !this.state.expandedSection[section.key]}})}>
-            <Text style={styles.pluginSectionTitle} >{sectionTitles[section.key]}</Text>
-            {this.state.expandedSection[section.key]
-                    ? <Icon style={{ fontSize: 18 }} name="remove-circle" />
-                    : <Icon style={{ fontSize: 18 }} name="add-circle" />}
-        </TouchableOpacity>
-        )
     }
 
     render(){
@@ -68,7 +47,10 @@ class Group extends React.Component{
 
         const sections = [
             {key: "matches", data: sortMatchesByDate(this.props.competition.getGroupMatches(group.id))},
-            {key: "betting", data: ["groupBet", ...group.playersIDs]}
+            ...Platform.select({
+                ios: [], //No betting in iOs :(
+                android: [{key: "betting", data: ["groupBet", ...group.playersIDs]}]
+            })
         ]
 
         const sectionTitles = {
@@ -87,12 +69,11 @@ class Group extends React.Component{
                 navigation={this.props.navigation}
             />
             {this.state.expandable ? <View style={{height: this.state.expanded ? undefined: 0, overflow: "hidden"}}>
-                <SectionList
-                    style={styles.plugInsSectionList}
+                <ExpandableSectionList
+                    itemContainerStyle={styles.plugInItemContainer}
                     renderItem={this.renderPlugIns}
-                    renderSectionHeader={(args) =>  this.renderHeaders(args, sectionTitles)}
+                    sectionTitles={sectionTitles}
                     sections={sections}
-                    keyExtractor={item => {return typeof item != "string" ? item.id : item}}
                 />         
             </View> : null}
             

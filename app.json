@@ -9,7 +9,7 @@
       "android",
       "web"
     ],
-    "version": "1.5.0",
+    "version": "1.5.1",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "splash": {
@@ -41,7 +41,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.pol.esquaixlligues",
-      "buildNumber": "3",
+      "buildNumber": "1",
       "config": {
         "googleSignIn": {
           "reservedClientId": "com.googleusercontent.apps.524738063553-7a5ri1erg2jgc74u50oju3i1ksffdft4"

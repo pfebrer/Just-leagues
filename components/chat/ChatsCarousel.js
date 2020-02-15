@@ -14,7 +14,7 @@ import {getCompetitionName, elevation} from "../../assets/utils/utilFuncs"
 import { connect } from 'react-redux'
 import {setCurrentCompetition} from "../../redux/actions"
 
-import Card from '../home/Card';
+import Card from '../UX/Card';
 import { translate } from '../../assets/translations/translationManager';
 import { selectCurrentCompetition } from '../../redux/reducers';
 

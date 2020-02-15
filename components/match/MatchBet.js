@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
-import { Text, StyleSheet, View, TouchableOpacity} from 'react-native'
+import { Text, StyleSheet, View, TouchableOpacity, Platform} from 'react-native'
 
 import { translate } from '../../assets/translations/translationManager'
 
 //Redux stuff
 import { connect } from 'react-redux'
 import {setCurrentMatch} from "../../redux/actions"
-import Card from '../home/Card'
-import { MatchWinnerBet, MatchResultBet, MatchGamesTotalBet } from '../betting/MatchBetting'
+import Card from '../UX/Card'
+import { MatchWinnerBet, MatchResultBet, MatchGamesTotalBet, isMatchScheduled, isPlayed} from '../betting/MatchBetting'
 
 
 class MatchBets extends Component {
@@ -25,8 +25,19 @@ class MatchBets extends Component {
 
         //if ( !this.props.match.isBetable || !this.props.match.playersIDs) return null
 
-        //YOU CAN NOT BET ON AN OWN MATCH! At least for now...
-        if (this.props.match.playersIDs.indexOf(this.props.currentUser.id) != -1) return null
+        //YOU CAN NOT BET ON AN OWN MATCH! At least for now... Oh and iOs also doesn't like betting.
+        if (Platform.OS == "ios" || this.props.match.playersIDs.indexOf(this.props.currentUser.id) != -1) return null
+
+        let content = isMatchScheduled({match: this.props.match}) || isPlayed({match: this.props.match}) ? (
+            [
+                <MatchWinnerBet match={this.props.match} competition={this.props.match.context.competition}/>,
+                <MatchResultBet match={this.props.match} competition={this.props.match.context.competition}/>,
+                <MatchGamesTotalBet match={this.props.match} competition={this.props.match.context.competition}/>
+            ]
+            
+        ) : (
+            <Text>{translate("info.you can not place bets until the match is scheduled")}</Text>
+        )
 
         return (
             <Card
@@ -35,10 +46,7 @@ class MatchBets extends Component {
                 pendingUpdate={this.state.pendingUpdate}
                 onCommitUpdate={this.commitResultToDB}
                 >
-                <MatchWinnerBet match={this.props.match} competition={this.props.match.context.competition}/>
-                <MatchResultBet match={this.props.match} competition={this.props.match.context.competition}/>
-                <MatchGamesTotalBet match={this.props.match} competition={this.props.match.context.competition}/>
-
+                {content}
             </Card>
         )
     }

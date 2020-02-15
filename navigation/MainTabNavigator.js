@@ -16,7 +16,7 @@ import HomeScreen from "../screens/HomeScreen"
 import MatchScreen from "../screens/MatchScreen"
 
 import { Icon } from 'native-base';
-import HeaderIcon from "../components/header/HeaderIcon"
+import HeaderIcon from "../components/UX/HeaderIcon"
 import ChatScreen from '../screens/ChatScreen';
 import { translate } from '../assets/translations/translationManager';
 import EndingPeriodModal from '../components/groups/EndingPeriodModal';

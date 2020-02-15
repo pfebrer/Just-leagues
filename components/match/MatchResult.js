@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Text, StyleSheet, View, TouchableOpacity} from 'react-native'
 
-import Card from '../home/Card'
+import Card from '../UX/Card'
 import { translate } from '../../assets/translations/translationManager'
 
 //Redux stuff
@@ -9,7 +9,7 @@ import { connect } from 'react-redux'
 import {setCurrentMatch} from "../../redux/actions"
 import { totalSize, h} from '../../api/Dimensions'
 import { Icon } from 'native-base'
-import UpdatableCard from './UpdatableCard'
+import UpdatableCard from '../UX/UpdatableCard'
 import NumericInput from '../inputs/NumericInput'
 
 import _ from 'lodash'

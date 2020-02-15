@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Text, StyleSheet, View, TouchableOpacity} from 'react-native'
 
-import Card from '../home/Card'
+import Card from '../UX/Card'
 import { translate } from '../../assets/translations/translationManager'
 
 //Redux stuff

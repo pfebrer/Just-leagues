@@ -53,7 +53,6 @@ export default function App(props) {
 async function loadResourcesAsync() {
   await Promise.all([
     Asset.loadAsync([
-        require('./assets/images/bg.jpg'),
         require('./assets/images/blank-profile.png'),
         require('./assets/images/icon.png')
     ]),

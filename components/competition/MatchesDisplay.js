@@ -1,8 +1,12 @@
 import React from 'react';
-import {StyleSheet, SectionList, View, Text} from 'react-native';
+import {StyleSheet, TouchableOpacity, View, Text} from 'react-native';
+import {Icon} from 'native-base'
+
 import MatchSummary from "../../components/match/MatchSummary";
+import ExpandableSectionList from '../UX/ExpandableSectionList'
 
 import _ from "lodash"
+import { isPlayed, isMatchScheduled } from '../betting/MatchBetting'
 import { translate } from "../../assets/translations/translationManager"
 import { connect } from 'react-redux'
 import { sortMatchesByDate } from '../../assets/utils/utilFuncs'
@@ -12,6 +16,7 @@ class MatchesDisplay extends React.Component {
 
     constructor(props) {
         super(props);
+
 
     }
 
@@ -41,27 +46,34 @@ class MatchesDisplay extends React.Component {
             (match) => {
                 if (match.playersIDs.indexOf(this.props.currentUser.id) != -1) {
                     return "own"
+                } else if (isPlayed({match})){
+                    return "played"
                 } else {
-                    return match.context.group.name
+                    return "not played"
                 }
             }
         )
 
-        let groupKeys = Object.keys(grouped).filter( key => key != "own")
+        //let groupKeys = Object.keys(grouped).filter( key => key != "own")
 
         let sectionTitles = {
             "own": translate("tabs.your matches"),
-            ...groupKeys.reduce((sections, key) =>{sections[key] = translate("vocabulary.group") + " " + key; return sections}, {})
+            "played": translate("tabs.played matches"),
+            "not played": translate("tabs.matches to play")
+
+            //...groupKeys.reduce((sections, key) =>{sections[key] = translate("vocabulary.group") + " " + key; return sections}, {})
         }
 
-        let keyOrder = ["own", ...groupKeys.sort( key => Number(key))]
+        let keyOrder = ["own", "played", "not played"]//...groupKeys.sort( key => Number(key))]
 
         return (
 
-            <SectionList
+            <ExpandableSectionList
+                style={styles.containerView}
                 renderItem={({item: match}) => <MatchSummary key={match.id} match={match} navigation={this.props.navigation}/>}
-                renderSectionHeader={({section}) => <Text style={styles.sectionTitle}>{sectionTitles[section.key]}</Text>}
+                sectionTitles={sectionTitles}
                 sections={keyOrder.reduce((sections, key) => { if (grouped[key]) sections.push({data: grouped[key], key}); return sections} , [])}
+                initiallyExpanded={["own"]}
             />
     
         )
@@ -78,9 +90,9 @@ export default connect(mapStateToProps)(MatchesDisplay);
 
 const styles = StyleSheet.create({
 
-    sectionTitle: {
-        textAlign: "center",
-        fontFamily: "bold"
+    containerView: {
+        paddingHorizontal: 20
     }
+    
 
 });

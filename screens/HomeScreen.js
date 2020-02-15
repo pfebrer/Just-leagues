@@ -11,11 +11,11 @@ import { connect } from 'react-redux'
 import {setCurrentCompetition} from "../redux/actions"
 
 import { USERSETTINGS } from "../constants/Settings"
-import HeaderIcon from "../components/header/HeaderIcon"
+import HeaderIcon from "../components/UX/HeaderIcon"
 
 import PendingMatches from "../components/home/PendingMatches"
 import Notifications from "../components/home/Notifications"
-import Card from "../components/home/Card"
+import Card from "../components/UX/Card"
 import AdminSummary from "../components/home/AdminSummary"
 
 import { elevation } from '../assets/utils/utilFuncs'

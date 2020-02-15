@@ -7,7 +7,7 @@ import PlayerProfile from '../components/statDisplays/UserProfile';
 //Redux stuff
 import { connect } from 'react-redux'
 import { USERSETTINGS } from "../constants/Settings"
-import Card from '../components/home/Card';
+import Card from '../components/UX/Card';
 import DetailedStats from '../components/statDisplays/DetailedStats';
 import { translate } from '../assets/translations/translationManager';
 

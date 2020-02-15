@@ -20,7 +20,7 @@ import { w } from '../../api/Dimensions';
 //Redux stuff
 import { connect } from 'react-redux'
 
-import HeaderIcon from '../../components/header/HeaderIcon';
+import HeaderIcon from '../../components/UX/HeaderIcon';
 
 import Firebase from "../../api/Firebase"
 import { selectCurrentCompetition } from '../../redux/reducers';

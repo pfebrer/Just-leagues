@@ -3,7 +3,7 @@ import { View, StyleSheet, TouchableOpacity } from 'react-native'
 import { Icon, Text, Toast, Accordion} from "native-base"
 import { connect } from 'react-redux'
 import _ from "lodash"
-import Card from "./Card"
+import Card from "../UX/Card"
 
 import { translate } from "../../assets/translations/translationManager"
 import { selectAdminCompetitions } from '../../redux/reducers'
