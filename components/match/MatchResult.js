@@ -61,7 +61,7 @@ class MatchResult extends Component {
 
         return (
             <UpdatableCard
-                cardContainerStyle={this.props.style}
+                cardContainerStyles={this.props.style}
                 titleIcon="tennisball"
                 title={translate("vocabulary.match score")}
                 pendingUpdate={this.state.pendingUpdate}

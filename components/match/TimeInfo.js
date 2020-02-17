@@ -119,7 +119,8 @@ class TimeInfo extends Component {
             actionIcon: this.props.match.scheduled && this.props.match.scheduled.time ? "backspace" : null,
             actionIconStyles: {color: "darkred"},
             onHeaderPress: this.props.match.scheduled && this.props.match.scheduled.time ? () => this.updateAndCommitSchedule(null) : null,
-            contentContainerStyles: {justifyContent:"center", alignItems: "center"}
+            contentContainerStyles: {justifyContent:"center", alignItems: "center"},
+            cardContainerStyles: this.props.style
         }
 
         if ( !this.props.match.context.pending) {

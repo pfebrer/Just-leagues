@@ -165,6 +165,10 @@
             "name": "Ubicació",
             "description": "Lloc on es juga la competició. Es farà servir com a lloc de joc dels partits en que no s'especifiqui ubicació."
         },
+        "maxBetValue": {
+            "name": "Aposta màxima",
+            "description": "No es podrà apostar més que aquesta quantitat"
+        },
         "groups": "Grups",
         "nPromotingPlayers": {
             "name": "Jugadors que promocionen",

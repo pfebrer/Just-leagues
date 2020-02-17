@@ -150,7 +150,13 @@ class MatchScreen extends Component {
 
         if (!match) return null
 
-        let {bg: backgroundColor} = getMatchColors({match})
+        let {bg: backgroundColor, text: textColor} = getMatchColors({match})
+
+        const commonProps = {
+            style: {borderColor: textColor, borderWidth: 2},
+            match: match,
+            editable: this.state.editable,
+        }
 
         return (
             <View style={{...styles.container, backgroundColor}}>
@@ -158,22 +164,20 @@ class MatchScreen extends Component {
                     <MatchImage match={match}/>
 
                     <MatchResult
-                        style={{borderColor: "red", borderWidth: 1}}
-                        match={match}
+                        {...commonProps}
                         editable={this.state.editable}
                         defaultResult={this.defaultResult}
                         updateDBMatchParams={this.updateDBMatchParams}/>
 
                     <TimeInfo
-                        match={match}
-                        editable={this.state.editable}
+                        {...commonProps}
                         updateDBMatchParams={this.updateDBMatchParams}/>
 
-                    <MatchBet match={match}/>
+                    <MatchBet {...commonProps}/>
                     
-                    <MatchDiscussion match={match}/>
+                    <MatchDiscussion {...commonProps}/>
 
-                    <Head2Head match={match}/>
+                    <Head2Head {...commonProps}/>
                     
                 </ScrollView>
                 

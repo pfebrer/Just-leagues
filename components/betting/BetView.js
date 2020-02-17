@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-native'
 
 import { w, h, totalSize} from '../../api/Dimensions';
-import { elevation } from '../../assets/utils/utilFuncs'
+import { elevation, round} from '../../assets/utils/utilFuncs'
 import Firebase from '../../api/Firebase';
 import {translate } from "../../assets/translations/translationManager"
 import NumericInput from '../inputs/NumericInput'
@@ -12,11 +12,13 @@ import { betHelpers } from '../../api/BetManager'
 import _ from "lodash"
 
 import { connect } from 'react-redux'
+import { selectCurrentCompetition } from '../../redux/reducers'
 
 const mapStateToProps = (state) => ({
     currentUser: state.currentUser,
     relevantUsers: state.relevantUsers,
     bets: state.bets,
+    competition: selectCurrentCompetition(state)
 })
 
 const mapDispatchToProps = {
@@ -72,12 +74,14 @@ export default function toBetView(BetControlsComponent, type, refTo, checkIfBetC
             this.customFilter = customFilter 
             this.syncStateWithDatabase()
         }
+
+        getOdds = () => betHelpers[type].odds(this.props.bet || this.state, this.props)
     
         getBetForSubmit = () => {
     
             return {
                 ...this.state,
-                odds: betHelpers[type].odds(),
+                odds: this.getOdds(),
                 type,
                 removePreviousBet: this.state.id, //This indicates that the bet was already placed and we need to update it
                 refTo: refTo(this.props),
@@ -124,7 +128,7 @@ export default function toBetView(BetControlsComponent, type, refTo, checkIfBetC
                                 key="quantity"
                                 value={this.state.quantity}
                                 disableTextInput
-                                onValueChange={(value)=> value <= 10 ? this.setState({quantity: value}) : null}
+                                onValueChange={(value)=> value <= this.props.competition.getSetting("maxBetValue") ? this.setState({quantity: value}) : null}
                                 valueContainerStyle={{...elevation(0)}}
                                 leftControlIcon="remove"
                                 rightControlIcon="add"/>
@@ -133,7 +137,7 @@ export default function toBetView(BetControlsComponent, type, refTo, checkIfBetC
                                 style={{paddingRight: 0}}
                                 valueContainerStyle={{...elevation(0)}}
                                 disabledValueTextStyle={{color: Colors.WINNER_GREEN_BG, fontFamily: "bold"}}
-                                value={betHelpers[type].odds().win * this.state.quantity}
+                                value={round(this.getOdds().win * this.state.quantity, 2)}
                                 disabled />
                         </View>
                         <TouchableOpacity style={styles.groupBetSubmitBut} onPress={this.submitBettingState}>

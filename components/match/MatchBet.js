@@ -43,8 +43,7 @@ class MatchBets extends Component {
             <Card
                 titleIcon="logo-game-controller-a"
                 title={translate("cardTitles.match bets")}
-                pendingUpdate={this.state.pendingUpdate}
-                onCommitUpdate={this.commitResultToDB}
+                cardContainerStyles={this.props.style}
                 >
                 {content}
             </Card>

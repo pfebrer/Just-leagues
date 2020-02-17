@@ -14,7 +14,7 @@ export default class UpdatableCard extends Component {
             titleTextStyles: this.props.pendingUpdate ? styles.pendingUpdateFont : null,
             actionIcon: this.props.pendingUpdate ? "cloud-upload" : null,
             actionIconStyles: styles.pendingUpdateFont,
-            cardContainerStyles: this.props.pendingUpdate ? {backgroundColor: "#ef8345"} : null,
+            cardContainerStyles: this.props.pendingUpdate ? {backgroundColor: "#ef8345"} : this.props.cardContainerStyles,
             onHeaderPress: this.props.pendingUpdate ? this.props.onCommitUpdate : null,
         }
 

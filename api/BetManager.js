@@ -67,7 +67,21 @@ const betHelpers = {
 
     [BetTypes.MATCHWINNER_BET]: {
 
-        odds: () => ({win: 2}),
+        odds: (bet, {match, competition}) => {
+
+            if (competition && competition.playersIDs){
+
+                if( !bet.bet || _.isEqual(bet.bet, {})) return {win: 2}
+
+                const ranks = match.playersIDs.map(uid => competition.playersIDs.indexOf(uid))
+                const rankDifference = bet.bet == 1 ? ranks[0] - ranks[1] : ranks[1] - ranks[0]
+
+                return { win: 1 + Math.exp(rankDifference/10)}
+            } else {
+                return {win: 2}
+            }
+
+        },
         settle: (bet, {match}) => {
 
             let result = match.result[0] > match.result[1] ? 1 : match.result[0] > match.result[1] ? "X" : 2

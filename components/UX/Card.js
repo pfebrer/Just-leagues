@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
         paddingBottom: 20,
         backgroundColor: "white",
         //overflow: "hidden",
-        ...elevation(5)
+        ...elevation(5),
     },
 
     itemTitleView : {
