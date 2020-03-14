@@ -87,7 +87,11 @@ class CompetitionStats extends React.Component {
 
                 <View style={{flexDirection: "row"}}>
                     <View style={{flex:1}}>
-                        <Leaderboard style={styles.leaderboardCard} title={translate("tabs.betting")} items={this.props.competition.bettingPoints}/>
+                        <Leaderboard style={styles.leaderboardCard} title={translate("tabs.betting")} items={
+                            Object.keys(this.props.competition.bettingPoints).reduce((rounded, key)=> {
+                                rounded[key] = round(this.props.competition.bettingPoints[key], 2)
+                                return rounded
+                            }, {})}/>
                     </View>
                 </View>
 

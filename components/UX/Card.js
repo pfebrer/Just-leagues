@@ -31,7 +31,7 @@ export default class Card extends Component{
         return(
             <Animated.View style={{...styles.gridItem, ...this.props.cardContainerStyles}}>
                 <TouchableOpacity disabled={!this.props.onHeaderPress} style={{...styles.itemTitleView, ...this.props.headerStyles}} onPress={this.props.onHeaderPress}>
-                    <Icon name={this.props.titleIcon} style={{...styles.titleIcon,...this.props.titleIconStyles}}/>
+                    <Icon name={this.props.titleIcon} style={{...styles.titleIcon,...this.props.titleIconStyles}} {...this.props.titleIconProps}/>
                     <Text style={{...styles.titleText,...this.props.titleTextStyles}}>{this.props.title}</Text>
                     <Animated.View style={styles.actionView}>
                         {this.props.actionHelperText ? <Text style={{...styles.actionHelperText, ...this.props.actionHelperTextStyles}} >{this.props.actionHelperText}</Text> : null}

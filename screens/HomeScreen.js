@@ -17,6 +17,7 @@ import PendingMatches from "../components/home/PendingMatches"
 import Notifications from "../components/home/Notifications"
 import Card from "../components/UX/Card"
 import AdminSummary from "../components/home/AdminSummary"
+import Courts from "../components/home/Courts"
 
 import { elevation } from '../assets/utils/utilFuncs'
 
@@ -103,6 +104,8 @@ class HomeScreen extends Component {
                 contentContainerStyle={{paddingVertical: 20}}>
 
                 <Notifications/>
+
+                <Courts/>
 
                 <PendingMatches navigation={this.props.navigation}/>
 
