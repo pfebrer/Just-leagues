@@ -105,7 +105,7 @@ class HomeScreen extends Component {
 
                 <Notifications/>
 
-                <Courts/>
+                {false ? <Courts/>: null}
 
                 <PendingMatches navigation={this.props.navigation}/>
 

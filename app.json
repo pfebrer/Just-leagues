@@ -3,13 +3,12 @@
     "name": "Just leagues",
     "slug": "SquashLeagues",
     "privacy": "public",
-    "sdkVersion": "36.0.0",
     "platforms": [
       "ios",
       "android",
       "web"
     ],
-    "version": "1.5.1",
+    "version": "1.5.2",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "splash": {
@@ -41,7 +40,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.pol.esquaixlligues",
-      "buildNumber": "1",
+      "buildNumber": "2",
       "config": {
         "googleSignIn": {
           "reservedClientId": "com.googleusercontent.apps.524738063553-7a5ri1erg2jgc74u50oju3i1ksffdft4"
@@ -49,7 +48,7 @@
       }
     },
     "android": {
-      "versionCode": 4,
+      "versionCode": 5,
       "config": {
         "googleSignIn": {
           "apiKey": "AIzaSyBo87T9t5sl8jX6YaJqsYylHsN2ZcZ95Xs",
@@ -57,7 +56,7 @@
         }
       },
       "package": "com.pol.esquaixlligues",
-      "googleServicesFile":"./google-services.json"
+      "googleServicesFile": "./google-services.json"
     },
     "description": "This app is meant to make your life easier with your sport competitions. If you have any doubt, please contact justleaguesapp@gmail.com.",
     "githubUrl": "https://github.com/pfebrer96/SquashLeaguesV2"
