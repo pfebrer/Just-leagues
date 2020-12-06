@@ -48,7 +48,7 @@
       }
     },
     "android": {
-      "versionCode": 5,
+      "versionCode": 6,
       "permissions": [
         "NOTIFICATIONS",
         "CAMERA",
