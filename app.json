@@ -49,6 +49,11 @@
     },
     "android": {
       "versionCode": 5,
+      "permissions": [
+        "NOTIFICATIONS",
+        "CAMERA",
+        "CAMERA_ROLL"
+      ],
       "config": {
         "googleSignIn": {
           "apiKey": "AIzaSyBo87T9t5sl8jX6YaJqsYylHsN2ZcZ95Xs",
