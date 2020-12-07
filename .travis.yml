@@ -12,6 +12,8 @@ before_script:
 jobs:
   include:
     - stage: deploy
+      on:
+        tags: true
       node_js: lts/*
       script:
         - npm ci

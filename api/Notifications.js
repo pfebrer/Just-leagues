@@ -1,4 +1,4 @@
-import { Notifications} from 'expo';
+import * as Notifications from 'expo-notifications';
 import * as Permissions from "expo-permissions";
 
 import Firebase from "./Firebase"
@@ -43,7 +43,7 @@ class NotificationManager {
 
     createCategories(){
 
-        Notifications.createCategoryAsync('chatNotification', [
+        Notifications.setNotificationCategoryAsync('chatNotification', [
             {
               actionId: 'reply',
               buttonTitle: translate("actions.reply"),
@@ -55,7 +55,7 @@ class NotificationManager {
     }
 
     listenToNotifications = (navigation, states = {}, actions = {}) => {
-        Notifications.addListener( notif => {
+        Notifications.addNotificationReceivedListener( notif => {
 
             if (notif.origin == "selected"){
 
@@ -75,20 +75,19 @@ class NotificationManager {
                     }
                     
                 }
-                //Go to the corresponding chat
-                //if notif.data = "Chat"
             }
-            //If remote == false, the notification has been triggered on purpose from the device.
-            //If remote == true, we are recieving the notification from the server, and we need to render it as we wish
-            if ( notif.remote ){
+        })
 
-                if (notif.data && notif.data.categoryId){
-                    Notifications.dismissNotificationAsync(notif.notificationId)
-                    Notifications.presentLocalNotificationAsync({...notif, ...notif.data})
+        // Handle notifications that arrive while the app is in the foreground.
+        Notifications.setNotificationHandler({
+            handleNotification: async (notif) => {
+                const notify = Boolean(notif.remote && notif.data && notif.data.categoryId)
+                return {
+                    shouldPlaySound: notify,
+                    shouldSetBadge: notify,
+                    shouldShowAlert: notify
                 }
-                
-            } 
-
+            }
         })
     }
 

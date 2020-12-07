@@ -9,12 +9,13 @@
   },
   "dependencies": {
     "@firebase/firestore": "^1.6.3",
-    "@react-native-community/datetimepicker": "3.0.0",
+    "@react-native-community/datetimepicker": "^3.0.8",
     "expo": "^39.0.0",
     "expo-calendar": "~8.5.0",
     "expo-google-app-auth": "^7.0.0",
     "expo-google-sign-in": "~8.3.0",
     "expo-localization": "~9.0.0",
+    "expo-notifications": "~0.7.2",
     "expo-permissions": "~9.3.0",
     "firebase": "7.9.0",
     "firebase-admin": "^8.6.0",
@@ -38,6 +39,7 @@
     "react-native-loading-spinner-overlay": "^1.0.1",
     "react-native-modal": "^11.5.1",
     "react-native-reanimated": "~1.13.0",
+    "react-native-screens": "~2.10.1",
     "react-native-snap-carousel": "^3.8.4",
     "react-native-sortable-list": "0.0.23",
     "react-native-svg": "12.1.0",
@@ -54,8 +56,7 @@
     "redux": "^4.0.4",
     "redux-logger": "^3.0.6",
     "redux-orm": "^0.16.0",
-    "sentry-expo": "^2.0.1",
-    "react-native-screens": "~2.10.1"
+    "sentry-expo": "^2.0.1"
   },
   "devDependencies": {
     "@expo/vector-icons": "^10.0.0",

@@ -54,6 +54,7 @@
         "CAMERA",
         "CAMERA_ROLL"
       ],
+      "useNextNotificationsApi": true,
       "config": {
         "googleSignIn": {
           "apiKey": "AIzaSyBo87T9t5sl8jX6YaJqsYylHsN2ZcZ95Xs",
