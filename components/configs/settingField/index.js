@@ -9,8 +9,9 @@ import TextField from './TextField'
 import ColorField from "./ColorField";
 import SortableField from "./SortableField";
 import RelationsField from "./RelationsField";
+import PickerField from "./PickerField";
 
-const allFields = [ TextField, NumericField, ColorField, SortableField, RelationsField ].reduce((fields, current) => {
+const allFields = [ TextField, NumericField, ColorField, SortableField, RelationsField, PickerField ].reduce((fields, current) => {
     fields[current._type] = current
     return fields
 }, {})

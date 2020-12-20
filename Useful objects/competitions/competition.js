@@ -95,9 +95,13 @@ export default class Competition extends Configurable {
             return [ nameObject.firstName, nameObject.lastName].join(" ")
         } else if (nameDisplaySettings == "Lastname, Name" ) {
             return [ nameObject.lastName, nameObject.firstName].join(", ")
+        } else if (nameDisplaySettings == "Lastname") {
+            return nameObject.lastName
         } else if (nameDisplaySettings == "Name") {
             return nameObject.firstName
-        } else if (nameDisplaySettings == "free"){
+        } else if (nameDisplaySettings == "Name Lastname (aka)") {
+            return [ nameObject.firstName, nameObject.lastName].join(" ") + (nameObject.aka ? "(" + nameObject.aka + ")" : "")
+        } else if (nameDisplaySettings == "aka"){
             return nameObject.aka
         }
     }

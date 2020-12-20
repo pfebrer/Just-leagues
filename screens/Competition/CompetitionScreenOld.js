@@ -5,7 +5,7 @@ import { USERSETTINGS} from "../../constants/Settings"
 
 //Redux stuff
 import { connect } from 'react-redux'
-import { selectCurrentCompetition } from '../../redux/reducers'
+import { selectCurrentCompetition, selectUserSetting } from '../../redux/reducers'
 
 import CompetitionComponent from './CompetitionScreen';
 
@@ -48,7 +48,7 @@ class CompetitionScreen extends React.Component {
                     <CompetitionComponent what="main" competition={new KnockoutCompetition({})}  navigation={this.props.navigation}/>
                 </View>*/
 
-        return <View style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
+        return <View style={{...styles.container, backgroundColor: this.props.backgroundColor}}>
                     <CompetitionComponent what="main" competition={this.props.competition}  navigation={this.props.navigation}/>
                 </View>
     }
@@ -58,6 +58,7 @@ class CompetitionScreen extends React.Component {
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
     competition: selectCurrentCompetition(state),
+    backgroundColor: selectUserSetting(state, "General appearance", "backgroundColor")
 })
 
 export default connect(mapStateToProps)(CompetitionScreen);
@@ -66,7 +67,6 @@ const styles = StyleSheet.create({
 
     container: {
         flex: 1,
-        backgroundColor: USERSETTINGS["General appearance"].backgroundColor.default
     },
 
 });

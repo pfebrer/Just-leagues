@@ -10,7 +10,6 @@ import { Icon, Button } from 'native-base'
 import { connect } from 'react-redux'
 import {setCurrentCompetition} from "../redux/actions"
 
-import { USERSETTINGS } from "../constants/Settings"
 import HeaderIcon from "../components/UX/HeaderIcon"
 
 import PendingMatches from "../components/home/PendingMatches"
@@ -21,10 +20,9 @@ import Courts from "../components/home/Courts"
 
 import { elevation } from '../assets/utils/utilFuncs'
 
-import Firebase from "../api/Firebase"
-
 import _ from "lodash"
 import { selectSuperChargedCompetitions } from '../redux/reducers';
+import { selectUserSetting } from '../redux/reducers';
 
 class HomeScreen extends Component {
 
@@ -39,7 +37,7 @@ class HomeScreen extends Component {
     componentDidMount() {
 
         this.props.navigation.setParams({
-            backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor,
+            backgroundColor: this.props.backgroundColor,
             isAdmin: (this.props.currentUser.gymAdmin && this.props.currentUser.gymAdmin.length > 0) || this.props.currentUser.admin
         })
 
@@ -47,10 +45,10 @@ class HomeScreen extends Component {
 
     componentDidUpdate(prevProps){
 
-        let currentbackCol = this.props.currentUser.settings["General appearance"].backgroundColor
+        let currentbackCol = this.props.backgroundColor
 
         //Update the header color when the background color is updated :)
-        if ( prevProps.currentUser.settings["General appearance"].backgroundColor !== currentbackCol){
+        if ( prevProps.backgroundColor !== currentbackCol){
             this.props.navigation.setParams({backgroundColor: currentbackCol})
         }
 
@@ -68,7 +66,7 @@ class HomeScreen extends Component {
         return {
             headerStyle: {
                 ...elevation(2),
-                backgroundColor: navigation.getParam("backgroundColor")
+                backgroundColor: navigation.getParam("backgroundColor"),
               },
             headerLeft: navigation.getParam("isAdmin", false) ? <HeaderIcon name="clipboard" onPress={() => {navigation.navigate("AdminScreen")}} /> : null,
             headerRight: <HeaderIcon name="settings" onPress={() => {navigation.navigate("SettingsScreen")}} />
@@ -100,7 +98,7 @@ class HomeScreen extends Component {
 
         return (
             <ScrollView 
-                style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}
+                style={{...styles.container, backgroundColor: this.props.backgroundColor}}
                 contentContainerStyle={{paddingVertical: 10}}>
 
                 <Notifications/>
@@ -164,6 +162,7 @@ class CompetitionState extends Component {
 
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
+    backgroundColor: selectUserSetting(state, "General appearance", "backgroundColor"),
     competitions: selectSuperChargedCompetitions(state)
 })
 
@@ -178,7 +177,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingHorizontal: 10,
-        backgroundColor: USERSETTINGS["General appearance"].backgroundColor.default
     },
 
     competitionStateActions: {

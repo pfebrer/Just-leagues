@@ -16,6 +16,12 @@ import { Provider } from 'react-redux'
 import * as Sentry from 'sentry-expo';
 import Constants from 'expo-constants';
 
+import { SafeAreaView } from 'react-navigation';
+import TranslationManager from './assets/translations/translationManager';
+if (Platform.OS === 'android') {
+  SafeAreaView.setStatusBarHeight(0);
+}
+
 Sentry.init({
   dsn: 'https://859a3f17d2964dd6b8c9dd3e6bcd2624@sentry.io/1886709',
   enableInExpoDevelopment: false,
@@ -40,6 +46,7 @@ export default function App(props) {
     return (
       <Provider store={store}>
         <Root>
+          <TranslationManager/>
           <View style={styles.container}>
             {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
               <AppNavigator />

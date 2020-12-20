@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux'
-import currentUser from './currentUser'
+import currentUser, * as fromCurrentUser from './currentUser'
 import match from "./match"
 import relevantUsers from "./relevantUsers"
 import competitions, * as fromCompetitions from "./competitions"
@@ -32,3 +32,5 @@ export const selectUserPendingMatches = (state) => {
         return [...userPendingMatches, ...competition.pendingMatches.filter(match => match.playersIDs.indexOf(state.currentUser.id) > -1)]
     }, [])
 }
+
+export const selectUserSetting = (state, ...args) => fromCurrentUser.selectUserSetting(state.currentUser, ...args)

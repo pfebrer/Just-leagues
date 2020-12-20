@@ -27,6 +27,7 @@ import ChatsCarousel from '../components/chat/ChatsCarousel';
 import { Icon } from 'native-base';
 import { selectCurrentCompetition } from '../redux/reducers';
 import {setCurrentCompetition} from '../redux/actions'
+import { selectUserSetting } from '../redux/reducers';
 
 class ChatScreen extends React.Component {
 
@@ -199,7 +200,7 @@ class ChatScreen extends React.Component {
         return (
             <View style={{flex: 1}}>
                 <SafeAreaView style={{ flex:0, backgroundColor: 'white' }} />
-                <View style={ {...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
+                <View style={ {...styles.container, backgroundColor: this.props.backgroundColor}}>
                     <View style={{...styles.chatCarousel}}>
                         <ChatsCarousel
                             setNewMessagesTarget={this.setNewMessagesTarget}
@@ -238,6 +239,7 @@ class ChatScreen extends React.Component {
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
     currentComp: selectCurrentCompetition(state),
+    backgroundColor: selectUserSetting(state, "General appearance", "backgroundColor"),
     relevantUsers: state.relevantUsers
 })
 

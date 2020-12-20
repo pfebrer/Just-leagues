@@ -10,6 +10,7 @@ import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 
 import { translate } from "../../assets/translations/translationManager"
 import { compTabBarOptions } from "../../navigation/MainTabNavigator"
+import { selectUserSetting } from '../../redux/reducers';
 
 const initialLayout = { width: Dimensions.get('window').width };
 
@@ -92,7 +93,7 @@ class CompetitionScreen extends Component {
         };
 
         return (
-            <View style={{backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor, flex: 1}}>
+            <View style={{backgroundColor: this.props.backgroundColor, flex: 1}}>
                 <TabView
                     lazy
                     navigationState={this.state}
@@ -112,7 +113,8 @@ class CompetitionScreen extends Component {
 
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
-    competition: selectCurrentCompetition(state)
+    competition: selectCurrentCompetition(state),
+    backgroundColor: selectUserSetting(state, "General appearance", "backgroundColor")
 })
 
 export default connect(mapStateToProps)(CompetitionScreen);

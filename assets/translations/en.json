@@ -143,7 +143,8 @@
         },
         "language": {
             "name":"Language",
-            "description":"Pick your language."
+            "description":"Pick your language.",
+            "detect automatically": "Detect automatically"
         },
         "max visible cols": {
             "name": "Visible columns in groups",
@@ -164,7 +165,13 @@
         "general": "General",
         "nameDisplay": {
             "name": "Names format",
-            "description": "Format used to display names in the competition's screens."
+            "description": "Format used to display names in the competition's screens.",
+            "Name Lastname": "Name Lastname",
+            "Lastname, Name": "Lastname, Name",
+            "Lastname": "Lastname",
+            "Name": "Name",
+            "Name Lastname (aka)": "Name Lastname (aka)",
+            "aka": "Aka"
         },
         "location": {
             "name": "Location",

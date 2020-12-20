@@ -143,7 +143,8 @@
         },
         "language": {
             "name":"Idioma",
-            "description":"Tria l'idioma."
+            "description":"Tria l'idioma.",
+            "detect automatically": "Detecta automàticament"
         },
         "max visible cols": {
             "name": "Columnes visibles en grups",
@@ -164,7 +165,13 @@
         "general": "General",
         "nameDisplay": {
             "name": "Nom dels jugadors",
-            "description": "Format del nom dels jugadors en les pantalles de la competició."
+            "description": "Format del nom dels jugadors en les pantalles de la competició.",
+            "Name Lastname": "Nom Cognom",
+            "Lastname, Name": "Cognom, Nom",
+            "Lastname": "Cognom",
+            "Name": "Nom",
+            "Name Lastname (aka)": "Nom Cognom (alies)",
+            "aka": "Alies"
         },
         "location": {
             "name": "Ubicació",

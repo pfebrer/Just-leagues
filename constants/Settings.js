@@ -9,6 +9,14 @@ exports.COMPSETTINGS = {
             },
             name: "compsettings.nameDisplay.name",
             description: "compsettings.nameDisplay.description",
+            items: [
+                {translatelabel: "compsettings.nameDisplay.Name Lastname", value: "Name Lastname"},
+                {translatelabel: "compsettings.nameDisplay.Lastname, Name", value: "Lastname, Name"},
+                {translatelabel: "compsettings.nameDisplay.Lastname", value: "Lastname"},
+                {translatelabel: "compsettings.nameDisplay.Name", value: "Name"},
+                {translatelabel: "compsettings.nameDisplay.aka", value: "aka"},
+                {translatelabel: "compsettings.nameDisplay.Name Lastname (aka)", value: "Name Lastname (aka)"},
+            ],
             default: "Name Lastname", //One of ["Name Lastname", "Lastname, Name", "Name", "free"]
         },
         location: {
@@ -45,10 +53,10 @@ exports.COMPSETTINGS = {
                 type: "sortable",
                 items: {
                     "directMatch":{
-                        name: "vocabulary.direct match"
+                        translatename: "vocabulary.direct match"
                     },
                     "position":{
-                        name: "vocabulary.position"
+                        translatename: "vocabulary.position"
                     }
                 }
             },
@@ -150,11 +158,16 @@ exports.USERSETTINGS = {
         },
         language: {
             control: {
-                type: "text",
+                type: "picker",
             },
             name: "settings.language.name",
             description: "settings.language.description",
-            default: "ca",
+            items: [
+                {translatelabel: "settings.language.detect automatically", value: ""},
+                {label: "Català", value: "ca"},
+                {label: "English", value: "en"},
+            ],
+            default: "",
         },
     },
     "Competition display": {

@@ -7,6 +7,7 @@ import PlayerProfile from '../components/statDisplays/UserProfile';
 //Redux stuff
 import { connect } from 'react-redux'
 import { USERSETTINGS } from "../constants/Settings"
+import { selectUserSetting } from '../redux/reducers';
 
 class Stats extends React.Component {
 
@@ -79,7 +80,7 @@ class Stats extends React.Component {
         let uid = this.state.uid || this.props.currentUser.id
 
         return (
-            <View style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
+            <View style={{...styles.container, backgroundColor: this.props.backgroundColor}}>
                 <PlayerProfile uid={uid}/>
                 <View style={styles.sessionOptions}>
                     <TouchableOpacity style={styles.changePWButton} onPress={() => {
@@ -104,7 +105,8 @@ class Stats extends React.Component {
 }
 
 const mapStateToProps = state => ({
-    currentUser: state.currentUser
+    currentUser: state.currentUser,
+    backgroundColor: selectUserSetting(state, "General appearance", "backgroundColor")
 })
 
 export default connect(mapStateToProps)(Stats);
@@ -113,7 +115,6 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingHorizontal: 20,
-        backgroundColor: USERSETTINGS["General appearance"].backgroundColor.default,
         paddingTop: 30,
     },
     statsScrollView: {

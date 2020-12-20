@@ -29,18 +29,9 @@ export default class SortableInput extends Component  {
 
     renderRow = ({data, active, index}) => {
 
-        /*return (
-            <View style={styles.sortableItem}>
-                <View style={styles.indexView}>
-                    <Text style={styles.indexText}>{index + 1}</Text>
-                </View>
-                <View style={styles.dataView}>
-                    <Text style={styles.dataText}>{translate(this.props.items[data].name)}</Text>
-                </View>
-            </View>
-        )*/
+        const name = this.props.items[data].translatename ? translate(this.props.items[data].translatename) : this.props.items[data].name
         return <Row 
-                data={translate(this.props.items[data].name)} 
+                data={name} 
                 active={active} 
                 index={index}
                 //deletable={this.state.deleteMode}
@@ -50,8 +41,6 @@ export default class SortableInput extends Component  {
     }
 
     render() {
-
-      console.warn("RENDERING SORTABLE")
 
         return (
             <SortableList

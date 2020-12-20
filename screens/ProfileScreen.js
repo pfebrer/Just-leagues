@@ -1,15 +1,18 @@
 import React, {Component} from 'react';
-import {ImageBackground, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import { StyleSheet, Text, View} from 'react-native';
 import Firebase from "../api/Firebase"
 import ChangePWModal from '../components/ChangePWModal';
 import PlayerProfile from '../components/statDisplays/UserProfile';
 
 //Redux stuff
 import { connect } from 'react-redux'
-import { USERSETTINGS } from "../constants/Settings"
 import Card from '../components/UX/Card';
 import DetailedStats from '../components/statDisplays/DetailedStats';
-import { translate } from '../assets/translations/translationManager';
+
+import Carousel, {Pagination} from 'react-native-snap-carousel';
+import { w } from '../api/Dimensions';
+import { selectUserSetting } from '../redux/reducers';
+
 
 class ProfileScreen extends React.Component {
 
@@ -51,7 +54,7 @@ class ProfileScreen extends React.Component {
         let uid = this.state.uid || this.props.currentUser.id
 
         return (
-            <View style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}>
+            <View style={{...styles.container, backgroundColor: this.props.backgroundColor}}>
                 <Card>
                     <Text>{this.props.currentUser.displayName}</Text>
                 </Card>
@@ -64,9 +67,6 @@ class ProfileScreen extends React.Component {
         );
     }
 }
-
-import Carousel, {Pagination} from 'react-native-snap-carousel';
-import { w } from '../api/Dimensions';
 
 class StatsCarousel extends Component {
 
@@ -122,7 +122,8 @@ class StatsCarousel extends Component {
 }
 
 const mapStateToProps = state => ({
-    currentUser: state.currentUser
+    currentUser: state.currentUser,
+    backgroundColor: selectUserSetting(state, "General appearance", "backgroundColor")
 })
 
 export default connect(mapStateToProps)(ProfileScreen);
@@ -130,7 +131,6 @@ export default connect(mapStateToProps)(ProfileScreen);
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: USERSETTINGS["General appearance"].backgroundColor.default,
         paddingTop: 30,
     },
     statsScrollView: {

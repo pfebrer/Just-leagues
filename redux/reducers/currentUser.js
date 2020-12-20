@@ -16,4 +16,13 @@ const currentUser = (state = [], action) => {
     }
 }
 
+export const selectUserSetting = (currentUser, settingType, settingKey) => {
+
+    if (currentUser && currentUser.settings) {
+        return currentUser.settings[settingType][settingKey]
+    } else {
+        return undefined
+    }
+}
+
 export default currentUser
