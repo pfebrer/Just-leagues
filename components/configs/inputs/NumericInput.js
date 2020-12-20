@@ -1,35 +1,104 @@
 import React , {Component} from 'react';
-import { View, Text, StyleSheet, TouchableOpacity} from "react-native"
+import { View, Text, TextInput, StyleSheet, TouchableOpacity } from "react-native"
 import { Icon } from 'native-base';
-import { totalSize } from '../../../api/Dimensions';
+import { h, totalSize } from '../../../api/Dimensions';
 
 export default class NumericInput extends Component  {
 
     static _type = "number"
-    
-    constructor(props){
-        super(props)
+
+    static _default = 0
+
+    textChange = (text, onValueChange) => {
+        if (text){
+            onValueChange(Number(text))
+        } else {
+            onValueChange("")
+        }
+    }
+
+    get stepSize (){
+        return this.props.stepSize || 1
+    }
+
+    decrement = () => {
+        this.props.onValueChange(this.props.value - this.stepSize)
+    }
+
+    increment = () => {
+        this.props.onValueChange(this.props.value + this.stepSize)
     }
 
     render() {
 
-        return <View style={{...styles.container, ...this.props.style}}>
+        const value = this.props.value
+
+        if (this.props.disabled){
+
+            return (
+                <View style={{...styles.scoreInputView, ...this.props.style}}>
+                    <View style={{...styles.scoreValueView, ...this.props.valueContainerStyle, ...this.props.disabledValueContainerStyle}}>
+                        <Text style={{...styles.scoreValue, ...this.props.inputContainerStyle, ...this.props.disabledValueTextStyle}}>{this.props.value}</Text>
+                    </View>
+                </View>
+            )
+
+        }
+        
+        if (this.props.controlMode === "sideArrows"){
+
+            return <View style={{...styles.container, ...this.props.style}}>
                     <View style={styles.valueView}>
-                        <Text style={styles.valueText}>{this.props.value}</Text>
+                        <Text style={styles.valueText}>{value}</Text>
                     </View>
                     <View>
                         <TouchableOpacity 
-                            onPress={()=> {this.props.onValueChange(this.props.value+1)}}
+                            onPress={this.increment}
                             style={styles.iconView}>
                             <Icon name="arrow-up" style={styles.icon}/>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            onPress={()=> {this.props.onValueChange(this.props.value-1)}}
+                            onPress={this.decrement}
                             style={styles.iconView}>
                             <Icon name="arrow-down" style={styles.icon}/>
                         </TouchableOpacity>
                     </View>
                 </View>
+        } else {
+            return (
+                <View style={{...styles.scoreInputView, ...this.props.style}}>
+                    <TouchableOpacity 
+                        style={{...styles.scoreInputControls, ...this.props.inputControlsStyle, ...this.props.leftInputControlStyle}}
+                        onPress={this.decrement}>
+                            {this.props.renderLeftInputControl ? 
+                                this.props.renderLeftInputControl() 
+                                :
+                                <Icon name={this.props.leftControlIcon || "arrow-round-back"} style={{...styles.scoreInputControlsIcon, ...this.props.inputControlIconStyle}}/>
+                            }
+                    </TouchableOpacity>
+                    <View style={{...styles.scoreValueView, ...this.props.valueContainerStyle}}>
+                        <TextInput
+                            editable={!this.props.disableTextInput}
+                            keyboardType="numeric"
+                            value={String(value)}
+                            style={{...styles.scoreValue, ...this.props.inputContainerStyle}}
+                            onChangeText={(text) => this.textChange(text, onValueChange)}/>
+                    </View>
+                    <TouchableOpacity 
+                        style={{...styles.scoreInputControls, ...this.props.inputControlsStyle, ...this.props.rightInputControlStyle}}
+                        onPress={this.increment}
+                        >
+                            {this.props.renderRightInputControl ? 
+                                this.props.renderRightInputControl() 
+                                :
+                                <Icon name={this.props.rightControlIcon || "arrow-round-forward"} style={{...styles.scoreInputControlsIcon, ...this.props.inputControlIconStyle}}/>
+                            }
+                    </TouchableOpacity>
+                </View>
+            )
+        }
+
+            
     }
 
 }
@@ -57,6 +126,41 @@ const styles = StyleSheet.create({
     icon: {
         color:"gray",
         fontSize: totalSize(2.8)
-    }
+    },
+
+    // Separated arrows styles
+    scoreContainer: {
+        flexDirection: "row",
+        marginVertical: 10,
+    },
+
+    scoreInputView: {
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+
+    scoreValueView: {
+        elevation: 3,
+        backgroundColor: "white",
+        height: h(6),
+        width: h(6),
+        borderRadius: 5,
+        justifyContent: "center",
+        alignItems: "center"
+    },
+
+    scoreValue: {
+        textAlign: "center",
+        fontSize: totalSize(2.5)
+    },
+
+    scoreInputControls: {
+        padding: 20,
+    },
+
+    scoreInputControlsIcon: {
+        fontSize: totalSize(1.5)
+    },
 
 })

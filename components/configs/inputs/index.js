@@ -13,9 +13,24 @@ const allInputs = [NumericInput, RelationsInput, SortableInput, ColorPicker, Pic
 
 export default class InputField extends Component {
 
+    constructor(props){
+        super(props)
+
+        this.InputComponent = allInputs[props.type]
+
+        this.state = {}
+    }
+
+    get onValueChange(){
+        return this.props.onValueChange || ((value) => this.setState({value}))
+    }
+
+    get value (){
+        return this.props.value || this.state.value || this.InputComponent._default
+    }
+
     render(){
-        const InputComponent = allInputs[this.props.type]
-        return <InputComponent {...this.props} />
+        return <this.InputComponent {...this.props} value={this.value} onValueChange={this.onValueChange}/>
     }
     
 }

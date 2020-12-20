@@ -15,7 +15,7 @@ export default class NumericField extends Component {
                 <Text note>{this.props.description} </Text>
             </Body>, 
             <Right>
-                <InputField {...this.props} type="number"/>
+                <InputField {...this.props} type="number" controlMode="sideArrows"/>
             </Right>
         ]
                     

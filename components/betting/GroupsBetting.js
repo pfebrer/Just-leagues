@@ -7,9 +7,10 @@ import {translate } from "../../assets/translations/translationManager"
 import { elevation} from "../../assets/utils/utilFuncs"
 import { BetTypes } from '../../api/BetManager'
 import toBetView from './BetView'
-import NumericInput from '../configs/inputs/NumericInput';
+import InputField from '../configs/inputs';
 
 import _ from "lodash"
+
 
 
 const refToGroup = ({competition, group}) => Firebase.groupRef(competition.gymID, competition.id, group.id).path
@@ -101,7 +102,8 @@ class PlayerPointsBet extends Component {
         return (
             <View style={styles.playerPointsView}>
                 <Text style={{flex: 1, fontFamily: "bold", paddingLeft: 10}}>{playerName}</Text>
-                <NumericInput
+                <InputField
+                    type="number"
                     style={{paddingRight: 0}}
                     value={this.props.bet[uid]}
                     disabledValueContainerStyle={{marginHorizontal: 20}}

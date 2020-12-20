@@ -1,14 +1,13 @@
 import React, { Component } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity} from 'react-native'
 
-import { w, h, totalSize} from '../../api/Dimensions';
 import Firebase from '../../api/Firebase';
 import {translate } from "../../assets/translations/translationManager"
 import { elevation} from "../../assets/utils/utilFuncs"
 import { BetTypes } from '../../api/BetManager'
 import toBetView from './BetView'
 import Colors from '../../constants/Colors'
-import NumericInput from '../configs/inputs/NumericInput';
+import InputField from '../configs/inputs';
 
 import _ from "lodash"
 
@@ -104,12 +103,13 @@ class MatchResultBet extends Component {
                         <View
                             style={addStyles[i].view}
                         >
-                            <NumericInput
-                            style={{paddingRight: 0}}
-                            value={this.props.bet[i]}
-                            disabled={this.props.betClosed}
-                            disabledValueContainerStyle={{marginHorizontal: 20}}
-                            onValueChange={(value)=>this.updateBet(i, value)}/>
+                            <InputField
+                                type="number"
+                                style={{paddingRight: 0}}
+                                value={this.props.bet[i]}
+                                disabled={this.props.betClosed}
+                                disabledValueContainerStyle={{marginHorizontal: 20}}
+                                onValueChange={(value)=>this.updateBet(i, value)}/>
                             <Text style={addStyles[i].text} >{playerName}</Text>
                         </View>
                     )
@@ -132,7 +132,8 @@ class MatchGamesTotalBet extends Component {
                 <View style={{flex:1, paddingLeft: 20}}>
                     <Text style={{fontFamily: "bold"}}>{translate("vocabulary.games")}</Text>
                 </View>
-                <NumericInput
+                <InputField
+                    type="number"
                     style={{paddingRight: 0}}
                     value={_.isEqual(this.props.bet, {}) ? 0 : this.props.bet}
                     disabled={this.props.betClosed}

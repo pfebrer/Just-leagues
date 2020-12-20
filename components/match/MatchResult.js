@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, StyleSheet, View, TouchableOpacity} from 'react-native'
+import { Text, StyleSheet, View } from 'react-native'
 
 import Card from '../UX/Card'
 import { translate } from '../../assets/translations/translationManager'
@@ -8,11 +8,11 @@ import { translate } from '../../assets/translations/translationManager'
 import { connect } from 'react-redux'
 import {setCurrentMatch} from "../../redux/actions"
 import { totalSize, h} from '../../api/Dimensions'
-import { Icon } from 'native-base'
 import UpdatableCard from '../UX/UpdatableCard'
-import NumericInput from '../configs/inputs/NumericInput'
+import InputField from '../configs/inputs'
 
 import _ from 'lodash'
+
 
 
 
@@ -48,7 +48,8 @@ class MatchResult extends Component {
         let result = this.props.match.result || this.props.defaultResult || this.defaultResult
             
         let scoreInputs = result.map( (value, index) => (
-            <NumericInput
+            <InputField
+                type="number"
                 key={index} 
                 value={value}
                 disabled={!this.props.editable} 

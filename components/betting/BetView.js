@@ -7,12 +7,13 @@ import Firebase from '../../api/Firebase';
 import {translate } from "../../assets/translations/translationManager"
 import Colors from '../../constants/Colors'
 import { betHelpers } from '../../api/BetManager'
-import NumericInput from '../configs/inputs/NumericInput';
+import InputField from '../configs/inputs';
 
 import _ from "lodash"
 
 import { connect } from 'react-redux'
 import { selectCurrentCompetition } from '../../redux/reducers'
+
 
 
 const mapStateToProps = (state) => ({
@@ -125,7 +126,8 @@ export default function toBetView(BetControlsComponent, type, refTo, checkIfBetC
                 ) : (
                     <View style={styles.betSubmiterView}>
                         <View style={styles.betQuantityView}>
-                            <NumericInput
+                            <InputField
+                                type="number"
                                 key="quantity"
                                 value={this.state.quantity}
                                 disableTextInput
@@ -133,7 +135,8 @@ export default function toBetView(BetControlsComponent, type, refTo, checkIfBetC
                                 valueContainerStyle={{...elevation(0)}}
                                 leftControlIcon="remove"
                                 rightControlIcon="add"/>
-                            <NumericInput
+                            <InputField
+                                type="number"
                                 key="winOutcome"
                                 style={{paddingRight: 0}}
                                 valueContainerStyle={{...elevation(0)}}
