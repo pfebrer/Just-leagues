@@ -1,4 +1,3 @@
-import Firebase from "../api/Firebase"
 
 //Contains all the parameters that can be used to tune the behaviour of a competition
 exports.COMPSETTINGS = {

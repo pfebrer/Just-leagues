@@ -28,5 +28,8 @@ jobs:
 
       - name: "Install node packages"
         run: npm install
+      
+      - name: "Run tests"
+        run: npm test
 
       - run: expo publish
