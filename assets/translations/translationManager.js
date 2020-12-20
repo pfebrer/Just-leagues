@@ -69,6 +69,6 @@ const setI18nConfig = async (langToImpose) => {
     moment.locale(languageTag)
 };
 
-setI18nConfig("ca");
+setI18nConfig();
 
 export { translate, setI18nConfig }

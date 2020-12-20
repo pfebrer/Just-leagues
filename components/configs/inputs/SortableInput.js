@@ -1,8 +1,8 @@
 import React , {Component} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Platform, Easing, Animated} from "react-native"
-import { totalSize } from '../../api/Dimensions';
+import { totalSize } from '../../../api/Dimensions';
 
-import { translate } from "../../assets/translations/translationManager"
+import { translate } from "../../../assets/translations/translationManager"
 
 import SortableList from 'react-native-sortable-list';
 
@@ -10,11 +10,13 @@ import _ from "lodash"
 
 export default class SortableInput extends Component  {
 
+    static _type = "sortable"
+
     constructor(props){
         super(props)
 
         this.state = {
-            value: props.defaultValue
+          value: props.defaultValue
         }
     }
 
@@ -49,10 +51,12 @@ export default class SortableInput extends Component  {
 
     render() {
 
+      console.warn("RENDERING SORTABLE")
+
         return (
             <SortableList
                 style={styles.list}
-                contentContainerStyle={styles.contentContainer}
+                contentContainerStyle={{...styles.contentContainer, ...this.props.style}}
                 onReleaseRow={(key, newOrder) => this.updateValues(newOrder)}
                 //onPressRow={(key) => this.setState({deleteMode: this.state.editable && !this.state.deleteMode})}
                 data={this.state.value}

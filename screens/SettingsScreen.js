@@ -8,12 +8,8 @@ import { w, totalSize, h } from '../api/Dimensions';
 import { USERSETTINGS, COMPSETTINGS } from "../constants/Settings"
 import { connect } from 'react-redux'
 import { List, ListItem, Body, Right, Icon, Text, Button, Form, Item, Label, Input} from 'native-base';
-import { ColorPicker , fromHsv} from 'react-native-color-picker'
 
 import HeaderIcon from "../components/UX/HeaderIcon"
-import NumericInput from "../components/settings/NumericInput"
-import RelationsInput from "../components/settings/RelationsInput"
-import SortableInput from "../components/settings/SortableInput"
 
 import { withNavigationFocus } from 'react-navigation';
 
@@ -21,30 +17,15 @@ import {deepClone} from "../assets/utils/utilFuncs"
 
 import _ from "lodash"
 import { selectCurrentCompetition } from '../redux/reducers';
- 
-const Picker = (props) => (
-    <View style={{height: h(60)}}>
-        <ColorPicker
-        oldColor={props.currentValue}
-        onColorChange={props.onColorChange}
-        style={{flex: 1, paddingHorizontal: 30}}/>
-    </View>
-    
-)
 
+import SettingField from '../components/configs/settingField';
 
 class SettingsScreen extends React.Component {
 
-    constructor(props) {
-        super(props);
+    constructor(props){
+        super(props)
 
-        this.state ={
-            modalComponent: undefined,
-        }
-
-        //Auxiliary variable to store future changes in settings
-        this.temp = null
-
+        this.state = {}
     }
 
     static navigationOptions = ({navigation}) => {
@@ -145,41 +126,13 @@ class SettingsScreen extends React.Component {
 
     goBack = () => {
 
-        if(this.state.modalComponent){
+        this.props.navigation.goBack()
 
-            this.setState({modalComponent: undefined})
-
-            return true
-
-        } else {
-
-            //this.setState({settings: deepClone(this.props.currentUser.settings)})
-            this.props.navigation.goBack()
-
-            return true
-            
-        }
     }
 
     submitSettings = () => {
 
-        if(this.state.modalComponent){
-
-            if (this.temp){
-
-                this.updateStateSettings(this.temp.settingType, this.temp.settingKey, this.temp.value)
-
-                this.temp = null
-            } else {
-
-                this.goBack()
-            }
-            
-        } else {
-
-            this.state.submitFunction(this.state.settings, this.props.navigation.goBack)
-
-        }
+        this.state.submitFunction(this.state.settings, this.props.navigation.goBack)
 
     }
 
@@ -189,92 +142,16 @@ class SettingsScreen extends React.Component {
             
             let setting = settings[key]
 
-            let rightContent = this.getRightContent(setting.control, values[key], settingsType, key)
-            let description = setting.description ? <Text note>{translate(setting.description)}</Text> : null
+            // let rightContent = this.getRightContent(setting.control, values[key], settingsType, key)
 
-            /*There are two types of settings: Those that use an input field of the full width, and those whose control is only in
-            the right side and the description and name stays at the left side.*/
-            if (setting.control.type == "text"){
-                return (
-                    <ListItem key={key}>
-                        <Form style={{width: "100%"}}>
-                            <Item inlineLabel style={{marginTop: 0, marginBottom: 10}}>
-                                <Label >{translate(setting.name)}</Label>
-                                <Input
-                                    onChangeText={ text => this.updateStateSettings(settingsType, key, text)}
-                                    value={values[key]}/>
-                            </Item>
-                            <View style={{paddingLeft: 15}}>
-                                {description}
-                            </View> 
-                        </Form>
-                    </ListItem>
-                )
-            } else {
-                return (
-                    <ListItem key={key}>
-                        <Body>
-                            <Text>{translate(setting.name)}</Text>
-                            {description}
-                        </Body>
-                        <Right style={styles.rightView}>
-                            {rightContent}
-                        </Right>
-                    </ListItem>
-                )
-            }
+            return <SettingField 
+                type={setting.control.type} 
+                value={values[key]}
+                onValueChange={(value) => this.updateStateSettings(settingsType, key, value)}
+                {...setting}
+            />
+
         })
-    }
-
-    getRightContent = (settingControl, currentValue, settingType, settingKey) => {
-
-        if (settingControl.type == "colorWheel") {
-
-            return <TouchableOpacity 
-                        style={{width: 30, height: 30, backgroundColor: currentValue, elevation: 5}} 
-                        onPress={() => this.setState( 
-                            {
-                                modalComponent: Picker({
-                                    currentValue: _.cloneDeep(currentValue),
-                                    onColorChange: (color) => {this.temp = {value: fromHsv(color), settingType, settingKey}}
-                                }),
-                                headerTitle: translate([this.state.translateRoot, settingKey].join("."))
-                            })}>
-                    </TouchableOpacity>
-
-        } else if (settingControl.type == "integer") {
-
-            return <NumericInput 
-                    control={settingControl} 
-                    value={currentValue} 
-                    onValueChange={(value) => this.updateStateSettings(settingType, settingKey, value)}/>
-
-        } else if (settingControl.type == "relations") {
-
-            return <TouchableOpacity 
-                        style={{width: 30, height: 30, justifyContent: "center", alignItems: "center"}} 
-                        onPress={() => this.setState( 
-                            {
-                                modalComponent: <RelationsInput defaultValue={currentValue} {...settingControl} reportValue={(value) => {this.temp = {value, settingType, settingKey}} }/>,
-                                headerTitle: translate([this.state.translateRoot, settingKey].join("."))
-                            })}>
-                        <Icon name="arrow-forward"/>
-                    </TouchableOpacity>
-        } else if (settingControl.type == "sortable") {
-
-            return <TouchableOpacity 
-                        style={{width: 30, height: 30, justifyContent: "center", alignItems: "center"}} 
-                        onPress={() => this.setState( 
-                            {
-                                modalComponent: <SortableInput defaultValue={currentValue} {...settingControl} reportValue={(value) => {this.temp = {value, settingType, settingKey}} }/>,
-                                headerTitle: translate([this.state.translateRoot, settingKey].join("."))
-                            })}>
-                        <Icon name="arrow-forward"/>
-                    </TouchableOpacity>
-        } else if (settingControl.type == "text") {
-
-            return null
-        }
     }
 
     renderSettings = (settingsObject, currentValues) => {
@@ -303,13 +180,9 @@ class SettingsScreen extends React.Component {
 
         if (!this.state.settingsTemplate || !this.state.settings) return null
 
-        if (this.state.modalComponent){
-            return this.state.modalComponent
-        }
-
         return (
             <View style={styles.container}>
-                <ScrollView style={styles.scrollView} contentContainerStyle={{justifyContent: "center",alignItems: "center"}}>
+                <ScrollView style={styles.scrollView} contentContainerStyle={{justifyContent: "center",alignItems: "center"}} nestedScrollEnabled>
                     <List style={styles.settingsList}>
                         {this.renderSettings(this.state.settingsTemplate, this.state.settings)}
                     </List>

@@ -101,7 +101,7 @@ class HomeScreen extends Component {
         return (
             <ScrollView 
                 style={{...styles.container, backgroundColor: this.props.currentUser.settings["General appearance"].backgroundColor}}
-                contentContainerStyle={{paddingVertical: 20}}>
+                contentContainerStyle={{paddingVertical: 10}}>
 
                 <Notifications/>
 

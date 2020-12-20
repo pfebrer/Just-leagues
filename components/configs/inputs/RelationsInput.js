@@ -1,13 +1,15 @@
 import React , {Component} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity} from "react-native"
 import { Icon, List, ListItem, Body, Right, Button } from 'native-base';
-import { totalSize } from '../../api/Dimensions';
+import { totalSize } from '../../../api/Dimensions';
 
 import NumericInput from "./NumericInput"
 
 import _ from "lodash"
 
 export default class RelationsInput extends Component  {
+
+    static _type = "relations"
 
     constructor(props){
         super(props)

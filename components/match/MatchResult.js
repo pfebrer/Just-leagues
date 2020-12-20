@@ -10,9 +10,10 @@ import {setCurrentMatch} from "../../redux/actions"
 import { totalSize, h} from '../../api/Dimensions'
 import { Icon } from 'native-base'
 import UpdatableCard from '../UX/UpdatableCard'
-import NumericInput from '../inputs/NumericInput'
+import NumericInput from '../configs/inputs/NumericInput'
 
 import _ from 'lodash'
+
 
 
 class MatchResult extends Component {

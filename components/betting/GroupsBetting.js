@@ -7,9 +7,10 @@ import {translate } from "../../assets/translations/translationManager"
 import { elevation} from "../../assets/utils/utilFuncs"
 import { BetTypes } from '../../api/BetManager'
 import toBetView from './BetView'
-import NumericInput from '../inputs/NumericInput'
+import NumericInput from '../configs/inputs/NumericInput';
 
 import _ from "lodash"
+
 
 const refToGroup = ({competition, group}) => Firebase.groupRef(competition.gymID, competition.id, group.id).path
 const anyResult = ({group}) => group.scores.filter(score => score != false).length != 0

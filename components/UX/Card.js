@@ -54,15 +54,15 @@ export default class Card extends Component{
 const styles = StyleSheet.create({
 
     gridItem : {
-        marginHorizontal: 10,
+        marginHorizontal: 2,
         marginVertical: 10,
-        borderRadius: 5,
+        borderRadius: 3,
         paddingHorizontal: 15,
         paddingTop: 10,
         paddingBottom: 20,
         backgroundColor: "white",
         //overflow: "hidden",
-        ...elevation(5),
+        ...elevation(2),
     },
 
     itemTitleView : {

@@ -5,14 +5,15 @@ import { w, h, totalSize} from '../../api/Dimensions';
 import { elevation, round} from '../../assets/utils/utilFuncs'
 import Firebase from '../../api/Firebase';
 import {translate } from "../../assets/translations/translationManager"
-import NumericInput from '../inputs/NumericInput'
 import Colors from '../../constants/Colors'
 import { betHelpers } from '../../api/BetManager'
+import NumericInput from '../configs/inputs/NumericInput';
 
 import _ from "lodash"
 
 import { connect } from 'react-redux'
 import { selectCurrentCompetition } from '../../redux/reducers'
+
 
 const mapStateToProps = (state) => ({
     currentUser: state.currentUser,

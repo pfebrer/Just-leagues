@@ -141,13 +141,21 @@ exports.USERSETTINGS = {
     "General appearance": {
         backgroundColor: {
             control: {
-                type: "colorWheel",
+                type: "color",
             },
             name: "settings.background color.name",
             description: "settings.background color.description",
             default: "#ffe39f",
             
-        }
+        },
+        language: {
+            control: {
+                type: "text",
+            },
+            name: "settings.language.name",
+            description: "settings.language.description",
+            default: "ca",
+        },
     },
     "Competition display": {
         groupMaxVisibleCols: {

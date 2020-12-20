@@ -1,13 +1,14 @@
 import React , {Component} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity} from "react-native"
 import { Icon } from 'native-base';
-import { totalSize } from '../../api/Dimensions';
+import { totalSize } from '../../../api/Dimensions';
 
 export default class NumericInput extends Component  {
 
+    static _type = "number"
+    
     constructor(props){
         super(props)
-
     }
 
     render() {

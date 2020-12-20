@@ -8,7 +8,7 @@ import { elevation} from "../../assets/utils/utilFuncs"
 import { BetTypes } from '../../api/BetManager'
 import toBetView from './BetView'
 import Colors from '../../constants/Colors'
-import NumericInput from '../inputs/NumericInput'
+import NumericInput from '../configs/inputs/NumericInput';
 
 import _ from "lodash"
 

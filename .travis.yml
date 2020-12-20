@@ -17,4 +17,4 @@ jobs:
       node_js: lts/*
       script:
         - npm ci
-        - npx expo build:android -t app-bundle --no-wait
+        - npx expo publish

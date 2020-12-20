@@ -1,14 +1,15 @@
 {
-    "auth": {
-        "create account": "Create account",
+    "auth" : {
+        "create account": "Crete account",
         "forgot password": "Forgot password",
         "use app as guest": "Use app as guest",
+        "email": "E-mail address",
         "welcome" : "Welcome",
-        "email": "Email",
         "username": "Username",
         "password": "Password",
         "log in": "Log in",
-        "log out": "Log out",
+        "sign in with google": "Sign in with Google",
+        "sign out": "Sign out",
         "unable to log in": "Unable to log in",
         "unable to register for notifications": "Unable to register for notifications",
         "name":"Name",
@@ -20,8 +21,205 @@
     "tabs":{
         "stats": "Stats",
         "competition": "Competition",
+        "competitions you administrate": "Competitions you administrate",
+        "competition overview": "Overview",
         "chat": "Chat",
         "matches": "Matches",
-        "ranking": "Ranking"
+        "ranking": "Ranking",
+        "home":"Home",
+        "settings": "Settings",
+        "competitions handling": "Competitions handling",
+        "match view": "Match view",
+        "ranking editing": "Ranking editing",
+        "player management": "Player management",
+        "your matches": "Your matches",
+        "played matches": "Played matches",
+        "matches to play": "Matches to play",
+        "other matches": "Other matches",
+        "betting": "Betting",
+        "old groups": "Old groups",
+        "new ranking": "New ranking",
+        "your courts": "Your courts"
+    },
+    "stats": {
+        "played matches": "Played matches",
+        "played games": "Played games",
+        "won matches": "Won matches",
+        "won games": "Won games",
+        "games per match": "Games per match",
+        "clean sheets": "RClean sheets"
+    },
+    "cardTitles": {
+        "match schedule": "Match schedule",
+        "match date": "Match date",
+        "general stats": "General stats",
+        "groups betting": "Groups betting",
+        "match bets": "Match bets"
+    },
+    "info": {
+        "checking user": "Checking user",
+        "loading classifications": "Loading classifications",
+        "no pending matches": "No pending matches. You can relax.",
+        "there are competitions waiting for you": "There are competitions waiting for you!",
+        "no date limit to play match": "No date limit to play this match.",
+        "limit to play": "Limit to play",
+        "choose the competition that you would like to edit":"Choose the competition that you would like to edit",
+        "you don't have any notifications at the moment": "You don't have any notifications at the moment",
+        "if you expected to have any, please talk with your competition administrator": "If you expected to have any, please talk with your competition administrator, please :)",
+        "no messages yet": "No messages yet",
+        "new message": "New message",
+        "new group message": "New group message",
+        "player added": "Player added",
+        "player data modified": "Player data modified",
+        "no email address available": "No email address available",
+        "added to calendar": "Added to calendar",
+        "bets closed": "Bets closed",
+        "you can not place bets until the match is scheduled": "You can not place bets until the match is scheduled"
+    },
+    "questions": {
+        "has this match been played now?": "Has this match been played now?"
+    },
+    "vocabulary": {
+        "no": "No",
+        "yes": "Yes",
+        "group": "Group",
+        "total": "Total",
+        "pending matches": "Pending matches",
+        "notifications": "Notifications",
+        "cancel": "Cancel",
+        "OK": "OK",
+        "attention": "Attention!",
+        "limit":"Limit",
+        "scheduled match": "Scheduled match",
+        "not scheduled match": "Not scheduled match",
+        "match": "Match",
+        "match score": "Match score",
+        "fix a date":"Fix a date",
+        "days": "Days",
+        "hours": "Hours",
+        "played": "Played",
+        "general": "General",
+        "player": "Player",
+        "players": "Players",
+        "direct match": "Direct match",
+        "position": "Position",
+        "groups": "Groups",
+        "games": "Games"
+    },
+    "progress": {
+        "cleaning previous groups": "Cleaning previous groups...",
+        "generating new groups": "Generating new groups...",
+        "settling bets": "Settling bets...",
+        "submitting match": "Submitting match...",
+        "submitting all changes": "Submitting all changes..."
+    },
+    "success": {
+        "done": "Done",
+        "bets settled": "Bets settled"
+    },
+    "errors": {
+        "there was an error": "There was an error :(",
+        "you entered an invalid result":"You entered an invalid result",
+        "unable to merge users": "Unable to merge users",
+        "unknown competition": "Unknown competition",
+        "no name": "No name",
+        "could not send message": "Could not send message",
+        "competition was not removed": "Competition was not removed",
+        "unable to add new players": "Unable to add new players",
+        "failed to add to calendar": "Failed to add to calendar",
+        "could not get previous ranking": "Could not get previous ranking",
+        "could not clean previous groups": "Could not clean previous groups",
+        "could not generate new groups": "Could not generate new groups",
+        "could not submit changes": "Could not submit changes"
+    },
+    "settings": {
+        "you are about to restore default settings": "You are about to restore default settings",
+        "General appearance": "General appearance",
+        "Competition display": "Competition display",
+        "Profile": "Profile",
+        "background color": {
+            "name":"Background color",
+            "description":"Choose the background color of the app."
+        },
+        "language": {
+            "name":"Language",
+            "description":"Pick your language."
+        },
+        "max visible cols": {
+            "name": "Visible columns in groups",
+            "description": "In group competitions, the maximum number of columns that can be confortably visualized in your display."
+        },
+        "aka": {
+            "name":"Aka",
+            "description":"Name that will be shown whenever a competition allows free naming."
+        },
+        "first name": {
+            "name":"First name"
+        },
+        "last name": {
+            "name":"Last name"
+        }
+    },
+    "compsettings": {
+        "general": "General",
+        "nameDisplay": {
+            "name": "Names format",
+            "description": "Format used to display names in the competition's screens."
+        },
+        "location": {
+            "name": "Location",
+            "description": "Location where the competition takes place. Will be used as default for competitions' matches."
+        },
+        "maxBetValue": {
+            "name": "Max bet",
+            "description": "Maximum amount that can be submitted in bets."
+        },
+        "groups": "Groups",
+        "nPromotingPlayers": {
+            "name": "Promoting players",
+            "description": " Number of players that ascend/descend when the competition period is over."
+        },
+        "untyingCriteria": {
+            "name": "Untying criteria",
+            "description": "Criteria that will be applied to decide the ranking order for the next period in case there are ties."
+        },
+        "pointScheme": {
+            "name": "Point scheme",
+            "description": "Determine how many points are attributed to each player for a given result."
+        },
+        "groupSize": {
+            "name": "Group size",
+            "description": "Number of players in each group in normal conditions."
+        },
+        "minGroupSize": {
+            "name": "Min group size",
+            "description": "If there are less than this number of leftover players, the last two groups will be merged."
+        }
+    },
+    "actions": {
+        "go back": "Go back",
+        "type a message": "Type a message",
+        "reply": "Reply",
+        "write your reply": "Write your reply",
+        "add the date": "Add the date",
+        "add player": "Add player",
+        "modify player data": "Modify player data",
+        "pick a player": "Pick a player",
+        "add to your calendar": "Add to your calendar",
+        "submit": "Submit",
+        "modify": "Modify"
+    },
+
+    "admin": {
+        "choose a time limit to play matches": "Choose a time limit to play matches",
+        "edit ranking manually": "Edit ranking manually",
+        "end competition period": "End competition period",
+        "modify matches": "Modify matches",
+        "go to competition screen": "Go to competition screen",
+        "generate groups": "Generate groups",
+        "generate new ranking": "Generate new ranking",
+        "competition settings": "Competition settings",
+        "manage players": "Manage players",
+        "go back to previous ranking": "Go back to previous ranking"
     }
 }
