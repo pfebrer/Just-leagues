@@ -1,0 +1,32 @@
+name: Publish app to expo
+
+on:
+  push:
+    branches:
+      - master
+  
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      # Install nodejs
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: '14'
+
+      # Install all the dependencies using the cached packages
+      - uses: c-hive/gha-npm-cache@v1
+      
+      - uses: expo/expo-github-action@v5
+        with:
+          expo-packager: npm
+          expo-token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: "Install node packages"
+        run: npm install
+
+      - run: expo publish
