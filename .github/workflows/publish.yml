@@ -21,15 +21,16 @@ jobs:
       # Install all the dependencies using the cached packages
       - uses: c-hive/gha-npm-cache@v1
       
+      - name: "Install node packages"
+        run: npm install
+
       - uses: expo/expo-github-action@v5
         with:
           expo-packager: npm
           expo-token: ${{ secrets.EXPO_TOKEN }}
 
-      - name: "Install node packages"
-        run: npm install
-      
-      - name: "Run tests"
+      - name: Run tests
         run: npm test
 
-      - run: expo publish
+      - name: Publish to expo
+        run: expo publish
