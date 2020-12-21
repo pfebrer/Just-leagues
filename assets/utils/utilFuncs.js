@@ -1,5 +1,5 @@
 import _ from "lodash"
-import { translate } from "../translations/translationManager";
+import { translate } from "../translations/translationWorkers";
 import { Errors } from '../../constants/CONSTANTS'
 import {Toast} from 'native-base'
 

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Text, StyleSheet, View } from 'react-native'
 
 import Card from '../UX/Card'
-import { translate } from '../../assets/translations/translationManager'
+import { translate } from '../../assets/translations/translationWorkers'
 
 //Redux stuff
 import { connect } from 'react-redux'

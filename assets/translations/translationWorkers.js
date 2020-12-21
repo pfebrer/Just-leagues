@@ -19,10 +19,6 @@ import {
 import caLocale from "moment/locale/ca"
 import esLocale from "moment/locale/es"
 
-import { Component } from "react";
-import { connect } from "react-redux";
-import { selectUserSetting } from "../../redux/reducers";
-
 const translationGetters = {
     // lazy requires (metro bundler does not support symlinks)
     ca: () => require("./ca.json"),
@@ -72,20 +68,5 @@ const setI18nConfig = async (langToImpose) => {
 
     moment.locale(languageTag)
 };
-
-class TranslationManager extends Component {
-
-    render(){
-        setI18nConfig(this.props.language);
-        return null
-    }
-}
-
-const mapStateToProps = state => ({
-    language: selectUserSetting(state, "General appearance", "language"),
-})
-
-export default connect(mapStateToProps)(TranslationManager)
-
 
 export { translate, setI18nConfig }

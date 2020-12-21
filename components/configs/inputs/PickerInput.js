@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Container, Header, Content, Picker, Form } from "native-base";
-import { translate } from "../../../assets/translations/translationManager";
+import { translate } from "../../../assets/translations/translationWorkers";
 
 export default class PickerInput extends Component {
 

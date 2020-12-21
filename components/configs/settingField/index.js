@@ -2,7 +2,7 @@ import React, { Component } from "react";
 
 import { ListItem } from "native-base";
 
-import { translate } from "../../../assets/translations/translationManager";
+import { translate } from "../../../assets/translations/translationWorkers";
 
 import NumericField from './NumericField'
 import TextField from './TextField'

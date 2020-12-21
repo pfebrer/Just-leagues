@@ -7,7 +7,7 @@ import ExpandableSectionList from '../UX/ExpandableSectionList'
 
 import _ from "lodash"
 import { isPlayed, isMatchScheduled } from '../betting/MatchBetting'
-import { translate } from "../../assets/translations/translationManager"
+import { translate } from "../../assets/translations/translationWorkers"
 import { connect } from 'react-redux'
 import { sortMatchesByDate } from '../../assets/utils/utilFuncs'
 import { selectCurrentCompetition } from '../../redux/reducers';

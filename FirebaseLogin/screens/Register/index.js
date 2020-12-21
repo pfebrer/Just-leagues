@@ -5,7 +5,7 @@ import {w, h, totalSize} from '../../../api/Dimensions';
 import InputField from '../../components/InputField';
 import Continue from './Continue';
 import Firebase from "../../../api/Firebase";
-import { translate } from '../../../assets/translations/translationManager';
+import { translate } from '../../../assets/translations/translationWorkers';
 import { Toast } from 'native-base';
 
 const email = require('../../assets/email.png');

@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity} from 'react-native'
 
 import Firebase from '../../api/Firebase';
-import {translate } from "../../assets/translations/translationManager"
+import {translate } from "../../assets/translations/translationWorkers"
 import { elevation} from "../../assets/utils/utilFuncs"
 import { BetTypes } from '../../api/BetManager'
 import toBetView from './BetView'

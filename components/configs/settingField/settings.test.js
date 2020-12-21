@@ -16,7 +16,5 @@ describe("All settings have a setting field", () => {
             expect(availableTypes).toEqual(expect.arrayContaining(neededTypes))
         })
     });
-    
-    
 
 })

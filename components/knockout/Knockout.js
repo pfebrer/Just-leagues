@@ -1,6 +1,6 @@
 import React from 'react';
 import {StyleSheet, Text, View, FlatList, TouchableOpacity, Dimensions, ScrollView} from 'react-native';
-import { translate } from '../../assets/translations/translationManager';
+import { translate } from '../../assets/translations/translationWorkers';
 
 import { totalSize, w } from '../../api/Dimensions';
 

@@ -8,7 +8,7 @@ import { Dimensions, StyleSheet, View, Text, TouchableOpacity } from "react-nati
 
 import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
 
-import { translate } from "../../assets/translations/translationManager"
+import { translate } from "../../assets/translations/translationWorkers"
 import { compTabBarOptions } from "../../navigation/MainTabNavigator"
 import { selectUserSetting } from '../../redux/reducers';
 

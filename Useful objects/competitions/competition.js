@@ -4,7 +4,7 @@ import Firebase from "../../api/Firebase"
 
 import React, {Component} from 'react';
 import _ from "lodash"
-import { translate } from "../../assets/translations/translationManager"
+import { translate } from "../../assets/translations/translationWorkers"
 //import {} from "react-native"
 import MatchesDisplay from "../../components/competition/MatchesDisplay";
 import CompStats from "../../components/competition/CompStats";

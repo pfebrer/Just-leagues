@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Group} from 'reac
 
 import { w, h, totalSize} from '../../api/Dimensions';
 import Firebase from '../../api/Firebase';
-import {translate } from "../../assets/translations/translationManager"
+import {translate } from "../../assets/translations/translationWorkers"
 import { elevation} from "../../assets/utils/utilFuncs"
 import { BetTypes } from '../../api/BetManager'
 import toBetView from './BetView'

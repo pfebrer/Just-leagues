@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { Text, StyleSheet, View, TouchableOpacity, Platform} from 'react-native'
 
-import { translate } from '../../assets/translations/translationManager'
+import { translate } from '../../assets/translations/translationWorkers'
 
 //Redux stuff
 import { connect } from 'react-redux'

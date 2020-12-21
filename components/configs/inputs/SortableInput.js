@@ -2,7 +2,7 @@ import React , {Component} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Platform, Easing, Animated} from "react-native"
 import { totalSize } from '../../../api/Dimensions';
 
-import { translate } from "../../../assets/translations/translationManager"
+import { translate } from "../../../assets/translations/translationWorkers"
 
 import SortableList from 'react-native-sortable-list';
 

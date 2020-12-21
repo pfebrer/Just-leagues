@@ -4,7 +4,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity} from 'react-nativ
 import { w, h, totalSize} from '../../api/Dimensions';
 import { elevation, round} from '../../assets/utils/utilFuncs'
 import Firebase from '../../api/Firebase';
-import {translate } from "../../assets/translations/translationManager"
+import {translate } from "../../assets/translations/translationWorkers"
 import Colors from '../../constants/Colors'
 import { betHelpers } from '../../api/BetManager'
 import InputField from '../configs/inputs';

@@ -15,7 +15,7 @@ import { connect } from 'react-redux'
 import {setCurrentCompetition} from "../../redux/actions"
 
 import Card from '../UX/Card';
-import { translate } from '../../assets/translations/translationManager';
+import { translate } from '../../assets/translations/translationWorkers';
 import { selectCurrentCompetition } from '../../redux/reducers';
 
 

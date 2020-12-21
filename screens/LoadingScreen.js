@@ -1,7 +1,7 @@
 import React from 'react'
 import {ActivityIndicator, ImageBackground, StatusBar, StyleSheet, Text, View,} from 'react-native';
 import Firebase from "../api/Firebase"
-import { translate } from '../assets/translations/translationManager';
+import { translate } from '../assets/translations/translationWorkers';
 import { Toast } from 'native-base';
 
 import { updateSettingsFields } from "../assets/utils/utilFuncs"

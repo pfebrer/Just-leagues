@@ -3,7 +3,7 @@ import {StyleSheet, ScrollView, View, Text} from 'react-native';
 import { List, ListItem} from "native-base"
 
 import _ from "lodash"
-import { translate } from "../../assets/translations/translationManager"
+import { translate } from "../../assets/translations/translationWorkers"
 import { round } from "../../assets/utils/utilFuncs"
 import { connect } from 'react-redux'
 import { totalSize } from '../../api/Dimensions';

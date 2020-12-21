@@ -5,7 +5,7 @@ import moment from 'moment'
 
 import Card from '../UX/Card'
 import Colors from '../../constants/Colors'
-import { translate } from '../../assets/translations/translationManager'
+import { translate } from '../../assets/translations/translationWorkers'
 
 //Redux stuff
 import { connect } from 'react-redux'

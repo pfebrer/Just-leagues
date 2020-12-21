@@ -17,7 +17,7 @@ import * as Sentry from 'sentry-expo';
 import Constants from 'expo-constants';
 
 import { SafeAreaView } from 'react-navigation';
-import TranslationManager from './assets/translations/translationManager';
+import TranslationManager from './assets/translations/TranslationManager';
 if (Platform.OS === 'android') {
   SafeAreaView.setStatusBarHeight(0);
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import {StyleSheet, Text, View, FlatList, TouchableOpacity, SectionList, Platform} from 'react-native';
 import { Icon } from "native-base";
 import Table from "./Table"
-import { translate } from '../../assets/translations/translationManager';
+import { translate } from '../../assets/translations/translationWorkers';
 
 import { GroupBet, PlayerPointsBet } from "../betting/GroupsBetting"
 import MatchSummary from "../match/MatchSummary"

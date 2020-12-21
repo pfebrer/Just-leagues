@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, View, ScrollView, TouchableOpacity, BackHandler, Alert} from 'react-native';
 import Firebase from "../api/Firebase";
 
-import { translate } from '../assets/translations/translationManager';
+import { translate } from '../assets/translations/translationWorkers';
 import { w, totalSize, h } from '../api/Dimensions';
 
 import { USERSETTINGS, COMPSETTINGS } from "../constants/Settings"

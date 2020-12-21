@@ -11,7 +11,7 @@ import Firebase from '../../api/Firebase'
 
 import HeaderIcon from '../UX/HeaderIcon';
 
-import { translate } from '../../assets/translations/translationManager'
+import { translate } from '../../assets/translations/translationWorkers'
 
 export class NewRankingScreen extends React.Component {
 

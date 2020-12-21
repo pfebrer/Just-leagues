@@ -3,7 +3,7 @@ import { Picker } from 'native-base'
 import { connect } from 'react-redux'
 import _ from "lodash"
 
-import { translate } from '../../assets/translations/translationManager';
+import { translate } from '../../assets/translations/translationWorkers';
 import { selectCurrentCompetition } from '../../redux/reducers';
 
 class PlayerPicker extends Component {

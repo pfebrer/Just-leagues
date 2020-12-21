@@ -4,7 +4,7 @@ import InputField from "../../components/InputField";
 import {w, h, totalSize} from '../../../api/Dimensions';
 import GetStarted from './GetStarted';
 import Firebase from '../../../api/Firebase';
-import { translate } from '../../../assets/translations/translationManager';
+import { translate } from '../../../assets/translations/translationWorkers';
 import { Toast } from 'native-base';
 
 const companyLogo = require('../../assets/companylogo.png');

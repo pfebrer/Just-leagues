@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import _ from "lodash"
 import Card from "../UX/Card"
 
-import { translate } from "../../assets/translations/translationManager"
+import { translate } from "../../assets/translations/translationWorkers"
 import { selectAdminCompetitions } from '../../redux/reducers'
 import { setCurrentCompetition } from '../../redux/actions'
 

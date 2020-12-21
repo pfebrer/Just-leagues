@@ -4,7 +4,7 @@ import _ from "lodash"
 import Firebase from "../api/Firebase"
 
 import {resultIsCorrect, isError} from "../assets/utils/utilFuncs";
-import { translate } from '../assets/translations/translationManager';
+import { translate } from '../assets/translations/translationWorkers';
 import Colors from '../constants/Colors'
 
 //Redux stuff

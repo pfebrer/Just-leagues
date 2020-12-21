@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Dimensions, StyleSheet, TouchableOpacity, Text, ActivityIndicator } from 'react-native';
 import PropTypes from 'prop-types';
 import {w, h, totalSize} from "../../../api/Dimensions";
-import { translate } from '../../../assets/translations/translationManager';
+import { translate } from '../../../assets/translations/translationWorkers';
 
 export default class Continue extends Component {
   render() {

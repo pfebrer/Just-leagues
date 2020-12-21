@@ -20,7 +20,7 @@ import {setCurrentMatch} from "../../redux/actions"
 
 import { totalSize, w, h } from '../../api/Dimensions';
 
-import { translate } from '../../assets/translations/translationManager';
+import { translate } from '../../assets/translations/translationWorkers';
 import { convertDate, sortMatchesByDate, getCompetitionName } from "../../assets/utils/utilFuncs";
 import Card from '../UX/Card';
 import { selectSuperChargedCompetitions, selectUserPendingMatches} from '../../redux/reducers';

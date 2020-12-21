@@ -5,7 +5,7 @@ import moment from "moment"
 
 import Card from '../UX/Card'
 
-import { translate } from '../../assets/translations/translationManager'
+import { translate } from '../../assets/translations/translationWorkers'
 import {convertDate} from "../../assets/utils/utilFuncs"
 
 //Redux stuff

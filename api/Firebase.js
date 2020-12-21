@@ -8,7 +8,7 @@ import { settleBet } from '../api/BetManager'
 
 import * as Google from 'expo-google-app-auth';
 import * as GoogleSignIn from 'expo-google-sign-in';
-import { translate } from "../assets/translations/translationManager";
+import { translate } from "../assets/translations/translationWorkers";
 
 import 'lodash.combinations';
 import _ from "lodash"
@@ -1227,10 +1227,7 @@ class Firebase {
   
 }
 
-if ( ! global.__TEST__ ){
-  Firebase.shared = new Firebase();
-}
-
+Firebase.shared = new Firebase();
 
 export default Firebase.shared;
 

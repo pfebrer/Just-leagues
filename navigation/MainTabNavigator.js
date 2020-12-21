@@ -18,7 +18,7 @@ import MatchScreen from "../screens/MatchScreen"
 import { Icon } from 'native-base';
 import HeaderIcon from "../components/UX/HeaderIcon"
 import ChatScreen from '../screens/ChatScreen';
-import { translate } from '../assets/translations/translationManager';
+import { translate } from '../assets/translations/translationWorkers';
 import EndingPeriodModal from '../components/groups/EndingPeriodModal';
 
 export const compTabBarOptions = {

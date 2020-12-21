@@ -4,7 +4,7 @@ import { StyleSheet, View, TouchableOpacity, Text, Keyboard } from 'react-native
 import { w, h, totalSize } from "../../../api/Dimensions";
 import InputField from '../../components/InputField';
 import Firebase from '../../../api/Firebase';
-import { translate } from '../../../assets/translations/translationManager';
+import { translate } from '../../../assets/translations/translationWorkers';
 
 const email = require('../../assets/email.png');
 

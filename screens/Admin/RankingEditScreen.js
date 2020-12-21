@@ -14,7 +14,7 @@ import { Button, Icon, Toast } from 'native-base';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import _ from "lodash"
 
-import { translate } from '../../assets/translations/translationManager';
+import { translate } from '../../assets/translations/translationWorkers';
 import { w } from '../../api/Dimensions';
 
 //Redux stuff

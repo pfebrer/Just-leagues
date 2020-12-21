@@ -19,7 +19,7 @@ import NotificationManager from "../api/Notifications"
 //Redux stuff
 import { connect } from 'react-redux'
 
-import { translate } from '../assets/translations/translationManager';
+import { translate } from '../assets/translations/translationWorkers';
 import {getCompetitionName} from '../assets/utils/utilFuncs'
 import moment from 'moment';
 import { h, totalSize } from '../api/Dimensions';

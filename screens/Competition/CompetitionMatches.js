@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, View, ActivityIndicator, Text} from 'react-native';
 
 import HeaderIcon from "../../components/header/HeaderIcon"
-import { translate } from "../../assets/translations/translationManager"
+import { translate } from "../../assets/translations/translationWorkers"
 
 import { USERSETTINGS} from "../../constants/Settings"
 

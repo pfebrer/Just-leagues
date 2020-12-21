@@ -2,7 +2,7 @@ import * as Notifications from 'expo-notifications';
 import * as Permissions from "expo-permissions";
 
 import Firebase from "./Firebase"
-import { translate } from '../assets/translations/translationManager';
+import { translate } from '../assets/translations/translationWorkers';
 
 class NotificationManager {
 

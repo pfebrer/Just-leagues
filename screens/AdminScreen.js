@@ -15,7 +15,7 @@ import {Constants} from "../constants/CONSTANTS";
 import { connect } from 'react-redux'
 import {setCurrentCompetition} from "../redux/actions"
 
-import { translate } from '../assets/translations/translationManager';
+import { translate } from '../assets/translations/translationWorkers';
 import { w, totalSize } from '../api/Dimensions';
 
 

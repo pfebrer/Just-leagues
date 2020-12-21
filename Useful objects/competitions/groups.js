@@ -6,7 +6,7 @@ import Firebase from "../../api/Firebase"
 import GroupsBetting from "../../components/betting/GroupsBetting"
 import Groups from "../../components/groups/Groups"
 import Table from "../../components/groups/Table"
-import { translate } from "../../assets/translations/translationManager"
+import { translate } from "../../assets/translations/translationWorkers"
 import { sortPlayerIndices } from "../../assets/utils/utilFuncs"
 
 import _ from "lodash"

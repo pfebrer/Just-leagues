@@ -61,11 +61,15 @@
     "sentry-expo": "^2.0.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
     "@expo/vector-icons": "^10.0.0",
+    "@testing-library/react-native": "^7.1.0",
     "babel-preset-expo": "^8.3.0",
     "expo-cli": "^4.0.8",
     "flat": "^5.0.2",
-    "jest-expo": "^39.0.0"
+    "jest-expo": "^39.0.0",
+    "react-test-renderer": "^17.0.1"
   },
   "jest": {
     "preset": "jest-expo",

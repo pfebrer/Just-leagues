@@ -12,7 +12,7 @@ import {
 import { Button, Icon, Input, Form, Label, Item, Picker} from 'native-base';
 import _ from "lodash"
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import { translate } from '../../assets/translations/translationManager';
+import { translate } from '../../assets/translations/translationWorkers';
 import { w, totalSize } from '../../api/Dimensions';
 
 
