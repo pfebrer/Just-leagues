@@ -34,3 +34,5 @@ export default class InputField extends Component {
     }
     
 }
+
+export { allInputs }

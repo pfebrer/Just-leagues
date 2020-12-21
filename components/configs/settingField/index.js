@@ -33,3 +33,5 @@ export default class SettingField extends Component {
         }
     }
 }
+
+export { allFields }

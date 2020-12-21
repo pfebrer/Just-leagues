@@ -1227,7 +1227,10 @@ class Firebase {
   
 }
 
-Firebase.shared = new Firebase();
+if ( ! global.__TEST__ ){
+  Firebase.shared = new Firebase();
+}
+
 
 export default Firebase.shared;
 
