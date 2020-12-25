@@ -17,7 +17,7 @@ export default class PickerInput extends Component {
             >
                 {(this.props.items || []).map( (props) => {
                     const label = props.translatelabel ? translate(props.translatelabel) : props.label
-                    return <Picker.Item {...props} label={label}/>
+                    return <Picker.Item key={props.value} {...props} label={label}/>
                 })}
             </Picker>
         );

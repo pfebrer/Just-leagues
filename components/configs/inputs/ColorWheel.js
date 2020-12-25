@@ -3,7 +3,6 @@ import React, { Component } from "react"
 import { AntDesign } from '@expo/vector-icons'
 import { View, TouchableOpacity } from "react-native"
 import { ColorPicker , fromHsv} from 'react-native-color-picker'
-import { Text } from "native-base"
 
 export default class ColorWheel extends Component {
 

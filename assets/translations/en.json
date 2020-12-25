@@ -1,6 +1,6 @@
 {
     "auth" : {
-        "create account": "Crete account",
+        "create account": "Create account",
         "forgot password": "Forgot password",
         "use app as guest": "Use app as guest",
         "email": "E-mail address",
@@ -47,7 +47,7 @@
         "won matches": "Won matches",
         "won games": "Won games",
         "games per match": "Games per match",
-        "clean sheets": "RClean sheets"
+        "clean sheets": "Clean sheets"
     },
     "cardTitles": {
         "match schedule": "Match schedule",
@@ -94,7 +94,7 @@
         "not scheduled match": "Not scheduled match",
         "match": "Match",
         "match score": "Match score",
-        "fix a date":"Fix a date",
+        "fix a date":"Fix a date...",
         "days": "Days",
         "hours": "Hours",
         "played": "Played",

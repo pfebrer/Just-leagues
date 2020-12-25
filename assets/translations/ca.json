@@ -179,7 +179,7 @@
         },
         "maxBetValue": {
             "name": "Aposta màxima",
-            "description": "No es podrà apostar més que aquesta quantitat"
+            "description": "No es podrà apostar més que aquesta quantitat."
         },
         "groups": "Grups",
         "nPromotingPlayers": {

@@ -1,28 +1,232 @@
 {
-    "auth": {
+    "auth" : {
         "create account": "Crea una cuenta",
-        "forgot password": "Contraseña olvidada",
-        "use app as guest": "Utiliza la app como invitado",
+        "forgot password": "Olvidé la contraseña",
+        "use app as guest": "Utiliza como invitado",
         "email": "Correo electrónico",
         "welcome" : "Bienvenido",
         "username": "Usuario",
         "password": "Contraseña",
         "log in": "Inicia sesión",
-        "log out": "Cierra sesión",
-        "unable to log in": "No se ha podido iniciar sesión",
-        "unable to register for notifications": "No se han podido activar las notificaciones",
+        "sign in with google": "Inicia sesión con google",
+        "sign out": "Cerrar sesión",
+        "unable to log in": "No se pudo iniciar seión",
+        "unable to register for notifications": "No se ha podido activar las notificaciones",
         "name":"Nombre",
-        "repeat password": "Repite la contraseña",
-        "continue": "Continua",
-        "forgot your password?":"Has olvidado tu contraseña?",
-        "send email": "Envía correo"
+        "repeat password": "Repetir contraseña",
+        "continue": "Continuar",
+        "forgot your password?":"Olvidaste tu contraseña?",
+        "send email": "Enviar correo"
     },
-    
     "tabs":{
         "stats": "Estadísticas",
         "competition": "Competición",
+        "competitions you administrate": "Competiciones que administras",
+        "competition overview": "Vista general",
         "chat": "Chat",
         "matches": "Partidos",
-        "ranking": "Ranking"
+        "ranking": "Ranking",
+        "home":"Inicio",
+        "settings": "Ajustes",
+        "competitions handling": "Gestión de competiciones",
+        "match view": "Vista de partido",
+        "ranking editing": "Edición de ranking",
+        "player management": "Administración de partidos",
+        "your matches": "Tus partidos",
+        "played matches": "Partidos jugados",
+        "matches to play": "Partidos por jugar",
+        "other matches": "Otros partidos",
+        "betting": "Apuestas",
+        "old groups": "Grupos antiguos",
+        "new ranking": "Nuevo ranking",
+        "your courts": "Tus pistas"
+    },
+    "stats": {
+        "played matches": "Partidos jugados",
+        "played games": "Juegos jugados",
+        "won matches": "Partidos ganados",
+        "won games": "Juegos ganados",
+        "games per match": "Juegos por partido",
+        "clean sheets": "Rival a 0"
+    },
+    "cardTitles": {
+        "match schedule": "Previsión de fecha",
+        "match date": "Fecha del partido",
+        "general stats": "Estadísticas generales",
+        "groups betting": "Apuestas de grupo",
+        "match bets": "Apuestas del partido"
+    },
+    "info": {
+        "checking user": "Comprobando usuario",
+        "loading classifications": "Cargando clasificaciones",
+        "no pending matches": "No tienes partidos pendientes. Puedes relajarte.",
+        "there are competitions waiting for you": "Hay competiciones esperándote!",
+        "no date limit to play match": "No hay fecha límite para jugar este partido.",
+        "limit to play": "Límite para jugar",
+        "choose the competition that you would like to edit":"Escoje la competición que quieres editar",
+        "you don't have any notifications at the moment": "De momento no tienes notificaciones",
+        "if you expected to have any, please talk with your competition administrator": "Si esperabas tener alguna, habla con el administrador de tu competición, por favor :)",
+        "no messages yet": "No hay mensajes todavía",
+        "new message": "Nuevo mensaje",
+        "new group message": "Nuevo mensaje de grupo",
+        "player added": "Jugador añadido",
+        "player data modified": "Datos del jugador modificados",
+        "no email address available": "Sin correo",
+        "added to calendar": "Añadido al calendario",
+        "bets closed": "Apuestas cerradas",
+        "you can not place bets until the match is scheduled": "No puedes apostar hasta que el partido tenga fecha."
+    },
+    "questions": {
+        "has this match been played now?": "Se ha jugado ahora el partido?"
+    },
+    "vocabulary": {
+        "no": "No",
+        "yes": "Sí",
+        "group": "Grupo",
+        "total": "Total",
+        "pending matches": "Partidos pendientes",
+        "notifications": "Notificaciones",
+        "cancel": "Cancelar",
+        "OK": "De acuerdo",
+        "attention": "Atención!",
+        "limit":"Límite",
+        "scheduled match": "Horario acordado",
+        "not scheduled match": "Horario no acordado",
+        "match": "Partido",
+        "match score": "Resultado del partido",
+        "fix a date":"Fija una fecha...",
+        "days": "Días",
+        "hours": "Horas",
+        "played": "Jugado",
+        "general": "General",
+        "player": "Jugador",
+        "players": "Jugadores",
+        "direct match": "Enfrontamiento directo",
+        "position": "Posición",
+        "groups": "Grupos",
+        "games": "Juegos"
+    },
+    "progress": {
+        "cleaning previous groups": "Borrando grupos anteriores...",
+        "generating new groups": "Generando nuevos grupos...",
+        "settling bets": "Comprobando apuestas...",
+        "submitting match": "Registrando el partido...",
+        "submitting all changes": "Escribiendo todos los cambios..."
+    },
+    "success": {
+        "done": "Hecho",
+        "bets settled": "Apuestas comprobadas"
+    },
+    "errors": {
+        "there was an error": "Ha habido un error :(",
+        "you entered an invalid result":"No nos engañes, este resultado es imposible :(",
+        "unable to merge users": "No se han podido unir los jugadores",
+        "unknown competition": "Competición desconocida",
+        "no name": "Sin nombre",
+        "could not send message": "No se ha podido enviar el mensaje",
+        "competition was not removed": "La competición no se ha podido eliminar",
+        "unable to add new players": "No se ha podido añadir nuevos jugadores",
+        "failed to add to calendar": "No se ha podido añadir al calendario",
+        "could not get previous ranking": "No se ha podido obtener el ranking anterior",
+        "could not clean previous groups": "No se han podido borrar los grupos anteriores",
+        "could not generate new groups": "No se han podido generar los nuevos grupos",
+        "could not submit changes": "No se han podido registrar los cambios"
+    },
+    "settings": {
+        "you are about to restore default settings": "Estás a punto de volver a la configuración inicial.",
+        "General appearance": "Diseño general",
+        "Competition display": "Presentación de las competiciones",
+        "Profile": "Perfil",
+        "background color": {
+            "name":"Color principal",
+            "description":"Escoje el color principal de la app."
+        },
+        "language": {
+            "name":"Idioma",
+            "description":"Escoje el idioma.",
+            "detect automatically": "Detecta automáticamente"
+        },
+        "max visible cols": {
+            "name": "Columnas visibles en grupos",
+            "description": "En competiciones de grupos, el máximo de columnas que se ven en la pantalla a la vez."
+        },
+        "aka": {
+            "name":"Alias",
+            "description":"Nombre que se utilizará en competiciones que permitan nombre libre."
+        },
+        "first name": {
+            "name":"Nombre"
+        },
+        "last name": {
+            "name":"Apellido"
+        }
+    },
+    "compsettings": {
+        "general": "General",
+        "nameDisplay": {
+            "name": "Formato del nombre",
+            "description": "Formato utilizado para los nombres de los jugadores en las pantallas de la competición.",
+            "Name Lastname": "Nombre Apellido",
+            "Lastname, Name": "Apellido, Nombre",
+            "Lastname": "Apellido",
+            "Name": "Nombre",
+            "Name Lastname (aka)": "Nombre Apellido (alias)",
+            "aka": "Alias"
+        },
+        "location": {
+            "name": "Ubicación",
+            "description": "Ubicación donde se juega la competición. Se utilizará por defecto en los partidos de la competición."
+        },
+        "maxBetValue": {
+            "name": "Apuesta máxima",
+            "description": "No se podrá apostar más que esta cantidad."
+        },
+        "groups": "Grupos",
+        "nPromotingPlayers": {
+            "name": "Jugadores que promocionan",
+            "description": "Número de jugadores que suben/bajan cuando se cierra un período de competición."
+        },
+        "untyingCriteria": {
+            "name": "Criterios de desempate",
+            "description": "Criterios que se aplicaran para decidir el nuevo orden del ranking cuando se cierre un período."
+        },
+        "pointScheme": {
+            "name": "Repartimiento de puntos",
+            "description": "Determina cuantos puntos se reparten dependiendo del resultado del partido."
+        },
+        "groupSize": {
+            "name": "Tamaño de los grupos",
+            "description": "Número de jugadores que tiene cada grupo en condiciones normales."
+        },
+        "minGroupSize": {
+            "name": "Mínimo tamaño grupos",
+            "description": "Si queda un grupo más pequeño, se juntarán los dos últimos grupos."
+        }
+    },
+    "actions": {
+        "go back": "Volver atrás",
+        "type a message": "Escribe un mensaje",
+        "reply": "Responder",
+        "write your reply": "Escribe tu respuesta",
+        "add the date": "Añade una fecha",
+        "add player": "Añade un jugador",
+        "modify player data": "Modificar datos jugador",
+        "pick a player": "Escoje un jugador",
+        "add to your calendar": "Añade a tu calendario",
+        "submit": "Envia",
+        "modify": "Modifica"
+    },
+
+    "admin": {
+        "choose a time limit to play matches": "Escoje una fecha límite para jugar los partidos",
+        "edit ranking manually": "Edita el ranking manualmente",
+        "end competition period": "Finaliza el periodo de competición",
+        "modify matches": "Modifica partidos",
+        "go to competition screen": "Ve a la pantalla de la competición",
+        "generate groups": "Genera grupos",
+        "generate new ranking": "Genera nuevo ranking",
+        "competition settings": "Configuración de la competición",
+        "manage players": "Administra jugadores",
+        "go back to previous ranking": "Vuelve al ranking anterior"
     }
 }
