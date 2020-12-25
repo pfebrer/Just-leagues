@@ -55,7 +55,7 @@ const setI18nConfig = async (langToImpose) => {
     //Get the locale
     var { languageTag, isRTL } = findBestAvailableLanguage(Object.keys(translationGetters), fallback)
 
-    if (langToImpose) languageTag = langToImpose
+    if (langToImpose && Object.keys(translationGetters).includes(langToImpose)) languageTag = langToImpose
 
     // clear translation cache
     translate.cache.clear();

@@ -1,6 +1,9 @@
-import { USERSETTINGS } from "../../constants/Settings"
+import i18n from "i18n-js";
 import flatten from "flat"
 import _ from "lodash"
+
+import { USERSETTINGS } from "../../constants/Settings"
+import { setI18nConfig } from "./translationWorkers"
 
 var supportedLanguages = []
 var translations = {}
@@ -56,4 +59,20 @@ describe("Translation files contain all translations", () => {
             }
         }) 
     })
+})
+
+describe("Translation functions work properly", () => {
+
+    test("Language can be correctly set", () => {
+        setI18nConfig("en")
+
+        expect(i18n.locale).toBe("en")
+    })
+
+    test("Language defaults to catalan if none found", () => {
+        setI18nConfig("non-existing language")
+
+        expect(i18n.locale).toBe("ca")
+    })
+
 })
