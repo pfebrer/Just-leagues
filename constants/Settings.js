@@ -165,6 +165,7 @@ exports.USERSETTINGS = {
                 {translatelabel: "settings.language.detect automatically", value: ""},
                 {label: "Català", value: "ca"},
                 {label: "English", value: "en"},
+                {label: "Español", value: "es"},
             ],
             default: "",
         },
