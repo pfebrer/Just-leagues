@@ -16,8 +16,6 @@ import _ from "lodash"
 //Redux stuff
 import { connect } from 'react-redux'
 
-import { totalSize, w, h } from '../../api/Dimensions';
-
 import { translate } from '../../assets/translations/translationWorkers';
 import Card from '../UX/Card';
 
@@ -30,6 +28,8 @@ class Notifications extends Component {
             unasignedUsers: []
         }
     }
+
+    static _type = "notifications"
 
     componentDidMount() {
 

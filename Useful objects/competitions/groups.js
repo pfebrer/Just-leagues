@@ -48,7 +48,6 @@ export default class GroupsCompetition extends Competition {
         return <Table
             {...playerGroup}
             competition={this}
-            //competition={_.pick(this, ["renderName", "name", "playersIDs", "settings", "getMatch", "getSortedIndices"])}
             navigation={props.navigation}
         />
     }

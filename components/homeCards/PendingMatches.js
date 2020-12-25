@@ -39,6 +39,8 @@ class PendingMatches extends Component {
         this.MAX_HEIGHT = 10000
 
     }
+    
+    static _type = "pendingMatches"
 
     setMatches = () => {
 

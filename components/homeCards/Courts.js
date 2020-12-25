@@ -10,11 +10,6 @@ import {
 
 import { Icon, Text} from 'native-base';
 
-import _ from "lodash"
-import moment from "moment"
-
-import Firebase from "../../api/Firebase"
-
 //Redux stuff
 import { connect } from 'react-redux'
 import {setCurrentMatch} from "../../redux/actions"
@@ -40,6 +35,8 @@ class Courts extends Component {
         this.MAX_HEIGHT = 10000
 
     }
+
+    static _type = "courts"
 
     setMatches = () => {
 

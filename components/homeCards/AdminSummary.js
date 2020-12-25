@@ -17,6 +17,8 @@ export class AdminSummary extends Component {
         this.state = {}
     }
 
+    static _type = "admin"
+
     goToCompScreen = (comp) => {
 
         this.props.setCurrentCompetition(comp.id)

@@ -169,6 +169,25 @@ exports.USERSETTINGS = {
             ],
             default: "",
         },
+        /* homeCards: {
+            control: {
+                type: "sortable",
+                items: {
+                    "notifications":{
+                        translatename: "vocabulary.notifications"
+                    },
+                    "pendingMatches":{
+                        translatename: "vocabulary.pending matches"
+                    },
+                    "admin": {
+                        translatename: "tabs.competitions you administrate"
+                    }
+                }
+            },
+            name: "settings.homeCards.name",
+            description: "settings.homeCards.description", 
+            default: ["notifications","pendingMatches", "admin"],
+        } */
     },
     "Competition display": {
         groupMaxVisibleCols: {
