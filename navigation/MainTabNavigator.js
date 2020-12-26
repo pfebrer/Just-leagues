@@ -157,7 +157,7 @@ export default MainNavigator = createBottomTabNavigator({
         }*/
     },
     {
-        initialRouteName: "Search",
+        initialRouteName: "Home",
         tabBarOptions: {
             showLabel: false,
             activeTintColor: 'black',
