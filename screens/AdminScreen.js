@@ -1,9 +1,7 @@
 import React from 'react';
-import {StyleSheet, Text, View, Picker, ScrollView} from 'react-native';
+import {StyleSheet, Text, View, ScrollView} from 'react-native';
 import {Button} from "native-base"
-import DatePicker from 'react-native-datepicker'
 import Modal from "react-native-modal";
-import moment from "moment"
 
 import Firebase from "../api/Firebase";
 import EndingPeriodModal from "../components/groups/EndingPeriodModal";
@@ -21,6 +19,7 @@ import { w, totalSize } from '../api/Dimensions';
 
 import _ from "lodash"
 import { selectCurrentCompetition, selectSuperChargedCompetitions } from '../redux/reducers';
+import InputField from '../components/configs/inputs';
 
 
 
@@ -59,7 +58,7 @@ class AdminScreen extends React.Component {
 
     renderCompPicker = (competitions, currentComp) => {
 
-        let pickerItems = competitions.map(comp=> <Picker.Item key={comp.id} label={comp.name} value={comp.id} /> )
+        let pickerItems = competitions.map(comp=> ({label:comp.name, value:comp.id}) )
 
         let selected = currentComp ? currentComp.id : competitions.length > 0 ? competitions.id : null;
 
@@ -67,15 +66,14 @@ class AdminScreen extends React.Component {
             <View style={styles.compSelectionView}>
                 <Text>{translate("info.choose the competition that you would like to edit")}</Text>
                 <View style={styles.compPickerView}>
-                    <Picker
-                        selectedValue={selected}
+                    <InputField
+                        type="picker"
+                        value={selected}
                         style={styles.compPicker}
                         onValueChange={(itemValue, itemIndex) =>
                             this.props.setCurrentCompetition(competitions[itemIndex].id)
-
-                        }>
-                            {pickerItems}
-                    </Picker>
+                        }
+                        items={pickerItems}/>
                 </View>
             </View>
         )
@@ -245,28 +243,20 @@ class AdminScreen extends React.Component {
                 {endingPeriodModal}
                 <Modal
                     isVisible={this.state.groupGeneratingModal}
-                    swipeDirection={["left", "right"]}
+                    swipeDirection={["left", "right"]}      
                     onSwipeComplete={(swipeDirection) => this.toggleGroupGeneratingModal()}
                     onBackdropPress={this.toggleGroupGeneratingModal}
                     >
                     <View style={styles.modalContent}>
                         <Text>{translate("admin.choose a time limit to play matches")}</Text>
-                        <DatePicker
-                            minDate={new Date()}
-                            date={this.state.newPeriodDue}
-                            onDateChange={(date) => {this.setState({newPeriodDue: moment(date, "DD-MM-YYYY HH:mm" ).toDate()})}}
-                            style={{paddingHorizontal: 20, marginVertical: 20, width: "100%", justifyContent: "center", alignItems: "center"}}
-                            mode="datetime"
-                            placeholder={translate("vocabulary.fix a date")}
+                        <InputField
+                            type="datetime"
+                            minimumDate={new Date()}
+                            value={this.state.newPeriodDue}
+                            onValueChange={(value) => this.setState({newPeriodDue: value})}
+                            containerStyle={{flexDirection: "row", padding: 30, justifyContent: "center", alignItems: "center"}}
                             format="DD-MM-YYYY HH:mm"
-                            customStyles={{
-                                dateInput: {
-                                borderWidth: 0,
-                                },
-                                dateText: {
-                                    fontSize: totalSize(2)
-                                }
-                            }}/>
+                            />
 
                         <Button
                             style={{...styles.button, ...styles.modalActionButton}}

@@ -5,8 +5,9 @@ import RelationsInput from './RelationsInput'
 import SortableInput from './SortableInput'
 import ColorPicker from './ColorWheel'
 import PickerInput from './PickerInput'
+import DateTimeInput from './DateTimeInput'
 
-const allInputs = [NumericInput, RelationsInput, SortableInput, ColorPicker, PickerInput].reduce((inps, current) => {
+const allInputs = [NumericInput, RelationsInput, SortableInput, ColorPicker, PickerInput, DateTimeInput].reduce((inps, current) => {
     inps[current._type] = current
     return inps
 }, {})

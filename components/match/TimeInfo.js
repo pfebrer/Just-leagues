@@ -1,6 +1,5 @@
 import React, { Component } from 'react'
 import { StyleSheet, View } from 'react-native'
-import DatePicker from 'react-native-datepicker'
 import moment from "moment"
 
 import Card from '../UX/Card'
@@ -18,6 +17,7 @@ import * as Localization from 'expo-localization'
 
 import UpdatableCard from '../UX/UpdatableCard'
 import { Text, Button, Icon, Toast} from 'native-base'
+import InputField from "../configs/inputs"
 
 import _ from "lodash"
 import { TouchableOpacity } from 'react-native-gesture-handler'
@@ -149,25 +149,14 @@ class TimeInfo extends Component {
             return (
                 <Card
                     {...cardProps}>
-                    <DatePicker
-                        minDate={new Date()}
-                        maxDate={this.props.match.due}
-                        date={this.props.match.scheduled && this.props.match.scheduled.time ? this.props.match.scheduled.time : null}
-                        onDateChange={(date) => this.updateAndCommitSchedule(date)}
-                        style={{paddingHorizontal: 20, width: "100%", justifyContent: "center", alignItems: "center"}}
-                        mode="datetime"
-                        placeholder={translate("vocabulary.fix a date")}
-                        format={this.datePickerFormat}
-                        disabled={!this.props.editable}
-                        showIcon={this.props.editable}
-                        customStyles={{
-                            dateInput: {
-                              borderWidth: 0,
-                            },
-                            dateText: {
-                                fontSize: totalSize(2)
-                            }
-                        }}/>
+                    <InputField
+                        type="datetime"
+                        minimumDate={new Date()}
+                        maximumDate={this.props.match.due}
+                        value={this.props.match.scheduled && this.props.match.scheduled.time ? this.props.match.scheduled.time : null}
+                        onValueChange={(date) => this.updateAndCommitSchedule(date)}
+                        containerStyle={{flexDirection: "row", padding: 30, justifyContent: "center", alignItems: "center"}}
+                        />
                     {timeLimit}
                     <TouchableOpacity onPress={this.addToCalendar} style={styles.addCalendarButton}>
                         <Text style={{paddingRight: 20, color: "indigo",textDecorationLine: 'underline'}}>{translate("actions.add to your calendar")}</Text>
