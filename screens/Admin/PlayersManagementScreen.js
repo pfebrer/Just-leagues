@@ -1,17 +1,12 @@
 import React, { Component } from 'react';
 import {
-  Animated,
-  Easing,
   StyleSheet,
   Text,
-  Image,
   View,
   Dimensions,
-  Platform,
 } from 'react-native';
-import { Button, Icon, Input, Form, Label, Item, Picker} from 'native-base';
+import { Button, Icon, Input, Form, Label, Item} from 'native-base';
 import _ from "lodash"
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import { translate } from '../../assets/translations/translationWorkers';
 import { w, totalSize } from '../../api/Dimensions';
 
@@ -22,6 +17,7 @@ import { connect } from 'react-redux'
 import Firebase from "../../api/Firebase"
 import PlayerPicker from '../../components/pickers/PlayerPicker';
 import { selectCurrentCompetition } from '../../redux/reducers';
+import UserCard from '../../components/user/UserCard';
 
 const window = Dimensions.get('window');
 
@@ -33,7 +29,7 @@ class PlayersManagementScreen extends Component {
 
         this.state = {
           newPlayer: {},
-          playerToModify: {}
+          playerToModify: {},
         }
 
     }
@@ -50,7 +46,7 @@ class PlayersManagementScreen extends Component {
 
     if ( !this.state.newPlayer.name || !this.state.newPlayer.email) return
 
-    Firebase.addNewPlayersToComp(compID, [this.state.newPlayer],
+    Firebase.addNewPlayersToComp(gymID, compID, [this.state.newPlayer],
       (newPlayers) => {
         let newPlayer = newPlayers[0];
         alert( translate("info.player added") + "\n" + translate("auth.name") + ": " + newPlayer.name + "\n" + translate("auth.email") + ": " + newPlayer.email )
@@ -121,6 +117,20 @@ class PlayersManagementScreen extends Component {
                 <Text style={styles.buttonText}>{translate("actions.modify player data")}</Text>
             </Button>
           </Form>
+          <View style={{paddingHorizontal: 10, paddingVertical: 20}}>
+            <Text>{translate("info.players that would like to join")}</Text>
+            {this.props.competition.playersAskingToJoin.map(uid => <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
+              <UserCard uid={uid}/>
+              <View style={{flexDirection: "row"}}>
+                <Button 
+                  onPress={() => Firebase.addNewPlayersToComp(this.props.competition.gymID, this.props.competition.id, [{id: uid}])}
+                  style={{backgroundColor: "green", marginRight: 5}}><Icon name="checkmark"/></Button>
+                <Button 
+                  onPress={() => Firebase.denyPlayerFromCompetition(this.props.competition.gymID, this.props.competition.id, uid)}
+                  style={{backgroundColor: "red"}}><Icon name="close"/></Button>
+              </View>
+            </View>)}
+          </View>
       </View>
     );
   }

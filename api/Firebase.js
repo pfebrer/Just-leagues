@@ -14,6 +14,8 @@ import 'lodash.combinations';
 import _ from "lodash"
 import { withProgressAsync, throwClarifiedError } from '../assets/utils/utilFuncs'
 
+const FieldValue = firebase.firestore.FieldValue
+
 class Firebase {
 
   constructor(){
@@ -56,19 +58,6 @@ class Firebase {
           }}})
         }
       })
-    })
-  }
-
-  activeCompsToIDs = () => {
-    this.usersRef.get().then(snap => {
-      snap.forEach(doc => {
-
-        if (doc.get("activeCompetitions")){
-          this.firestore.collection(Collections.USERS).doc(doc.id)
-          .set({activeCompetitions: doc.get("activeCompetitions").map(comp => comp.id)}, { merge: true})
-        }
-        
-      });
     })
   }
   
@@ -382,6 +371,8 @@ class Firebase {
   //FUNCTIONS TO GET DATA FROM DATABASE ONCE (don't keep listening)
   getCompetition = (compID) => this.compsGroupRef.where("id", "==", compID).get()
 
+  getAllCompetitions = () => this.compsGroupRef.get()
+
   getPreviousRanking = (gymID, compID) => this.rankHistoryRef(gymID, compID).orderBy("date", "desc").limit(1).get()
   
   //LISTENERS TO THE DATABASE
@@ -490,6 +481,36 @@ class Firebase {
     })
   }
 
+  onGymsSnapshot = (callback, getData = true) => {
+    /*Listen to all gyms*/
+    return this.gymsRef.onSnapshot(querySnapshot => { 
+      if (!getData) callback(querySnapshot)
+      else callback( querySnapshot.docs.map(doc => ({
+          ...doc.data(),
+          id: doc.id,
+        })
+      ))
+
+    })
+  }
+
+  onAllCompetitionsSnapshot = (callback, getData = true) => {
+    console.warn("COMPETITIONS")
+    /*Listen to competitions for a certain gym (thought in principle for gym admins)*/
+
+    return this.compsGroupRef.onSnapshot(querySnapshot => { 
+
+      if (!getData) callback(querySnapshot)
+      else callback( querySnapshot.docs.map(doc => ({
+          ...doc.data(),
+          id: doc.id,
+          gymID: doc.ref.parent.parent.id
+        })
+      ))
+
+    })
+  }
+
   onCompetitionsSnapshot = (gymID, callback, getData = true) => {
     console.warn("COMPETITIONS")
     /*Listen to competitions for a certain gym (thought in principle for gym admins)*/
@@ -530,34 +551,12 @@ class Firebase {
   onCompUsersSnapshot = (compID, currentUser, callback) => {
     console.warn("COMP USERS")
     /*Listen to users that are active in a given competition
-    Returns and object like {id1: name1, id2:name2 ....}*/
+    Returns and object like {id1: user1, id2: user2 ....}*/
 
     return this.usersRef.where("activeCompetitions", "array-contains", compID).onSnapshot(
 
       querySnapshot => {
-        callback( querySnapshot.docs.reduce((relevantUsers,user) => {
-
-            let {settings: userSettings, expoToken, asigned, email} = user.data()
-
-            let names = userSettings && userSettings["Profile"] ? 
-              _.pick( userSettings["Profile"] , ["aka", "firstName", "lastName"])
-              : {aka: user.get("displayName") , firstName: user.get("displayName"), lastName: ""} //This is just to account for users that may not have their settings updated (or unasigned users)
-            
-            //Decide when to not store the email
-            if ( !( currentUser.admin || currentUser.gymAdmin ) | email === "" ){
-              email = undefined
-            }
-
-            relevantUsers[user.id] = {
-              names,
-              expoToken,
-              asigned,
-              email
-            }
-
-            return relevantUsers;
-          }, {})
-        )
+        callback( querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()})))
       }
 
     )
@@ -570,29 +569,7 @@ class Firebase {
     return this.usersRef.where("gymAdmin", "array-contains", gymID).onSnapshot(
 
       querySnapshot => {
-        callback( querySnapshot.docs.reduce((relevantUsers,user) => {
-
-            let {settings: userSettings, expoToken, asigned, email} = user.data()
-
-            let names = userSettings && userSettings["Profile"] ? 
-              _.pick( userSettings["Profile"] , ["aka", "firstName", "lastName"])
-              : {aka: user.get("displayName") , firstName: user.get("displayName"), lastName: ""} //This is just to account for users that may not have their settings updated (or unasigned users)
-            
-            //Decide when to not store the email
-            if ( !( currentUser.admin || currentUser.gymAdmin ) | email === "" ){
-              email = undefined
-            }
-
-            relevantUsers[user.id] = {
-              names,
-              expoToken,
-              asigned,
-              email
-            }
-
-            return relevantUsers;
-          }, {})
-        )
+        callback( querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()})))
       }
 
     )
@@ -800,7 +777,7 @@ class Firebase {
     //Create the batch that we will use
     let batch = this.firestore.batch()
 
-    batch.update(this.userRef(requestingUser.id), { activeCompetitions: [...requestingUser.activeCompetitions, ...userToMerge.activeCompetitions] })
+    batch.update(this.userRef(requestingUser.id), { activeCompetitions: [...new Set([...requestingUser.activeCompetitions, ...userToMerge.activeCompetitions])] })
     batch.delete(this.userRef(userToMerge.id))
 
     //Define all the references where there is an array of playersIDs that needs to be modified
@@ -1038,45 +1015,76 @@ class Firebase {
 
   }
 
-  addNewPlayersToComp = (compID, newPlayers, callback = () => {}) => {
+  askToJoinCompetition = (gymID, compID, uid, callback) => {
+    /* Puts a new player into the list of players waiting to be accepted to a competition */
+    if (uid){
+      this.updateCompetitionDoc(gymID, compID, { playersAskingToJoin: FieldValue.arrayUnion(uid) }, callback)
+    }
+  }
 
-    /*Function that adds a player to a given competition*/
+  denyPlayerFromCompetition = (gymID, compID, uid, callback) => {
+    /* Removes a player from the list of players waiting for an answer.
+    
+    There's no specific function to accept players, as one can use this.addNewPlayersToComp, which already
+    takes care of removing from the waiting list
+    */
+    if (uid){  
+      this.updateCompetitionDoc(gymID, compID, {playersAskingToJoin: FieldValue.arrayRemove(uid)}, callback)
+    }
+  }
 
-    //If there are no new players, we don't need to do anything
+  addNewPlayersToComp = (gymID, compID, newPlayers, callback = () => {}) => {
+    /* Function that adds players to a given competition */
+
+    // If there are no new players, we don't need to do anything
     if (!newPlayers) return
 
-    //We need to get the actual competition ranking, and then add the new player
-    this.getCompetition(compID).then(({docs}) => {
-      let {playersIDs} = docs[0].data()
+    // Prepare the array where we are going to append players
+    let playersIDsToAdd = []
 
-      //Initialize the batch
-      let batch = this.firestore.batch()
-      //If there are no players registered yet (e.g. the competition is being initialized), then playersIDs is an empty list
-      playersIDs = playersIDs || [];
+    // Create the batch that we are going to use
+    let batch = this.firestore.batch()
 
-      //Create all the new unasigned users for this competition
-      newPlayers.forEach( newPlayer => {
+    // Go through all the players that need to be added
+    newPlayers.forEach( newPlayer => {
 
-          var newRef = this.usersRef.doc();
-          playersIDs.push(newRef.id)
+      var uid;
 
-          batch.set( newRef, {
-            displayName: newPlayer.name,
-            email: newPlayer.email.toLowerCase(),
-            activeCompetitions: [compID],
-            asigned: false
-          })
+      if (newPlayer.id){
+        // If an id is provided, we are going to interpret that this player already exists
+        uid = newPlayer.id
+        
+        // Therefore, all we need to do is to update its current active competitions
+        batch.update(this.userRef(uid), {activeCompetitions: FieldValue.arrayUnion(compID)})
+      } else {
+        // If no id is provided, we assume that this is the info of a new unregistered user
+        // We will just create a new user that can be reasigned to a real user when they claim it
+        var newRef = this.usersRef.doc();
+        uid = newRef.id
 
-      })
+        batch.set( newRef, {
+          displayName: newPlayer.name,
+          email: newPlayer.email.toLowerCase(),
+          activeCompetitions: [compID],
+          asigned: false
+        })
+      }
 
-      //Update also the competition players (create a playersIDs list and remove the helper players list)
-      batch.update(docs[0].ref, {
-          playersIDs: playersIDs,
-      })
+      // In any case, we have a new id that needs to be pushed onto the list of playersIDs for the competition
+      playersIDsToAdd.push(uid)
 
-      return batch.commit().then(() => callback(newPlayers))
+    })
 
-    }).catch(err => { alert( translate("errors.unable to add new players") + "\nError: " + err)})
+    // Update the competition to incorporate the new players (and remove them from a waiting stage if applicable)
+    batch.update(this.compRef(gymID, compID), {
+      playersIDs: FieldValue.arrayUnion(...playersIDsToAdd), 
+      playersAskingToJoin: FieldValue.arrayRemove(...playersIDsToAdd)
+    })
+
+    // Run the batch
+    return batch.commit().then(
+      () => callback(newPlayers)
+    ).catch(err => { alert( translate("errors.unable to add new players") + "\nError: " + err)})
 
   }
 

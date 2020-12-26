@@ -74,7 +74,8 @@
         "no email address available": "No email address available",
         "added to calendar": "Added to calendar",
         "bets closed": "Bets closed",
-        "you can not place bets until the match is scheduled": "You can not place bets until the match is scheduled"
+        "you can not place bets until the match is scheduled": "You can not place bets until the match is scheduled",
+        "players that would like to join": "Players that would like to join"
     },
     "questions": {
         "has this match been played now?": "Has this match been played now?"

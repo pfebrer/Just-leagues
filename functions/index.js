@@ -44,6 +44,7 @@ const { updateGroupScores } = require("./groups")
 
 admin.initializeApp();
 const firestore = admin.firestore();
+const FieldValue = admin.firestore.FieldValue
 const auth = admin.auth();
 
 const firestoreFunction = functions.region('europe-west1').runWith(runtimeOpts).firestore
@@ -378,12 +379,20 @@ exports.updateCompSettings = httpsFunction.onCall((data, context) => {
 
 exports.onCompetitionUpdate = firestoreFunction.document(Collections.GYMS + "/{gymID}/"+ Subcollections.COMPETITIONS + "/{compID}")
 .onUpdate((change, context) => {
-
-    /* It creates all the players that a new competition needs */
+    /*Listens to updates on the competition documents*/
 
     const {gymID, compID} = context.params
-    const { settings: prevSettings } = change.before.data()
-    const { type: typeOfComp, settings } = change.after.data()
+    const { settings: prevSettings, playersIDs: prevPlayersIDs } = change.before.data()
+    const { type: typeOfComp, settings, playersIDs } = change.after.data()
+
+
+    // For players that have been removed from the competitions, update properly their activeCompetition field
+    const removedPlayers = _.difference(prevPlayersIDs, playersIDs)
+
+    console.log(`Players ${removedPlayers} have been removed from the competition ${compID} in ${gymID}`)
+    removedPlayers.forEach(uid => {
+        firestore.doc(`${Collections.USERS}/${uid}`).update({"activeCompetitions": FieldValue.arrayRemove(compID)})
+    })
     
     if (typeOfComp == "groups"){
 

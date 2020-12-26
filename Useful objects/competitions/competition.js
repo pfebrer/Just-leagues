@@ -18,7 +18,8 @@ export default class Competition extends Configurable {
 
         defaults = {
             matches: [],
-            pendingMatches: []
+            pendingMatches: [],
+            playersAskingToJoin: []
         }
 
         allAttrs = {...defaults, ...compDict}
@@ -37,7 +38,7 @@ export default class Competition extends Configurable {
         listeners["main"] = Firebase.onCompetitionSnapshot( compID, compData => {
 
             //Update the competition with the main information (this is the doc information)
-            updateCompetition({...compData, isAdmin: currentUser.gymAdmin && currentUser.gymAdmin.indexOf(compData.gymID) != -1})
+            updateCompetition({...compData, isAdmin: currentUser.gymAdmin && currentUser.gymAdmin.includes(compData.gymID)})
             
             //Trigger all the additional listeners that the specific competition might have now that we have all the competition's info
             //if (listeners["additional"]) listeners["additional"].forEach(listener => listener()) //First we cancel the existing ones
@@ -60,7 +61,6 @@ export default class Competition extends Configurable {
                 listeners["admins"] = Firebase.onCompAdminsSnapshot(compData.gymID, compID, currentUser,relevantUsers => updateRelevantUsers(relevantUsers))
             }
             
-        
         })
 
         listeners["users"] = Firebase.onCompUsersSnapshot(compID, currentUser,relevantUsers => updateRelevantUsers(relevantUsers))
@@ -68,17 +68,13 @@ export default class Competition extends Configurable {
         //Return a function that will turn off all listeners at the same time
         return () => {
 
-            listeners["main"]();
-
-            listeners["matches"]();
-
-            listeners["pendingMatches"]();
-
-            listeners["users"]();
-
-            listeners["admins"]();
-            
-            if (listeners["additional"]) listeners["additional"].forEach(listener => listener())
+            Object.keys(listeners).forEach(listenerKey => {
+                if (listenerKey == "additional"){
+                    listeners[listenerKey].forEach(listener => listener())
+                } else {
+                    listeners[listenerKey]();
+                }
+            })
         
         }
 

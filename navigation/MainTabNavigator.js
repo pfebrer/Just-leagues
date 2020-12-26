@@ -20,6 +20,7 @@ import HeaderIcon from "../components/UX/HeaderIcon"
 import ChatScreen from '../screens/ChatScreen';
 import { translate } from '../assets/translations/translationWorkers';
 import EndingPeriodModal from '../components/groups/EndingPeriodModal';
+import SearchScreen from '../screens/SearchScreen';
 
 export const compTabBarOptions = {
     pressColor: "#ccc",
@@ -110,6 +111,14 @@ export default MainNavigator = createBottomTabNavigator({
                 )
             }
         },
+        Search: {
+            screen: SearchScreen,
+            navigationOptions: {
+                tabBarIcon: ({tintColor}) => (
+                    <Icon name="search" style={{color: tintColor}}/>
+                )
+            }
+        },
         Chat: {
             screen: ChatScreen,
             navigationOptions: {
@@ -117,7 +126,8 @@ export default MainNavigator = createBottomTabNavigator({
                     <Icon name="chatbubbles" style={{color: tintColor}}/>
                 )
             }
-        },/*
+        },
+        /*
         Profile: {
             screen: ProfileScreen,
             navigationOptions: {
@@ -147,12 +157,12 @@ export default MainNavigator = createBottomTabNavigator({
         }*/
     },
     {
-        initialRouteName: "Home",
+        initialRouteName: "Search",
         tabBarOptions: {
             showLabel: false,
-            activeTintColor: 'tomato',
-            inactiveTintColor: 'gray',
-            activeBackgroundColor: "#cccccc4D",
+            activeTintColor: 'black',
+            inactiveTintColor: '#ccc',
+            activeBackgroundColor: "#ffffff00",//"#cccccc4D",
             inactiveBackgroundColor: "#ffffff00"
         }
     }

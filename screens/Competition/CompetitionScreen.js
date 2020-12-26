@@ -4,9 +4,9 @@ import { connect } from 'react-redux'
 import { selectCurrentCompetition } from '../../redux/reducers'
 
 
-import { Dimensions, StyleSheet, View, Text, TouchableOpacity } from "react-native"
+import { Dimensions, View} from "react-native"
 
-import { TabView, SceneMap, TabBar } from 'react-native-tab-view';
+import { TabView, TabBar } from 'react-native-tab-view';
 
 import { translate } from "../../assets/translations/translationWorkers"
 import { compTabBarOptions } from "../../navigation/MainTabNavigator"

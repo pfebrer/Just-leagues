@@ -74,7 +74,8 @@
         "no email address available": "Sin correo",
         "added to calendar": "Añadido al calendario",
         "bets closed": "Apuestas cerradas",
-        "you can not place bets until the match is scheduled": "No puedes apostar hasta que el partido tenga fecha."
+        "you can not place bets until the match is scheduled": "No puedes apostar hasta que el partido tenga fecha.",
+        "players that would like to join": "Jugadores que quieren unirse"
     },
     "questions": {
         "has this match been played now?": "Se ha jugado ahora el partido?"

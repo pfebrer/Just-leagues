@@ -74,7 +74,8 @@
         "no email address available": "Sense correu",
         "added to calendar": "Afegit al calendari",
         "bets closed": "Apostes tancades",
-        "you can not place bets until the match is scheduled": "No pots apostar fins que el partit tingui una data fixada."
+        "you can not place bets until the match is scheduled": "No pots apostar fins que el partit tingui una data fixada.",
+        "players that would like to join": "Jugadors que volen unir-se"
     },
     "questions": {
         "has this match been played now?": "S'ha jugat ara el partit?"
