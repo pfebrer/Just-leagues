@@ -14,11 +14,9 @@ jobs:
       - uses: actions/checkout@v2
 
       - env:
-          FIREBASE_API_KEY: ${{ secrets.DUMB_KEY }} #${{ secrets.FIREBASE_API_KEY }}
+          FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
         run: |
           sed -i "s/process.env.FIREBASE_API_KEY/${FIREBASE_API_KEY}/" "${GITHUB_WORKSPACE}/api/Firebase.js"
-          cat "${GITHUB_WORKSPACE}/api/Firebase.js"
-          asdhsajkjdlasd
 
       # Install nodejs
       - uses: actions/setup-node@v2-beta
