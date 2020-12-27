@@ -44,7 +44,7 @@ class GroupBet extends Component {
                 
             </TouchableOpacity>
             <View style={styles.playerNameView}>
-                <Text style={{...styles.playerNameText, ...addPlayerTextStyles}}>{this.props.competition.renderName(this.props.relevantUsers[uid].names)}</Text>
+                <Text style={{color: "black", ...styles.playerNameText, ...addPlayerTextStyles}}>{this.props.competition.renderName(this.props.relevantUsers[uid].names)}</Text>
             </View>
             <TouchableOpacity
                 disabled={this.props.betClosed}
