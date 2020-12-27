@@ -13,6 +13,13 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
+      - env:
+          FIREBASE_API_KEY: key # ${{ secrets.FIREBASE_API_KEY }}
+        run: |
+          sed -i "s/process.env.FIREBASE_API_KEY/${FIREBASE_API_KEY}" "${GITHUB_WORKSPACE}/api/Firebase.js"
+          cat ${{ secrets.FIREBASE_API_KEY }}
+          asdhsajkjdlasd
+
       # Install nodejs
       - uses: actions/setup-node@v2-beta
         with:
