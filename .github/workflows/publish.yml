@@ -36,5 +36,10 @@ jobs:
       - name: Run tests
         run: npm test
 
+      - name: Upload code coverage results
+        uses: codecov/codecov-action@v1
+        with:
+          verbose: true
+
       - name: Publish to expo
         run: expo publish

@@ -3,7 +3,7 @@ import flatten from "flat"
 import _ from "lodash"
 
 import { USERSETTINGS } from "../../constants/Settings"
-import { setI18nConfig } from "./translationWorkers"
+import { setI18nConfig, translate } from "./translationWorkers"
 
 var supportedLanguages = []
 var translations = {}
@@ -74,5 +74,11 @@ describe("Translation functions work properly", () => {
 
         expect(i18n.locale).toBe("ca")
     })
+
+    test("'translate' returns the correct translation", () => {
+        expect(translate("vocabulary.yes")).toBe("Sí")
+    })
+
+    
 
 })

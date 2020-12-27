@@ -26,7 +26,7 @@ const translationGetters = {
     es: () => require("./es.json"),
 };
     
-const translate = memoize(
+let translate = memoize(
     (key, config) => i18n.t(key, config),
     (key, config) => (config ? key + JSON.stringify(config) : key)
 );
@@ -35,7 +35,7 @@ findBestAvailableLanguage = (keys, fallback) => {
     
     let phoneLocale = Localization.locale
 
-    let fitsExactly = false, fits = false;
+    let fitsExactly = false,  fits = false;
     keys.forEach(key => {
         if (key == phoneLocale){
             fitsExactly = key

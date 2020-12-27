@@ -13,3 +13,4 @@ web-report/
 *.log
 .idea
 kk/**
+coverage/
