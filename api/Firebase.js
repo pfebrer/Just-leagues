@@ -22,7 +22,7 @@ class Firebase {
 
     //Here we initialize the app
     var firebaseConfig = {
-      apiKey: process.env.FIREBASE_API_KEY,//"AIzaSyAHqGQDf55s2jACqlyn3ejicyk9ESrU3KM",
+      apiKey: process.env.FIREBASE_API_KEY,
       authDomain: "squash-leagues-94b68.firebaseapp.com",
       databaseURL: "https://squash-leagues-94b68.firebaseio.com",
       projectId: "squash-leagues-94b68",
