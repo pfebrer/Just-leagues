@@ -16,7 +16,7 @@ jobs:
       - env:
           FIREBASE_API_KEY: key # ${{ secrets.FIREBASE_API_KEY }}
         run: |
-          sed -i "s/process.env.FIREBASE_API_KEY/${FIREBASE_API_KEY}" "${GITHUB_WORKSPACE}/api/Firebase.js"
+          sed -i "s/process.env.FIREBASE_API_KEY/${FIREBASE_API_KEY}/" "${GITHUB_WORKSPACE}/api/Firebase.js"
           cat ${{ secrets.FIREBASE_API_KEY }}
           asdhsajkjdlasd
 
