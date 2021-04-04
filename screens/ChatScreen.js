@@ -58,7 +58,7 @@ class ChatScreen extends React.Component {
                     createdAt: message.createdAt.toDate(),
                     user: {
                         ...message.user,
-                        name: this.props.currentComp.renderName(this.props.relevantUsers[message.user._id].names)
+                        name: this.props.currentComp.renderName(this.props.relevantUsers, message.user._id)
                     }
                 }
             })
@@ -109,7 +109,7 @@ class ChatScreen extends React.Component {
 
                 if (this.state.target.particularChat){
 
-                    let authorName = this.props.currentComp.renderName(this.props.relevantUsers[this.props.currentUser.id].names)
+                    let authorName = this.props.currentComp.renderName(this.props.relevantUsers, this.props.currentUser.id)
 
                     this.state.context.playersIDs.forEach(uid => {
 
@@ -189,7 +189,7 @@ class ChatScreen extends React.Component {
             
             //Get the names of the users, except own name
             users = particularInfo.playersIDs.reduce((users,uid) => {
-                if (uid != this.props.currentUser.id) users.push(this.props.currentComp.renderName(this.props.relevantUsers[uid].names))
+                if (uid != this.props.currentUser.id) users.push(this.props.currentComp.renderName(this.props.relevantUsers, uid))
                 return users
             }, [])
 
