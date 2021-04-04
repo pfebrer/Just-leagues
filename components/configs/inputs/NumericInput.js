@@ -34,7 +34,6 @@ export default class NumericInput extends Component  {
         const value = this.props.value
 
         if (this.props.disabled){
-
             return (
                 <View style={{...styles.scoreInputView, ...this.props.style}}>
                     <View style={{...styles.scoreValueView, ...this.props.valueContainerStyle, ...this.props.disabledValueContainerStyle}}>
@@ -44,6 +43,9 @@ export default class NumericInput extends Component  {
             )
 
         }
+
+        const incrementButtonProps = {accessibilityLabel: "increment", onPress: this.increment}
+        const decrementButtonProps = {accessibilityLabel: "decrement", onPress: this.decrement}
         
         if (this.props.controlMode === "sideArrows"){
 
@@ -52,13 +54,13 @@ export default class NumericInput extends Component  {
                         <Text style={styles.valueText}>{value}</Text>
                     </View>
                     <View>
-                        <TouchableOpacity 
-                            onPress={this.increment}
+                        <TouchableOpacity
+                            {...incrementButtonProps}
                             style={styles.iconView}>
                             <Icon name="arrow-up" style={styles.icon}/>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            onPress={this.decrement}
+                            {...decrementButtonProps}
                             style={styles.iconView}>
                             <Icon name="arrow-down" style={styles.icon}/>
                         </TouchableOpacity>
@@ -67,9 +69,9 @@ export default class NumericInput extends Component  {
         } else {
             return (
                 <View style={{...styles.scoreInputView, ...this.props.style}}>
-                    <TouchableOpacity 
-                        style={{...styles.scoreInputControls, ...this.props.inputControlsStyle, ...this.props.leftInputControlStyle}}
-                        onPress={this.decrement}>
+                    <TouchableOpacity
+                        {...decrementButtonProps}
+                        style={{...styles.scoreInputControls, ...this.props.inputControlsStyle, ...this.props.leftInputControlStyle}}>
                             {this.props.renderLeftInputControl ? 
                                 this.props.renderLeftInputControl() 
                                 :
@@ -84,9 +86,9 @@ export default class NumericInput extends Component  {
                             style={{...styles.scoreValue, ...this.props.inputContainerStyle}}
                             onChangeText={(text) => this.textChange(text, onValueChange)}/>
                     </View>
-                    <TouchableOpacity 
+                    <TouchableOpacity
+                        {...incrementButtonProps}
                         style={{...styles.scoreInputControls, ...this.props.inputControlsStyle, ...this.props.rightInputControlStyle}}
-                        onPress={this.increment}
                         >
                             {this.props.renderRightInputControl ? 
                                 this.props.renderRightInputControl() 

@@ -44,7 +44,7 @@ class GroupBet extends Component {
                 
             </TouchableOpacity>
             <View style={styles.playerNameView}>
-                <Text style={{color: "black", ...styles.playerNameText, ...addPlayerTextStyles}}>{this.props.competition.renderName(this.props.relevantUsers[uid].names)}</Text>
+                <Text style={{color: "black", ...styles.playerNameText, ...addPlayerTextStyles}}>{this.props.competition.renderName(this.props.relevantUsers, uid)}</Text>
             </View>
             <TouchableOpacity
                 disabled={this.props.betClosed}
@@ -97,7 +97,7 @@ class PlayerPointsBet extends Component {
     render(){
 
         const uid = this.props.playerID
-        const playerName = this.props.competition.renderName(this.props.relevantUsers[uid].names)
+        const playerName = this.props.competition.renderName(this.props.relevantUsers, uid)
             
         return (
             <View style={styles.playerPointsView}>

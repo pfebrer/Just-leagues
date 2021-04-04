@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Container, Header, Content, Picker, Form } from "native-base";
+import { Picker } from "native-base";
 import { translate } from "../../../assets/translations/translationWorkers";
 
 export default class PickerInput extends Component {
@@ -16,7 +16,7 @@ export default class PickerInput extends Component {
             onValueChange={this.props.onValueChange}
             >
                 {(this.props.items || []).map( (props) => {
-                    const label = props.translatelabel ? translate(props.translatelabel) : props.label
+                    const label = props.translatelabel ? translate(props.translatelabel) : (props.label || props.value)
                     return <Picker.Item key={props.value} {...props} label={label}/>
                 })}
             </Picker>

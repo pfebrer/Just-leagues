@@ -1,11 +1,11 @@
 import React , {Component} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity} from "react-native"
 import { Icon, List, ListItem, Body, Right, Button } from 'native-base';
+import _ from "lodash"
+
 import { totalSize } from '../../../api/Dimensions';
 
-import NumericInput from "./NumericInput"
-
-import _ from "lodash"
+import InputField from '.';
 
 export default class RelationsInput extends Component  {
 
@@ -45,7 +45,8 @@ export default class RelationsInput extends Component  {
     renderNumericInputs = (relationIndex, varKey, arrValue) => {
 
         return arrValue.map( (value, index) => (
-            <NumericInput
+            <InputField
+                type="number"
                 key={index} 
                 value={value}
                 onValueChange={(value)=>this.updateValue(relationIndex, varKey, index , value)}/>

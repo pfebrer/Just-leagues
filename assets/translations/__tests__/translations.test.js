@@ -2,8 +2,8 @@ import i18n from "i18n-js";
 import flatten from "flat"
 import _ from "lodash"
 
-import { USERSETTINGS } from "../../constants/Settings"
-import { setI18nConfig, translate } from "./translationWorkers"
+import { USERSETTINGS } from "../../../constants/Settings"
+import { setI18nConfig, translate } from "../translationWorkers"
 
 var supportedLanguages = []
 var translations = {}

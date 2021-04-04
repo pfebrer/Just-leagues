@@ -24,7 +24,7 @@ class PlayerPicker extends Component {
         let items = this.props.currentComp.playersIDs.reduce( (items, uid) => {
 
             if (this.props.relevantUsers[uid].asigned === false ) {
-                items.push( {label: this.props.currentComp.renderName(this.props.relevantUsers[uid].names) , value: uid} )
+                items.push( {label: this.props.currentComp.renderName(this.props.relevantUsers, uid) , value: uid} )
             }
 
             return items

@@ -106,7 +106,7 @@ class LoadingScreen extends React.Component {
                     if (userData.gymAdmin && userData.gymAdmin.length > 0) {
                         userData.gymAdmin.forEach(gymID => {
 
-                            if ( ! this.gymListeners[gymID] && (!__DEV__ || gymID == "testgym")){
+                            if ( ! this.gymListeners[gymID] && ((!__DEV__ || true ) || gymID == "testgym")){
 
                                 this.gymListeners[gymID] = Firebase.onCompetitionsSnapshot(gymID, competitions => {
                                     

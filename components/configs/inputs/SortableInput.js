@@ -22,9 +22,9 @@ export default class SortableInput extends Component  {
 
     updateValues = (newOrder) => {
 
-        let newValue = newOrder.map(key => this.state.value[key])
+      let newValue = newOrder.map(key => this.state.value[key])
 
-        this.setState({value: newValue}, () => this.props.reportValue(newValue))
+      this.setState({value: newValue}, () => this.props.reportValue(newValue))
     }
 
     renderRow = ({data, active, index}) => {

@@ -36,7 +36,7 @@ class MatchWinnerBet extends Component {
 
         const match = this.props.match
         const competition = match.context.competition
-        const playerNames = match.playersIDs.map(uid => competition.renderName(this.props.relevantUsers[uid].names))
+        const playerNames = match.playersIDs.map(uid => competition.renderName(this.props.relevantUsers, uid))
         const addStyles = match.playersIDs.map((uid, index) => this.props.bet == index + 1 ? {
             view: styles.selectedWinnerView , text: styles.selectedWinnerText
         } : {
@@ -86,7 +86,7 @@ class MatchResultBet extends Component {
 
         const match = this.props.match
         const competition = match.context.competition
-        const playerNames = match.playersIDs.map(uid => competition.renderName(this.props.relevantUsers[uid].names))
+        const playerNames = match.playersIDs.map(uid => competition.renderName(this.props.relevantUsers, uid))
         let addStyles = match.playersIDs.map((uid, index) => this.props.bet == index + 1 ? {
             view: styles.selectedWinnerView , text: styles.selectedWinnerText
         } : {

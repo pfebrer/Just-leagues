@@ -139,7 +139,7 @@ class RankingEditScreen extends Component {
 
   _renderRow = ({data: uid, active, index}) => {
 
-    let name = this.props.relevantUsers[uid] ? this.props.competition.renderName(this.props.relevantUsers[uid].names) : "NO"
+    let name = this.props.competition.renderName(this.props.relevantUsers, uid)
 
     return <Row 
             data={name} 

@@ -56,7 +56,7 @@ class MatchResult extends Component {
                 onValueChange={(value)=>this.updateResult(index, value)}/>
         ))
 
-        let players = this.props.match.playersIDs.map( uid => this.props.match.context.competition.renderName(this.props.relevantUsers[uid].names) )
+        let players = this.props.match.playersIDs.map( uid => this.props.match.context.competition.renderName(this.props.relevantUsers, uid) )
         let ranks = this.props.match.playersIDs.map( uid => {
             return this.props.match.context.competition.playersIDs.indexOf(uid) + 1
         })

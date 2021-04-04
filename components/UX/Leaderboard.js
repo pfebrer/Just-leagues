@@ -39,7 +39,7 @@ class Leaderboard extends React.Component {
                 <ListItem style={{...styles.leaderboardCell, ...customStyles}} key={i} noIndent noBorder={i == arr.length - 1}>
                     <Left>
                         <Text style={{...styles.userText, ...customTextStyles}}>
-                            {preText + this.props.competition.renderName(this.props.relevantUsers[uid].names)}
+                            {preText + this.props.competition.renderName(this.props.relevantUsers, uid)}
                         </Text>
                     </Left>
                     <Right>

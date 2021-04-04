@@ -379,3 +379,5 @@ exports.withProgressAsync = ({progress: progressMessage, success: successMessage
 }
 
 exports.isError = (result) => typeof result == "string" && Object.keys(Errors).indexOf(result) != -1
+
+exports.getUserNames = (relevantUsers, uid) => (relevantUsers[uid] ? relevantUsers[uid].names : {})

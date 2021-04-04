@@ -31,6 +31,11 @@ let translate = memoize(
     (key, config) => (config ? key + JSON.stringify(config) : key)
 );
 
+if (typeof __TEST__ !== "undefined" && __TEST__ === true){
+    realTranslate = translate
+    translate = (key, config) => key === "_" ? "__" : realTranslate(key, config)
+}
+
 findBestAvailableLanguage = (keys, fallback) => {
     
     let phoneLocale = Localization.locale

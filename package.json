@@ -64,6 +64,7 @@
     "@babel/core": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
     "@expo/vector-icons": "^10.0.0",
+    "@testing-library/jest-native": "^3.4.3",
     "@testing-library/react-native": "^7.1.0",
     "babel-preset-expo": "^8.3.0",
     "expo-cli": "^4.0.8",
@@ -78,6 +79,7 @@
     ],
     "coverageDirectory": "./coverage/",
     "collectCoverage": true,
+    "setupFilesAfterEnv": ["@testing-library/jest-native/extend-expect"],
     "globals": {
       "__TEST__": true
     }

@@ -80,7 +80,7 @@ class TimeInfo extends Component {
         let match = this.props.match
         let scheduled = match.scheduled && match.scheduled.time
 
-        let notes = scheduled ? match.playersIDs.map( uid => match.context.competition.renderName(this.props.relevantUsers[uid].names)).join(" - ") : ""
+        let notes = scheduled ? match.playersIDs.map( uid => match.context.competition.renderName(this.props.relevantUsers, uid)).join(" - ") : ""
         let title =  scheduled ? match.context.competition.name : match.context.competition.name + " ("+ translate("vocabulary.limit") + ")"
         let startDate = scheduled ? match.scheduled.time : match.due
         let endDate = scheduled ? moment(startDate).add(30, "m").toDate() : moment(startDate).add(1, "s").toDate()

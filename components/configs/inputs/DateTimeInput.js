@@ -21,9 +21,10 @@ export default class DateTimeInput extends Component {
 
         const placeholder = this.props.placeholder || translate("vocabulary.fix a date")
         const selecting = this.props.selecting !== undefined ? this.props.selecting : this.state.selecting
+        const label = this.props.accessibilityLabel
 
         return <View style={this.props.containerStyle}>
-                <Button iconRight onPress={() => this.setState({selecting: true})} style={this.props.style}>
+                <Button accessibilityLabel={`${label}button`} iconRight onPress={() => this.setState({selecting: true})} style={this.props.style}>
                     <Text>{this.props.value ? moment(this.props.value).format("DD-MM-YYYY HH:mm") : placeholder}</Text>
                     <Icon name="calendar"/>
                 </Button>

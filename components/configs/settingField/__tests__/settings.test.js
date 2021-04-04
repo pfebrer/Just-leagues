@@ -1,5 +1,5 @@
-import { allFields } from "./index"
-import * as allSettings from "../../../constants/Settings"
+import { allFields } from "../index"
+import * as allSettings from "../../../../constants/Settings"
 
 const availableTypes = Object.keys(allFields)
 

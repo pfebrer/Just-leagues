@@ -5,7 +5,7 @@ import Firebase from "../../api/Firebase"
 import React, {Component} from 'react';
 import _ from "lodash"
 import { translate } from "../../assets/translations/translationWorkers"
-//import {} from "react-native"
+import { getUserNames } from "../../assets/utils/utilFuncs"
 import MatchesDisplay from "../../components/competition/MatchesDisplay";
 import CompStats from "../../components/competition/CompStats";
 
@@ -80,8 +80,10 @@ export default class Competition extends Configurable {
 
     }
     
-    renderName = (nameObject) => {
-        /* Renders the name of a given user according to the competition's settings */ 
+    renderName = (relevantUsers, uid) => {
+        /* Renders the name of a given user according to the competition's settings */
+
+        const nameObject = getUserNames(relevantUsers, uid)
 
         let nameDisplaySettings = this.getSetting("nameDisplay")
 

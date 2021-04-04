@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
-import { sortPlayerIndices, elevation , deepClone} from "../../assets/utils/utilFuncs"
+import { elevation , deepClone} from "../../assets/utils/utilFuncs"
 import { translate } from '../../assets/translations/translationWorkers';
 import { w, h, totalSize } from '../../api/Dimensions';
 import { ScrollView } from 'react-native-gesture-handler';
@@ -29,9 +29,9 @@ class Table extends Component {
         let uid = this.props.playersIDs[iRow]
 
         if (uid == this.props.currentUser.id){
-            console.warn("Go to profile: ", this.props.competition.renderName(this.props.relevantUsers[uid].names))
+            console.warn("Go to profile: ", this.props.competition.renderName(this.props.relevantUsers, uid))
         } else {
-            console.warn("Go to stats: ", this.props.competition.renderName(this.props.relevantUsers[uid].names))
+            console.warn("Go to stats: ", this.props.competition.renderName(this.props.relevantUsers, uid))
         }
         
     }
@@ -116,7 +116,7 @@ class Table extends Component {
 
         if( !playersIDs.length > 0 ) { return null }
 
-        let players = playersIDs.map( uid => this.props.competition.renderName(this.props.relevantUsers[uid].names) )
+        let players = playersIDs.map( uid => this.props.competition.renderName(this.props.relevantUsers, uid))
 
         let ranks = playersIDs.map( uid => {
             return this.props.competition.playersIDs.indexOf(uid) + 1

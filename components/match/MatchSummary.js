@@ -49,7 +49,7 @@ class MatchSummary extends Component {
 
         let result = match.result || this.props.defaultResult || this.defaultResult
 
-        let players = match.playersIDs.map( uid => match.context.competition.renderName(this.props.relevantUsers[uid].names) )
+        let players = match.playersIDs.map( uid => match.context.competition.renderName(this.props.relevantUsers, uid) )
         let ranks = match.playersIDs.map( uid => {
             return match.context.competition.playersIDs.indexOf(uid) + 1
         })
