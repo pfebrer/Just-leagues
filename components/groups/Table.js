@@ -13,6 +13,8 @@ import { connect } from 'react-redux'
 import {setCurrentMatch} from "../../redux/actions"
 
 import _ from "lodash"
+import Firebase from '../../api/Firebase';
+import { Icon } from 'native-base';
 
 class Table extends Component {
 
@@ -106,6 +108,21 @@ class Table extends Component {
                 iLeader={iLeader}
                 iLoser={iLoser}/>,
         ]
+    }
+
+    renderAdminOptions() {
+
+        let {playersIDs, scores, id: groupID, competition} = this.props
+        const {gymID, id: compID} = competition
+
+        const isAdmin = this.props.currentUser.admin || (this.props.currentUser.gymAdmin && this.props.currentUser.gymAdmin.indexOf(gymID) >= 0)
+        
+        console.warn(gymID, isAdmin)
+        if ( !isAdmin ) return null
+
+        return <TouchableOpacity onPress={() => Firebase.updateGroupScores(gymID, compID, groupID)}>
+            <Icon name="sync"/>
+        </TouchableOpacity>
     }
 
     render() {

@@ -21,8 +21,6 @@ import _ from "lodash"
 import { selectCurrentCompetition, selectSuperChargedCompetitions } from '../redux/reducers';
 import InputField from '../components/configs/inputs';
 
-
-
 class AdminScreen extends React.Component {
 
     constructor(props) {
@@ -154,6 +152,14 @@ class AdminScreen extends React.Component {
                     </View>
                     <View style={styles.buttonRow}>
                         <Button
+                            style={styles.button}
+                            onPress={this.updateAllGroupScores}
+                            >
+                            <Text style={styles.buttonText}>{translate("admin.update group scores")}</Text>
+                        </Button>
+                    </View>
+                    <View style={styles.buttonRow}>
+                        <Button
                             style={styles.button}   
                             onPress={()=>{this.props.navigation.navigate("CompetitionScreen", {competitionName: this.props.competition.name})}}
                             >
@@ -175,6 +181,24 @@ class AdminScreen extends React.Component {
     updateGroups = () => {
         this.callFunction('updateGroups');
     };
+
+    updateAllGroupScores = () => {
+        /*Updates the scores of all groups in the competition, just in case some of them were wrong*/
+
+        const {gymID, id: compID, groups} = this.props.competition
+        
+        let i = 0
+        const maxI = groups.length - 1
+        const interval = setInterval(() => {
+
+            if (i > maxI) clearInterval(interval)
+            else {
+                Firebase.updateGroupScores(gymID, compID, groups[i].id)
+                i += 1
+            }
+        }, 500)
+        
+    }
 
     toggleGroupGeneratingModal = () => {
         this.setState({groupGeneratingModal: !this.state.groupGeneratingModal})

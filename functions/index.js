@@ -419,8 +419,7 @@ exports.updateGroupScores = httpsFunction.onCall((data, context) => {
     //We get all the competitions
     return firestore.doc(groupPath).get().then((groupSnapshot) => {
 
-        updateGroupScores(firestore, groupSnapshot.ref, {id: groupSnapshot.ref.id, ...groupSnapshot.data()})
-            
+        updateGroupScores(firestore, groupSnapshot.ref, {id: groupSnapshot.ref.id, ...groupSnapshot.data()})  
 
     })
   
