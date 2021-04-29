@@ -114,4 +114,38 @@ export default class GroupsCompetition extends Competition {
         return this.matchesWithContext([...this.matches, ...this.pendingMatches].filter( match => match.context.group.id == groupID))
     }
 
+    getPeriodMatches = () => {
+        
+        if (!this.groups) return []
+
+        return this.groups.reduce((matches, group) => {return [...matches, ...this.getGroupMatches(group.id)]}, [])
+    }
+
+    adminCompSummary = () => {
+
+        let groupedPending = _.groupBy(this.pendingMatches, "scheduled")
+
+        const nPending = this.pendingMatches.length
+        const nPeriod = this.getPeriodMatches().length
+
+        return [
+
+            {
+                name: undefined ,
+                attributes: [
+                    {icon: "people", name: translate("vocabulary.players"), "value": this.playersIDs.length},
+                    ...(this.additionalCompSummary ? this.additionalCompSummary() : [])
+                ]
+            },
+
+            {
+                name: translate("tabs.matches"),
+                attributes: [
+                    {icon: "alert", "name": translate("vocabulary.pending matches"), value: this.pendingMatches ? `${nPending}/${nPeriod} (${((nPending/nPeriod)*100).toFixed()} %)` : "..."}
+                ]
+            },
+            
+        ]
+    }
+
 }
