@@ -79,7 +79,9 @@
     ],
     "coverageDirectory": "./coverage/",
     "collectCoverage": true,
-    "setupFilesAfterEnv": ["@testing-library/jest-native/extend-expect"],
+    "setupFilesAfterEnv": [
+      "@testing-library/jest-native/extend-expect"
+    ],
     "globals": {
       "__TEST__": true
     }

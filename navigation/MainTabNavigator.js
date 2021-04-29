@@ -21,6 +21,7 @@ import ChatScreen from '../screens/ChatScreen';
 import { translate } from '../assets/translations/translationWorkers';
 import EndingPeriodModal from '../components/groups/EndingPeriodModal';
 import SearchScreen from '../screens/SearchScreen';
+import SquashMatchTracker from '../Useful objects/sports/squash/matchTracker';
 
 export const compTabBarOptions = {
     pressColor: "#ccc",
@@ -104,7 +105,7 @@ export default MainNavigator = createBottomTabNavigator({
             }
         }, */
         Home: {
-            screen: HomeStack,
+            screen: SquashMatchTracker, //HomeStack,
             navigationOptions: {
                 tabBarIcon: ({tintColor}) => (
                     <Icon name="home" size={20} style={{color: tintColor}}/>
