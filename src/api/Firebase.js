@@ -1,10 +1,11 @@
-import firebase from "firebase";
-import 'firebase/firestore';
-import 'firebase/functions';
+import firebase from "firebase/compat/app";
+import 'firebase/compat/firestore';
+import 'firebase/compat/functions';
+import 'firebase/compat/auth'
 
 import { Toast } from 'native-base'
 import {Collections, Subcollections, Constants, Documents} from "../constants/CONSTANTS";
-import { settleBet } from '../api/BetManager'
+import { settleBet } from './BetManager'
 
 import * as Google from 'expo-google-app-auth';
 import * as GoogleSignIn from 'expo-google-sign-in';

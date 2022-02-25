@@ -1,12 +1,10 @@
 import React, {Component} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 
-import { elevation , deepClone} from "../../assets/utils/utilFuncs"
+import { elevation , deepClone, withNavigation} from "../../assets/utils/utilFuncs"
 import { translate } from '../../assets/translations/translationWorkers';
 import { w, h, totalSize } from '../../api/Dimensions';
 import { ScrollView } from 'react-native-gesture-handler';
-
-import { withNavigation } from "react-navigation"
 
 //Redux stuff
 import { connect } from 'react-redux'

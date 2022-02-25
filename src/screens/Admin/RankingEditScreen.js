@@ -84,8 +84,6 @@ class RankingEditScreen extends Component {
 
       let {playersIDs: ranking, date} = querySnapshot.docs[0].data()
 
-      console.warn(ranking)
-
       this.setState({ranking})
     } catch (error) {
       Toast.show({

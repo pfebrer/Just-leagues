@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import { Text, StyleSheet, View, TouchableOpacity} from 'react-native'
-import { withNavigation } from 'react-navigation'
 import moment from 'moment'
 
 import Card from '../UX/Card'
 import Colors from '../../constants/Colors'
+import { withNavigation } from '../../assets/utils/utilFuncs'
 import { translate } from '../../assets/translations/translationWorkers'
 
 //Redux stuff

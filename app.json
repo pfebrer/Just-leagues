@@ -10,14 +10,14 @@
     ],
     "version": "1.5.3",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./src/assets/images/icon.png",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./src/assets/images/splash.png",
       "resizeMode": "cover",
       "backgroundColor": "#818181"
     },
     "notification": {
-      "icon": "./assets/images/icon.png"
+      "icon": "./src/assets/images/icon.png"
     },
     "updates": {
       "fallbackToCacheTimeout": 0

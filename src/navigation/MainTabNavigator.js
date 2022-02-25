@@ -1,0 +1,75 @@
+import React from 'react';
+
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+
+import CompetitionScreen from "../screens/Competition/CompetitionScreen";
+import AdminScreen from "../screens/AdminScreen";
+import SettingsScreen from "../screens/SettingsScreen";
+import RankingEditScreen from "../screens/Admin/RankingEditScreen";
+import PlayersManagementScreen from "../screens/Admin/PlayersManagementScreen";
+import HomeScreen from "../screens/HomeScreen"
+import MatchScreen from "../screens/MatchScreen"
+
+import { Icon } from 'native-base';
+import ChatScreen from '../screens/ChatScreen';
+import EndingPeriodModal from '../components/groups/EndingPeriodModal';
+import SearchScreen from '../screens/SearchScreen';
+
+const HomeStack = createNativeStackNavigator();
+
+function HomeNavigator() {
+  return (
+    <HomeStack.Navigator
+        initialRouteName="HomeScreen">
+        <HomeStack.Screen name="HomeScreen" component={HomeScreen}/>
+        <HomeStack.Screen name="SettingsScreen" component={SettingsScreen}/>
+        <HomeStack.Screen name="CompetitionScreen" component={CompetitionScreen}/>
+        <HomeStack.Screen name="MatchScreen" component={MatchScreen}/>
+        <HomeStack.Screen name="AdminScreen" component={AdminScreen}/>
+        <HomeStack.Screen name="EditRankingScreen" component={RankingEditScreen}/>
+        <HomeStack.Screen name="PlayersManagementScreen" component={PlayersManagementScreen}/>
+        <HomeStack.Screen name="EndPeriodScreen" component={EndingPeriodModal}/>
+    </HomeStack.Navigator>
+  );
+}
+
+const MainTab = createBottomTabNavigator();
+
+function MainNavigator() {
+  return (
+    <MainTab.Navigator
+        initialRouteName="Home"
+        screenOptions={{
+            tabBarShowLabel: false,
+            tabBarActiveTintColor: 'black',
+            tabBarInactiveTintColor: '#ccc',
+            tabBarActiveBackgroundColor: "#ffffff00",
+            tabBarInactiveBackgroundColor: "#ffffff00"
+        }}>
+        <MainTab.Screen 
+            name="Home" 
+            component={HomeNavigator} 
+            tabBarIcon={({color}) => (
+                <Icon name="home" size={20} style={{color}}/>
+            )}
+            />
+        <MainTab.Screen 
+            name="Search" 
+            component={SearchScreen} 
+            tabBarIcon={({color}) => (
+                <Icon name="search" style={{color}}/>
+            )}
+            />
+        <MainTab.Screen 
+            name="Chat" 
+            component={ChatScreen} 
+            tabBarIcon={({color}) => (
+                <Icon name="chatbubbles" style={{color}}/>
+            )}
+            />
+    </MainTab.Navigator>
+  );
+}
+
+export default MainNavigator;

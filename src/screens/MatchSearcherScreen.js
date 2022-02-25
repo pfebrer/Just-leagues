@@ -1,8 +1,8 @@
 import React from 'react';
 import {ImageBackground, StyleSheet, View} from 'react-native';
-import MatchFilter from "../components/matchSearcher/MatchFilter"
-import MatchHistory from "../components/matchSearcher/MatchHistory"
-import { USERSETTINGS } from "../constants/Settings"
+import MatchFilter from "../../components/matchSearcher/MatchFilter"
+import MatchHistory from "../../components/matchSearcher/MatchHistory"
+import { USERSETTINGS } from "../../constants/Settings"
 
 import { connect } from 'react-redux'
 import { selectUserSetting } from '../redux/reducers';

@@ -1,7 +1,10 @@
 import _ from "lodash"
+import {Toast} from 'native-base'
+import { useNavigation } from '@react-navigation/native';
+
 import { translate } from "../translations/translationWorkers";
 import { Errors } from '../../constants/CONSTANTS'
-import {Toast} from 'native-base'
+
 
 //Get a deep copy of an object
 exports.deepClone = (obj) => {
@@ -381,3 +384,12 @@ exports.withProgressAsync = ({progress: progressMessage, success: successMessage
 exports.isError = (result) => typeof result == "string" && Object.keys(Errors).indexOf(result) != -1
 
 exports.getUserNames = (relevantUsers, uid) => (relevantUsers[uid] ? relevantUsers[uid].names : {})
+
+exports.withNavigation = (Component) => {
+
+    return function (props) {
+        const navigation = useNavigation();
+
+        return <Component {...props} navigation={navigation} />;
+    } 
+}

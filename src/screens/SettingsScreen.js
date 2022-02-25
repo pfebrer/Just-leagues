@@ -11,8 +11,6 @@ import { List, ListItem, Body, Right, Icon, Text, Button, Form, Item, Label, Inp
 
 import HeaderIcon from "../components/UX/HeaderIcon"
 
-import { withNavigationFocus } from 'react-navigation';
-
 import {deepClone} from "../assets/utils/utilFuncs"
 
 import _ from "lodash"
@@ -40,15 +38,15 @@ class SettingsScreen extends React.Component {
         }
     };
 
-    componentDidUpdate(prevProps) {
+    // componentDidUpdate(prevProps) {
 
-        //When the screen is focused change the state
-        if ( this.props.isFocused && !prevProps.isFocused ) {
+    //     //When the screen is focused change the state
+    //     if ( this.props.isFocused && !prevProps.isFocused ) {
 
-            this.setUpComponent()
+    //         this.setUpComponent()
             
-        }
-    }
+    //     }
+    // }
 
     componentDidMount() {
 
@@ -205,7 +203,7 @@ const mapStateToProps = state => ({
     currentComp: selectCurrentCompetition(state),
 })
 
-export default connect(mapStateToProps)(withNavigationFocus(SettingsScreen));
+export default connect(mapStateToProps)(SettingsScreen);
 
 const styles = StyleSheet.create({
     container: {
