@@ -1,14 +1,14 @@
 import firebase from "firebase/compat/app";
+import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, 
+    createUserWithEmailAndPassword, sendPasswordResetEmail, signOut } from "firebase/auth";
 import 'firebase/compat/firestore';
 import 'firebase/compat/functions';
-import 'firebase/compat/auth'
+
 
 import { Toast } from 'native-base'
 import {Collections, Subcollections, Constants, Documents} from "../constants/CONSTANTS";
 import { settleBet } from './BetManager'
 
-import * as Google from 'expo-google-app-auth';
-import * as GoogleSignIn from 'expo-google-sign-in';
 import { translate } from "../assets/translations/translationWorkers";
 
 import 'lodash.combinations';
@@ -33,9 +33,11 @@ class Firebase {
     this.app = firebase.initializeApp(firebaseConfig);
     this.firestore = this.app.firestore();
     this.functions = this.app.functions('europe-west1');
-    this.auth = this.app.auth();
-
+    this.auth = getAuth(this.app);
   }
+
+  //FIREBASE API
+  onAuthStateChanged = (callback) => onAuthStateChanged(this.auth, callback)
 
   //FUNCTIONS TO MIGRATE (Use for developement)
   migrateUsers = (prefix) => {
@@ -63,133 +65,11 @@ class Firebase {
   }
   
   //AUTHENTICATION STUFF
-  /***Google***/
-
-  //New way
-  signInWithGoogleAsync = async () => {
-    await GoogleSignIn.initAsync({
-      clientId: '524738063553-7a5ri1erg2jgc74u50oju3i1ksffdft4.apps.googleusercontent.com',
-    });
-    try {
-      await GoogleSignIn.askForPlayServicesAsync();
-      const { type, user } = await GoogleSignIn.signInAsync();
-      if (type === 'success') {
-        this.onGoogleSignIn(user)
-      }
-    } catch ({ message }) {
-      return { error: true }
-    }
-  };
-
-  //Should continue to do it like this inside expo
-  signInWithGoogleAsyncExpo = async () => {
-    try {
-      const result = await Google.logInAsync({
-        androidStandaloneAppClientId: "524738063553-vn8rk9pmad9gil0gtsbhaf616ng6e0mj.apps.googleusercontent.com",
-        androidClientId: "524738063553-1tr662gs9strhp1rvljj4qv588mbj254.apps.googleusercontent.com",
-        iosClientId: "524738063553-r84f2p2d63sp41pf72pe7bdmlk9boi52.apps.googleusercontent.com",
-        behavior: "web",
-        scopes: ['profile', 'email'],
-      });
-  
-      if (result.type === 'success') {
-
-        //Log in to our firebase app
-        this.onGoogleSignIn(result, true)
-        return result.accessToken;
-
-      } else {
-        return { cancelled: true };
-      }
-    } catch (e) {
-      return { error: true };
-    }
-  }
-
-  onGoogleSignIn = (googleUser, inExpo) => {
-
-    function isUserEqual(googleUser, firebaseUser) {
-      if (firebaseUser) {
-        var providerData = firebaseUser.providerData;
-        for (var i = 0; i < providerData.length; i++) {
-          if (providerData[i].providerId === firebase.auth.GoogleAuthProvider.PROVIDER_ID &&
-              providerData[i].uid === googleUser.getBasicProfile().getId()) {
-            // We don't need to reauth the Firebase connection.
-            return true;
-          }
-        }
-      }
-      return false;
-    }
-
-    //Sign out from expo google, as we are going to sign in with firebase again now that we have the credentials
-    if (!inExpo) GoogleSignIn.signOutAsync()
-
-    console.log('Google Auth Response', googleUser);
-    // We need to register an Observer on Firebase Auth to make sure auth is initialized.
-    var unsubscribe = this.auth.onAuthStateChanged(function(firebaseUser) {
-      unsubscribe();
-      // Check if we are already signed-in Firebase with the correct user.
-      if (!isUserEqual(googleUser, firebaseUser)) {
-        // Build Firebase credential with the Google ID token.
-        var credential = firebase.auth.GoogleAuthProvider.credential(
-          inExpo ? googleUser.idToken : googleUser.auth.idToken,
-          inExpo ? googleUser.accessToken : googleUser.auth.accessToken
-        );
-        // Sign in with credential from the Google user.
-        this.auth.signInWithCredential(credential)
-        .then( result => {
-
-          let userProfile = {
-            profilePic: result.additionalUserInfo.profile.picture,
-            aka: result.additionalUserInfo.profile.name,
-            firstName: result.additionalUserInfo.profile.given_name,
-            lastName: result.additionalUserInfo.profile.family_name,
-          }
-
-          this.userRef(result.user.uid).get()
-
-            .then(docSnapshot => {
-
-              let userSettings = docSnapshot.get("settings") || {}
-
-              docSnapshot.ref.set({
-                ...docSnapshot.data(),
-                settings: {
-                  ...userSettings,
-                  ["Profile"]: {
-                    ...userProfile,
-                    ...userSettings["Profile"],
-                  }
-                },
-                
-              }, {merge: true})
-
-            })
-
-        })
-        .catch(function(error) {
-          // Handle Errors here.
-          var errorCode = error.code;
-          var errorMessage = error.message;
-          // The email of the user's account used.
-          var email = error.email;
-          // The firebase.auth.AuthCredential type that was used.
-          var credential = error.credential;
-          // ...
-          console.log(errorMessage)
-        });
-      } else {
-        console.log('User already signed-in Firebase.');
-      }
-    }.bind(this));
-  }
-
   /***Email***/
   userLogin = (email, password) => {
     let me = this;
     return new Promise(resolve => {
-      me.auth.signInWithEmailAndPassword(email, password)
+      signInWithEmailAndPassword(me.auth, email, password)
         .catch(error => {
           switch (error.code) {
             case 'auth/invalid-email':
@@ -223,7 +103,7 @@ class Firebase {
   createFirebaseAccount = (name, email, password) => {
     let me = this;
     return new Promise(resolve => {
-      me.auth.createUserWithEmailAndPassword(email, password).catch(error => {
+      createUserWithEmailAndPassword(me.auth, email, password).catch(error => {
         switch (error.code) {
           case 'auth/email-already-in-use':
             Toast.show({
@@ -275,7 +155,7 @@ class Firebase {
   sendEmailWithPassword = (email) => {
     let me = this;
     return new Promise(resolve => {
-      me.auth.sendPasswordResetEmail(email)
+      sendPasswordResetEmail(me.auth, email)
         .then(() => {
           console.warn('Email with new password has been sent');
           resolve(true);
@@ -296,7 +176,7 @@ class Firebase {
   };
 
   signOut = () => {
-    this.auth.signOut().then().catch((error) => {
+    signOut(this.auth).then().catch((error) => {
       alert(error.message)
     })
   }
@@ -713,6 +593,45 @@ class Firebase {
   }
 
   submitNewPlayedMatch = withProgressAsync({progress: translate("progress.submitting match")}, this._submitNewPlayedMatch)
+
+  //FUNCTIONS TO DO COMPLEX OPERATIONS
+  _cancelPlayedMatchResult = async (matchInfo, backToPending, callback) => {
+    /*Takes a match from pendingMatches and puts it into matches.
+    It also deletes the already played pendingMatch. ID of the match is preserved.*/
+    let batch = this.firestore.batch()
+
+    //Pick only the relevant info
+    let {result, playersIDs, scheduled, context, id: matchID} = matchInfo
+
+    let {competition} = context
+    let {id: compID, gymID, type: typeOfComp} = competition
+
+    // Remove it from the matches
+    batch.delete(this.matchRef(gymID, compID, matchID))
+    // There should probably be some kind of logic here to unsettle bets, and also if
+    // statistics are no longer computed on the fly, something is needed here.
+
+    // Set the document back in the pending matches if requested. It may be the case that this match
+    // is no longer to be scheduled, in which case it should not be added again to pending matches.
+    if (backToPending){
+        batch.set(this.pendingMatchRef(gymID, compID, matchID),{
+        context: {
+            ..._.omit(context, ["pending", "matchID"]),
+            competition: _.pick(competition, ["id", "gymID", "name", "type"])
+        },
+        scheduled: false,
+        playersIDs,
+        })
+    }
+
+    await withProgressAsync(
+        {progress: translate("progress.submitting all changes"), error: translate("errors.could not submit changes"), throwErr: true}, 
+        batch.commit.bind(batch)
+      ) ()
+
+  }
+
+  cancelPlayedMatchResult = withProgressAsync({progress: translate("progress.submitting match")}, this._cancelPlayedMatchResult)
 
   settleMatchBets = async (match, batch) => {
 

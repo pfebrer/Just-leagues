@@ -1,6 +1,7 @@
 import React from 'react';
-import {StyleSheet, ScrollView, View, TouchableOpacity} from 'react-native';
-import { List, ListItem, Right, Left, Text} from "native-base"
+import {StyleSheet, View, Pressable} from 'react-native';
+import { Text, Icon } from "native-base"
+import { Ionicons } from '@expo/vector-icons';
 
 import _ from "lodash"
 import { connect } from 'react-redux'
@@ -31,21 +32,27 @@ class Leaderboard extends React.Component {
 
         return topRankedKeys.map( (uid, i, arr) =>{
 
-            let customStyles = i == 0 ? styles.leaderCell : i < 3 ? styles.podiumCell : uid == this.props.currentUser.id ? i == this.state.nTop && ! this.state.showAll ? styles.ownCellOutside : styles.ownCell : null 
-            let customTextStyles = i == 0 ? styles.leaderText : i < 3 ? styles.podiumText : uid == this.props.currentUser.id ? styles.ownText : null
-            let preText = !this.state.showAll && i == this.state.nTop ? (sortedKeys.indexOf(this.props.currentUser.id) + 1) + ". " : (i+1) + ". "
+            const customStyles = i == 0 ? styles.leaderCell : i < 3 ? styles.podiumCell : uid == this.props.currentUser.id ? i == this.state.nTop && ! this.state.showAll ? styles.ownCellOutside : styles.ownCell : null 
+            const customTextStyles = i == 0 ? styles.leaderText : i < 3 ? styles.podiumText : uid == this.props.currentUser.id ? styles.ownText : null
+            const position = !this.state.showAll && i == this.state.nTop ? (sortedKeys.indexOf(this.props.currentUser.id) + 1) : (i+1)
+            const preText = position + "."
 
             return (
-                <ListItem style={{...styles.leaderboardCell, ...customStyles}} key={i} noIndent noBorder={i == arr.length - 1}>
-                    <Left>
+                <View style={{...styles.leaderboardCell, ...customStyles}} key={i} >
+                    <View style={styles.leaderboardPositionView}>
                         <Text style={{...styles.userText, ...customTextStyles}}>
-                            {preText + this.props.competition.renderName(this.props.relevantUsers, uid)}
+                            {preText}
                         </Text>
-                    </Left>
-                    <Right>
+                    </View>
+                    <View style={styles.userView}>
+                        <Text style={{...styles.userText, ...customTextStyles}}>
+                            {this.props.competition.renderName(this.props.relevantUsers, uid)}
+                        </Text>
+                    </View>
+                    <View>
                         <Text style={{...styles.valueText, ...customTextStyles}}>{this.props.items[uid]}</Text>
-                    </Right>
-                </ListItem>
+                    </View>
+                </View>
             )
         } )
 
@@ -64,14 +71,15 @@ class Leaderboard extends React.Component {
         return (
 
             <Card
-                cardContainerStyles={{paddingTop: 20, paddingBottom: 0, paddingHorizontal: 0, overflow: "hidden", borderRadius: 5, ...this.props.style}}
+                cardContainerStyles={{paddingTop: 0, paddingBottom: 0, paddingHorizontal: 0, overflow: "hidden", borderRadius: 2, ...this.props.style}}
                 headerStyles={{paddingBottom: 0, height : 0}}>
-                <TouchableOpacity onPress={() => this.setState({showAll: !this.state.showAll})}>
+                <Pressable onPress={() => this.setState({showAll: !this.state.showAll})} style={styles.pressableStyles}>
                     <Text style={styles.titleText}>{this.props.title} </Text>
-                </TouchableOpacity>
-                <List style={styles.leaderboardBody}>
+                    <Icon as={Ionicons} name={this.state.showAll ? "remove-circle": "add-circle"} size={5} style={styles.titleIcon}/>
+                </Pressable>
+                <View style={styles.leaderboardBody}>
                     {this.getLeaderboardBody(sortedKeys)}
-                </List>
+                </View>
             </Card>
     
         )
@@ -89,24 +97,45 @@ export default connect(mapStateToProps)(Leaderboard);
 
 const styles = StyleSheet.create({
 
+    pressableStyles: {
+        flexDirection: "row", 
+        justifyContent: "space-between", 
+        paddingLeft: 20, 
+        paddingRight: 10,
+        marginVertical: 20,
+    },
+
     titleText: {
         fontFamily: "bold",
         textAlign: "center",
     },
 
-    leaderboardBody: {
-        marginTop: 20,
+    titleIcon: {
+        width: "auto"
     },
 
     leaderboardCell: {
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
         marginHorizontal: 0,
         paddingLeft: 10,
+        paddingRight: 10,
+        paddingVertical: 5,
+    },
+
+    leaderboardPositionView: {
+        paddingRight: 10,
+    },
+
+    userView: {
+        flex: 1,
     },
 
     leaderCell: {
         backgroundColor: "#c6e17b",
-        marginHorizontal:5,
-        borderRadius: 20,
+        //marginHorizontal:5,
+        //borderRadius: 2,
         marginVertical: 5,
         borderBottomWidth: 0
     },
@@ -118,8 +147,8 @@ const styles = StyleSheet.create({
 
     podiumCell: {
         backgroundColor: "#E6F1C7",
-        marginHorizontal:5,
-        borderRadius: 20,
+        //marginHorizontal:5,
+        //borderRadius: 2,
         marginVertical: 5,
         borderBottomWidth: 0
     },

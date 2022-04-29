@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {ImageBackground, StyleSheet, Text, TouchableOpacity, View, ScrollView, Alert} from 'react-native';
+import {ImageBackground, StyleSheet, Text, TouchableOpacity, View, ScrollView, Alert, Pressable} from 'react-native';
 import _ from "lodash"
 import Firebase from "../api/Firebase"
 
@@ -11,7 +11,7 @@ import Colors from '../constants/Colors'
 import { connect } from 'react-redux'
 import {setCurrentMatch} from "../redux/actions"
 
-import { Icon, Toast } from 'native-base';
+import { Button, Box, Toast } from 'native-base';
 
 import TimeInfo from "../components/match/TimeInfo"
 import MatchResult from '../components/match/MatchResult';
@@ -34,16 +34,10 @@ class MatchScreen extends Component {
 
     }
 
-    static navigationOptions = ({navigation}) => {
-        return {
-            title: translate("tabs.match view"),
-            //headerRight: <HeaderIcon name="checkmark" onPress={navigation.getParam("commitAllMatchChanges")}/>
-        }
-    };
-
     componentDidMount() {
-
-       this.props.navigation.setParams({commitAllMatchChanges: this.commitAllMatchChanges})
+        this.props.navigation.setOptions({
+            title: translate("tabs.match view"),
+        })
 
        this.grantEditRights()
 
@@ -144,6 +138,31 @@ class MatchScreen extends Component {
 
     }
 
+    onCancelPress = () => {
+        Alert.alert(
+            translate("vocabulary.attention"),
+            translate("questions.are you sure you want to cancel this match?"),
+            [
+            {
+                text: translate('vocabulary.no'),
+                style: 'cancel',
+            },
+            {text: translate('vocabulary.yes'), onPress: this.cancelMatchResult},
+            ],
+            {cancelable: true},
+        );
+    }
+
+    cancelMatchResult = async (callback) => {
+
+        const cancelledMatch = await Firebase.cancelPlayedMatchResult(this.props.currentMatch, true)
+
+        if ( !isError(cancelledMatch) ){
+            this.props.setCurrentMatch({context: {...this.props.currentMatch.context, pending: true}, result: null}, {merge: true})
+            callback()
+        }
+    }
+
     render() {
 
         const match = this.props.currentMatch
@@ -167,7 +186,8 @@ class MatchScreen extends Component {
                         {...commonProps}
                         editable={this.state.editable}
                         defaultResult={this.defaultResult}
-                        updateDBMatchParams={this.updateDBMatchParams}/>
+                        updateDBMatchParams={this.updateDBMatchParams}
+                        />
 
                     <TimeInfo
                         {...commonProps}
@@ -180,6 +200,15 @@ class MatchScreen extends Component {
                     <Head2Head {...commonProps}/>
                     
                 </ScrollView>
+
+                {this.state.editable && match.context.pending == false ? <View style={styles.cancelContainer}>
+                    <Button alignSelf="center" backgroundColor="salmon" onPress={this.onCancelPress}>
+                        <Text style={{color: "darkred", fontWeight: "bold"}}>
+                            {translate("admin.cancel match result")}
+                        </Text>
+                    </Button>
+                </View> : null}
+                
                 
             </View>
         );
@@ -211,6 +240,13 @@ const styles = StyleSheet.create({
 
     scrollContainer: {
         paddingVertical: 20
+    },
+
+    cancelContainer: {
+        justifyContent: "center",
+        alignItems: "center",
+        padding: 20,
+        width: "100%"
     }
 
 });

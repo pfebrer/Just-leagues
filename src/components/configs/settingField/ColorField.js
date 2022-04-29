@@ -28,26 +28,31 @@ export default class ColorField extends Component {
             onSelected={() => this.setState({selecting: false})}
             selecting={this.state.selecting}
             hideSliders={true}
-            style={{...styles, ...this.props.pickerStyles}}
             wheelStyles={{height: 80}}
             iconProps={{size: 30, style:{ paddingHorizontal: 20}}}
             {...this.props}
+            style={{...styles, ...this.props.pickerStyles}}
         />
 
         if (this.state.selecting) {
-            return <Body style={{flex: 1}}>
+            return <View style={{flex: 1}}>
                 <Text style={{marginBottom: 10}}>{this.props.name}</Text>
                 {picker}
-            </Body>
+            </View>
         } else {
-            return [
-                <Body>
-                    <Text>{this.props.name}</Text>
-                    <Text note>{this.props.description} </Text>
-                </Body>
-                ,
-                <Right>{picker}</Right>
-            ]
+            return <View>
+                <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
+                    <View>
+                        <Text>{this.props.name}</Text>
+                    </View>
+                    <View style={{flex: 1, flexDirection: "row", justifyContent: "flex-end", padding: 10}}>
+                        {picker}
+                    </View>
+                </View>
+                <View>
+                    <Text fontSize={"xs"} color="#ccc">{this.props.description}</Text>
+                </View> 
+            </View>
         }
        
     }

@@ -6,7 +6,7 @@ import _ from "lodash"
 import Card from '../UX/Card'
 import { setCurrentCompetition } from '../../redux/actions'
 import Firebase from '../../api/Firebase'
-import { Ionicons } from '@expo/vector-icons'
+import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons'
 
 class CompSummary extends Component {
 
@@ -41,13 +41,13 @@ class CompSummary extends Component {
                 actionIcon={participating ? "arrow-forward" : alreadyAsked ? "time" : "person-add"}>
                 <View style={{flexDirection: "row", paddingBottom: 10}}>
                     <View style={{flex: 1, flexDirection: "row", alignItems: "center"}}>
-                        <Icon name="warehouse" type="MaterialCommunityIcons"/>
+                        <Icon as={MaterialCommunityIcons} size={5} name="warehouse"/>
                         <View style={{paddingLeft: 20}}>
                             <Text>{gym ? gym.name : null} </Text>
                         </View>
                     </View>
                     <View style={{flex: 1, flexDirection: "row", alignItems: "center"}}>
-                        <Icon name="location-on" type="MaterialIcons" />
+                        <Icon as={MaterialIcons} size={5} name="location-on"/>
                         <View style={{paddingLeft: 10}}>
                             <Text>{this.props.competition.settings.general.location} </Text>
                         </View>
@@ -55,7 +55,7 @@ class CompSummary extends Component {
                 </View>
                 <View style={{flexDirection: "row"}}>
                     <View style={{flex: 1, flexDirection: "row", alignItems: "center"}}>
-                        <Icon name="run" type="MaterialCommunityIcons"/>
+                        <Icon as={MaterialCommunityIcons} size={5} name="run"/>
                         <View style={{paddingLeft: 20}}>
                             <Text>{this.props.competition.sport.replace(/^\w/, (c) => c.toUpperCase())} </Text>
                         </View>

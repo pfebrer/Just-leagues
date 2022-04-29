@@ -1,11 +1,9 @@
 import React, { Component } from 'react'
-import { Text, StyleSheet, View, TouchableOpacity} from 'react-native'
+import { Text, StyleSheet, View, TouchableOpacity, Pressable} from 'react-native'
 import moment from 'moment'
 
 import Card from '../UX/Card'
-import Colors from '../../constants/Colors'
 import { withNavigation } from '../../assets/utils/utilFuncs'
-import { translate } from '../../assets/translations/translationWorkers'
 
 //Redux stuff
 import { connect } from 'react-redux'
@@ -14,7 +12,7 @@ import { totalSize, h} from '../../api/Dimensions'
 import { Icon } from 'native-base'
 
 import { isMatchScheduled, isPlayed, getMatchColors } from '../betting/MatchBetting'
-
+import { Ionicons } from '@expo/vector-icons'
 
 class MatchSummary extends Component {
 
@@ -56,40 +54,54 @@ class MatchSummary extends Component {
 
         let {bg: backgroundColor, text: textColor} = getMatchColors({match})
 
-        let timeInfo = isPlayed({match}) ? match.playedOn : isMatchScheduled({match}) ? match.scheduled.time : match.due
+        const isMatchPlayed = isPlayed({match})
 
-        return (
-            <Card
-                cardContainerStyles={{paddingTop: 20, backgroundColor}}
-                headerStyles={{paddingBottom: 0, height : 0}}
-                >
-                <TouchableOpacity onPress={this.goToMatch}>
-                    <View style={styles.matchResultView}>
-                        <Text style={{...styles.playerNameText, ...this.addWinnerLStyles(result, 0 , 1), textAlign: "left"}}>
-                            {"(" + ranks[0] + ") " + players[0]}
-                        </Text>
-                        <View style={{...styles.scoreText}}>
-                            <Text style={this.addWinnerLStyles(result, 0 , 1)}>
-                                {result[0]}
-                            </Text>
-                            <Text> - </Text>
-                            <Text style={this.addWinnerLStyles(result, 1 , 0)}>
-                                {result[1]}
-                            </Text>
+        let timeInfo =  isMatchPlayed ? match.playedOn : isMatchScheduled({match}) ? match.scheduled.time : match.due
 
-                        </View>
-                        <Text style={{...styles.playerNameText, ...this.addWinnerLStyles(result, 1, 0), textAlign: "right"}}>
-                            {players[1] + " (" + ranks[1] + ")"}
-                        </Text>
-                    </View>
+        const ScoreView = ({playerIndex, otherIndex}) => {
+            return isMatchPlayed ? <View style={styles.scoreView}>
+                <Text style={{...styles.scoreText, ...this.addWinnerLStyles(result, playerIndex, otherIndex)}}>
+                    {result[playerIndex]}
+                </Text>
+            </View> : null
+        }
+
+        const PlayerNameView = ({playerIndex, otherIndex}) => {
+            return <View style={styles.playerNameView}>
+                <Text style={{...styles.playerNameText, ...this.addWinnerLStyles(result, playerIndex , otherIndex), textAlign: "left"}}>
+                    {`${players[playerIndex]} (${ranks[playerIndex]})`}
+                </Text>
+            </View>
+        }
+
+        const HourInfo = ({timeInfo}) => {
+            return isMatchPlayed ? null : <View style={styles.hourInfoView}>
+                <Text style={{...styles.hourInfoText, color: textColor}}>
+                    {moment(timeInfo).format("HH:mm")}
+                </Text>
+            </View>
+        }
+
+        return <View style={{...styles.container, backgroundColor, ...this.props.style}}>
+            <Pressable onPress={this.goToMatch}>
+                <View style={styles.matchWrapper}>
                     <View style={styles.timeInfoView}>
-                        <Icon name="time" style={{paddingRight: 20, color: textColor}}/>
-                        <Text style={{color: textColor}}>{moment(timeInfo).calendar()}</Text>
+                        <Text style={{...styles.timeInfoText, color: textColor}}>{moment(timeInfo).format("DD MMM")}</Text>
                     </View>
-                    
-                </TouchableOpacity>
-            </Card>
-        )
+                    <View style={styles.matchResultView}>
+                        <View style={styles.playerView}>
+                            <PlayerNameView playerIndex={0} otherIndex={1}/>
+                            <ScoreView playerIndex={0} otherIndex={1}/>
+                        </View>
+                        <View style={styles.playerView}>
+                            <PlayerNameView playerIndex={1} otherIndex={0}/>
+                            <ScoreView playerIndex={1} otherIndex={0}/>
+                        </View>
+                    </View>
+                    <HourInfo timeInfo={timeInfo}/>
+                </View>
+            </Pressable>
+        </View>
     }
 }
 
@@ -107,9 +119,40 @@ export default connect(mapStateToProps, mapDispatchToProps)(MatchSummary);
 exports.Table = connect(mapStateToProps, mapDispatchToProps)(withNavigation(MatchSummary));
 
 const styles = StyleSheet.create({
+
+    matchWrapper: {
+        flexDirection: "row",
+        alignItems: "center"
+    },
+
+    timeInfoView: {
+        paddingHorizontal: 10,
+    },
+
+    timeInfoText: {
+        fontWeight: "bold"
+    },
+
+    hourInfoView: {
+        paddingHorizontal: 10,
+    },
+
+    hourInfoText: {
+        fontWeight: "bold"
+    },
+
+    matchResultView: {
+        flex: 1,
+        paddingRight: 5,
+    },
+
+    playerView: {
+        flexDirection: "row",
+        justifyContent: "space-between",
+    },
+
     //Players
     playerNameView: {
-        flex: 2,
     },
 
     playerNameText: {
@@ -118,7 +161,6 @@ const styles = StyleSheet.create({
     },
 
     scoreView: {
-        flex: 1,
     },
 
     scoreText: {
@@ -126,17 +168,6 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "center",
         flex: 1
-    },
-
-    matchResultView: {
-        display: "flex",
-        flexDirection: "row"
-    },
-
-    timeInfoView: {
-        flexDirection: "row",
-        justifyContent: "center",
-        alignItems: "center"
-    }
+    }, 
 
 })

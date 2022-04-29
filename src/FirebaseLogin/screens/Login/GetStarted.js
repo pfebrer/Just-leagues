@@ -1,41 +1,102 @@
 import React, { Component } from 'react';
 import { StyleSheet, ActivityIndicator, Text, TouchableOpacity, Image } from 'react-native';
-import PropTypes from 'prop-types';
 import {w, h, totalSize} from '../../../api/Dimensions';
 import { translate } from '../../../assets/translations/translationWorkers';
 
-export default class GetStarted extends Component {
-  render() {
+import * as WebBrowser from 'expo-web-browser';
+import * as NEW_Google from 'expo-auth-session/providers/google';
+import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
+import Firebase from '../../../api/Firebase';
+
+import * as Google from 'expo-google-app-auth';
+import * as GoogleSignIn from 'expo-google-sign-in';
+
+WebBrowser.maybeCompleteAuthSession();
+
+export default function GetStarted (props){
+
+    // Response state
+    const [response, setResponse] = React.useState({});
+
+    // Using the new API, which only works inside ExpoGo for some reason
+    const [request, NEW_response, NEW_promptAsync] = NEW_Google.useIdTokenAuthRequest(
+        {
+            //clientId: "524738063553-o9ij9j358m9odfs30kivd3bmecso1kvi.apps.googleusercontent.com"
+            expoClientId: '524738063553-o9ij9j358m9odfs30kivd3bmecso1kvi.apps.googleusercontent.com',
+            webClientId: '524738063553-o9ij9j358m9odfs30kivd3bmecso1kvi.apps.googleusercontent.com',
+            //androidClientId: '524738063553-inqd7vg0cgfjrmlqpi777uocvjvoegnl.apps.googleusercontent.com',
+            //iosClientId: '524738063553-7a5ri1erg2jgc74u50oju3i1ksffdft4.apps.googleusercontent.com',
+            clientId: '524738063553-o9ij9j358m9odfs30kivd3bmecso1kvi.apps.googleusercontent.com'
+        },
+    );
+    // If a response is received using the new API, set the response state.
+    React.useEffect(() => setResponse(NEW_response), [NEW_response]);
+
+    // Using the old API because it is the only way I can make it work in standalone apps.
+    const OLD_promptAsync = async () => { 
+        await GoogleSignIn.initAsync({
+            clientId: '524738063553-7a5ri1erg2jgc74u50oju3i1ksffdft4.apps.googleusercontent.com',
+        });
+        await GoogleSignIn.askForPlayServicesAsync();
+        const response = await GoogleSignIn.signInAsync();
+        await GoogleSignIn.signOutAsync()
+        setResponse(response);
+        
+    }
+
+    const promptAsync = __DEV__ ? NEW_promptAsync : OLD_promptAsync;
+    
+    React.useEffect(() => {
+        if (response?.type === 'success') {
+          var id_token, access_token;
+          if (__DEV__ ){
+            // With new method (NOT WORKING ON STANDALONE APP)
+            var { id_token, access_token } = response.params;
+          } else {
+            // With old deprecated login
+            var { idToken: id_token } = response.user.auth;
+          }
+          
+          const auth = Firebase.auth;
+          const credential = GoogleAuthProvider.credential(id_token, access_token);
+          signInWithCredential(auth, credential).then().catch(function(error) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            // The email of the user's account used.
+            var email = error.email;
+            // The firebase.auth.AuthCredential type that was used.
+            var credential = error.credential;
+            // ...
+            console.log(errorMessage)
+          });;;
+        }
+    }, [response]);
+
     return (
       [
       <TouchableOpacity key="email"
-        onPress={() => {this.props.click("email")}}
+        onPress={() => {props.click("email")}}
         style={{...styles.button, ...styles.mailButton}}
         activeOpacity={0.6}
       >
-        {this.props.isLogin
+        {props.isLogin
           ? <ActivityIndicator size="large" style={styles.spinner} color='white' />
           : <Text style={{...styles.text, ...styles.mailText}}>{translate("auth.log in").toUpperCase()}</Text>}
       </TouchableOpacity>,
       <TouchableOpacity key="google"
-      onPress={() => {this.props.click("google")}}
+      onPress={() => {promptAsync()}}
       style={{...styles.button, ...styles.googleButton}}
       activeOpacity={0.6}
     >
-      {this.props.isLogin
+      {props.isLogin
         ? <ActivityIndicator size="large" style={styles.spinner} color='white' />
         : [<Image key="googleIcon" style={styles.googleLogo} source={require("../../../assets/images/googleIcon.png")}/>,
           <Text key="googleText" style={{...styles.text, ...styles.googleText}}>{translate("auth.sign in with google")}</Text>]}
     </TouchableOpacity>]
 
     );
-  }
 }
-
-GetStarted.propTypes = {
-  click: PropTypes.func.isRequired,
-  isLogin: PropTypes.bool.isRequired,
-};
 
 const styles = StyleSheet.create({
   button: {

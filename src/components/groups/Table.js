@@ -138,7 +138,7 @@ class Table extends Component {
         })
 
         return (
-            <View style={this.props.containerStyles}>
+            <View style={this.props.style}>
                 <View style={{...styles.tableContainer, ...this.props.tableStyles}}>
                     {this.renderTable(ranks, players, scores)}
                 </View>

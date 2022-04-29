@@ -5,7 +5,7 @@ import {
   View,
   Dimensions,
 } from 'react-native';
-import { Button, Icon, Input, Form, Label, Item} from 'native-base';
+import { Button, Icon, Input, FormControl, Stack} from 'native-base';
 import _ from "lodash"
 import { translate } from '../../assets/translations/translationWorkers';
 import { w, totalSize } from '../../api/Dimensions';
@@ -18,6 +18,7 @@ import Firebase from "../../api/Firebase"
 import PlayerPicker from '../../components/pickers/PlayerPicker';
 import { selectCurrentCompetition } from '../../redux/reducers';
 import UserCard from '../../components/user/UserCard';
+import { Ionicons } from '@expo/vector-icons';
 
 const window = Dimensions.get('window');
 
@@ -71,52 +72,52 @@ class PlayersManagementScreen extends Component {
   render() {
 
     return (
-      <View >
-          <Form>
-              <Item stackedLabel>
-                  <Label>{translate("auth.name")}</Label>
+      <View style={{padding: 10}}>
+          <FormControl>
+              <Stack>
+                  <FormControl.Label>{translate("auth.name")}</FormControl.Label>
                   <Input 
                       value={this.state.newPlayer.name}
                       onChangeText={(value) => this.setState({newPlayer: {...this.state.newPlayer, name: value}}) }
                   />
-              </Item>
-              <Item stackedLabel last>
-                  <Label>{translate("auth.email")}</Label>
+              </Stack>
+              <Stack last>
+                  <FormControl.Label>{translate("auth.email")}</FormControl.Label>
                   <Input 
                       value={this.state.newPlayer.email} 
                       onChangeText={(value) => this.setState({newPlayer: {...this.state.newPlayer, email: value}}) }
                   />
-              </Item>
+              </Stack>
               <Button
                   style={styles.button}
                   onPress={this.addPlayer}
                   >
                   <Text style={styles.buttonText}>{translate("actions.add player")}</Text>
               </Button>
-          </Form>
-          <Form>
-            <Item>
-              <Label>{translate("vocabulary.player")}</Label>
+          </FormControl>
+          <FormControl>
+            <Stack>
+              <FormControl.Label>{translate("vocabulary.player")}</FormControl.Label>
               <PlayerPicker
                 value={this.state.playerToModify.id}
                 onPlayerChange={(uid) => this.setState({playerToModify: {...this.state.playerToModify, id: uid}}) }
               />
-            </Item>
-            <Item stackedLabel last>
-              <Label>{translate("auth.email")}</Label>
+            </Stack>
+            <Stack last>
+              <FormControl.Label>{translate("auth.email")}</FormControl.Label>
               <Input
                 placeholder={this.props.relevantUsers[this.state.playerToModify.id] && this.props.relevantUsers[this.state.playerToModify.id].email ? this.props.relevantUsers[this.state.playerToModify.id].email : translate("info.no email address available")} 
                 value={this.state.playerToModify.email} 
                 onChangeText={(value) => this.setState({playerToModify: {...this.state.playerToModify, email: value}}) }
               />
-            </Item>
+            </Stack>
             <Button
                 style={styles.button}
                 onPress={this.modifyPlayer}
                 >
                 <Text style={styles.buttonText}>{translate("actions.modify player data")}</Text>
             </Button>
-          </Form>
+          </FormControl>
           <View style={{paddingHorizontal: 10, paddingVertical: 20}}>
             <Text>{translate("info.players that would like to join")}</Text>
             {this.props.competition.playersAskingToJoin.map(uid => <View style={{flexDirection: "row", justifyContent: "space-between", alignItems: "center"}}>
@@ -124,10 +125,10 @@ class PlayersManagementScreen extends Component {
               <View style={{flexDirection: "row"}}>
                 <Button 
                   onPress={() => Firebase.addNewPlayersToComp(this.props.competition.gymID, this.props.competition.id, [{id: uid}])}
-                  style={{backgroundColor: "green", marginRight: 5}}><Icon name="checkmark"/></Button>
+                  style={{backgroundColor: "green", marginRight: 5}}><Icon as={Ionicons} size={5} name="checkmark"/></Button>
                 <Button 
                   onPress={() => Firebase.denyPlayerFromCompetition(this.props.competition.gymID, this.props.competition.id, uid)}
-                  style={{backgroundColor: "red"}}><Icon name="close"/></Button>
+                  style={{backgroundColor: "red"}}><Icon as={Ionicons} size={5} name="close"/></Button>
               </View>
             </View>)}
           </View>
@@ -152,7 +153,8 @@ const styles = StyleSheet.create({
     button: {
         justifyContent:"center",
         alignItems:"center",
-        paddingHorizontal: 30
+        paddingHorizontal: 30,
+        marginVertical: 5
     },
 
     buttonText: {

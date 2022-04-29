@@ -7,7 +7,7 @@ import { w, totalSize, h } from '../api/Dimensions';
 
 import { USERSETTINGS, COMPSETTINGS } from "../constants/Settings"
 import { connect } from 'react-redux'
-import { List, ListItem, Body, Right, Icon, Text, Button, Form, Item, Label, Input} from 'native-base';
+import { Text, Button } from 'native-base';
 
 import HeaderIcon from "../components/UX/HeaderIcon"
 
@@ -26,18 +26,6 @@ class SettingsScreen extends React.Component {
         this.state = {}
     }
 
-    static navigationOptions = ({navigation}) => {
-
-        return {
-            title: navigation.getParam("title", translate("tabs.settings")),
-            headerLeft: <HeaderIcon name="arrow-back" onPress={navigation.getParam("goBack")}/>,
-            headerRight: <View style={{flexDirection: "row"}}>
-                            {navigation.getParam("restoreButton", true) ? <HeaderIcon name="refresh" onPress={navigation.getParam("restoreDefaults")}/> : null }
-                            <HeaderIcon name="checkmark" onPress={navigation.getParam("submitSettings")}/>
-                        </View>
-        }
-    };
-
     // componentDidUpdate(prevProps) {
 
     //     //When the screen is focused change the state
@@ -52,8 +40,6 @@ class SettingsScreen extends React.Component {
 
         this.setUpComponent()
 
-        this.props.navigation.setParams({submitSettings: this.submitSettings, goBack: this.goBack, restoreDefaults: this.restoreDefaults})
-
         this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.goBack );
     }
 
@@ -61,7 +47,7 @@ class SettingsScreen extends React.Component {
 
         //Decide which type of settings is going to be displayed
 
-        let configurableDoc = this.props.navigation.getParam("configurableDoc", "user")
+        let configurableDoc = this.props.route.params?.configurableDoc || "user"
 
         if (configurableDoc == "user"){
             this.setState({
@@ -142,7 +128,8 @@ class SettingsScreen extends React.Component {
 
             // let rightContent = this.getRightContent(setting.control, values[key], settingsType, key)
 
-            return <SettingField 
+            return <SettingField
+                style={styles.settingField}
                 type={setting.control.type} 
                 value={values[key]}
                 onValueChange={(value) => this.updateStateSettings(settingsType, key, value)}
@@ -159,9 +146,9 @@ class SettingsScreen extends React.Component {
         Object.keys(settingsObject).forEach( settingsType => {
 
             list.push(
-                <ListItem key={settingsType} itemDivider>
-                    <Text>{translate( [this.state.translateRoot, settingsType].join(".") )}</Text>
-                </ListItem>
+                <View key={settingsType} style={styles.itemDivider}>
+                    <Text style={styles.itemDividerText}>{translate( [this.state.translateRoot, settingsType].join(".") )}</Text>
+                </View>
             )
 
             this.renderSettingFields(settingsObject[settingsType], currentValues[settingsType], settingsType).forEach(
@@ -176,20 +163,28 @@ class SettingsScreen extends React.Component {
 
     render() {
 
+        this.props.navigation.setOptions({
+            title: this.props.route.params?.title || translate("tabs.settings"),
+            headerLeft: () => <HeaderIcon name="arrow-back" onPress={this.goBack}/>,
+            headerRight: () => <View style={{flexDirection: "row"}}>
+                            {this.props.route.params?.restoreButton ? <HeaderIcon name="refresh" onPress={this.restoreDefaults}/> : null }
+                            <HeaderIcon name="checkmark" onPress={this.submitSettings}/>
+                        </View>
+        })
+
         if (!this.state.settingsTemplate || !this.state.settings) return null
 
         return (
             <View style={styles.container}>
                 <ScrollView style={styles.scrollView} contentContainerStyle={{justifyContent: "center",alignItems: "center"}} nestedScrollEnabled>
-                    <List style={styles.settingsList}>
+                    <View style={styles.settingsList}>
                         {this.renderSettings(this.state.settingsTemplate, this.state.settings)}
-                    </List>
-                    <TouchableOpacity 
-                        onPress={Firebase.signOut} 
-                        transparent 
-                        style={styles.signOutButton}>
-                        <Text style={styles.signOutText}> {translate("auth.sign out")}</Text>
-                    </TouchableOpacity>
+                    </View>
+                    <Button alignSelf="center" backgroundColor="salmon" style={styles.logOutButton} onPress={Firebase.signOut}>
+                        <Text style={styles.signOutText}>
+                            {translate("auth.sign out")}
+                        </Text>
+                    </Button>
                 </ScrollView>
             </View>
             
@@ -217,6 +212,22 @@ const styles = StyleSheet.create({
 
     settingsList: {
         width: w(100),
+        marginBottom: 10
+    },
+
+    itemDivider: {
+        backgroundColor: "#ccc",
+        padding: 20,
+    },
+
+    itemDividerText: {
+        fontWeight: "bold",
+    },
+
+    settingField: {
+        padding: 10,
+        borderBottomWidth: 0.5,
+        borderBottomColor: "#ccc",
     },
 
     rightView: {
@@ -224,24 +235,12 @@ const styles = StyleSheet.create({
         justifyContent: "flex-end"
     },
 
-    signOutButton: {
-        paddingVertical: 20
+    logOutButton: {
+        marginVertical: 20,
     },
-
-    /*signOutButton: {
-        backgroundColor: "red",
-        justifyContent: "center",
-        alignItems: "center",
-        width: w(60),
-        height: h(6),
-        borderRadius: h(3),
-        marginTop: 20,
-        elevation: 5
-    },*/
 
     signOutText: {
         color: "darkred",
-        fontSize: totalSize(1.7),
         fontFamily: "bold"
     },
 });

@@ -6,7 +6,7 @@ import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 import AppNavigator from './navigation/AppNavigator';
-import { Root } from 'native-base';
+import { NativeBaseProvider } from 'native-base';
 
 //REDUX STUFF
 import store from './redux/store'
@@ -25,7 +25,7 @@ import TranslationManager from './assets/translations/TranslationManager';
 Sentry.init({
   dsn: 'https://859a3f17d2964dd6b8c9dd3e6bcd2624@sentry.io/1886709',
   enableInExpoDevelopment: false,
-  debug: true
+  debug: false
 });
 
 //Sentry.setRelease(Constants.manifest.revisionId);
@@ -45,13 +45,13 @@ export default function Main(props) {
   } else {
     return (
       <Provider store={store}>
-        <Root>
+        <NativeBaseProvider>
           <TranslationManager/>
           <View style={styles.container}>
             {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
               <AppNavigator />
           </View>
-        </Root>
+        </NativeBaseProvider>
       </Provider>
     );
   }
@@ -73,8 +73,8 @@ async function loadResourcesAsync() {
       'lucidaGrande': require('./assets/fonts/LucidaGrande.ttf'),
       'roboto': require('./assets/fonts/Roboto-Bold.ttf'),
       'bold': require('./assets/fonts/Roboto-Bold.ttf'),
-      Roboto: require("native-base/Fonts/Roboto.ttf"),
-      Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf")
+      //Roboto: require("native-base/Fonts/Roboto.ttf"),
+      //Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf")
     })
   ]);
 }

@@ -41,7 +41,7 @@ class MatchBets extends Component {
 
         return (
             <Card
-                titleIcon="logo-game-controller-a"
+                titleIcon="cash"
                 title={translate("cardTitles.match bets")}
                 cardContainerStyles={this.props.style}
                 >

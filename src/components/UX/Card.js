@@ -15,6 +15,7 @@ import { Icon, Text} from 'native-base';
 
 import { totalSize, w, h } from '../../api/Dimensions';
 import { elevation } from '../../assets/utils/utilFuncs'
+import { Ionicons } from "@expo/vector-icons";
 
 export default class Card extends Component{
 
@@ -31,13 +32,13 @@ export default class Card extends Component{
         return(
             <Animated.View style={{...styles.gridItem, ...this.props.cardContainerStyles}}>
                 <TouchableOpacity disabled={!this.props.onHeaderPress} style={{...styles.itemTitleView, ...this.props.headerStyles}} onPress={this.props.onHeaderPress}>
-                    <Icon name={this.props.titleIcon} style={{...styles.titleIcon,...this.props.titleIconStyles}} {...this.props.titleIconProps}/>
+                    <Icon as={Ionicons} size={5} name={this.props.titleIcon} style={{...styles.titleIcon,...this.props.titleIconStyles}} {...this.props.titleIconProps}/>
                     <Text style={{...styles.titleText,...this.props.titleTextStyles}}>{this.props.title}</Text>
                     <Animated.View style={styles.actionView}>
                         {this.props.actionHelperText ? <Text style={{...styles.actionHelperText, ...this.props.actionHelperTextStyles}} >{this.props.actionHelperText}</Text> : null}
                         {this.props.actionIcon ? (
                             <Animated.View style={this.props.actionIconViewStyles}>
-                                <Icon name={this.props.actionIcon} style={{...styles.actionIcon,...this.props.actionIconStyles}}/>
+                                <Icon as={Ionicons} size={5} name={this.props.actionIcon} style={{...styles.actionIcon,...this.props.actionIconStyles}}/>
                             </Animated.View>) : null}
                     </Animated.View>
                 </TouchableOpacity>
@@ -74,7 +75,8 @@ const styles = StyleSheet.create({
 
     titleIcon: {
         paddingRight: 15,
-        color: "gray"
+        color: "gray",
+        width: "auto",
     },
 
     actionView: {
@@ -89,7 +91,7 @@ const styles = StyleSheet.create({
     },
     
     actionIcon: {
-        color: "gray"
+        color: "orange"
     },
 
     titleText: {

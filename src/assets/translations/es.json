@@ -78,7 +78,8 @@
         "players that would like to join": "Jugadores que quieren unirse"
     },
     "questions": {
-        "has this match been played now?": "Se ha jugado ahora el partido?"
+        "has this match been played now?": "Se ha jugado ahora el partido?",
+        "are you sure you want to cancel this match?": "¿Estás seguro de que quieres cancelar este partido?",
     },
     "vocabulary": {
         "no": "No",
@@ -229,6 +230,7 @@
         "generate new ranking": "Genera nuevo ranking",
         "competition settings": "Configuración de la competición",
         "manage players": "Administra jugadores",
-        "go back to previous ranking": "Vuelve al ranking anterior"
+        "go back to previous ranking": "Vuelve al ranking anterior",
+        "cancel match result": "Cancela el resultado del partido"
     }
 }

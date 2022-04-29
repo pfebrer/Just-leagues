@@ -28,6 +28,7 @@ import { Icon } from 'native-base';
 import { selectCurrentCompetition } from '../redux/reducers';
 import {setCurrentCompetition} from '../redux/actions'
 import { selectUserSetting } from '../redux/reducers';
+import { Ionicons } from '@expo/vector-icons';
 
 class ChatScreen extends React.Component {
 
@@ -163,7 +164,7 @@ class ChatScreen extends React.Component {
                 {...props}
             >
                 <View style={{paddingBottom: 10, paddingRight: 10, justifyContent: "center", alignContent: "center"}}>
-                    <Icon name="send" style={{color: "#147efb"}}/>
+                    <Icon as={Ionicons} size={5} name="send" style={{color: "#147efb"}}/>
                 </View>
             </Send>
         );
@@ -198,7 +199,7 @@ class ChatScreen extends React.Component {
         
 
         return (
-            <View style={{flex: 1}}>
+            <KeyboardAvoidingView style={{flex: 1}}>
                 <SafeAreaView style={{ flex:0, backgroundColor: 'white' }} />
                 <View style={ {...styles.container, backgroundColor: this.props.backgroundColor}}>
                     <View style={{...styles.chatCarousel}}>
@@ -226,11 +227,8 @@ class ChatScreen extends React.Component {
                         placeholder={translate("actions.type a message") + "..."}
                         renderUsernameOnMessage
                         />
-                    {
-                        Platform.OS === 'android' && <KeyboardAvoidingView behavior="padding" />
-                    }
                 </View>
-            </View>
+            </KeyboardAvoidingView>
             
         )
     }

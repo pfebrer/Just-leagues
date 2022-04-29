@@ -1,23 +1,30 @@
 import React, { Component } from "react";
 
-import { Form, Item, Label, Input, View, Text} from 'native-base';
+import { Input, View, Text} from 'native-base';
 
 export default class TextField extends Component {
 
     static _type = "text"
 
     render(){
-        return <Form style={{width: "100%"}}>
-                <Item inlineLabel style={{marginTop: 0, marginBottom: 10}}>
-                    <Label >{this.props.name}</Label>
-                    <Input
-                        onChangeText={this.props.onValueChange}
-                        value={this.props.value}/>
-                </Item>
-                <View style={{paddingLeft: 15}}>
-                    <Text note>{this.props.description}</Text>
+
+        return <View style={{width: "100%"}}>
+                <View style={{marginTop: 0, marginBottom: 10, flexDirection: "row", justifyContent: "center", alignItems: "center"}}>
+                    <View style={{paddingRight: 10}}>
+                        <Text>{this.props.name}</Text>
+                    </View>
+                    <View style={{flex: 1}}>
+                        <Input
+                            style={{marginLeft: 10}}
+                            variant="underlined"
+                            onChangeText={this.props.onValueChange}
+                            value={this.props.value}/>
+                    </View>
+                </View>
+                <View>
+                    <Text fontSize={"xs"} color="#ccc">{this.props.description}</Text>
                 </View> 
-            </Form>
+            </View>
 
     }
 }

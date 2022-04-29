@@ -8,6 +8,7 @@ import { connect } from "react-redux";
 
 import Card from "../UX/Card"
 import { setCurrentCompetition } from "../../redux/actions";
+import { Ionicons } from '@expo/vector-icons';
 
 
 class CompetitionState extends Component {
@@ -43,7 +44,7 @@ class CompetitionState extends Component {
                 actionIcon="add">
                     {this.props.competition.renderCompState({uid: this.props.uid, navigation: this.props.navigation})}
                     <View style={styles.competitionStateActions}>
-                        <Icon name="chatbubbles" onPress={this.goToCompChat}/>
+                        <Icon as={Ionicons} size={5} name="chatbubbles" onPress={this.goToCompChat}/>
                         {/*<Icon name="stats" onPress={() => this.goToCompetition("stats")}/>*/}
                     </View>
             </Card>

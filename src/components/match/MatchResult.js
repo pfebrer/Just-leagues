@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Text, StyleSheet, View } from 'react-native'
+import { Text, StyleSheet, View, Pressable } from 'react-native'
 
 import Card from '../UX/Card'
 import { translate } from '../../assets/translations/translationWorkers'

@@ -17,85 +17,52 @@ import _ from "lodash"
 import { selectSuperChargedCompetitions } from '../redux/reducers';
 import { selectUserSetting } from '../redux/reducers';
 
-class HomeScreen extends Component {
+const HomeScreen = (props) => {
 
-    static navigationOptions = ({navigation}) => {
-        return {
+    const isAdmin = (props.currentUser.gymAdmin && props.currentUser.gymAdmin.length > 0) || props.currentUser.admin
+    const backgroundColor = props.backgroundColor
+    const navigation = props.navigation
+
+    React.useEffect(() => {
+        navigation.setOptions({
+            title: "",
             headerStyle: {
                 ...elevation(2),
-                backgroundColor: navigation.getParam("backgroundColor"),
-              },
-            headerLeft: navigation.getParam("isAdmin", false) ? <HeaderIcon name="clipboard" onPress={() => {navigation.navigate("AdminScreen")}} /> : null,
-            headerRight: <HeaderIcon name="settings" onPress={() => {navigation.navigate("SettingsScreen")}} />
-        }
-    };
+                backgroundColor: backgroundColor,
+            },
+            headerLeft: () => isAdmin ? <HeaderIcon name="clipboard" onPress={() => {navigation.navigate("AdminScreen")}} /> : null,
+            headerRight: () => <HeaderIcon name="settings" onPress={() => {navigation.navigate("SettingsScreen")}}/>
+        });
+    }, [navigation, isAdmin, backgroundColor]);
 
-    constructor(props) {
-        super(props);
 
-        this.state = {
-            isLoading: false
-        }
-    }
+    // This is meant to be a setting, but for now we are hard coding it.
+    // The only reason is because it's hard to figure out the best way to incorporate
+    // newly developed cards to the settings of users.
+    const homeCards = [
+        ...(["notifications", "pendingMatches", "admin"].map(type => ({type}))),
+        ...props.currentUser.activeCompetitions.map(compID => ({
+            type: "competition", 
+            props: {competition: props.competitions[compID], compID: compID}
+        }))
+    ]
 
-    componentDidMount() {
+    return (
+        <ScrollView 
+            style={{...styles.container, backgroundColor: backgroundColor}}
+            contentContainerStyle={{paddingVertical: 10}}>
 
-        this.props.navigation.setParams({
-            backgroundColor: this.props.backgroundColor,
-            isAdmin: (this.props.currentUser.gymAdmin && this.props.currentUser.gymAdmin.length > 0) || this.props.currentUser.admin
-        })
+            {homeCards.map(({type, props}) => 
+                <HomeCard 
+                    key={HomeCard.getKey(type, props)}
+                    type={type}
+                    navigation={navigation}
+                    {...props}
+                />)
+            }
 
-    }
-
-    componentDidUpdate(prevProps){
-
-        let currentbackCol = this.props.backgroundColor
-
-        //Update the header color when the background color is updated :)
-        if ( prevProps.backgroundColor !== currentbackCol){
-            this.props.navigation.setParams({backgroundColor: currentbackCol})
-        }
-
-        if ( ! _.isEqual(prevProps.currentUser.gymAdmin, this.props.currentUser.gymAdmin)
-            || ( prevProps.currentUser.admin != this.props.currentUser.admin) ) {
-
-            this.props.navigation.setParams({
-                isAdmin: (this.props.currentUser.gymAdmin && this.props.currentUser.gymAdmin.length > 0) || this.props.currentUser.admin
-            })
-
-        }
-    }
-
-    render() {
-
-        // This is meant to be a setting, but for now we are hard coding it.
-        // The only reason is because it's hard to figure out the best way to incorporate
-        // newly developed cards to the settings of users.
-        const homeCards = [
-            ...(["notifications", "pendingMatches", "admin"].map(type => ({type}))),
-            ...this.props.currentUser.activeCompetitions.map(compID => ({
-                type: "competition", 
-                props: {competition: this.props.competitions[compID], compID: compID}
-            }))
-        ]
-
-        return (
-            <ScrollView 
-                style={{...styles.container, backgroundColor: this.props.backgroundColor}}
-                contentContainerStyle={{paddingVertical: 10}}>
-
-                {homeCards.map(({type, props}) => 
-                    <HomeCard 
-                        key={HomeCard.getKey(type, props)}
-                        type={type}
-                        navigation={this.props.navigation}
-                        {...props}
-                    />)
-                }
-
-            </ScrollView>
-        )
-    }
+        </ScrollView>
+    )
 
 }
 

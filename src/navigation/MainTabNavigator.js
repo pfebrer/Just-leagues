@@ -15,13 +15,15 @@ import { Icon } from 'native-base';
 import ChatScreen from '../screens/ChatScreen';
 import EndingPeriodModal from '../components/groups/EndingPeriodModal';
 import SearchScreen from '../screens/SearchScreen';
+import { Ionicons } from '@expo/vector-icons';
 
 const HomeStack = createNativeStackNavigator();
 
 function HomeNavigator() {
   return (
     <HomeStack.Navigator
-        initialRouteName="HomeScreen">
+        initialRouteName="HomeScreen"
+        screenOptions={{headerShown: true}}>
         <HomeStack.Screen name="HomeScreen" component={HomeScreen}/>
         <HomeStack.Screen name="SettingsScreen" component={SettingsScreen}/>
         <HomeStack.Screen name="CompetitionScreen" component={CompetitionScreen}/>
@@ -41,32 +43,34 @@ function MainNavigator() {
     <MainTab.Navigator
         initialRouteName="Home"
         screenOptions={{
+            headerShown: false,
             tabBarShowLabel: false,
             tabBarActiveTintColor: 'black',
             tabBarInactiveTintColor: '#ccc',
             tabBarActiveBackgroundColor: "#ffffff00",
             tabBarInactiveBackgroundColor: "#ffffff00"
-        }}>
+        }}
+        >
         <MainTab.Screen 
             name="Home" 
-            component={HomeNavigator} 
-            tabBarIcon={({color}) => (
-                <Icon name="home" size={20} style={{color}}/>
-            )}
+            component={HomeNavigator}
+            options={{
+                tabBarIcon: ({color}) => <Icon as={Ionicons} name="home" size={5} style={{color}}/>
+            }}
             />
         <MainTab.Screen 
             name="Search" 
             component={SearchScreen} 
-            tabBarIcon={({color}) => (
-                <Icon name="search" style={{color}}/>
-            )}
+            options={{
+                tabBarIcon: ({color}) => <Icon as={Ionicons} name="search" size={5} style={{color}}/>
+            }}
             />
-        <MainTab.Screen 
+        <MainTab.Screen
             name="Chat" 
             component={ChatScreen} 
-            tabBarIcon={({color}) => (
-                <Icon name="chatbubbles" style={{color}}/>
-            )}
+            options={{
+                tabBarIcon: ({color}) => <Icon as={Ionicons} name="chatbubbles" size={5} style={{color}}/>
+            }}
             />
     </MainTab.Navigator>
   );

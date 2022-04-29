@@ -1,20 +1,26 @@
 import React, { Component } from 'react'
-import { View, StyleSheet, TouchableOpacity } from 'react-native'
-import { Icon, Text, Toast, Accordion} from "native-base"
+import { View, StyleSheet, TouchableOpacity, Pressable } from 'react-native'
+import { Icon, Text, Toast} from "native-base"
+import Accordion from "react-native-collapsible/Accordion"
 import { connect } from 'react-redux'
 import _ from "lodash"
+import { Ionicons } from '@expo/vector-icons'
+
 import Card from "../UX/Card"
 
 import { translate } from "../../assets/translations/translationWorkers"
 import { selectAdminCompetitions } from '../../redux/reducers'
 import { setCurrentCompetition } from '../../redux/actions'
 
+
 export class AdminSummary extends Component {
 
     constructor(props){
         super(props);
 
-        this.state = {}
+        this.state = {
+            activeSections: []
+        }
     }
 
     static _type = "admin"
@@ -30,13 +36,13 @@ export class AdminSummary extends Component {
         this.props.navigation.navigate("AdminScreen")
     }
 
-    renderHeader = ({content: comp}, expanded) => {
+    renderHeader = ({content: comp}, index, expanded) => {
         return (
             <View style={styles.accordionHeader}>
                 <Text style={styles.compNameText}>{comp.name}</Text>
                 {expanded
-                    ? <Icon style={{ fontSize: 18 }} name="remove-circle" />
-                    : <Icon style={{ fontSize: 18 }} name="add-circle" />}
+                    ? <Icon style={{ fontSize: 18, width: "auto" }} as={Ionicons} name="remove-circle" size={5} />
+                    : <Icon style={{ fontSize: 18, width:"auto"}} as={Ionicons} name="add-circle" size={5} />}
             </View>  
         )
     }
@@ -59,8 +65,8 @@ export class AdminSummary extends Component {
                                         {section.name ? <Text>{section.name}</Text> : null}
                                         <View style={styles.attributesView}>
                                             {section.attributes.map(item => 
-                                                <TouchableOpacity style={styles.attributeView} onPress={() => Toast.show({"text": item.name + ": " + item.value})}>
-                                                    {item.icon ? <Icon name={item.icon} style={styles.attributeIcon}/> : null}
+                                                <TouchableOpacity style={styles.attributeView} onPress={() => Toast.show({"description": item.name + ": " + item.value})}>
+                                                    {item.icon ? <Icon as={Ionicons} size={5} name={item.icon} style={styles.attributeIcon}/> : null}
                                                     <Text>{item.value}</Text>
                                                 </TouchableOpacity>
                                             )}
@@ -92,14 +98,14 @@ export class AdminSummary extends Component {
                 title={translate("tabs.competitions you administrate")}
                 >
                     <Accordion
-                        dataArray={Object.values(this.props.adminComps).map(comp => ({title: comp.name, content: comp}) )}
-                        animation={true}
-                        expanded={true}
+                        sections={Object.values(this.props.adminComps).map(comp => ({title: comp.name, content: comp}) )}
+                        activeSections={this.state.activeSections}
+                        onChange={(activeSections) => this.setState({ activeSections })}
+                        touchableComponent={Pressable}
+                        expandMultiple={true}
                         renderHeader={this.renderHeader}
                         renderContent={this.renderCompSummary}
-                        style={{borderWidth: 0}}
                     />
-                {}
             </Card>
         )
     }
@@ -177,7 +183,8 @@ const styles = StyleSheet.create({
 
     attributeIcon: {
         paddingRight: 15,
-        color: "#ccc"
+        color: "#ccc",
+        width: "auto"
     },
 
     attributeName: {

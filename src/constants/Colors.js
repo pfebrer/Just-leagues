@@ -8,7 +8,7 @@ export default {
   MATCH_PLAYED_TEXT: "#2d652b",
   MATCH_SCHEDULED_BG: "#fdd48a",
   MATCH_SCHEDULED_TEXT: "orange",
-  MATCH_NOTSCHEDULED_BG: "#e1947b",
+  MATCH_NOTSCHEDULED_BG: "#ffcdcb",
   MATCH_NOTSCHEDULED_TEXT: "darkred",
 
 };

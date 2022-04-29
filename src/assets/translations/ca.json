@@ -78,7 +78,8 @@
         "players that would like to join": "Jugadors que volen unir-se"
     },
     "questions": {
-        "has this match been played now?": "S'ha jugat ara el partit?"
+        "has this match been played now?": "S'ha jugat ara el partit?",
+        "are you sure you want to cancel this match?": "Estàs segur que vols cancel·lar aquest partit?"
     },
     "vocabulary": {
         "no": "No",
@@ -229,6 +230,7 @@
         "generate new ranking": "Genera nou rànquing",
         "competition settings": "Configuració de la competició",
         "manage players": "Administra jugadors",
-        "go back to previous ranking": "Torna al rànquing anterior"
+        "go back to previous ranking": "Torna al rànquing anterior",
+        "cancel match result": "Cancel·la el resultat del partit"
     }
 }

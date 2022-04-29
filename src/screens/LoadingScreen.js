@@ -46,7 +46,7 @@ class LoadingScreen extends React.Component {
     onConstruct = async () => {
 
         //Listen for any change on the authorization state (even logouts)
-        const unsub = Firebase.auth.onAuthStateChanged(user => {
+        const unsub = Firebase.onAuthStateChanged(user => {
 
             //Set up the listeners to retrieve all the data about users and competitions that may be needed during the app experience
             [this.usersListeners, this.compListeners, this.gymListeners].forEach(listenersObject => {
@@ -65,7 +65,7 @@ class LoadingScreen extends React.Component {
 
             this.compListeners = {} ; this.usersListeners = {} ; this.gymListeners = {}
 
-            //On sign out remove the previous userListener, otherwise it will crash due to not having permission to read the database 
+            // On sign out remove the previous userListener, otherwise it will crash due to not having permission to read the database 
             if (this.userListener && !user) {this.userListener()}
 
             //If there is a logged in user, do all the preparatory stuff
@@ -77,11 +77,24 @@ class LoadingScreen extends React.Component {
 
                     userData => {
 
-                    //In this case, it is just the object coming from google sign in (I don't fully understand the flow)
                     if( !userData) return null
 
+                    let settings = userData.settings || {}
+
+                    if (!settings?.Profile?.firstName){
+                        settings = {
+                            ...settings,
+                            Profile: {
+                                ...settings.Profile,
+                                firstName: settings.Profile.firstName || user.displayName,
+                                profilePic: settings.Profile.profilePic || user.photoURL,
+                            }
+                        }
+                        Firebase.updateUserSettings(user.uid, settings)
+                    }
+
                     //Update the settings fields if some new settings have been produced
-                    let newSettings = updateSettingsFields(userData.settings || {}, USERSETTINGS)
+                    let newSettings = updateSettingsFields(settings, USERSETTINGS)
 
                     //Create the listeners needed for each competition in active competitions
                     if (userData.activeCompetitions && ! __DEV__){
@@ -160,11 +173,6 @@ class LoadingScreen extends React.Component {
                         console.log("User signed in ---> Redirect to the home screen")
 
                         this.props.navigation.navigate('App');
-
-                        /*Toast.show({
-                        text: 'Benvingut, ' + userData.firstName + '!',
-                        duration: 3000
-                        })*/
 
                     }
 

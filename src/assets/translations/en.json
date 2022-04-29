@@ -78,7 +78,8 @@
         "players that would like to join": "Players that would like to join"
     },
     "questions": {
-        "has this match been played now?": "Has this match been played now?"
+        "has this match been played now?": "Has this match been played now?",
+        "are you sure you want to cancel this match?": "Are you sure you want to cancel this match?",
     },
     "vocabulary": {
         "no": "No",
@@ -229,6 +230,7 @@
         "generate new ranking": "Generate new ranking",
         "competition settings": "Competition settings",
         "manage players": "Manage players",
-        "go back to previous ranking": "Go back to previous ranking"
+        "go back to previous ranking": "Go back to previous ranking",
+        "cancel match result": "Cancel match result",
     }
 }

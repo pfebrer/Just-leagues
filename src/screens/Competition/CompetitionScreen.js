@@ -74,6 +74,10 @@ class CompetitionScreen extends Component {
 
     render(){
 
+        this.props.navigation.setOptions({
+            headerTitle: this.props.route?.params?.competitionName || ""
+        })
+
         //if (!this.renderer) return null
         if (!this.props.competition) return null
 

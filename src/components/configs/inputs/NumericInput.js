@@ -2,6 +2,7 @@ import React , {Component} from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity } from "react-native"
 import { Icon } from 'native-base';
 import { h, totalSize } from '../../../api/Dimensions';
+import { Ionicons } from '@expo/vector-icons';
 
 export default class NumericInput extends Component  {
 
@@ -57,15 +58,28 @@ export default class NumericInput extends Component  {
                         <TouchableOpacity
                             {...incrementButtonProps}
                             style={styles.iconView}>
-                            <Icon name="arrow-up" style={styles.icon}/>
+                            <Icon name="arrow-up" as={Ionicons} size={5} style={styles.icon}/>
                         </TouchableOpacity>
                         <TouchableOpacity
                             {...decrementButtonProps}
                             style={styles.iconView}>
-                            <Icon name="arrow-down" style={styles.icon}/>
+                            <Icon name="arrow-down" as={Ionicons} size={5} style={styles.icon}/>
                         </TouchableOpacity>
                     </View>
                 </View>
+        } else if (this.props.controlMode === "keyboard") {
+            return (
+                <View style={{...styles.scoreInputView, ...this.props.style}}>
+                    <View style={{...styles.scoreValueView, ...this.props.valueContainerStyle}}>
+                        <TextInput
+                            editable={!this.props.disableTextInput}
+                            keyboardType="numeric"
+                            value={String(value)}
+                            style={{...styles.scoreValue, ...this.props.inputContainerStyle}}
+                            onChangeText={(text) => this.textChange(text, this.props.onValueChange)}/>
+                    </View>
+                </View>
+            )
         } else {
             return (
                 <View style={{...styles.scoreInputView, ...this.props.style}}>
@@ -75,7 +89,7 @@ export default class NumericInput extends Component  {
                             {this.props.renderLeftInputControl ? 
                                 this.props.renderLeftInputControl() 
                                 :
-                                <Icon name={this.props.leftControlIcon || "arrow-round-back"} style={{...styles.scoreInputControlsIcon, ...this.props.inputControlIconStyle}}/>
+                                <Icon name={this.props.leftControlIcon || "arrow-back"} as={Ionicons} size={5} style={{...styles.scoreInputControlsIcon, ...this.props.inputControlIconStyle}}/>
                             }
                     </TouchableOpacity>
                     <View style={{...styles.scoreValueView, ...this.props.valueContainerStyle}}>
@@ -84,7 +98,7 @@ export default class NumericInput extends Component  {
                             keyboardType="numeric"
                             value={String(value)}
                             style={{...styles.scoreValue, ...this.props.inputContainerStyle}}
-                            onChangeText={(text) => this.textChange(text, onValueChange)}/>
+                            onChangeText={(text) => this.textChange(text, this.props.onValueChange)}/>
                     </View>
                     <TouchableOpacity
                         {...incrementButtonProps}
@@ -93,7 +107,7 @@ export default class NumericInput extends Component  {
                             {this.props.renderRightInputControl ? 
                                 this.props.renderRightInputControl() 
                                 :
-                                <Icon name={this.props.rightControlIcon || "arrow-round-forward"} style={{...styles.scoreInputControlsIcon, ...this.props.inputControlIconStyle}}/>
+                                <Icon name={this.props.rightControlIcon || "arrow-forward"} as={Ionicons} size={5} style={{...styles.scoreInputControlsIcon, ...this.props.inputControlIconStyle}}/>
                             }
                     </TouchableOpacity>
                 </View>
@@ -122,12 +136,12 @@ const styles = StyleSheet.create({
     },
 
     iconView: {
-        paddingVertical: 10
+        paddingVertical: 10,
     },
 
     icon: {
         color:"gray",
-        fontSize: totalSize(2.8)
+        width:"auto",
     },
 
     // Separated arrows styles

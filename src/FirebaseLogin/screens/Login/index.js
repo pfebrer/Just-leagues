@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { StyleSheet, View, TouchableOpacity, Text, Image, Keyboard} from 'react-native';
+import { StyleSheet, View, TouchableOpacity, Text, Image, Keyboard } from 'react-native';
 import InputField from "../../components/InputField";
 import {w, h, totalSize} from '../../../api/Dimensions';
 import GetStarted from './GetStarted';
@@ -26,7 +26,7 @@ export default class Login extends Component {
     if (mode == "google") {
       this.setState({ isLogin: true });
 
-      const googleLoginFunc = __DEV__ ? Firebase.signInWithGoogleAsyncExpo : Firebase.signInWithGoogleAsync;
+      const googleLoginFunc = __DEV__ ? Firebase.signInWithGoogleAsync : Firebase.signInWithGoogleAsync;
 
       var googleUser = googleLoginFunc().then((result) => {
         if (result.cancelled || result.error) this.setState({ isLogin: false })

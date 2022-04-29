@@ -5,6 +5,7 @@ import { View, TouchableOpacity } from "react-native"
 import { Button, Icon, Text } from "native-base"
 import { translate } from "../../../assets/translations/translationWorkers";
 import moment from "moment"
+import { Ionicons } from "@expo/vector-icons";
 
 export default class DateTimeInput extends Component {
 
@@ -24,9 +25,10 @@ export default class DateTimeInput extends Component {
         const label = this.props.accessibilityLabel
 
         return <View style={this.props.containerStyle}>
-                <Button accessibilityLabel={`${label}button`} iconRight onPress={() => this.setState({selecting: true})} style={this.props.style}>
+                <Button accessibilityLabel={`${label}button`} rightIcon={
+                    <Icon as={Ionicons} size={5} name="calendar"/>
+                } onPress={() => this.setState({selecting: true})} style={this.props.style}>
                     <Text>{this.props.value ? moment(this.props.value).format("DD-MM-YYYY HH:mm") : placeholder}</Text>
-                    <Icon name="calendar"/>
                 </Button>
             <DateTimePickerModal
                 isVisible={selecting}

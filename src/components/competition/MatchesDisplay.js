@@ -1,6 +1,5 @@
 import React from 'react';
-import {StyleSheet, TouchableOpacity, View, Text} from 'react-native';
-import {Icon} from 'native-base'
+import {StyleSheet} from 'react-native';
 
 import MatchSummary from "../../components/match/MatchSummary";
 import ExpandableSectionList from '../UX/ExpandableSectionList'
@@ -17,10 +16,13 @@ class MatchesDisplay extends React.Component {
     constructor(props) {
         super(props);
 
-
     }
 
     filterMatches = (matches) => {
+        // Note that this scales very bad with the number of matches (find a solution!)
+        // The solution is probably to include the periodNumber in matches, then we can
+        // query the database for matches in the current period, there would be no need to
+        // filter here.
 
         let groupIDs = this.props.competition.groups.map(group => group.id)
 
@@ -44,7 +46,7 @@ class MatchesDisplay extends React.Component {
         let grouped = _.groupBy(
             sortMatchesByDate( this.filterMatches(this.props.matches)),
             (match) => {
-                if (match.playersIDs.indexOf(this.props.currentUser.id) != -1) {
+                if (false){//match.playersIDs.indexOf(this.props.currentUser.id) != -1) {
                     return "own"
                 } else if (isPlayed({match})){
                     return "played"
@@ -72,10 +74,14 @@ class MatchesDisplay extends React.Component {
 
             <ExpandableSectionList
                 style={styles.containerView}
-                renderItem={({item: match}) => <MatchSummary key={match.id} match={match} navigation={this.props.navigation}/>}
+                renderItem={({item: match}) => <MatchSummary 
+                    key={match.id} match={match} navigation={this.props.navigation}
+                    style={styles.matchSummary}
+                />}
                 sectionTitles={sectionTitles}
+                sectionHeaderStyle={styles.sectionHeader}
                 sections={keyOrder.reduce((sections, key) => { if (grouped[key]) sections.push({data: grouped[key], key}); return sections} , [])}
-                initiallyExpanded={["own"]}
+                initiallyExpanded={["played"]}
             />
     
         )
@@ -93,7 +99,20 @@ export default connect(mapStateToProps)(MatchesDisplay);
 const styles = StyleSheet.create({
 
     containerView: {
-        paddingHorizontal: 20
+        backgroundColor: "white"
+    },
+
+    sectionHeader: {
+        paddingHorizontal: 10
+    },
+
+    matchSummary: {
+        borderBottomWidth: 1,
+        borderTopWidth: 1,
+        backgroundColor: "whitesmoke",
+        paddingVertical: 10,
+        paddingHorizontal: 5,
+        marginVertical: 2
     }
     
 

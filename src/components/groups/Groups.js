@@ -6,13 +6,14 @@ import { translate } from '../../assets/translations/translationWorkers';
 
 import { GroupBet, PlayerPointsBet } from "../betting/GroupsBetting"
 import MatchSummary from "../match/MatchSummary"
-import ExpandableSectionList from '../UX/ExpandableSectionList'
+import { AccordionSectionList } from '../UX/ExpandableSectionList'
 
 import { totalSize } from '../../api/Dimensions';
 import { sortMatchesByDate } from '../../assets/utils/utilFuncs'
 
 import _ from "lodash"
 import { elevation } from '../../assets/utils/utilFuncs'
+import { Ionicons } from '@expo/vector-icons';
 
 class Group extends React.Component{
 
@@ -33,11 +34,13 @@ class Group extends React.Component{
     renderPlugIns = ({item, section}) => {
 
         if (section.key == "betting") {
-            if (item == "groupBet") return <GroupBet noHeader group={this.props.group} competition={this.props.competition}/>
-            else return <PlayerPointsBet playerID={item} group={this.props.group} competition={this.props.competition}/>
+            let content;
+            if (item == "groupBet") content = <GroupBet noHeader group={this.props.group} competition={this.props.competition}/>
+            else content = <PlayerPointsBet playerID={item} group={this.props.group} competition={this.props.competition}/>
+            return <View style={styles.betContainer}>{content}</View>
         }
 
-        else if (section.key == "matches") return <MatchSummary navigation={this.props.navigation} match={item} />
+        else if (section.key == "matches") return <MatchSummary navigation={this.props.navigation} match={item} style={styles.matchSummary} />
 
     }
 
@@ -61,19 +64,22 @@ class Group extends React.Component{
         return <View style={{...styles.groupContainer}}>
             <TouchableOpacity onPress={() => this.setState({expandable: true, expanded: !this.state.expanded})} style={{...styles.groupTitleView}}>
                 <Text style={styles.groupTitleText}>{translate("vocabulary.group") + " " + (group.name)}</Text>
-                <Icon style={styles.groupExpandingIcon} name={this.state.expanded ? "arrow-dropup" : "arrow-dropdown"}/>
+                <Icon as={Ionicons} size={5} style={styles.groupExpandingIcon} name={this.state.expanded ? "arrow-up-circle" : "arrow-down-circle"}/>
             </TouchableOpacity>
             <Table
                 {...group}
+                style={styles.groupTable}
                 competition={this.props.competition}
                 navigation={this.props.navigation}
             />
             {this.state.expandable ? <View style={{height: this.state.expanded ? undefined: 0, overflow: "hidden"}}>
-                <ExpandableSectionList
+                <AccordionSectionList
                     itemContainerStyle={styles.plugInItemContainer}
+                    initiallyExpanded={[0]}
                     renderItem={this.renderPlugIns}
                     sectionTitles={sectionTitles}
                     sections={sections}
+                    sectionHeaderStyle={styles.plugInSectionHeader}
                 />         
             </View> : null}
             
@@ -125,9 +131,7 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         marginHorizontal: 10,
         borderRadius: 5,
-        paddingHorizontal: 15,
         paddingTop: 10,
-        paddingBottom: 20,
         backgroundColor: "white",
         overflow: "hidden"
     },
@@ -137,6 +141,12 @@ const styles = StyleSheet.create({
         justifyContent: "flex-start",
         alignItems: "center",
         paddingBottom: 10,
+        paddingHorizontal: 15,
+    },
+
+    groupTable: {
+        paddingHorizontal: 15,
+        paddingBottom: 20,
     },
 
     groupTitleText: {
@@ -148,14 +158,10 @@ const styles = StyleSheet.create({
 
     groupExpandingIcon: {
         paddingRight: 5,
-        color: "#555"
+        width: "auto",
+        color: "orange"
     },
 
-    loadingMessageView: {
-        flex: 1,
-        alignItems: "center",
-        justifyContent: "center"
-    },
     scrollView: {
         flex: 1,
     },
@@ -171,8 +177,9 @@ const styles = StyleSheet.create({
     plugInSectionHeader: {
         flexDirection: "row",
         paddingVertical: 20,
+        paddingHorizontal: 15,
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center",
     },
 
     pluginSectionTitle: {
@@ -185,11 +192,28 @@ const styles = StyleSheet.create({
 
     },
 
-    plugInItemContainer: {
-        marginLeft: 5,
-        paddingLeft: 10,
+    betContainer: {
+        marginHorizontal: 15,
+        //paddingLeft: 10,
         borderLeftColor: "black",
-        borderLeftWidth: 1,
+        //borderLeftWidth: 1,
+        paddingVertical: 5,
+    },
+
+    plugInItemContainer: {
+        //marginLeft: 5,
+        //paddingLeft: 10,
+        //borderLeftColor: "black",
+        //borderLeftWidth: 1,
+        //paddingVertical: 5,
+    },
+
+    matchSummary: {
+        borderBottomWidth: 1,
+        borderTopWidth: 1,
+        backgroundColor: "whitesmoke",
         paddingVertical: 10,
+        paddingHorizontal: 5,
+        marginVertical: 2
     }
 });

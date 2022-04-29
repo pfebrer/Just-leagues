@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import { ListItem } from "native-base";
+import { ListItem, View } from "native-base";
 
 import { translate } from "../../../assets/translations/translationWorkers";
 
@@ -25,9 +25,9 @@ export default class SettingField extends Component {
             const description = this.props.description ? translate(this.props.description) : ""
             const name = translate(this.props.name)
 
-            return <ListItem key={this.props.key}>
-                        <FieldComponent {...this.props} description={description} name={name}/>
-                    </ListItem>
+            return <View key={this.props.key} style={this.props.style}>
+                        <FieldComponent {...this.props} style={this.props.inputStyle} inputStyle={null} description={description} name={name}/>
+                    </View>
         } else {
             return null
         }

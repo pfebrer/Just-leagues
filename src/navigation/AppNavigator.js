@@ -13,7 +13,9 @@ const AuthNavigator = () => {
     return (
         <AuthStack.Navigator 
             initialRouteName="AuthLoading"
-            headerShown={false}>
+            screenOptions={{
+                headerShown: false
+            }}>
             <AuthStack.Screen
                 name="AuthLoading"
                 component={LoadingScreen}

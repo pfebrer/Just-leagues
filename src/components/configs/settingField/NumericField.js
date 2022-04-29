@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 
-import { Body, Right, Text} from 'native-base';
+import { View , Text} from 'native-base';
 
 import InputField from "../inputs";
 
@@ -9,15 +9,19 @@ export default class NumericField extends Component {
     static _type = "integer"
 
     render(){
-        return [
-            <Body>
-                <Text>{this.props.name}</Text>
-                <Text note>{this.props.description} </Text>
-            </Body>, 
-            <Right>
-                <InputField {...this.props} type="number" controlMode="sideArrows"/>
-            </Right>
-        ]
+        return <View>
+            <View style={{flexDirection: "row", alignItems: "center", justifyContent: "space-between"}}>
+                <View>
+                    <Text>{this.props.name}</Text>
+                </View>
+                <View style={{flex: 1, flexDirection: "row", justifyContent: "flex-end", paddingHorizontal: 10}}>
+                    <InputField {...this.props} type="number" controlMode="sideArrows"/>
+                </View>
+            </View>
+            <View>
+                <Text fontSize={"xs"} color="#ccc">{this.props.description}</Text>
+            </View> 
+        </View>
                     
     }
 }

@@ -160,9 +160,10 @@ exports.newPlayedMatchNotification = firestoreFunction.document(Collections.GYMS
     //If the result has not changed then stop here
     if (change.before && change.after && _.isEqual(change.before.get("result"), change.after.get("result")) ) return null
 
-    const docSnapshot = change.after
+    const matchData = change.after.data() || change.before.data()
 
-    const {context : matchContext, result: matchResult, playersIDs: matchPlayersIDs} = docSnapshot.data();
+    const {context : matchContext, playersIDs: matchPlayersIDs} = matchData;
+    const matchResult = matchData.result || [0, 0];
 
     let typeOfComp = matchContext.competition.type
 

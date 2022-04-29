@@ -1,11 +1,13 @@
 import React , {Component} from 'react';
 import { View, Text, StyleSheet, TouchableOpacity} from "react-native"
-import { Icon, List, ListItem, Body, Right, Button } from 'native-base';
+import { Icon, Button } from 'native-base';
+import { Ionicons } from '@expo/vector-icons';
 import _ from "lodash"
 
 import { totalSize } from '../../../api/Dimensions';
 
 import InputField from '.';
+
 
 export default class RelationsInput extends Component  {
 
@@ -49,6 +51,8 @@ export default class RelationsInput extends Component  {
                 type="number"
                 key={index} 
                 value={value}
+                disableTextInput={false}
+                controlMode={"keyboard"}
                 onValueChange={(value)=>this.updateValue(relationIndex, varKey, index , value)}/>
         ))
         
@@ -60,7 +64,7 @@ export default class RelationsInput extends Component  {
         const depVar = this.props.dependentVar;
 
         let layout = this.state.value.map( ({[indVar]: indValue, [depVar]: depValue }, index) => (
-            <ListItem style={styles.relationView}>
+            <View style={styles.relationView}>
                 <View style={styles.indVarView}>
                     {this.renderNumericInputs(index, indVar, indValue)}
                 </View>
@@ -70,16 +74,16 @@ export default class RelationsInput extends Component  {
                 </View>
                 <Icon name="close" style={styles.remoVeItemIcon} onPress={() => {this.removeRelation(index)}}/>
                 
-            </ListItem>
+            </View>
         ))
 
         return (
             <View>
-                <List>
+                <View>
                     {layout}
-                </List>
+                </View>
                 <Button style={styles.addItemButton} onPress={this.addNewRelation}>
-                    <Icon name="add"/>
+                    <Icon as={Ionicons} size={5} name="add"/>
                 </Button>
             </View>
             

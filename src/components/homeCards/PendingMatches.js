@@ -179,7 +179,7 @@ class PendingMatches extends Component {
                 title={translate("vocabulary.pending matches")}
                 onHeaderPress={this.toggleContent}
                 actionHelperText={"(" + this.state.matches.length + ")"}
-                actionIcon={this.state.matches.length > 1 ? "arrow-dropdown" : false}
+                actionIcon={this.state.matches.length > 1 ? "arrow-down-circle" : false}
                 actionIconViewStyles={{transform: [{ rotate: spin}] }}>
                 {this.renderPendingMatches(this.state.matches)}
             </Card>

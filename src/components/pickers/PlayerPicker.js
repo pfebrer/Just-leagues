@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Picker } from 'native-base'
+import { Select } from 'native-base'
 import { connect } from 'react-redux'
 import _ from "lodash"
 
@@ -32,13 +32,13 @@ class PlayerPicker extends Component {
 
         items = _.sortBy(items, ["label"])
 
-        return items.map( ({label, value}) => <Picker.Item key={value} label={label} value={value}/> )
+        return items.map( ({label, value}) => <Select.Item key={value} label={label} value={value}/> )
 
     }
 
     render() {
         return (
-            <Picker
+            <Select
                 note
                 mode="dropdown"
                 placeholder = {translate("actions.pick a player")}
@@ -47,7 +47,7 @@ class PlayerPicker extends Component {
                 onValueChange={(value) => {this.setState({value}); this.props.onPlayerChange(value)}}
             >
                 {this.renderItems()}
-            </Picker>
+            </Select>
         )
     }
 }

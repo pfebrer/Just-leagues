@@ -24,6 +24,7 @@ import HeaderIcon from '../../components/UX/HeaderIcon';
 
 import Firebase from "../../api/Firebase"
 import { selectCurrentCompetition } from '../../redux/reducers';
+import { Ionicons } from '@expo/vector-icons';
 
 const window = Dimensions.get('window');
 
@@ -204,7 +205,7 @@ class Row extends Component {
       return deletable ? <TouchableOpacity 
                             style={styles.deleteButton}
                             onPress={() => {this.props.deleteItem(index, this._marginHorizontal)}}>
-                            <Icon name="close" style={styles.deleteIcon}/>
+                            <Icon as={Ionicons} size={5} name="close" style={styles.deleteIcon}/>
                         </TouchableOpacity> : null;
   }
 

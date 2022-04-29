@@ -1,12 +1,14 @@
 import React from 'react';
-import {StyleSheet, Text, View, TouchableOpacity, SectionList} from 'react-native';
+import {StyleSheet, Text, View, TouchableOpacity, SectionList, Pressable, FlatList} from 'react-native';
 import { Icon } from "native-base";
 
 import { totalSize } from '../../api/Dimensions';
+import Accordion from "./Accordion"
 
 import _ from "lodash"
+import { Ionicons } from '@expo/vector-icons';
 
-export default class ExpandableSectionList extends React.Component{
+export default class _ExpandableSectionList extends React.Component{
 
     constructor(props){
         super(props);
@@ -29,12 +31,12 @@ export default class ExpandableSectionList extends React.Component{
 
         return(
         <TouchableOpacity
-            style={styles.sectionHeader}
+            style={{...styles.sectionHeader, ...this.props.sectionHeaderStyle}}
             onPress={() => this.setState({expandedSection: {...this.state.expandedSection, [section.key]: !this.state.expandedSection[section.key]}})}>
             <Text style={styles.sectionTitleText} >{this.props.sectionTitles[section.key]}</Text>
             {this.state.expandedSection[section.key]
-                    ? <Icon style={{ fontSize: 18 }} name="remove-circle" />
-                    : <Icon style={{ fontSize: 18 }} name="add-circle" />}
+                    ? <Icon as={Ionicons} size={5} name="remove-circle" />
+                    : <Icon as={Ionicons} size={5} name="add-circle" />}
         </TouchableOpacity>
         )
     }
@@ -52,6 +54,57 @@ export default class ExpandableSectionList extends React.Component{
 
 }
 
+export class AccordionSectionList extends React.Component{
+
+    constructor(props){
+        super(props);
+
+        let initiallyExpanded = this.props.initiallyExpanded || []
+
+        this.state = {
+            activeSections: initiallyExpanded,
+        }
+    }
+
+    renderItem = ({item, section}) => {
+        return <View style={{ ...styles.itemContainer, ...this.props.itemContainerStyle}}>{this.props.renderItem({item, section})}</View>
+    }
+
+    renderContent = (section) => {
+        return <View key={section.key}>
+            {section.data.map(item => this.renderItem({item, section}))}
+        </View>
+    }
+
+    renderHeader = ({key}, index, expanded) => {
+
+        return(
+            <View
+                style={{...styles.sectionHeader, ...this.props.sectionHeaderStyle}}>
+                <Text style={styles.sectionTitleText} >{this.props.sectionTitles[key]}</Text>
+                {expanded
+                        ? <Icon as={Ionicons} size={5} name="remove-circle" />
+                        : <Icon as={Ionicons} size={5} name="add-circle" />}
+            </View>
+        )
+    }
+
+    render(){
+
+        return <Accordion
+            containerStyle={this.props.style}
+            sections={this.props.sections}
+            activeSections={this.state.activeSections}
+            onChange={(activeSections) => this.setState({ activeSections })}
+            touchableComponent={Pressable}
+            expandMultiple={true}
+            renderHeader={this.renderHeader}
+            renderContent={this.renderContent}
+        />       
+    }
+
+}
+
 const styles = StyleSheet.create({
 
     hiddenItem: {
@@ -64,9 +117,7 @@ const styles = StyleSheet.create({
         overflow: "hidden"
     },
 
-    sectionListContainer: {
-        marginTop: 10
-    },
+    sectionListContainer: {},
 
     sectionHeader: {
         flexDirection: "row",
