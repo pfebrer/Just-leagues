@@ -86,8 +86,8 @@ export default class SquashMatchTracker extends Component {
             if (i === gameIndex) {
                 if (game.sequence.length == 0) return game
 
-                const {playerIndex} = game.sequence.pop()
-                if (playerIndex !== undefined && game.sequence.length > 1){
+                const {playerIndex, event} = game.sequence.pop()
+                if (playerIndex !== undefined && game.sequence.length > 1 && event !== "yes let") {
                     game.result[playerIndex] -= 1
                 }
 
