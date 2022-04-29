@@ -32,6 +32,10 @@ export default class SquashMatchTracker extends Component {
         const games = this.state.games.map((game, i) => {
 
             if (i === gameIndex) {
+                // Can't register a let if the game hasn't started
+                if(game.sequence.length == 0) return game
+                // Same if the game is already over
+                if(game.end) return game
                 game.sequence = [...game.sequence, {playerIndex, event: "yes let"}]
             }
             return game
@@ -45,6 +49,9 @@ export default class SquashMatchTracker extends Component {
         const games = this.state.games.map((game, i) => {
 
             if (i === gameIndex) {
+                // The only way to start a game is with a start event.
+                if (game.sequence.length == 0 && extras.event != "start") return game
+                // Can't add a new point if the game is over
                 if (game.end) return game
 
                 game.sequence = [...game.sequence, {playerIndex, serve_side: serveSide, ...extras}]
@@ -87,7 +94,7 @@ export default class SquashMatchTracker extends Component {
                 if (game.sequence.length == 0) return game
 
                 const {playerIndex, event} = game.sequence.pop()
-                if (playerIndex !== undefined && game.sequence.length > 1 && event !== "yes let") {
+                if (playerIndex !== undefined && game.sequence.length > 0 && event !== "yes let") {
                     game.result[playerIndex] -= 1
                 }
 
