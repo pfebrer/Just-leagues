@@ -106,7 +106,15 @@
         "direct match": "Direct match",
         "position": "Position",
         "groups": "Groups",
-        "games": "Games"
+        "game": "Game",
+        "games": "Games",
+        "end": "End"
+    },
+    "directions": {
+        "L": "L",
+        "left": "Left",
+        "R": "R",
+        "right": "Right"
     },
     "progress": {
         "cleaning previous groups": "Cleaning previous groups...",
@@ -207,6 +215,7 @@
     },
     "actions": {
         "go back": "Go back",
+        "undo": "Undo",
         "type a message": "Type a message",
         "reply": "Reply",
         "write your reply": "Write your reply",
@@ -216,7 +225,10 @@
         "pick a player": "Pick a player",
         "add to your calendar": "Add to your calendar",
         "submit": "Submit",
-        "modify": "Modify"
+        "modify": "Modify",
+        "ref this match": "Ref this match",
+        "new game": "New game",
+        "save": "Save"
     },
 
     "admin": {

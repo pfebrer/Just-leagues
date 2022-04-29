@@ -106,7 +106,15 @@
         "direct match": "Enfrontamiento directo",
         "position": "Posición",
         "groups": "Grupos",
-        "games": "Juegos"
+        "game": "Juego",
+        "games": "Juegos",
+        "end": "Final"
+    },
+    "directions": {
+        "L": "I",
+        "left": "Izquierda",
+        "R": "D",
+        "right": "Derecha"
     },
     "progress": {
         "cleaning previous groups": "Borrando grupos anteriores...",
@@ -207,6 +215,7 @@
     },
     "actions": {
         "go back": "Volver atrás",
+        "undo": "Deshacer",
         "type a message": "Escribe un mensaje",
         "reply": "Responder",
         "write your reply": "Escribe tu respuesta",
@@ -216,7 +225,10 @@
         "pick a player": "Escoje un jugador",
         "add to your calendar": "Añade a tu calendario",
         "submit": "Envia",
-        "modify": "Modifica"
+        "modify": "Modifica",
+        "ref this match": "Arbitra este partido",
+        "new game": "Nuevo juego",
+        "save": "Guarda"
     },
 
     "admin": {

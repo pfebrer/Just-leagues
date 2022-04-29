@@ -1,14 +1,11 @@
 import React, { Component } from 'react'
-import { Text, StyleSheet, View, TouchableOpacity} from 'react-native'
+import { StyleSheet} from 'react-native'
 
 import Card from '../UX/Card'
-import { translate } from '../../assets/translations/translationWorkers'
 
 //Redux stuff
 import { connect } from 'react-redux'
 import {setCurrentMatch} from "../../redux/actions"
-import { totalSize, h} from '../../api/Dimensions'
-import { Icon } from 'native-base'
 
 
 class MatchDiscussion extends Component {

@@ -106,7 +106,15 @@
         "direct match": "Enfrontament directe",
         "position": "Posició",
         "groups": "Grups",
-        "games": "Jocs"
+        "game": "Joc",
+        "games": "Jocs",
+        "end": "Final"
+    },
+    "directions": {
+        "L": "E",
+        "left": "Esquerra",
+        "R": "D",
+        "right": "Dreta"
     },
     "progress": {
         "cleaning previous groups": "Netejant els grups anteriors...",
@@ -207,6 +215,7 @@
     },
     "actions": {
         "go back": "Torna enrere",
+        "undo": "Desfés",
         "type a message": "Escriu un missatge",
         "reply": "Respon",
         "write your reply": "Escriu la teva resposta",
@@ -216,7 +225,10 @@
         "pick a player": "Tria un jugador",
         "add to your calendar": "Afegeix al teu calendari",
         "submit": "Envia",
-        "modify": "Modifica"
+        "modify": "Modifica",
+        "ref this match": "Arbitra el partit",
+        "new game": "Nou joc",
+        "save": "Desa"
     },
 
     "admin": {

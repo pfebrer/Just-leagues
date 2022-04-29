@@ -10,8 +10,10 @@ import {setCurrentMatch} from "../../redux/actions"
 import { totalSize, h} from '../../api/Dimensions'
 import UpdatableCard from '../UX/UpdatableCard'
 import InputField from '../configs/inputs'
+import SquashMatchTracker from '../../Useful objects/sports/squash/matchTracker'
 
 import _ from 'lodash'
+import { Button, Modal } from 'native-base'
 
 
 
@@ -22,19 +24,25 @@ class MatchResult extends Component {
         super(props)
 
         this.state = {
-            pendingUpdate: false
+            pendingUpdate: false,
+            showMatchTracker: false,
+            games: undefined
         }
 
         this.defaultResult = [0,0]
     }
 
-    updateResult = (iTarget, value) => {
+    updateResultIndex = (iTarget, value) => {
 
         let newResult = _.cloneDeep(this.props.match.result || this.defaultResult)
 
         newResult[iTarget] = value
 
-        this.props.setCurrentMatch({result: newResult}, {merge: true})
+        this.updateResult(newResult)
+    }
+
+    updateResult = (result) => {
+        this.props.setCurrentMatch({result}, {merge: true})
 
         this.setState({pendingUpdate: true})
     }
@@ -53,13 +61,45 @@ class MatchResult extends Component {
                 key={index} 
                 value={value}
                 disabled={!this.props.editable} 
-                onValueChange={(value)=>this.updateResult(index, value)}/>
+                onValueChange={(value)=>this.updateResultIndex(index, value)}/>
         ))
 
         let players = this.props.match.playersIDs.map( uid => this.props.match.context.competition.renderName(this.props.relevantUsers, uid) )
         let ranks = this.props.match.playersIDs.map( uid => {
             return this.props.match.context.competition.playersIDs.indexOf(uid) + 1
         })
+
+        const Tracker = () => {
+            if (!this.props.editable) return null
+            
+            return <View style={{marginTop: 20}}>
+                <Button onPress={() => this.setState({showMatchTracker:true})}>{translate("actions.ref this match")}</Button>
+                <Modal size="full" isOpen={this.state.showMatchTracker} onClose={() => this.setState({showMatchTracker:false})}>
+                    <Modal.Content>
+                    <Modal.CloseButton />
+                    <Modal.Header>{translate("vocabulary.match")}</Modal.Header>
+                    <Modal.Body style={{paddingLeft: 0, paddingTop: 0, paddingBottom: 0, paddingRight: 0, height: h(60)}}>
+                        <SquashMatchTracker ref={tracker => this.tracker = tracker} 
+                            match={this.props.match} 
+                            relevantUsers={this.props.relevantUsers}
+                            games={this.state.games}/>
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <Button.Group space={2}>
+                        <Button onPress={() => {
+                            const result = this.tracker.getResult()
+                            const games = this.tracker.getGames()
+                            this.updateResult(result)
+                            this.setState({showMatchTracker:false, games: games})}
+                        }>
+                            {translate("actions.save")}
+                        </Button>
+                        </Button.Group>
+                    </Modal.Footer>
+                    </Modal.Content>
+                </Modal>
+            </View>
+        }
 
         return (
             <UpdatableCard
@@ -79,6 +119,8 @@ class MatchResult extends Component {
                 <View style={styles.playerNameView}>
                     <Text style={{...styles.playerNameText,textAlign:"right"}}>{players[1] + " (" + ranks[1] + ")"}</Text>
                 </View>
+
+                <Tracker/>
 
             </UpdatableCard>
         )
