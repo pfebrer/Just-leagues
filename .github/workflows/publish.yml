@@ -17,12 +17,12 @@ jobs:
         env:
           FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
         run: |
-          sed -i "s/process.env.FIREBASE_API_KEY/\"${FIREBASE_API_KEY}\"/" "${GITHUB_WORKSPACE}/api/Firebase.js"
+          sed -i "s/process.env.FIREBASE_API_KEY/\"${FIREBASE_API_KEY}\"/" "${GITHUB_WORKSPACE}/src/api/Firebase.js"
 
       # Install nodejs
       - uses: actions/setup-node@v2-beta
         with:
-          node-version: '14'
+          node-version: '16'
 
       # Install all the dependencies using the cached packages      
       - name: "Install node packages with caching"
