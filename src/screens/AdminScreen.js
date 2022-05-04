@@ -34,13 +34,9 @@ class AdminScreen extends React.Component {
 
     }
 
-    static navigationOptions = ({navigation}) => {
-        return {
-            headerTitle: translate("tabs.competitions handling"),
-        }
-    };
-
     componentDidMount() {
+
+        this.props.navigation.setOptions({headerTitle: translate("tabs.competitions handling")})
 
         let editableComps = _.filter(this.props.competitions, (obj) => this.props.currentUser.gymAdmin.indexOf(obj.gymID) >= 0)
 

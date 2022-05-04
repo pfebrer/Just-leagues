@@ -35,11 +35,11 @@ class PlayersManagementScreen extends Component {
 
     }
 
-    static navigationOptions = ({navigation}) => {
-      return {
-        headerTitle: translate("tabs.player management"),
-      }
-  };
+    componentDidMount(){
+        this.props.navigation.setOptions({
+            title: translate("tabs.player management"),
+        })
+    }
 
   addPlayer = () => {
 
