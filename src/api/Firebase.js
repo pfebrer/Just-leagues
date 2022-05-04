@@ -1,9 +1,9 @@
 import firebase from "firebase/compat/app";
 import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, 
     createUserWithEmailAndPassword, sendPasswordResetEmail, signOut } from "firebase/auth";
-import 'firebase/compat/firestore';
-import 'firebase/compat/functions';
 
+import { getFunctions, httpsCallable } from "firebase/functions";
+import 'firebase/compat/firestore';
 
 import { Toast } from 'native-base'
 import {Collections, Subcollections, Constants, Documents} from "../constants/CONSTANTS";
@@ -32,8 +32,9 @@ class Firebase {
 
     this.app = firebase.initializeApp(firebaseConfig);
     this.firestore = this.app.firestore();
-    this.functions = this.app.functions('europe-west1');
+    this.functions = getFunctions(this.app, 'europe-west1');
     this.auth = getAuth(this.app);
+    
   }
 
   //FIREBASE API
@@ -1037,13 +1038,13 @@ class Firebase {
     }
     if (errorFn === undefined || errorFn === null) {
         errorFn = (httpsError) => {
-            console.warn("Firebase::callFunction::errorFn", httpsError); // bar
+            console.warn(`Firebase::callFunction::errorFn [${functionName}], ${httpsError}`); // bar
             //alert("ERROR: " + functionName);
         };
     }
     console.log("Firebase::callFunction functionName[" + functionName + "]");
 
-    return this.functions.httpsCallable(functionName)({dbPrefix: Constants.dbPrefix, ...argsObject}).then(callback).catch(errorFn);
+    return httpsCallable(this.functions, functionName)({dbPrefix: Constants.dbPrefix, ...argsObject}).then(callback).catch(errorFn);
 };
 
   //DATABASE REFERENCES (Only place where they should be declared in the whole app)

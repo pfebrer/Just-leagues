@@ -8,10 +8,11 @@ import {
   View,
   Dimensions,
   Platform,
+  Pressable,
+  TouchableOpacity
 } from 'react-native';
 import SortableList from 'react-native-sortable-list';
 import { Button, Icon, Toast } from 'native-base';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import _ from "lodash"
 
 import { translate } from '../../assets/translations/translationWorkers';
@@ -45,15 +46,11 @@ class RankingEditScreen extends Component {
   }
 
   componentDidMount(){
-    this.props.navigation.setParams({submitNewRanking: this.submitNewRanking})
+    this.props.navigation.setOptions({
+        headerTitle: translate("tabs.ranking editing"), 
+        headerRight: () => <HeaderIcon name="checkmark" onPress={this.submitNewRanking} />
+    })
   }
-
-  static navigationOptions = ({navigation}) => {
-    return {
-      headerTitle: translate("tabs.ranking editing"), 
-      headerRight: <HeaderIcon name="checkmark" onPress={navigation.getParam("submitNewRanking")} />
-    }
-  };
 
   isOrphan = (index) => {
 
@@ -202,11 +199,11 @@ class Row extends Component {
   }
 
   renderDeleteButton = (deletable, index) => {
-      return deletable ? <TouchableOpacity 
+      return deletable ? <Pressable 
                             style={styles.deleteButton}
                             onPress={() => {this.props.deleteItem(index, this._marginHorizontal)}}>
                             <Icon as={Ionicons} size={5} name="close" style={styles.deleteIcon}/>
-                        </TouchableOpacity> : null;
+                        </Pressable> : null;
   }
 
   render() {
