@@ -63,7 +63,7 @@
     "redux": "^4.0.4",
     "redux-logger": "^3.0.6",
     "redux-orm": "^0.16.0",
-    "sentry-expo": "^4.0.0",
+    "sentry-expo": "^4.2.0",
     "@react-native-community/datetimepicker": "4.0.0",
     "expo-apple-authentication": "~4.1.0"
   },
