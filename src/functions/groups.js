@@ -61,4 +61,50 @@ exports.updateGroupScores = (firestore, groupRef, groupData, callback = () => {}
     })
 
     
+}
+
+exports.updateCompetitionStats =  (competitionRef, callback = () => {}) => {
+    /* Given a reference to a competition, updates its stats.*/
+
+    let promises = [
+        competitionRef.collection(Subcollections.MATCHES).get(),
+    ]
+
+    return Promise.all(promises).then( ([matchesSnap]) => {
+
+        const updatedLeaderboards = matchesSnap.docs.reduce((leaderboards, matchSnap) => {
+
+            var match = matchSnap.data()
+            
+            match.playersIDs.forEach( (uid, i) => {
+
+                //This is a no show match
+                if (match.result.indexOf(-1) > -1 ) return 
+
+                let nGames = match.result.reduce((a, b) => a + b, 0)
+                let iWinner = match.result.indexOf(Math.max.apply(Math, match.result))
+
+                if (leaderboards.playedMatches[uid]){
+                    leaderboards.playedMatches[uid] ++
+                    leaderboards.playedGames[uid] += nGames
+                    leaderboards.wonMatches[uid] += i == iWinner ? 1 : 0
+                    leaderboards.wonGames[uid] += match.result[i]
+                    leaderboards.cleanSheets[uid] += i == iWinner && nGames == match.result[i] ? 1 : 0
+                } else {
+                    leaderboards.playedMatches[uid] = 1
+                    leaderboards.playedGames[uid] = nGames
+                    leaderboards.wonMatches[uid] = i == iWinner ? 1 : 0
+                    leaderboards.wonGames[uid] = match.result[i]
+                    leaderboards.cleanSheets[uid] = i == iWinner && nGames == match.result[i] ? 1 : 0
+                }
+            })
+            
+            return leaderboards
+        }, {playedMatches: {}, playedGames: {}, wonMatches: {}, wonGames: {}, cleanSheets: {}})
+
+        competitionRef.update({stats: updatedLeaderboards}).then(callback)
+        
+    })
+
+    
 } 

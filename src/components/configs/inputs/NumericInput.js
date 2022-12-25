@@ -76,7 +76,8 @@ export default class NumericInput extends Component  {
                             keyboardType="numeric"
                             value={String(value)}
                             style={{...styles.scoreValue, ...this.props.inputContainerStyle}}
-                            onChangeText={(text) => this.textChange(text, this.props.onValueChange)}/>
+                            onChangeText={(text) => this.textChange(text, this.props.onValueChange)}
+                            />
                     </View>
                 </View>
             )

@@ -7,7 +7,7 @@ import PlayerProfile from '../components/statDisplays/UserProfile';
 //Redux stuff
 import { connect } from 'react-redux'
 import { USERSETTINGS } from "../constants/Settings"
-import { selectUserSetting } from '../redux/reducers';
+import { selectCurrentCompetition, selectUserSetting } from '../redux/reducers';
 
 class Stats extends React.Component {
 
@@ -106,7 +106,7 @@ class Stats extends React.Component {
 
 const mapStateToProps = state => ({
     currentUser: state.currentUser,
-    backgroundColor: selectUserSetting(state, "General appearance", "backgroundColor")
+    backgroundColor: selectUserSetting(state, "General appearance", "backgroundColor"),
 })
 
 export default connect(mapStateToProps)(Stats);

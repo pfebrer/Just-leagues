@@ -39,7 +39,7 @@ const _ = require('lodash')
 const { sendPushNotifications } = require('./helperFuncs')
 const { Collections, Subcollections, Documents} = require("./constants")
 
-const { updateGroupScores } = require("./groups")
+const { updateGroupScores, updateCompetitionStats } = require("./groups")
 
 admin.initializeApp();
 const firestore = admin.firestore();
@@ -165,16 +165,21 @@ exports.newPlayedMatchNotification = firestoreFunction.document(Collections.GYMS
     const matchResult = matchData.result || [0, 0];
 
     let typeOfComp = matchContext.competition.type
+    const competitionRef = firestore.collection(Collections.GYMS).doc(context.params.gymID).collection(Subcollections.COMPETITIONS).doc(context.params.compID)
+
+    // Update the competition's stats (commented until it is really used by the app)
+    // updateCompetitionStats(competitionRef)
 
     if (typeOfComp == "groups"){
 
         let groupID = matchContext.group.id
+        const groupRef = competitionRef.collection(Subcollections.GROUPS).doc(groupID)
 
-        return firestore.collection(Collections.GYMS).doc(context.params.gymID).collection(Subcollections.COMPETITIONS).doc(context.params.compID).collection(Subcollections.GROUPS).doc(groupID).get().then( groupSnapshot => {
+        return groupRef.get().then( groupSnapshot => {
 
             let {playersIDs: groupPlayersIDs, matchesIDs: groupMatchesIDs, totals} = groupSnapshot.data()
 
-            updateGroupScores(firestore, firestore.doc(groupSnapshot.ref.path), {id: groupID, ...groupSnapshot.data()})
+            updateGroupScores(firestore, groupRef, {id: groupID, ...groupSnapshot.data()})
 
             const playersPromises = groupPlayersIDs.map( uid => firestore.collection(Collections.USERS).doc(uid).get())
 
@@ -227,7 +232,6 @@ exports.newPlayedMatchNotification = firestoreFunction.document(Collections.GYMS
         
     } else {
         console.log("WARNING-- The type of competition of this match (" + typeOfComp + ") is not implemented")
-        return null
     }
     
 });

@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
-import { Text, StyleSheet, View, Pressable } from 'react-native'
+import { Text, StyleSheet, View, Pressable, Image } from 'react-native'
 
 import Card from '../UX/Card'
 import { translate } from '../../assets/translations/translationWorkers'
+
+import BlankProfile from "../../assets/images/blank-profile.png"
 
 //Redux stuff
 import { connect } from 'react-redux'
@@ -13,10 +15,8 @@ import InputField from '../configs/inputs'
 import SquashMatchTracker from '../../Useful objects/sports/squash/matchTracker'
 
 import _ from 'lodash'
+import moment from "moment"
 import { Button, Modal } from 'native-base'
-
-
-
 
 class MatchResult extends Component {
 
@@ -43,8 +43,10 @@ class MatchResult extends Component {
 
     updateResult = (result) => {
         this.props.setCurrentMatch({result}, {merge: true})
+        
+        const pendingUpdate = result[0] !== "" && result[1] !== ""
 
-        this.setState({pendingUpdate: true})
+        this.setState({pendingUpdate})
     }
 
     commitResultToDB = () => this.props.updateDBMatchParams(["result"], () => this.setState({pendingUpdate: false}) )
@@ -54,20 +56,28 @@ class MatchResult extends Component {
         if (!this.props.match.playersIDs) return <Card loading/>
 
         let result = this.props.match.result || this.props.defaultResult || this.defaultResult
-            
-        let scoreInputs = result.map( (value, index) => (
-            <InputField
+        
+        const ScoreInput = (props) => {
+            const textStyles = props.winner ? styles.winnerText : {}
+
+            return <InputField
                 type="number"
-                key={index} 
-                value={value}
-                disabled={!this.props.editable} 
-                onValueChange={(value)=>this.updateResultIndex(index, value)}/>
-        ))
+                key={props.index} 
+                value={props.value}
+                disabled={!props.editable}
+                style={{padding: 0, margin: 0}}
+                valueContainerStyle={{borderWidth: 0, elevation: 0, padding: 0, margin: 0}}
+                inputContainerStyle={{padding: 0, margin: 0, ...textStyles}}
+                disabledValueContainerStyle={{borderWidth: 0, elevation: 0}}
+                onValueChange={(value)=> this.updateResultIndex(props.index, value)}
+                controlMode="keyboard"/>
+        }
 
         let players = this.props.match.playersIDs.map( uid => this.props.match.context.competition.renderName(this.props.relevantUsers, uid) )
         let ranks = this.props.match.playersIDs.map( uid => {
             return this.props.match.context.competition.playersIDs.indexOf(uid) + 1
         })
+        const pics = this.props.match.playersIDs.map( uid => this.props.relevantUsers[uid].profilePic )
 
         const Tracker = () => {
             if (!this.props.editable) return null
@@ -101,29 +111,82 @@ class MatchResult extends Component {
             </View>
         }
 
-        return (
-            <UpdatableCard
-                cardContainerStyles={this.props.style}
-                titleIcon="tennisball"
-                title={translate("vocabulary.match score")}
-                pendingUpdate={this.state.pendingUpdate}
-                onCommitUpdate={this.commitResultToDB}
-                >
+        const PlayerView = (props) => {
+            const textStyles = props.winner ? styles.winnerText : {}
+            const imgSrc = props.profilePic ? {uri: props.profilePic} : BlankProfile
+
+            return <View style={styles.playerView}>
+                <View style={styles.profileImageView}>
+                    <Image style={styles.profileImage} source={imgSrc}/>
+                </View>
                 <View style={styles.playerNameView}>
-                    <Text style={{...styles.playerNameText, textAlign: "left"}}>{"(" + ranks[0] + ") " + players[0]}</Text>
+                    <Text style={{...styles.playerNameText, ...textStyles}}>{props.name}</Text>
+                    <Text style={{...styles.playerRankingText, ...textStyles}}>{`(${props.rank})`}</Text>
                 </View>
-                <View style={styles.scoreContainer}>
-                    {scoreInputs}
-                </View>
+            </View>
+        }
+
+        const scoreViewStyles = {
+            ...styles.scoreView, 
+            ...(this.props.editable ? styles.editableScoreView : styles.notEditableScoreView)
+        }
+
+        const timeInfo = this.props.match.scheduled?.time || this.props.match.playedOn
+        const calendarTime = timeInfo ? moment(timeInfo).format("DD.MM.YYYY") : translate("vocabulary.no date")
+        const hour = timeInfo ? moment(timeInfo).format("HH:mm") : ""
+
+        const winners = [
+            this.props.match.playedOn && (result[0] > result[1]),
+            this.props.match.playedOn && (result[1] > result[0])
+        ]
+
+        return (<View>
+            <View style={styles.matchSummaryView}>
+                <PlayerView name={players[0]} rank={ranks[0]} winner={winners[0]} profilePic={pics[0]}/>
                 
-                <View style={styles.playerNameView}>
-                    <Text style={{...styles.playerNameText,textAlign:"right"}}>{players[1] + " (" + ranks[1] + ")"}</Text>
+                <View style={styles.scoreContainer}>
+                    <View style={styles.dateView}>
+                        <Text style={styles.dayText}>{calendarTime}</Text>
+                        <Text style={styles.hourText}>{hour}</Text>
+                    </View>
+                    <View style={scoreViewStyles}>
+                        <ScoreInput index={0} value={result[0]} winner={winners[0]} editable={this.props.editable}/>
+                        <View style={styles.scoreSeparator}/>
+                        <ScoreInput index={1} value={result[1]} winner={winners[1]} editable={this.props.editable}/>
+                    </View>
                 </View>
 
-                <Tracker/>
+                <PlayerView name={players[1]} rank={ranks[1]} winner={winners[1]} profilePic={pics[1]}/>
+            </View>
+            {this.state.pendingUpdate ? <Button style={{marginTop: 15, backgroundColor: "green"}} onPress={this.commitResultToDB}>{translate("actions.submit result")}</Button> : null}
+            <Tracker/>
+            </View>
 
-            </UpdatableCard>
-        )
+            )
+            
+        // (
+        //     <UpdatableCard
+        //         cardContainerStyles={this.props.style}
+        //         titleIcon="tennisball"
+        //         title={translate("vocabulary.match score")}
+        //         pendingUpdate={this.state.pendingUpdate}
+        //         onCommitUpdate={this.commitResultToDB}
+        //         >
+        //         <View style={styles.playerNameView}>
+        //             <Text style={{...styles.playerNameText, textAlign: "left"}}>{"(" + ranks[0] + ") " + players[0]}</Text>
+        //         </View>
+        //         <View style={styles.scoreContainer}>
+        //             {scoreInputs}
+        //         </View>
+                
+        //         <View style={styles.playerNameView}>
+        //             <Text style={{...styles.playerNameText,textAlign:"right"}}>{players[1] + " (" + ranks[1] + ")"}</Text>
+        //         </View>
+
+        //         <Tracker/>
+
+        //     </UpdatableCard>
+        // )
     }
 }
 
@@ -140,18 +203,81 @@ export default connect(mapStateToProps, mapDispatchToProps)(MatchResult);
 
 const styles = StyleSheet.create({
     //Players
+    playerView: {
+        justifyContent: "center",
+        width: "35%",
+        alignItems: "center"
+    },
+
+    profileImageView: {
+        paddingVertical: 10
+    },
+
+    profileImage: {
+        width: 50,
+        height: 50,
+        borderRadius: 50
+    },
+
     playerNameView: {
-        width: "100%",
+        justifyContent: "center",
+        alignItems: "center"
     },
 
     playerNameText: {
-        fontSize: totalSize(2)
+        textAlign: "center",
+        fontSize: totalSize(1.5)
+    },
+
+    winnerText: {
+        fontWeight: "bold"
+    },
+
+    matchSummaryView: {
+      flexDirection: "row", 
     },
 
     //Scores input
     scoreContainer: {
-        flexDirection: "row",
+        width: "30%",
+        justifyContent: "center",
+        alignItems: "center",
         marginVertical: 10,
+    },
+
+    dateView: {
+        justifyContent: "center",
+        alignItems: "center"
+    },
+
+    dayText: {
+        justifyContent: "center",
+        alignItems: "center"
+    },
+
+    hourText: {
+        color: "gray"
+    },
+
+    scoreView: {
+        padding: 2,
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center"
+    },
+
+    scoreSeparator: {
+        width: 10,
+        backgroundColor: "black",
+        height: 1,
+        borderRadius: 1.5
+    },
+
+    editableScoreView: {
+        //borderWidth: 1,
+        borderColor: "#ccc",
+        borderRadius: 2,
+        //borderStyle: "dashed"
     },
 
     scoreInputView: {
@@ -159,20 +285,6 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         flex:1
-    },
-
-    scoreValueView: {
-        elevation: 3,
-        backgroundColor: "white",
-        height: h(6),
-        width: h(6),
-        borderRadius: 5,
-        justifyContent: "center",
-        alignItems: "center"
-    },
-
-    scoreValue: {
-        fontSize: totalSize(2.5)
     },
 
     scoreInputControls: {

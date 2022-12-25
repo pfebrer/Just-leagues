@@ -23,7 +23,11 @@ function HomeNavigator() {
   return (
     <HomeStack.Navigator
         initialRouteName="HomeScreen"
-        screenOptions={{headerShown: true}}>
+        screenOptions={{
+            headerShown: true,
+            headerShadowVisible: false
+        }}
+        >
         <HomeStack.Screen name="HomeScreen" component={HomeScreen}/>
         <HomeStack.Screen name="SettingsScreen" component={SettingsScreen}/>
         <HomeStack.Screen name="CompetitionScreen" component={CompetitionScreen}/>

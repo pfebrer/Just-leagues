@@ -36,7 +36,8 @@ class MatchScreen extends Component {
 
     componentDidMount() {
         this.props.navigation.setOptions({
-            title: translate("tabs.match view"),
+            //title: translate("tabs.match view"),
+            title: ""
         })
 
        this.grantEditRights()
@@ -169,7 +170,9 @@ class MatchScreen extends Component {
 
         if (!match) return null
 
-        let {bg: backgroundColor, text: textColor} = getMatchColors({match})
+        //let {bg: backgroundColor, text: textColor} = getMatchColors({match})
+        const backgroundColor = "white"
+        const textColor = "black"
 
         const commonProps = {
             style: {borderColor: textColor, borderWidth: 2},

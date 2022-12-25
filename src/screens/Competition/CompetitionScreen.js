@@ -9,7 +9,6 @@ import { Dimensions, View} from "react-native"
 import { TabView, TabBar } from 'react-native-tab-view';
 
 import { translate } from "../../assets/translations/translationWorkers"
-import { compTabBarOptions } from "../../navigation/MainTabNavigator"
 import { selectUserSetting } from '../../redux/reducers';
 
 const initialLayout = { width: Dimensions.get('window').width };
@@ -75,7 +74,7 @@ class CompetitionScreen extends Component {
     render(){
 
         this.props.navigation.setOptions({
-            headerTitle: this.props.route?.params?.competitionName || ""
+            headerTitle: this.props.route?.params?.competitionName || "",
         })
 
         //if (!this.renderer) return null
@@ -96,10 +95,18 @@ class CompetitionScreen extends Component {
             }
         };
 
+        const compTabBarOptions = {
+            indicatorStyle: { backgroundColor: 'black' },
+            style: { backgroundColor: 'white' },
+            pressColor: "white",
+            inactiveColor: "#ccc",
+            activeColor: "black"
+        }
+
         return (
             <View style={{backgroundColor: this.props.backgroundColor, flex: 1}}>
                 <TabView
-                    lazy
+                    lazy={false}
                     navigationState={this.state}
                     renderScene={renderScene}
                     onIndexChange={(index) => this.setState({index})}

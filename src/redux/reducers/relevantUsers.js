@@ -9,7 +9,7 @@ const relevantUsers = (state = {}, action) => {
             // First, we sanitize all users
             var newRelevantUsers = action.newRelevantUsers.reduce((relevantUsers,user) => {
 
-                let {settings: userSettings, expoToken, asigned, email, displayName} = user
+                let {settings: userSettings, expoToken, asigned, email, displayName, profilePic} = user
 
                 // Get the names object from the profile
                 let names = userSettings && userSettings["Profile"] ? _.pick( userSettings["Profile"] , ["aka", "firstName", "lastName"]) : null
@@ -25,7 +25,8 @@ const relevantUsers = (state = {}, action) => {
                   names,
                   expoToken,
                   asigned,
-                  email
+                  email,
+                  profilePic
                 }
     
                 return relevantUsers;

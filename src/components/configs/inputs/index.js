@@ -27,6 +27,8 @@ export default class InputField extends Component {
     }
 
     get value (){
+        if (this.props.type === "number" && this.props.value === "") return ""
+
         return this.props.value || this.state.value || this.InputComponent._default
     }
 

@@ -58,8 +58,12 @@ class CompetitionStats extends React.Component {
     }
     
     render() {
-        
-        let leaderboards = this.playedMatchesByUser(this.props.matches)
+
+        var leaderboards = this.playedMatchesByUser(this.props.matches)
+
+        // We could potentially have the stats precomputed, but for now it doesn't show much performance
+        // increase. In the tests I did, computing them on the phone takes about 3ms.
+        //var leaderboards = this.props.competition.stats
 
         advancedStats = Object.keys(leaderboards.playedMatches).reduce((advancedStats, uid) => {
 
