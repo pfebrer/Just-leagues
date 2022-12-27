@@ -10,11 +10,25 @@ export default class NumericInput extends Component  {
 
     static _default = 0
 
-    textChange = (text, onValueChange) => {
+    constructor(props){
+        super(props)
+
+        this.state = {
+            focused: false,
+            temp_text: "",
+        }
+    }
+
+    textChange = (text) => {
+        this.setState({temp_text: text})
+    }
+
+    onBlur = (text, onValueChange) => {
+        this.setState({focused: false, temp_text: ""})
         if (text){
             onValueChange(Number(text))
         } else {
-            onValueChange("")
+            onValueChange(0)
         }
     }
 
@@ -32,7 +46,7 @@ export default class NumericInput extends Component  {
 
     render() {
 
-        const value = this.props.value
+        var value = this.props.value
 
         if (this.props.disabled){
             return (
@@ -68,6 +82,9 @@ export default class NumericInput extends Component  {
                     </View>
                 </View>
         } else if (this.props.controlMode === "keyboard") {
+            if (this.state.focused) {
+                value = this.state.temp_text
+            }
             return (
                 <View style={{...styles.scoreInputView, ...this.props.style}}>
                     <View style={{...styles.scoreValueView, ...this.props.valueContainerStyle}}>
@@ -76,7 +93,9 @@ export default class NumericInput extends Component  {
                             keyboardType="numeric"
                             value={String(value)}
                             style={{...styles.scoreValue, ...this.props.inputContainerStyle}}
-                            onChangeText={(text) => this.textChange(text, this.props.onValueChange)}
+                            onChangeText={(text) => this.textChange(text)}
+                            onFocus={() => this.setState({focused: true, temp_text: ""})}
+                            onBlur={() => this.onBlur(this.state.temp_text, this.props.onValueChange)}
                             />
                     </View>
                 </View>
@@ -99,7 +118,9 @@ export default class NumericInput extends Component  {
                             keyboardType="numeric"
                             value={String(value)}
                             style={{...styles.scoreValue, ...this.props.inputContainerStyle}}
-                            onChangeText={(text) => this.textChange(text, this.props.onValueChange)}/>
+                            onChangeText={(text) => this.textChange(text)}
+                            onFocus={() => this.setState({focused: true, temp_text: ""})}
+                            onBlur={() => this.onBlur(this.state.temp_text, this.props.onValueChange)}/>
                     </View>
                     <TouchableOpacity
                         {...incrementButtonProps}

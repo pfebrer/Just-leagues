@@ -71,6 +71,8 @@ class LoadingScreen extends React.Component {
             //If there is a logged in user, do all the preparatory stuff
             if (user) {
 
+                console.warn(user.email)
+
                 NotificationManager.registerForPushNotificationsAsync(user.uid)
 
                 this.userListener = Firebase.onUserSnapshot(user.uid,
@@ -96,8 +98,12 @@ class LoadingScreen extends React.Component {
                     //Update the settings fields if some new settings have been produced
                     let newSettings = updateSettingsFields(settings, USERSETTINGS)
 
+                    if (userData.activeCompetitions === undefined){
+                        userData.activeCompetitions = []
+                    }
+
                     //Create the listeners needed for each competition in active competitions
-                    if (userData.activeCompetitions && ! __DEV__){
+                    if ((userData.activeCompetitions && ! __DEV__) || true){
                         
                         userData.activeCompetitions.forEach( compID => {
 
@@ -156,6 +162,8 @@ class LoadingScreen extends React.Component {
                     }
                     
                     if (newSettings){
+
+                        console.warn("UPDATING USER SETTINGS", user.uid, newSettings)
 
                         Firebase.updateUserSettings(user.uid, newSettings)
                         

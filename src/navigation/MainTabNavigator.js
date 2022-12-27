@@ -8,11 +8,11 @@ import AdminScreen from "../screens/AdminScreen";
 import SettingsScreen from "../screens/SettingsScreen";
 import RankingEditScreen from "../screens/Admin/RankingEditScreen";
 import PlayersManagementScreen from "../screens/Admin/PlayersManagementScreen";
-import HomeScreen from "../screens/HomeScreen"
 import MatchScreen from "../screens/MatchScreen"
+import HomeScreen from "../screens/HomeScreen"
 
 import { Icon } from 'native-base';
-import ChatScreen from '../screens/ChatScreen';
+// import ChatScreen from '../screens/ChatScreen'; NO CHAT FOR NOW, I FEEL LIKE IT ADDS NOTHING TO THE APP
 import EndingPeriodModal from '../components/groups/EndingPeriodModal';
 import SearchScreen from '../screens/SearchScreen';
 import { Ionicons } from '@expo/vector-icons';
@@ -69,13 +69,13 @@ function MainNavigator() {
                 tabBarIcon: ({color}) => <Icon as={Ionicons} name="search" size={5} style={{color}}/>
             }}
             />
-        <MainTab.Screen
+        {/* <MainTab.Screen
             name="Chat" 
             component={ChatScreen} 
             options={{
                 tabBarIcon: ({color}) => <Icon as={Ionicons} name="chatbubbles" size={5} style={{color}}/>
             }}
-            />
+            /> */}
     </MainTab.Navigator>
   );
 }

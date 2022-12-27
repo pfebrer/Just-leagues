@@ -1,12 +1,12 @@
-import AppLoading from 'expo-app-loading';
 import { Asset } from 'expo-asset';
 import * as Font from 'expo-font';
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import * as SplashScreen from 'expo-splash-screen';
 
 import AppNavigator from './navigation/AppNavigator';
-import { NativeBaseProvider } from 'native-base';
+import { NativeBaseProvider} from 'native-base';
 
 //REDUX STUFF
 import store from './redux/store'
@@ -22,6 +22,9 @@ import TranslationManager from './assets/translations/TranslationManager';
 //   SafeAreaView.setStatusBarHeight(0);
 // }
 
+// Keep the splash screen visible while we fetch resources
+SplashScreen.preventAutoHideAsync();
+
 Sentry.init({
   dsn: 'https://859a3f17d2964dd6b8c9dd3e6bcd2624@sentry.io/1886709',
   enableInExpoDevelopment: false,
@@ -34,20 +37,41 @@ export default function Main(props) {
 
   const [isLoadingComplete, setLoadingComplete] = useState(false);
 
-  if (!isLoadingComplete && !props.skipLoadingScreen) {
-    return (
-      <AppLoading
-        startAsync={loadResourcesAsync}
-        onError={handleLoadingError}
-        onFinish={() => handleFinishLoading(setLoadingComplete)}
-      />
-    );
+  useEffect(() => {
+    async function prepare() {
+      try {
+        // Pre-load fonts, make any API calls you need to do here
+        await loadResourcesAsync()
+      } catch (e) {
+        handleLoadingError(e);
+      } finally {
+        // Tell the application to render
+        handleFinishLoading(setLoadingComplete);
+      }
+    }
+
+    prepare();
+  }, []);
+
+  const onLayoutRootView = useCallback(async () => {
+    if (isLoadingComplete) {
+      // This tells the splash screen to hide immediately! If we call this after
+      // `setLoadingComplete`, then we may see a blank screen while the app is
+      // loading its initial state and rendering its first pixels. So instead,
+      // we hide the splash screen once we know the root view has already
+      // performed layout.
+      await SplashScreen.hideAsync();
+    }
+  }, [isLoadingComplete]);
+
+  if (!isLoadingComplete) {
+    return null;
   } else {
     return (
       <Provider store={store}>
         <NativeBaseProvider>
           <TranslationManager/>
-          <View style={styles.container}>
+          <View style={styles.container} onLayout={onLayoutRootView} >
             {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
               <AppNavigator />
           </View>

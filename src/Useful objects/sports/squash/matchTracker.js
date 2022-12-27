@@ -1,14 +1,16 @@
-import React, { Component } from 'react'
+import React, { Component, useRef } from 'react'
 import { View, Text, TouchableOpacity } from 'react-native'
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import GameTracker from './gameTracker'
-import Carousel from 'react-native-snap-carousel';
+import Carousel from "react-native-reanimated-carousel";
 import BottomSheet from 'reanimated-bottom-sheet';
 
 import { h, w } from '../../../api/Dimensions';
 import { Button } from 'native-base';
 import Colors from '../../../constants/Colors';
 import { translate } from '../../../assets/translations/translationWorkers';
+
 
 export default class SquashMatchTracker extends Component {
     constructor(props){
@@ -220,20 +222,14 @@ function MatchSheet() {
     );
   }
 
-class GamesCarousel extends Component {
+const GamesCarousel = (props) => {
 
-    constructor(props){
-        super(props)
+    const ref = useRef(null);
 
-        this.state = {
-            scrolling: false,
-        }
-    }
-
-    _renderItem = ({item: game, index: i}) => {
+    const _renderItem = ({item: game, index: i}) => {
 
         if (game === "dummy") return <View style={{padding: 30}}>
-            <Button style={{backgroundColor: Colors.WINNER_GREEN_BG}} onPress={this.props.newGame}>
+            <Button style={{backgroundColor: Colors.WINNER_GREEN_BG}} onPress={props.newGame}>
                 <Text style={{fontWeight: "bold", color: "darkgreen"}}>{translate("actions.new game").toUpperCase()}</Text>
             </Button>
         </View>
@@ -241,28 +237,32 @@ class GamesCarousel extends Component {
         return <GameTracker 
             game={game}
             gameIndex={i}
-            playerNames={this.props.playerNames}
-            matchResult={this.props.matchResult}
-            newPoint={(...args) => this.props.newGamePoint(i, ...args)}
-            newLet={(...args) => this.props.newLet(i, ...args)}
-            updatePoint={(...args) => this.props.updateGamePoint(i, ...args)}
-            undo={(...args) => this.props.undoGamePoint(i, ...args)}/>
+            playerNames={props.playerNames}
+            matchResult={props.matchResult}
+            newPoint={(...args) => props.newGamePoint(i, ...args)}
+            newLet={(...args) => props.newLet(i, ...args)}
+            updatePoint={(...args) => props.updateGamePoint(i, ...args)}
+            undo={(...args) => props.undoGamePoint(i, ...args)}/>
     }
 
-    render(){
+    let data = [...props.games]
+    // If the last game is over, we allow the user to start a new game
+    if(data[data.length - 1].end) data.push("dummy")
 
-        let data = [...this.props.games]
-        // If the last game is over, we allow the user to start a new game
-        if(data[data.length - 1].end) data.push("dummy")
-
-        return <Carousel
-            containerCustomStyle={{backgroundColor: "white"}}
-            ref={(c) => { this._carousel = c; }}
+    return <GestureHandlerRootView style={{flex:1, height: "100%"}}>
+        <View style={{flex:1, height: "100%"}}>
+            <Carousel
+            vertical={false}
+            loop={false}
+            onScrollBegin={() => console.warn("SCROLLING")}
+            ref={ref}
+            width={w(100)}
+            style={{ width: "100%" }}
+            autoPlay={false}
             data={data}
-            renderItem={this._renderItem}
-            sliderWidth={w(100)}
-            itemWidth={w(90)}
-            onSnapToItem={this.onScroll}
+            pagingEnabled={true}
+            renderItem={_renderItem}
         />
-    }
+        </View> 
+    </GestureHandlerRootView>
 }

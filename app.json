@@ -8,7 +8,7 @@
       "android",
       "web"
     ],
-    "version": "1.6.4",
+    "version": "1.7.0",
     "orientation": "portrait",
     "icon": "./src/assets/images/icon.png",
     "splash": {
@@ -19,6 +19,7 @@
     "notification": {
       "icon": "./src/assets/images/icon.png"
     },
+    "jsEngine": "hermes",
     "updates": {
       "fallbackToCacheTimeout": 0
     },
@@ -40,12 +41,8 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.pol.esquaixlligues",
-      "buildNumber": "6",
-      "config": {
-        "googleSignIn": {
-          "reservedClientId": "com.googleusercontent.apps.524738063553-7a5ri1erg2jgc74u50oju3i1ksffdft4"
-        }
-      }
+      "buildNumber": "7",
+      "usesAppleSignIn": true
     },
     "android": {
       "versionCode": 11,
@@ -54,20 +51,19 @@
         "CAMERA",
         "CAMERA_ROLL"
       ],
-      "useNextNotificationsApi": true,
-      "config": {
-        "googleSignIn": {
-          "apiKey": "AIzaSyBo87T9t5sl8jX6YaJqsYylHsN2ZcZ95Xs",
-          "certificateHash": "E3CB786C725BFB98DD12AECB3B31BDF59B330A91"
-        }
-      },
       "package": "com.pol.esquaixlligues",
       "googleServicesFile": "./google-services.json"
     },
     "description": "This app is meant to make your life easier with your sport competitions. If you have any doubt, please contact justleaguesapp@gmail.com.",
     "githubUrl": "https://github.com/pfebrer96/SquashLeaguesV2",
     "plugins": [
-      "sentry-expo"
-    ]
+      "sentry-expo",
+      "expo-apple-authentication"
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "d641aae0-e429-11e8-abdf-4fc901518335"
+      }
+    }
   }
 }

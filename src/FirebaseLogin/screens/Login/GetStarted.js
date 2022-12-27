@@ -5,11 +5,12 @@ import { translate } from '../../../assets/translations/translationWorkers';
 
 import * as WebBrowser from 'expo-web-browser';
 import * as NEW_Google from 'expo-auth-session/providers/google';
-import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithCredential, OAuthProvider } from 'firebase/auth';
 import Firebase from '../../../api/Firebase';
+import * as AppleAuthentication from 'expo-apple-authentication';
+import * as Crypto from 'expo-crypto';
 
-import * as Google from 'expo-google-app-auth';
-import * as GoogleSignIn from 'expo-google-sign-in';
+// import * as GoogleSignIn from 'expo-google-sign-in';
 
 WebBrowser.maybeCompleteAuthSession();
 
@@ -24,8 +25,8 @@ export default function GetStarted (props){
             //clientId: "524738063553-o9ij9j358m9odfs30kivd3bmecso1kvi.apps.googleusercontent.com"
             expoClientId: '524738063553-o9ij9j358m9odfs30kivd3bmecso1kvi.apps.googleusercontent.com',
             webClientId: '524738063553-o9ij9j358m9odfs30kivd3bmecso1kvi.apps.googleusercontent.com',
-            //androidClientId: '524738063553-inqd7vg0cgfjrmlqpi777uocvjvoegnl.apps.googleusercontent.com',
-            //iosClientId: '524738063553-7a5ri1erg2jgc74u50oju3i1ksffdft4.apps.googleusercontent.com',
+            androidClientId: '524738063553-inqd7vg0cgfjrmlqpi777uocvjvoegnl.apps.googleusercontent.com',
+            iosClientId: '524738063553-7a5ri1erg2jgc74u50oju3i1ksffdft4.apps.googleusercontent.com',
             clientId: '524738063553-o9ij9j358m9odfs30kivd3bmecso1kvi.apps.googleusercontent.com'
         },
     );
@@ -44,22 +45,39 @@ export default function GetStarted (props){
         
     }
 
-    const promptAsync = __DEV__ ? NEW_promptAsync : OLD_promptAsync;
+    const promptAsync = __DEV__ ? NEW_promptAsync : NEW_promptAsync;
+
+    const appleLogin = () => {
+        const nonce = Math.random().toString(36).substring(2, 10);
     
-    React.useEffect(() => {
-        if (response?.type === 'success') {
-          var id_token, access_token;
-          if (__DEV__ ){
-            // With new method (NOT WORKING ON STANDALONE APP)
-            var { id_token, access_token } = response.params;
-          } else {
-            // With old deprecated login
-            var { idToken: id_token } = response.user.auth;
-          }
-          
-          const auth = Firebase.auth;
-          const credential = GoogleAuthProvider.credential(id_token, access_token);
-          signInWithCredential(auth, credential).then().catch(function(error) {
+        return Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256, nonce)
+            .then((hashedNonce) =>
+                AppleAuthentication.signInAsync({
+                    requestedScopes: [
+                        AppleAuthentication.AppleAuthenticationScope.FULL_NAME,
+                        AppleAuthentication.AppleAuthenticationScope.EMAIL
+                    ],
+                    nonce: hashedNonce
+                })
+            )
+            .then((appleCredential) => {
+                const { identityToken } = appleCredential;
+                const provider = new OAuthProvider('apple.com');
+                const credential = provider.credential({
+                    idToken: identityToken,
+                    rawNonce: nonce
+                });
+
+                return credentialLogin(Firebase.auth, credential)
+                // Successful sign in is handled by firebase.auth().onAuthStateChanged
+            })
+            .catch((error) => {
+                // ...
+            });
+    };
+
+    const credentialLogin = (auth, credential) => {
+        signInWithCredential(auth, credential).then().catch(function(error) {
             // Handle Errors here.
             var errorCode = error.code;
             var errorMessage = error.message;
@@ -70,6 +88,22 @@ export default function GetStarted (props){
             // ...
             console.log(errorMessage)
           });;;
+    }
+    
+    React.useEffect(() => {
+        if (response?.type === 'success') {
+          var id_token, access_token;
+          if (__DEV__  || true){
+            // With new method (NOT WORKING ON STANDALONE APP)
+            var { id_token, access_token } = response.params;
+          } else {
+            // With old deprecated login
+            var { idToken: id_token } = response.user.auth;
+          }
+          
+          const auth = Firebase.auth;
+          const credential = GoogleAuthProvider.credential(id_token, access_token);
+          credentialLogin(auth, credential)
         }
     }, [response]);
 
@@ -93,7 +127,15 @@ export default function GetStarted (props){
         ? <ActivityIndicator size="large" style={styles.spinner} color='white' />
         : [<Image key="googleIcon" style={styles.googleLogo} source={require("../../../assets/images/googleIcon.png")}/>,
           <Text key="googleText" style={{...styles.text, ...styles.googleText}}>{translate("auth.sign in with google")}</Text>]}
-    </TouchableOpacity>]
+    </TouchableOpacity>,
+    <AppleAuthentication.AppleAuthenticationButton
+    buttonType={AppleAuthentication.AppleAuthenticationButtonType.SIGN_IN}
+    buttonStyle={AppleAuthentication.AppleAuthenticationButtonStyle.BLACK}
+    cornerRadius={5}
+    style={styles.appleButton}
+    onPress={appleLogin}
+  />    
+]
 
     );
 }
@@ -119,6 +161,16 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     flexDirection: "row",
     
+  },
+
+  appleButton: {
+    width: '85%',
+    alignSelf: 'center',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: w(5),
+    marginTop: h(2),
+    elevation: 3,
   },
 
   text: {

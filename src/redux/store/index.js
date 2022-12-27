@@ -5,7 +5,7 @@ import rootReducer from '../reducers'
 
 let store;
 
-if(__DEV__){
+if(__DEV__ & false){
     //Log all changes to store when in developement
     const createStoreWithMiddleware = applyMiddleware(createLogger())(createStore)
 

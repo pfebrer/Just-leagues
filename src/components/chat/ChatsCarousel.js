@@ -5,8 +5,9 @@ import {
     View,
     TouchableOpacity
 } from 'react-native';
-import Carousel, {Pagination} from 'react-native-snap-carousel';
 import { w, h } from '../../api/Dimensions';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import Carousel from "react-native-reanimated-carousel";
 
 import {getCompetitionName, elevation} from "../../assets/utils/utilFuncs"
 
@@ -24,8 +25,6 @@ class ChatsCarousel extends Component {
 
     constructor(props){
         super(props)
-
-        this.relevantComps = 
 
         this.state = {
             activeSlide: props.currentComp ? props.currentUser.activeCompetitions.indexOf(props.currentComp.id) : 0
@@ -100,40 +99,28 @@ class ChatsCarousel extends Component {
 
     render() {
 
-        this.availableComps
-
         let availableComps = Object.values(this.props.competitions)
 
-        return (
-            <View style={{flex:1, ...this.props.style}}>
+        console.warn(this.props)
+
+        return <GestureHandlerRootView style={{flex:1, ...this.props.style}}>
+            <View style={{flex:1}}>
                 <Carousel
-                  ref={c => this._slider1Ref = c}
-                  data={availableComps}
-                  firstItem={this.state.activeSlide}
-                  renderItem={(args) => this._renderItem(args)}
-                  sliderWidth={w(100)}
-                  itemWidth={w(80)}
-                  inactiveSlideScale={0.94}
-                  inactiveSlideOpacity={0.7}
-                  // inactiveSlideShift={20}
-                  containerCustomStyle={styles.slider}
-                  contentContainerCustomStyle={styles.sliderContentContainer}
-                  onSnapToItem={(index) => this.setState({ activeSlide: index }) }
-                />
-                <Pagination
-                  dotsLength={availableComps.length}
-                  activeDotIndex={this.state.activeSlide}
-                  containerStyle={styles.paginationContainer}
-                  dotColor={'rgba(0, 0, 0, 0.92)'}
-                  dotStyle={styles.paginationDot}
-                  inactiveDotColor="black"
-                  inactiveDotOpacity={0.4}
-                  inactiveDotScale={0.6}
-                  carouselRef={this._slider1Ref}
-                  tappableDots={!!this._slider1Ref}
-                />
-            </View>
-        );
+                vertical={false}
+                loop={false}
+                onScrollBegin={() => console.warn("SCROLLING")}
+                ref={c => this._slider1Ref = c}
+                width={w(100)}
+                style={{ width: "100%" }}
+                autoPlay={false}
+                data={availableComps}
+                pagingEnabled={true}
+                firstItem={this.state.activeSlide}
+                renderItem={(args) => this._renderItem(args)}
+                onSnapToItem={(index) => this.setState({ activeSlide: index })}
+            />
+            </View> 
+        </GestureHandlerRootView>
     }
 }
 

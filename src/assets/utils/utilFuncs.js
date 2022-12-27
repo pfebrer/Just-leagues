@@ -98,7 +98,7 @@ exports.updateSettingsFields = (currentSettings, upToDateSettings) => {
     
                 Object.keys(upToDateSettings[settingType]).forEach( setting => {
     
-                    if ( currentSettings[settingType][setting] == undefined){
+                    if ( currentSettings[settingType][setting] === undefined){
     
                         newSettings[settingType][setting] = defaultSettings[settingType][setting]
     

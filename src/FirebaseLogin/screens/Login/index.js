@@ -77,25 +77,27 @@ export default class Login extends Component {
     return (
       <View style={styles.container}>
         <Image style={styles.icon} resizeMode="contain" source={companyLogo}/>
-        <InputField
-          placeholder={translate("auth.email")}
-          keyboardType="email-address"
-          style={styles.email}
-          error={this.state.isEmailCorrect}
-          focus={this.changeInputFocus}
-          ref={ref => this.email = ref}
-          icon={email}
-        />
-        <InputField
-          placeholder={translate("auth.password")}
-          returnKeyType="done"
-          secureTextEntry={true}
-          blurOnSubmit={true}
-          error={this.state.isPasswordCorrect}
-          ref={ref => this.password = ref}
-          focus={this.changeInputFocus}
-          icon={password}
-        />
+        <View>
+            <InputField
+            placeholder={translate("auth.email")}
+            keyboardType="email-address"
+            style={styles.email}
+            error={this.state.isEmailCorrect}
+            focus={this.changeInputFocus}
+            ref={ref => this.email = ref}
+            icon={email}
+            />
+            <InputField
+            placeholder={translate("auth.password")}
+            returnKeyType="done"
+            secureTextEntry={true}
+            blurOnSubmit={true}
+            error={this.state.isPasswordCorrect}
+            ref={ref => this.password = ref}
+            focus={this.changeInputFocus}
+            icon={password}
+            />
+        </View>
         <GetStarted
           click={this.getStarted}
           isLogin={this.state.isLogin}
@@ -122,12 +124,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
+    justifyContent: "space-between",
+    marginBottom: h(8)
   },
   icon: {
     width: w(70),
     height: h(30),
-    marginTop: h(7),
-    marginBottom: h(5),
+    marginTop: h(2),
+    marginBottom: h(2),
   },
   textContainer: {
     width: w(100),
@@ -137,7 +141,7 @@ const styles = StyleSheet.create({
     paddingRight: 30
   },
   email: {
-    marginBottom: h(4.5),
+    marginBottom: h(3),
   },
   forgotPasswordTouch:{
     flex:1

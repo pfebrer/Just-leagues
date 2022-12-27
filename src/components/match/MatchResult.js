@@ -67,7 +67,7 @@ class MatchResult extends Component {
                 disabled={!props.editable}
                 style={{padding: 0, margin: 0}}
                 valueContainerStyle={{borderWidth: 0, elevation: 0, padding: 0, margin: 0}}
-                inputContainerStyle={{padding: 0, margin: 0, ...textStyles}}
+                inputContainerStyle={{padding: 5, margin: 0, flex: 1, width:"100%", ...textStyles}}
                 disabledValueContainerStyle={{borderWidth: 0, elevation: 0}}
                 onValueChange={(value)=> this.updateResultIndex(props.index, value)}
                 controlMode="keyboard"/>
