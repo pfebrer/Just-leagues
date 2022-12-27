@@ -16,7 +16,7 @@
     "firebase-functions": "^3.20.1",
     "firebase-tools": "^10.7.2",
     "lodash": "^4.17.20",
-    "moment": "^2.24.0",
+    "moment": "^2.29.4",
     "node-fetch": "^2.6.1"
   },
   "private": true
